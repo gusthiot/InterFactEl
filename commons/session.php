@@ -2,15 +2,14 @@
 
 require_once("from_csv/Superviseur.php");
 require_once("from_csv/Gestionnaire.php");
+require_once("tequila.php");
 
-if ( ! session_id() ) @ session_start();
-$_SESSION['sciper'] = "138027";
-if(!isset($_SESSION["sciper"])){
-    header("Location: login.php");
-    exit;
-}
+//if ( ! session_id() ) @ session_start();
+//$_SESSION['sciper'] = "138027";
+$oClient = new TequilaClient();
+$oClient->Authenticate();
+$login = $oClient->getValue('user');
 
-$isAllowed = TRUE;
 $superviseur = new Superviseur();
 $gestionnaire = new Gestionnaire();
-$login = $_SESSION['sciper'];
+//$login = "138027";//$_SESSION['sciper'];

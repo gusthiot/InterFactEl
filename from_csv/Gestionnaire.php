@@ -14,7 +14,7 @@ class Gestionnaire extends Csv {
         foreach($lines as $line) {
             $tab = explode(";", $line);
             if(array_key_exists($tab[0], $this->gestionnaires)) {
-                $plateformes = $this->gestionnaires[$tab[0]];
+                $this->gestionnaires[$tab[0]][$tab[1]] = $tab[2];
 
             }
             else {
