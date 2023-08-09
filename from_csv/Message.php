@@ -4,7 +4,7 @@ require_once("Csv.php");
 
 class Message extends Csv {
 
-    public $csv = "CONFIG/message.csv";
+    public $csv = "../CONFIG/message.csv";
 
     public $messages;
 

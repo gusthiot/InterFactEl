@@ -17,7 +17,7 @@ if(!empty($_POST["dir"]) && !empty($_POST["suf"])){
     }
     $html .= "</table>";
     
-    $html .= '<button type="button" id="getModif" class="btn btn-outline-dark">Download File</button>';
+    $html .= '<button type="button" id="getModif" class="btn btn-outline-dark">Download Modif-factures</button>';
 
     $journal = new Journal("../".$_POST["dir"]."/Journal-modifs".$_POST["suf"].".csv");
     $html .= "<table>";
@@ -31,7 +31,7 @@ if(!empty($_POST["dir"]) && !empty($_POST["suf"])){
     }
     $html .= "</table>";
     
-    $html .= '<button type="button" id="getModif" class="btn btn-outline-dark">Download File</button>';
+    $html .= '<button type="button" id="getModif" class="btn btn-outline-dark">Download Journal-modifs</button>';
 
 
     echo $html;

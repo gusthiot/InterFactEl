@@ -1,6 +1,9 @@
 
 $('#label').on('click', function () {
-    alert("label");
+    var dir = "../" + $('#dir').val();
+    $.post("controls/getLabel.php", {dir: dir}, function (data) {
+        $('#display').html(data);
+    });
 } );
 
 $('#info').on('click', function () {  
@@ -19,6 +22,19 @@ $('#bills').on('click', function () {
 
 $(document).on("click", "#getSap", function() {
     window.location.href = "controls/download.php?type=sap&dir="+$('#dir').val();
+} );
+
+$(document).on("click", "#saveLabel", function() {
+    var txt = $('#labelArea').val();
+    var dir = $('#dir').val();
+    $.post("controls/saveLabel.php", {txt: txt, dir: dir}, function (msg) {
+        if(msg == "ko") {
+            $('#message').html(msg);
+        }
+        else {
+            window.location.reload();
+        }
+    });
 } );
 
 $('#ticket').on('click', function () {

@@ -1,5 +1,6 @@
 <?php
 require_once("commons/session.php");
+require_once("from_txt/Label.php");
 $plateforme = $_GET['plateforme'];
 $year = $_GET['year'];
 $month = $_GET['month'];
@@ -9,6 +10,11 @@ $dir = $plateforme."/".$year."/".$month."/".$version."/".$run;
 $name = $gestionnaire->getGestionnaire($login)[$plateforme];
 $suf = "_".$name."_".$year."_".$month."_".$version;
 
+$label = new Label($dir);
+$ltxt = $label->getLabel();
+if($ltxt == "") {
+    $ltxt = $run;
+}
 ?>
 
 
@@ -19,12 +25,12 @@ $suf = "_".$name."_".$year."_".$month."_".$version;
     <body>
         <div class="container-fluid">	
         <a href="plateforme.php?plateforme=<?= $plateforme ?>"><i class="bi bi-arrow-return-left"></i></a>	
-        <h1 class="text-center p-1 pt-md-5"><?= $run ?></h1>	
+        <h1 class="text-center p-1 pt-md-5"><?= $ltxt ?></h1>	
         <input type="hidden" id="dir" value="<?= $dir ?>" />
         <input type="hidden" id="suf" value="<?= $suf ?>" />
         
         <div class="text-center">
-            <button type="button" id="label" disabled class="btn btn-outline-dark">Etiqueter</button>
+            <button type="button" id="label" class="btn btn-outline-dark">Etiqueter</button>
             <button type="button" id="info" class="btn btn-outline-dark">Afficher les infos</button>
             <button type="button" id="bills" class="btn btn-outline-dark">Afficher la liste des factures</button>
             <button type="button" id="ticket" class="btn btn-outline-dark">Contrôler le ticket</button>
@@ -38,7 +44,9 @@ $suf = "_".$name."_".$year."_".$month."_".$version;
             <button type="button" id="resend" disabled class="btn btn-outline-danger">Renvoi SAP</button>
         </div>
 
-        <div id="display"></div>
+        <div class="text-center" id="message"></div>
+
+        <div class="text-center" id="display"></div>
 
         <?php
         ?>
