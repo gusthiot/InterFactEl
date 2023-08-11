@@ -1,6 +1,6 @@
 <?php
 require_once("commons/session.php");
-require_once("from_txt/Label.php");
+require_once("src/Label.php");
 $plateforme = $_GET['plateforme'];
 $year = $_GET['year'];
 $month = $_GET['month'];
@@ -10,8 +10,8 @@ $dir = $plateforme."/".$year."/".$month."/".$version."/".$run;
 $name = $gestionnaire->getGestionnaire($login)[$plateforme];
 $suf = "_".$name."_".$year."_".$month."_".$version;
 
-$label = new Label($dir);
-$ltxt = $label->getLabel();
+$label = new Label();
+$ltxt = $label->load($dir);
 if($ltxt == "") {
     $ltxt = $run;
 }

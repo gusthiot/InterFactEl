@@ -23,6 +23,13 @@ if(isset($_GET['type'])) {
             Zip::getZipDir($tmp_file, "../".$_GET['dir']."/");
         }
     }
+    if($type=="prepa") {
+        if(isset($_GET['dir'])) {
+            $tmp_pe = '../tmp/paramedit.csv';
+            Zip::getZipDir($tmp_file, "../".$_GET['dir']."/", $tmp_pe);
+            unlink($tmp_pe);
+        }
+    }
     if($type=="sap") {
         if(isset($_GET['dir'])) {
             $filename = "../".$_GET['dir']."/sap.csv";
