@@ -1,9 +1,9 @@
 <?php
 require_once("../commons/Zip.php");
 require_once("../commons/Data.php");
-require_once("../from_csv/Result.php");
-require_once("../from_csv/Paramedit.php");
-require_once("../from_csv/Message.php");
+require_once("../src/Result.php");
+require_once("../src/Paramedit.php");
+require_once("../src/Message.php");
 
 if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type'])) {
     $plateforme = $_POST['plate'];
@@ -19,7 +19,8 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type'])) {
                 $msg = Zip::unzip($tmp_file, $tmp_dir);
                 unlink($tmp_file);
                 $results = new Result($tmp_dir."result.csv");
-                $params = new Paramedit($tmp_dir."paramedit.csv");
+                $params = new Paramedit();
+                $params->load($tmp_dir."paramedit.csv");
                 if($plateforme != $params->getParam('Platform')) {
                     $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
                 }

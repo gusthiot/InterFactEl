@@ -1,10 +1,10 @@
 
 $('#download').on('click', function () {
-    window.location.href = "controls/download.php?type=config";
+    window.location.href = "controller/download.php?type=config";
 } );
 
 $('#upload').on('click', function () {
-    var file = $('#zip_file').val();
+    const file = $('#zip_file').val();
     if(file.indexOf('.zip') > -1) {
         $('#upform').submit();
         $('#message').text('');

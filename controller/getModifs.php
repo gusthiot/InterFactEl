@@ -1,7 +1,7 @@
 <?php
 
-require_once("../from_csv/Journal.php");
-require_once("../from_csv/Modif.php");
+require_once("../src/Journal.php");
+require_once("../src/Modif.php");
 
 if(!empty($_POST["dir"]) && !empty($_POST["suf"])){
 
