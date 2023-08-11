@@ -1,7 +1,7 @@
 <?php
 require_once("commons/session.php");
 require_once("commons/Data.php");
-require_once("from_txt/Label.php");
+require_once("src/Label.php");
 $plateforme = $_GET['plateforme'];
 if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($login))) {
     $name = $gestionnaire->getGestionnaire($login)[$plateforme];
@@ -73,8 +73,8 @@ if(isset($_GET['message'])) {
                         echo '<td>';
                         foreach(Data::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
                             $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
-                            $label = new Label($plateforme."/".$year."/".$month."/".$version."/".$run);
-                            $ltxt = $label->getLabel();
+                            $label = new Label();
+                            $ltxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
                             if($ltxt == "") {
                                 $ltxt = $run;
                             }

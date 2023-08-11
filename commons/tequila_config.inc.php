@@ -1,6 +1,7 @@
 <?php
 $aConfig = array (
 	          'sServer' => 'https://tequila.epfl.ch',
+	          'sServerUrl' => 'https://tequila.epfl.ch/cgi-bin/tequila',
 	          'iTimeout' => 86400,
 			  'logoutUrl' => "https://localhost/logout.php",
 	);
