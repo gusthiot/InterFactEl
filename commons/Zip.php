@@ -1,10 +1,13 @@
 <?php
 class Zip {
 
-    static function getZipDir($tmp_file, $dirname) {
+    static function getZipDir($tmp_file, $dirname, $morefile="") {
         $zip = new ZipArchive;
         if ($zip->open($tmp_file, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-            tree($zip, $dirname, "");
+            self::tree($zip, $dirname, "");
+            if($morefile != "") {
+                $zip->addFile($morefile, basename($morefile));
+            }
             if($zip->close()) {
                 header('Content-disposition: attachment; filename="'.basename($tmp_file).'"');
                 header('Content-type: application/zip');
@@ -28,7 +31,7 @@ class Zip {
             }
             if(is_dir($path)) {
                 $zip->addEmptyDir($file);
-                tree($zip, $path, $treepath);
+                self::tree($zip, $path, $treepath);
             }
         }
         closedir($dir);

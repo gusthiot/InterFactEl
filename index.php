@@ -33,7 +33,7 @@ if(isset($_GET['message'])) {
     <body>
         <div class="container-fluid">		
         <h1 class="text-center pt-md-5">Interface de facturation</h1>
-        <h2 class="text-center pt-md-5">Welcome <?= $user ?></h2>
+        <h2 class="text-center pt-md-5">Welcome <?= $login ?></h2>
         <?php
             if($superviseur->isSuperviseur($login)) {
             ?>
@@ -41,7 +41,7 @@ if(isset($_GET['message'])) {
             <div class="text-center">
                 <button type="button" id="download" class="btn btn-outline-dark">Download CONFIG files</button>
                 <div>
-                    <form action="controls/uploadConfig.php" method="post" id="upform" enctype="multipart/form-data" >
+                    <form action="controller/uploadConfig.php" method="post" id="upform" enctype="multipart/form-data" >
                         <input type="file" name="zip_file" id="zip_file" accept=".zip">
                         <button type="button" id="upload" class="btn btn-outline-dark">Upload CONFIG files</button>
                     </form>

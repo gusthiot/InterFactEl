@@ -1,6 +1,6 @@
 <?php
 
-require_once("../from_csv/Info.php");
+require_once("../src/Info.php");
 
 if(!empty($_POST["csv"])){
     $info = new Info("../".$_POST["csv"]);
