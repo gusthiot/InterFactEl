@@ -33,7 +33,7 @@ if(isset($_GET['message'])) {
     <body>
         <div class="container-fluid">		
         <h1 class="text-center pt-md-5">Interface de facturation</h1>
-        <h2 class="text-center pt-md-5">Welcome <?= $user ?></h2>
+        <h2 class="text-center pt-md-5">Welcome <?= $login ?></h2>
         <?php
             if($superviseur->isSuperviseur($login)) {
             ?>
