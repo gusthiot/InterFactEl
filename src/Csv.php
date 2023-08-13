@@ -17,6 +17,17 @@ class Csv {
         }
         return $result;
     }
+
+    function write($file, $array) {
+        if (($open = fopen($file, "w")) !== false) {
+            foreach($array as $row) {
+                if(!fputcsv($open, $row,';')) {
+                    break;
+                }
+            }
+            fclose($open);
+        }
+    }
     
 }
 ?>

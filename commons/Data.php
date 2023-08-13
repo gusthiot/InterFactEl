@@ -1,8 +1,10 @@
 <?php
 
 class Data {
+
+    static $escaped = array('..', '.','logfile.log', 'lock.csv');
     static function scanDescSan($dir) {
-        return array_diff(scandir($dir, SCANDIR_SORT_DESCENDING), array('..', '.','logfile.log', 'lock.csv'));
+        return array_diff(scandir($dir, SCANDIR_SORT_DESCENDING), self::$escaped);
     }
 
     static function removeRun($path, $todel) {
@@ -91,7 +93,9 @@ class Data {
                     'run'=>$last_r,
                     'version'=>$last_v,
                     'month'=>$last_m,
-                    'year'=>$last_y);
+                    'year'=>$last_y,
+                    'exp_m'=>$next_m,
+                    'exp_y'=>$next_y);
                 $return['sap'][] = array(
                     'type'=>"info",
                     'msg'=>$last_m." ".$last_y.": ".$messages->getMessage('msg1.1'));
@@ -102,14 +106,18 @@ class Data {
                     'run'=>$last_r,
                     'version'=>$last_v,
                     'month'=>$last_m,
-                    'year'=>$last_y);
+                    'year'=>$last_y,
+                    'exp_m'=>$last_m,
+                    'exp_y'=>$last_y);
                 $return['sap'][] = array(
                     'type'=>"result",
                     'msg'=>$last_m." ".$last_y." v".$last_v." (pour facturation ".$next_m." ".$next_y.")",
                     'run'=>$last_r,
                     'version'=>$last_v,
                     'month'=>$last_m,
-                    'year'=>$last_y);
+                    'year'=>$last_y,
+                    'exp_m'=>$next_m,
+                    'exp_y'=>$next_y);
             }
             else { 
                 $return['proforma'][] = array(
@@ -128,7 +136,9 @@ class Data {
                             'run'=>$run,
                             'version'=>$version,
                             'month'=>$prev_m,
-                            'year'=>$prev_y);
+                            'year'=>$prev_y,
+                            'exp_m'=>$last_m,
+                            'exp_y'=>$last_y);
                     }
                     else {
                         $return['sap'][] = array(
@@ -149,7 +159,9 @@ class Data {
                             'run'=>$run,
                             'version'=>$version,
                             'month'=>$last_m,
-                            'year'=>$last_y);
+                            'year'=>$last_y,
+                            'exp_m'=>$last_m,
+                            'exp_y'=>$last_y);
                         $return['sap'][] = array(
                             'type'=>"error",
                             'msg'=>"facturation ".$last_m." ".$last_y.": ".$messages->getMessage('msg1.2'));

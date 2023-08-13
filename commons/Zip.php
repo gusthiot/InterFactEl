@@ -1,4 +1,7 @@
 <?php
+
+require_once("Data.php");
+
 class Zip {
 
     static function getZipDir($tmp_file, $dirname, $morefile="") {
@@ -21,7 +24,7 @@ class Zip {
     static function tree($zip, $dirname, $treename) {
         $dir = opendir($dirname);
         while($file = readdir($dir)) {
-            if(in_array($file, array('..', '.'))) {
+            if(in_array($file, Data::$escaped)) {
                 continue;
             }
             $path = $dirname.'/'.$file;
