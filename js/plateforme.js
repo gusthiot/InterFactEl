@@ -42,9 +42,7 @@ function displayMessages(type) {
 $(document).on("click", ".prepa", function() {
     const tab = $(this).attr("id").split('_');
     const prepa = prepas[tab[0]][tab[1]];
-    const dir = $('#plate').val()+"/"+prepa['year']+"/"+prepa['month']+"/"+prepa['version']+"/"+prepa['run'];
-    console.log(dir);
-    window.location.href = "controller/download.php?type=prepa&dir="+dir;
+    window.location.href = "controller/download.php?type=prepa&plate="+$('#plate').val()+"&tyfact="+tab[0]+"&prepa="+JSON.stringify(prepa);
 } );
 
 $(document).on("change", "#exptype", function() {
