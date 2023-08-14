@@ -18,8 +18,8 @@ let prepas = null;
 $('#export').on('click', function () {
     $.get("controller/getPrepas.php?plate="+$('#plate').val(), function (json) {
         prepas = json;
-        let html = '<div>Data OUT <div><select id="exptype"><option value="sap">SAP</option><option value="proforma">PROFORMA</option></select></div>';
-        html += '<div id="date">' + displayMessages('sap') + '</div>';
+        let html = '<div>Data OUT <div><select id="exptype"><option value="SAP">SAP</option><option value="PROFORMA">PROFORMA</option></select></div>';
+        html += '<div id="date">' + displayMessages('SAP') + '</div>';
         $('#display').html(html);
     });
 } );
@@ -48,10 +48,6 @@ $(document).on("click", ".prepa", function() {
 $(document).on("change", "#exptype", function() {
     const html = displayMessages($('#exptype').val());
     $('#date').html(html);
-} );
-
-$(document).on("click", "#expdl", function() {
-    $('#date').html(prepas.proforma.error);
 } );
 
 $('.run').on('click', function () {

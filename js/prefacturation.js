@@ -48,7 +48,9 @@ $('#changes').on('click', function () {
 } );
 
 $('#invalidate').on('click', function () {
-    alert("invalidate");
+    $.get("controller/invalidate.php?dir="+$('#dir').val(), function (data) {
+        $('#display').html(data);
+    });
 } );
 
 $('#bilans').on('click', function () {

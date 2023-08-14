@@ -54,11 +54,7 @@ class Zip {
                     }
                 }
             }                   
-            //$zip->extractTo($dest);
             $zip->close();
-            if($ret=="") {
-                return "success";
-            }
             return $ret;
         }
         return "error";
