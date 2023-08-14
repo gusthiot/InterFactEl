@@ -67,10 +67,17 @@ if(isset($_GET['message'])) {
                 foreach(Data::scanDescSan($plateforme."/".$year) as $month) {
                     $versions = Data::scanDescSan($plateforme."/".$year."/".$month);
                     echo '<tr>';
-                    echo '<td rowspan="'.count($versions).'">'.$month.' '.$year.'</td>';
+                    echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
+                    if (file_exists($plateforme."/".$year."/".$month."/lock.csv")) {
+                        echo ' <i class="bi bi-lock"></i> ';
+                    }
+                    echo '</td>';
                     foreach($versions as $version) {
-                        echo '<td>'.$version.'</td>';
-                        echo '<td>';
+                        echo '<td>'.$version;
+                        if (file_exists($plateforme."/".$year."/".$month."/".$version."/lock.csv")) {
+                            echo ' <i class="bi bi-lock"></i> ';
+                        }
+                        echo '</td><td>';
                         foreach(Data::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
                             $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
                             $label = new Label();
@@ -78,7 +85,11 @@ if(isset($_GET['message'])) {
                             if($ltxt == "") {
                                 $ltxt = $run;
                             }
-                            echo ' <button type="button" value="'.$value.'" class="run btn btn-success"> '.$ltxt.' <i class="bi bi-lock"></i></button> ';
+                            echo ' <button type="button" value="'.$value.'" class="run btn btn-success"> '.$ltxt;
+                            if (file_exists($plateforme."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
+                                echo ' <i class="bi bi-lock"></i> ';
+                            }
+                            echo '</button> ';
                         }
                         echo '</td>';
                     }

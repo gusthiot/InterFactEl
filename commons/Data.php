@@ -24,7 +24,7 @@ class Data {
     }
 
     static function availableForFacturation($plateforme, $messages) {
-        $return = array('sap'=>array(), 'proforma'=>array());   
+        $return = array('SAP'=>array(), 'PROFORMA'=>array());   
         $last_y = 0;
         $last_m = 0;
         $last_v = 0;
@@ -85,9 +85,9 @@ class Data {
         if($tree[$last_y][$last_m]['versions'][$last_v]['lockruns']) {     
             /* si dernière version fermée */ 
             if($tree[$last_y][$last_m]['versions'][$last_v]['lock']) { 
-                //return array('sap'=>array(['msg'=>"test : dernière fermée"]), 'proforma'=>array());  
+                //return array('SAP'=>array(['msg'=>"test : dernière fermée"]), 'PROFORMA'=>array());  
                 // retourne m,v pour m+1,0
-                $return['proforma'][] = array(
+                $return['PROFORMA'][] = array(
                     'type'=>"result",
                     'msg'=>$last_m." ".$last_y." v".$last_v." (pour facturation ".$next_m." ".$next_y.")",
                     'run'=>$last_r,
@@ -96,11 +96,11 @@ class Data {
                     'year'=>$last_y,
                     'exp_m'=>$next_m,
                     'exp_y'=>$next_y);
-                $return['sap'][] = array(
+                $return['SAP'][] = array(
                     'type'=>"info",
                     'msg'=>$last_m." ".$last_y.": ".$messages->getMessage('msg1.1'));
                 // retourne m,v pour m+1,0 ou m,v+1
-                $return['sap'][] = array(
+                $return['SAP'][] = array(
                     'type'=>"result",
                     'msg'=>$last_m." ".$last_y." v".$last_v." (pour facturation ".$last_m." ".$last_y.")",
                     'run'=>$last_r,
@@ -109,7 +109,7 @@ class Data {
                     'year'=>$last_y,
                     'exp_m'=>$last_m,
                     'exp_y'=>$last_y);
-                $return['sap'][] = array(
+                $return['SAP'][] = array(
                     'type'=>"result",
                     'msg'=>$last_m." ".$last_y." v".$last_v." (pour facturation ".$next_m." ".$next_y.")",
                     'run'=>$last_r,
@@ -120,17 +120,17 @@ class Data {
                     'exp_y'=>$next_y);
             }
             else { 
-                $return['proforma'][] = array(
+                $return['PROFORMA'][] = array(
                     'type'=>'error',
                     'msg'=>"facturation ".$last_m." ".$last_y.": ".$messages->getMessage('msg2'));
                 // si dernière version = 0 et ouverte
                 if($last_v == 0) {
-                    //return array('sap'=>array(['msg'=>"test : dernière = 0"]), 'proforma'=>array()); 
+                    //return array('SAP'=>array(['msg'=>"test : dernière = 0"]), 'PROFORMA'=>array()); 
                     if(in_array($prev_y,$tree) && in_array($prev_m, $tree[$prev_y])) {
                         $version = arsort(array_keys($tree[$prev_y][$prev_m]['versions']))[0];
                         $run = $tree[$prev_y][$prev_m]['versions'][$version]['last_run'];
                         // retourne m-1,vmax pour m,0
-                        $return['sap'][] = array(
+                        $return['SAP'][] = array(
                             'type'=>"result",
                             'msg'=>$prev_m." ".$prev_y." v".$version." (pour facturation ".$last_m." ".$last_y.")",
                             'run'=>$run,
@@ -141,7 +141,7 @@ class Data {
                             'exp_y'=>$last_y);
                     }
                     else {
-                        $return['sap'][] = array(
+                        $return['SAP'][] = array(
                             'type'=>"error",
                             'msg'=>"facturation ".$last_m." ".$last_y.": ".$messages->getMessage('msg1.3'));
                     }
@@ -153,7 +153,7 @@ class Data {
                     if(in_array($version,$tree[$last_y][$last_m]['versions'])) {
                         $run = $tree[$last_y][$last_m]['versions'][$version]['last_run'];
                         // retourne m,v-1 pour m,v 
-                        $return['sap'][] = array(
+                        $return['SAP'][] = array(
                             'type'=>"result",
                             'msg'=>$last_m." ".$last_y." v".$version." (pour facturation ".$last_m." ".$last_y.")",
                             'run'=>$run,
@@ -162,12 +162,12 @@ class Data {
                             'year'=>$last_y,
                             'exp_m'=>$last_m,
                             'exp_y'=>$last_y);
-                        $return['sap'][] = array(
+                        $return['SAP'][] = array(
                             'type'=>"error",
                             'msg'=>"facturation ".$last_m." ".$last_y.": ".$messages->getMessage('msg1.2'));
                     }
                     else {
-                        $return['sap'][] = array(
+                        $return['SAP'][] = array(
                             'type'=>"error",
                             'msg'=>"facturation ".$last_m." ".$last_y.": la version précédente n'existe pas, ce n'est pas normal");
                     }
@@ -178,10 +178,10 @@ class Data {
 
         }
         else {
-            $return['sap'][] = array(
+            $return['SAP'][] = array(
                 'type'=>'error',
                 'msg'=>"facturation ".$last_m." ".$last_y.": ".$messages->getMessage('msg1'));
-            $return['proforma'][] = array(
+            $return['PROFORMA'][] = array(
                 'type'=>'error',
                 'msg'=>"facturation ".$last_m." ".$last_y.": ".$messages->getMessage('msg2'));
         }

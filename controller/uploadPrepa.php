@@ -18,87 +18,65 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type'])) {
             if (file_exists($tmp_dir) || mkdir($tmp_dir, 0777, true)) {
                 $msg = Zip::unzip($tmp_file, $tmp_dir);
                 unlink($tmp_file);
-                $results = new Result($tmp_dir."result.csv");
-                $params = new Paramedit();
-                $params->load($tmp_dir."paramedit.csv");
-                if($plateforme != $params->getParam('Platform')) {
-                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
-                }
-                elseif($type != $params->getParam('Type')) {
-                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
-                }
-                if($plateforme != $results->getResult('Platform')) {
-                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
-                }
-                elseif($type != "SIMU" && $results->getResult('Type') != "SAP") {
-                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
-                }
-                else {
-                    $path = "../".$plateforme;
-                    if($type == "SAP") {
-                        if(file_exists($path)) {
-                            $data = Data::availableForFacturation($path, $messages);
-                            if($data['sap']['error']) {
-                                $msg = $data['sap']['error'];
-                            }
-                            elseif(!$data['sap']['result']) {
-                                $msg = "no data"; 
-                            }
-                            else {
-                                $ok = FALSE;
-                                foreach($data['sap']['result'] as $option) {
-                                    if($option['year'] == $results->getResult('Year') && (int)($option['month']) == (int)($results->getResult('Month')) && $option['version'] == $results->getResult('Version') && $option['run'] == $results->getResult('Folder')) {
-                                        $ok = TRUE;
-                                        break;
-                                    }
-                                }
-                                if(!$ok) {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
-                                }
-                                else {
-                                    $msg = runPrefa($tmp_dir, $path, $params->getParam('Year'), $params->getParam('Month'));
-                                    //$msg = "on peut préfacturer";
-                                }
-                            }
-                        }
-                        else {
-                            $msg = runPrefa($tmp_dir, $path, $params->getParam('Year'), $params->getParam('Month'));
-                            //$msg = "on peut préfacturer sans historique";
-                        }
+                if($msg == "") {
+                    $results = new Result($tmp_dir."result.csv");
+                    $params = new Paramedit();
+                    $params->load($tmp_dir."paramedit.csv");
+                    if($plateforme != $params->getParam('Platform')) {
+                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
                     }
-                    elseif($type == "PROFORMA") {
-                        if(file_exists($path)) {
-                            $data = Data::availableForFacturation($path, $messages);
-                            if($data['proforma']['error']) {
-                                $msg = $data['proforma']['error'];
-                            }
-                            elseif(!$data['proforma']['result']) {
-                                $msg = "no data"; 
-                            }
-                            else {
-                                $ok = FALSE;
-                                foreach($data['proforma']['result'] as $option) {
-                                    if($option['year'] == $results->getResult('Year') && (int)($option['month']) == (int)($results->getResult('Month')) && $option['version'] == $results->getResult('Version') && $option['run'] == $results->getResult('Folder')) {
-                                        $ok = TRUE;
-                                        break;
-                                    }
-                                }
-                                if(!$ok) {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
-                                }
-                                else {
-                                    $msg = "on peut générer";
-                                }
-                            }
+                    elseif($type != $params->getParam('Type')) {
+                        if($type == "SAP") {
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
+                        }
+                        elseif($type == "PROFORMA") {
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
                         }
                         else {
-                            $msg = "on peut générer sans historique";
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
                         }
+
+                    }
+                    elseif($plateforme != $results->getResult('Platform')) {
+                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
+                    }
+                    elseif($type != "SIMU" && $results->getResult('Type') != "SAP") {
+                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
                     }
                     else {
-                        $msg = "on peut simuler";
+                        $path = "../".$plateforme;
+                        if($type != "SIMU") {
+                            if(file_exists($path)) {
+                                $data = Data::availableForFacturation($path, $messages);
+                                if($data[$type][0]['type'] == "error") {
+                                    $msg = $option['msg'];
+                                }
+                                else {
+                                    $ok = FALSE;
+                                    foreach($data[$type] as $option) {
+                                        if($option['exp_y'] == $params->getParam('Year') && (int)($option['exp_m']) == (int)($params->getParam('Month'))) {
+                                            if($option['year'] == $results->getResult('Year') && (int)($option['month']) == (int)($results->getResult('Month')) && $option['version'] == $results->getResult('Version') && $option['run'] == $results->getResult('Folder')) {
+                                                $ok = TRUE;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if(!$ok) {
+                                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
+                                    }
+                                    else {
+                                        $msg = runPrefa($tmp_dir, $path, $params->getParam('Year'), $params->getParam('Month'));
+                                    }
+                                }
+                            }
+                            else {
+                                $msg = runPrefa($tmp_dir, $path, $params->getParam('Year'), $params->getParam('Month'));
+                            }
+                        }
+                        else {
+                            $msg = "on peut simuler";
+                        }
                     }
-
                 }
             }
             else {
