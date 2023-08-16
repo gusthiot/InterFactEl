@@ -8,15 +8,17 @@ class Data {
     }
 
     static function removeRun($path, $todel) {
-        foreach(self::scanDescSan($path) as $version) {
-            foreach(self::scanDescSan($path."/".$version) as $run) {
-                if($run == $todel) {
-                    exec(sprintf("rm -rf %s", escapeshellarg($path."/".$version."/".$run)));
+        if(file_exists($path)) {
+            foreach(self::scanDescSan($path) as $version) {
+                foreach(self::scanDescSan($path."/".$version) as $run) {
+                    if($run == $todel) {
+                        exec(sprintf("rm -rf %s", escapeshellarg($path."/".$version."/".$run)));
+                    }
                 }
+                rmdir($path."/".$version);
             }
-            rmdir($path."/".$version);
+            rmdir($path);
         }
-        rmdir($path);
     }
 
     static function litMonth($m) {
