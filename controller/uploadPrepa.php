@@ -54,10 +54,12 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type'])) {
                                 else {
                                     $ok = FALSE;
                                     foreach($data[$type] as $option) {
-                                        if($option['exp_y'] == $params->getParam('Year') && (int)($option['exp_m']) == (int)($params->getParam('Month'))) {
-                                            if($option['year'] == $results->getResult('Year') && (int)($option['month']) == (int)($results->getResult('Month')) && $option['version'] == $results->getResult('Version') && $option['run'] == $results->getResult('Folder')) {
-                                                $ok = TRUE;
-                                                break;
+                                        if($option['type'] == "result") {
+                                            if($option['exp_y'] == $params->getParam('Year') && (int)($option['exp_m']) == (int)($params->getParam('Month'))) {
+                                                if($option['year'] == $results->getResult('Year') && (int)($option['month']) == (int)($results->getResult('Month')) && $option['version'] == $results->getResult('Version') && $option['run'] == $results->getResult('Folder')) {
+                                                    $ok = TRUE;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
@@ -78,6 +80,7 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type'])) {
                         }
                     }
                 }
+                delTmpDir($tmp_dir);
             }
             else {
                 $errors= error_get_last();
@@ -102,6 +105,12 @@ else {
     header('Location: ../index.php?message=post_data_missing');
 }
 
+function delTmpDir($tmp_dir) {
+    foreach(Data::scanDescSan($tmp_dir) as $tmp_file) {
+        unlink($tmp_dir."/".$tmp_file);
+    }
+    rmdir($tmp_dir);
+}
 
 function runPrefa($tmp_dir, $path, $year, $month) {
     $unique = time();
@@ -120,8 +129,12 @@ function runPrefa($tmp_dir, $path, $year, $month) {
 function delPrefa($path, $year, $month, $unique) {
     $mstr = (int)$month > 9 ? $month : '0'.$month;
     Data::removeRun($path."/".$year."/".$mstr, $unique);
-    rmdir($path."/".$year);
-    rmdir($path);
+    if(file_exists($path)) {
+        if(file_exists($path."/".$year)) {
+            rmdir($path."/".$year);
+            rmdir($path);
+        }
+    }
 }
 
 
