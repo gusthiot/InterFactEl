@@ -3,7 +3,7 @@
 require_once("../src/Journal.php");
 require_once("../src/Modif.php");
 
-if(!empty($_POST["dir"]) && !empty($_POST["suf"])){
+if(isset($_POST["dir"]) && isset($_POST["suf"])){
 
     $modif = new Modif("../".$_POST["dir"]."/Modif-factures".$_POST["suf"].".csv");
     $html = "<table>";

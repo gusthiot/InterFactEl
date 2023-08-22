@@ -7,17 +7,22 @@ class Sap extends Csv {
 
     public $bills;
 
-    function __construct($csv) {
+    function load($dir) {
         $this->bills = array();
-        $lines = $this->extract($csv);
+        $lines = $this->extract($dir."/sap.csv");
         foreach($lines as $line) {
-            $this->bills[] = explode(";", $line);
+            $tab = explode(";", $line);
+            $this->bills[$tab[1]] = $tab; 
         }
-    }
-    
-    function getBills() {
         return $this->bills;
     }
-
+    
+    function save($dir, $content) {
+        $data = [];
+        foreach($content as $line) {
+            $data[] = $line;
+        }
+        $this->write($dir."/sap.csv", $data);
+    }
 }
 ?>

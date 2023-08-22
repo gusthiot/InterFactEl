@@ -1,5 +1,5 @@
 <?php
-require_once("commons/session.php");
+require_once("session.php");
 
 $message = "";
 if(isset($_GET['message'])) {
@@ -57,7 +57,7 @@ if(isset($_GET['message'])) {
                 <h3 class="text-center pt-md-5">Gestion</h3>
                 <div>
                 <?php
-                foreach($gestionnaire->getGestionnaire($login) as $plateforme => $name) {
+                foreach($gestionnaire->getGestionnaire($login)['plates'] as $plateforme => $name) {
                     echo '<button type="button" value="'.$plateforme.'" class="plateforme btn btn-primary">'.$plateforme.' - '.$name.'</button>';
                 }
                 ?>

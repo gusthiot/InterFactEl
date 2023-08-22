@@ -9,16 +9,17 @@ class Gestionnaire extends Csv {
     public $gestionnaires;
 
     function __construct() {
-        $this->gestionnaires = array();
+        $this->gestionnaires = array('sciper'=>'000000', 'plates'=>array());
         $lines = $this->extract($this->csv);
         foreach($lines as $line) {
             $tab = explode(";", $line);
             if(array_key_exists($tab[0], $this->gestionnaires)) {
-                $this->gestionnaires[$tab[0]][$tab[1]] = $tab[2];
+                $this->gestionnaires[$tab[0]]['plates'][$tab[2]] = $tab[3];
 
             }
             else {
-                $this->gestionnaires[$tab[0]] = array($tab[1]=>$tab[2]);
+                $this->gestionnaires[$tab[0]]['sciper'] = $tab[1];
+                $this->gestionnaires[$tab[0]]['plates'] = array($tab[2]=>$tab[3]);
             }
         }
     }

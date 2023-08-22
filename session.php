@@ -2,7 +2,8 @@
 
 require_once("src/Superviseur.php");
 require_once("src/Gestionnaire.php");
-require_once("tequila.php");
+require_once("commons/tequila.php");
+require_once("config.php");
 
 $oClient = new TequilaClient();
 $oClient->Authenticate();
