@@ -2,10 +2,10 @@
 
 require_once("../src/Sap.php");
 
-if(!empty($_POST["csv"])){
-    $sap = new Sap("../".$_POST["csv"]);
+if(isset($_POST["dir"])){
+    $sap = new Sap();
     $html = "<table>";
-    foreach($sap->getBills() as $line) {
+    foreach($sap->load("../".$_POST["dir"]) as $line) {
         $html .= "<tr>";
         foreach($line as $cell) {
             $html .= "<td>".$cell."</td>";

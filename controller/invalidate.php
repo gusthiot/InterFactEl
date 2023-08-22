@@ -2,13 +2,9 @@
 
 require_once("../src/Lock.php");
 
-if(!empty($_GET["dir"])){
+if(isset($_GET["dir"])){
     $lock = new Lock();
-    if($lock->save($_GET["dir"], "invalidate")) {
-        echo "ok";
+    if(!$lock->save($_GET["dir"], "invalidate")) {
+        echo "Impossible d'invalider";
     }
-    else {
-        echo "ko";
-    }
-
 }

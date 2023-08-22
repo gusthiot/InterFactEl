@@ -5,8 +5,9 @@ require_once("../src/Result.php");
 require_once("../src/Paramedit.php");
 require_once("../src/Message.php");
 
-if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type'])) {
+if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && isset($_POST['sciper'])) {
     $plateforme = $_POST['plate'];
+    $sciper = $_POST['sciper'];
     $messages = new Message();
     $type = $_POST['type'];
     $filename = $_FILES["zip_file"]["name"];
@@ -30,18 +31,18 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type'])) {
                             $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
                         }
                         elseif($type == "PROFORMA") {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8');
                         }
                         else {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.9');
                         }
 
                     }
                     elseif($plateforme != $results->getResult('Platform')) {
-                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
+                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
                     }
                     elseif($type != "SIMU" && $results->getResult('Type') != "SAP") {
-                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
+                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
                     }
                     else {
                         $path = "../".$plateforme;
@@ -49,7 +50,7 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type'])) {
                             if(file_exists($path)) {
                                 $data = Data::availableForFacturation($path, $messages);
                                 if($data[$type][0]['type'] == "error") {
-                                    $msg = $option['msg'];
+                                    $msg = $data[$type][0]['msg'];
                                 }
                                 else {
                                     $ok = FALSE;
@@ -67,12 +68,12 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type'])) {
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
                                     }
                                     else {
-                                        $msg = runPrefa($tmp_dir, $path, $params->getParam('Year'), $params->getParam('Month'));
+                                        $msg = runPrefa($tmp_dir, $path, $params->getParam('Year'), $params->getParam('Month'), $sciper);
                                     }
                                 }
                             }
                             else {
-                                $msg = runPrefa($tmp_dir, $path, $params->getParam('Year'), $params->getParam('Month'));
+                                $msg = runPrefa($tmp_dir, $path, $params->getParam('Year'), $params->getParam('Month'), $sciper);
                             }
                         }
                         else {
@@ -112,9 +113,9 @@ function delTmpDir($tmp_dir) {
     rmdir($tmp_dir);
 }
 
-function runPrefa($tmp_dir, $path, $year, $month) {
+function runPrefa($tmp_dir, $path, $year, $month, $sciper) {
     $unique = time();
-    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmp_dir.' -s -d ../ -u'.$unique;
+    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmp_dir.' -g -d ../ -u'.$unique.' -s '.$sciper;
     $result = shell_exec($cmd);
     if(substr($result, 0, 2) == "OK") {
         $msg = $unique." tout OK";

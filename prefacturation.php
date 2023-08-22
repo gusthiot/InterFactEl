@@ -1,5 +1,5 @@
 <?php
-require_once("commons/session.php");
+require_once("session.php");
 require_once("src/Label.php");
 $plateforme = $_GET['plateforme'];
 $year = $_GET['year'];
@@ -7,7 +7,7 @@ $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
 $dir = $plateforme."/".$year."/".$month."/".$version."/".$run;
-$name = $gestionnaire->getGestionnaire($login)[$plateforme];
+$name = $gestionnaire->getGestionnaire($login)['plates'][$plateforme];
 $suf = "_".$name."_".$year."_".$month."_".$version;
 
 $label = new Label();
@@ -39,7 +39,7 @@ if($ltxt == "") {
             <button type="button" id="bilans" class="btn btn-outline-dark">Exporter Bilans & Stats</button>
             <button type="button" id="annexes" class="btn btn-outline-dark">Exporter Annexes csv</button>
             <button type="button" id="all" class="btn btn-outline-dark">Exporter Tout</button>
-            <button type="button" id="send" disabled class="btn btn-outline-success">Envoi SAP</button>
+            <button type="button" id="send" class="btn btn-outline-success">Envoi SAP</button>
             <button type="button" id="finalize" disabled class="btn btn-outline-info">Finaliser SAP</button>
             <button type="button" id="resend" disabled class="btn btn-outline-danger">Renvoi SAP</button>
         </div>

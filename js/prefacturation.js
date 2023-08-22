@@ -7,15 +7,13 @@ $('#label').on('click', function () {
 } );
 
 $('#info').on('click', function () {  
-    const csv = $('#dir').val() + "/info.csv";
-    $.post("controller/getInfos.php", {csv: csv}, function (data) {
+    $.post("controller/getInfos.php", {dir: $('#dir').val()}, function (data) {
         $('#display').html(data);
     });
 } );
 
 $('#bills').on('click', function () {
-    const csv = $('#dir').val() + "/sap.csv";
-    $.post("controller/getBills.php", {csv: csv}, function (data) {
+    $.post("controller/displaySap.php", {dir: $('#dir').val()}, function (data) {
         $('#display').html(data);
     });
 } );
@@ -66,7 +64,19 @@ $('#all').on('click', function () {
 } );
 
 $('#send').on('click', function () {
-    alert("send");
+    $.post("controller/selectBills.php", {dir: $('#dir').val()}, function (data) {
+        $('#display').html(data);
+    });
+} );
+
+$(document).on("click", "#sendBills", function() {
+    let bills = [];
+    $.each($("input[name='bills']:checked"), function(){
+        bills.push($(this).val());
+    });
+    $.post("controller/sendBills.php", {bills: bills, dir: $('#dir').val()}, function (data) {
+        $('#display').html(data);
+    });
 } );
 
 $('#finalize').on('click', function () {

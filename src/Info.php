@@ -7,18 +7,22 @@ class Info extends Csv {
 
     public $infos;
 
-    function __construct($csv) {
-        $this->infos = array();
-        $lines = $this->extract($csv);
+    function load($dir) {
+        $this->infos = [];
+        $lines = $this->extract($dir."/info.csv");
         foreach($lines as $line) {
             $tab = explode(";", $line);
-            $this->infos[$tab[1]] = $tab[2];
+            $this->infos[$tab[0]] = $tab;
         }
-    }
-    
-    function getInfos() {
         return $this->infos;
     }
 
+    function save($dir, $content) {
+        $data = [];
+        foreach($content as $line) {
+            $data[] = $line;
+        }
+        $this->write($dir."/info.csv", $data);
+    }
 }
 ?>

@@ -1,10 +1,12 @@
 <?php
-require_once("commons/session.php");
+require_once("session.php");
 require_once("commons/Data.php");
 require_once("src/Label.php");
 $plateforme = $_GET['plateforme'];
-if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($login))) {
-    $name = $gestionnaire->getGestionnaire($login)[$plateforme];
+$path_plate = GROUND.$plateforme;
+if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($login)['plates'])) {
+    $name = $gestionnaire->getGestionnaire($login)['plates'][$plateforme];
+    $sciper = $gestionnaire->getGestionnaire($login)['sciper'];
 }
 else {
     die("Ce numéro de plateforme n'est pas pris en compte !");
@@ -43,7 +45,8 @@ if(isset($_GET['message'])) {
         <div class="container-fluid">	
         <a href="index.php"><i class="bi bi-arrow-return-left"></i></a>	
         <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
-        <input type="hidden" id="plate" value="<?= $plateforme ?>" />
+        <input type="hidden" id="plateInit" value="<?= $plateforme ?>" />
+        <input type="hidden" id="sciperInit" value="<?= $sciper ?>" />
         
         <div class="text-center">
         <?php

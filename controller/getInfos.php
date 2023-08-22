@@ -2,12 +2,12 @@
 
 require_once("../src/Info.php");
 
-if(!empty($_POST["csv"])){
-    $info = new Info("../".$_POST["csv"]);
+if(isset($_POST["dir"])){
+    $info = new Info();
     $html = "<table>";
-    foreach($info->getInfos() as $label=>$value) {
+    foreach($info->load("../".$_POST["dir"]) as $line) {
         $html .= "<tr>";
-        $html .= "<td>".$label."</td><td>".$value."</td>";
+        $html .= "<td>".$line[1]."</td><td>".$line[2]."</td>";
         $html .= "</tr>";
 
     }
