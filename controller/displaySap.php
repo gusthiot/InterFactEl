@@ -2,10 +2,10 @@
 
 require_once("../src/Sap.php");
 
-if(isset($_POST["dir"])){
+if(isset($_POST["dir"])) {
     $sap = new Sap();
     $html = "<table>";
-    foreach($sap->load(GROUND.$_POST["dir"]) as $line) {
+    foreach($sap->load("../".$_POST["dir"]) as $line) {
         $html .= "<tr>";
         foreach($line as $cell) {
             $html .= "<td>".$cell."</td>";

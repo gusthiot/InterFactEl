@@ -2,16 +2,17 @@
 require_once("session.php");
 require_once("commons/Data.php");
 require_once("src/Label.php");
-$plateforme = $_GET['plateforme'];
-$pathPlate = GROUND.$plateforme;
-if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($login)['plates'])) {
-    $name = $gestionnaire->getGestionnaire($login)['plates'][$plateforme];
-    $sciper = $gestionnaire->getGestionnaire($login)['sciper'];
+if(!isset($_GET["plateforme"])) {
+    die("Manque un numéro de plateforme !");
 }
-else {
+$plateforme = $_GET['plateforme'];
+
+if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($login)['plates'])) {
     die("Ce numéro de plateforme n'est pas pris en compte !");
 }
 
+$name = $gestionnaire->getGestionnaire($login)['plates'][$plateforme];
+$sciper = $gestionnaire->getGestionnaire($login)['sciper'];
 $message = "";
 if(isset($_GET['message'])) {
     if($_GET['message'] == "zip") {
@@ -50,7 +51,7 @@ if(isset($_GET['message'])) {
         
         <div class="text-center">
         <?php
-        if(file_exists($pathPlate)) { 
+        if(file_exists($plateforme)) { 
         ?>
             <button type="button" id="historique" class="btn btn-outline-dark">Consulter l'historique de la plateforme</button>
             <button type="button" id="export" class="btn btn-outline-dark">Exporter des données de préparation</button>
@@ -65,34 +66,47 @@ if(isset($_GET['message'])) {
         <div class="text-center">
             <table class="table table-bordered">
         <?php
-        if(file_exists($pathPlate)) {
-            foreach(Data::scanDescSan($pathPlate) as $year) {
-                foreach(Data::scanDescSan($pathPlate."/".$year) as $month) {
-                    $versions = Data::scanDescSan($pathPlate."/".$year."/".$month);
+        if(file_exists($plateforme)) {
+            
+            if($superviseur->isSuperviseur($login)) {
+            ?>
+            <div class="text-center">
+            <button type="button" id="destroy" class="btn btn-danger">Supprimer tous les données de cette plateforme</button>
+            </div>
+            <?php
+            }
+            foreach(Data::scanDescSan($plateforme) as $year) {
+                foreach(Data::scanDescSan($plateforme."/".$year) as $month) {
+                    $versions = Data::scanDescSan($plateforme."/".$year."/".$month);
                     echo '<tr>';
                     echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
-                    if (file_exists($pathPlate."/".$year."/".$month."/lock.csv")) {
+                    if (file_exists($plateforme."/".$year."/".$month."/lock.csv")) {
                         echo ' <i class="bi bi-lock"></i> ';
                     }
                     echo '</td>';
                     foreach($versions as $version) {
                         echo '<td>'.$version;
-                        if (file_exists($pathPlate."/".$year."/".$month."/".$version."/lock.csv")) {
+                        if (file_exists($plateforme."/".$year."/".$month."/".$version."/lock.csv")) {
                             echo ' <i class="bi bi-lock"></i> ';
                         }
                         echo '</td><td>';
-                        foreach(Data::scanDescSan($pathPlate."/".$year."/".$month."/".$version) as $run) {
+                        foreach(Data::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
                             $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
                             $label = new Label();
-                            $ltxt = $label->load($pathPlate."/".$year."/".$month."/".$version."/".$run);
+                            $ltxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
                             if($ltxt == "") {
                                 $ltxt = $run;
                             }
                             echo ' <button type="button" value="'.$value.'" class="run btn btn-success"> '.$ltxt;
-                            if (file_exists($pathPlate."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
+                            if (file_exists($plateforme."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
                                 echo ' <i class="bi bi-lock"></i> ';
                             }
                             echo '</button> ';
+                            if($superviseur->isSuperviseur($login)) {
+                            ?>
+                            <button type="button" id="erase" class="btn btn-danger" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
+                            <?php
+                            }
                         }
                         echo '</td>';
                     }
@@ -103,7 +117,6 @@ if(isset($_GET['message'])) {
         ?>
             </table
         </div>
-
         </div>
         <?php include("commons/footer.php");?> 
         <script src="js/plateforme.js"></script>

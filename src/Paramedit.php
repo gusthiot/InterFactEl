@@ -7,7 +7,7 @@ class Paramedit extends Csv {
     public $params;
 
     function load($csv) {
-        $this->params = array();
+        $this->params = [];
         $lines = $this->extract($csv);
         foreach($lines as $line) {
             $tab = explode(";", $line);

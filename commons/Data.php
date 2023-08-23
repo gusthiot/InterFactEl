@@ -28,7 +28,7 @@ class Data
     }
 
     static function availableForFacturation($pathPlate, $messages) {
-        $return = array('SAP'=>array(), 'PROFORMA'=>array());   
+        $return = ['SAP'=>[], 'PROFORMA'=>[]];   
         $last_y = 0;
         $last_m = 0;
         $last_v = 0;

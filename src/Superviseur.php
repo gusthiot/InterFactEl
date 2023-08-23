@@ -9,7 +9,7 @@ class Superviseur extends Csv {
     public $superviseurs;
 
     function __construct() {
-        $this->superviseurs = array();
+        $this->superviseurs = [];
         $lines = $this->extract($this->csv);
         foreach($lines as $line) {
             $this->superviseurs[] = $line;

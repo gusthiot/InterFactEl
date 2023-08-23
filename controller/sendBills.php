@@ -3,22 +3,21 @@
 require_once("../src/Sap.php");
 require_once("../src/Info.php");
 require_once("../src/Facture.php");
-require_once("../config.php");
 
 if(isset($_POST["bills"]) && isset($_POST['dir'])) {
     $bills = $_POST["bills"];
     $dir = $_POST["dir"];
     $html = "";
     foreach($bills as $bill) {
-        $facture = new Facture(GROUND.$dir."/Factures_JSON/facture_".$bill.".json");
+        $facture = new Facture("../".$dir."/Factures_JSON/facture_".$bill.".json");
         $res = json_decode(send($facture->getFacture()));
         if($res) {
             if(property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
                 $info = new Info();       
-                $content = $info->load(GROUND.$_POST["dir"]);
+                $content = $info->load("../".$_POST["dir"]);
                 if($content["Sent"][2] == "") {
                     $content["Sent"][2] = date('Y-m-d H:i:s');
-                    $info->save(GROUND.$_POST["dir"], $content);
+                    $info->save("../".$_POST["dir"], $content);
                 }
                 $sap = new Sap();
                 $content = $sap->load("../".$_POST["dir"]);                        
@@ -34,7 +33,7 @@ if(isset($_POST["bills"]) && isset($_POST['dir'])) {
                         $content[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
                     }
                 }
-                $sap->save(GROUND.$_POST["dir"], $content);
+                $sap->save("../".$_POST["dir"], $content);
                 $html .= "saved";
             }
         }

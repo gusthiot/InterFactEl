@@ -7,7 +7,7 @@ class Result extends Csv {
     public $results;
 
     function __construct($csv) {
-        $this->results = array();
+        $this->results = [];
         $lines = $this->extract($csv);
         foreach($lines as $line) {
             $tab = explode(";", $line);
