@@ -9,7 +9,7 @@ class Message extends Csv {
     public $messages;
 
     function __construct() {
-        $this->messages = array();
+        $this->messages = [];
         $lines = $this->extract($this->csv);
         foreach($lines as $line) {
             $tab = explode(";", $line);

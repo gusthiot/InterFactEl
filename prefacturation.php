@@ -2,6 +2,9 @@
 require_once("session.php");
 require_once("src/Label.php");
 
+if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
+    die("Manque un paramètre !");
+}
 $plateforme = $_GET['plateforme'];
 $year = $_GET['year'];
 $month = $_GET['month'];

@@ -9,7 +9,7 @@ class Gestionnaire extends Csv {
     public $gestionnaires;
 
     function __construct() {
-        $this->gestionnaires = array('sciper'=>'000000', 'plates'=>array());
+        $this->gestionnaires = ['sciper'=>'000000', 'plates'=>[]];
         $lines = $this->extract($this->csv);
         foreach($lines as $line) {
             $tab = explode(";", $line);
@@ -19,7 +19,7 @@ class Gestionnaire extends Csv {
             }
             else {
                 $this->gestionnaires[$tab[0]]['sciper'] = $tab[1];
-                $this->gestionnaires[$tab[0]]['plates'] = array($tab[2]=>$tab[3]);
+                $this->gestionnaires[$tab[0]]['plates'] = [$tab[2]=>$tab[3]];
             }
         }
     }

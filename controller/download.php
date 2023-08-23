@@ -6,32 +6,31 @@ require_once("../config.php");
 
 if(isset($_GET['type'])) {
     $type = $_GET['type'];
-    $tmp_dir = GROUND.'tmp/';
-    $tmp_file = $tmp_dir.$type.'.zip';
+    $tmp_file = TEMP.$type.'.zip';
    
     if($type=="config") {
-        Zip::getZipDir($tmp_file, GROUND."CONFIG/");
+        Zip::getZipDir($tmp_file, "../CONFIG/");
     }
     if($type=="bilans") {
         if(isset($_GET['dir'])) {
-            Zip::getZipDir($tmp_file, GROUND.$_GET['dir']."/Bilans_Stats/");
+            Zip::getZipDir($tmp_file, "../".$_GET['dir']."/Bilans_Stats/");
         }
     }
     if($type=="annexes") {
         if(isset($_GET['dir'])) {
-            Zip::getZipDir($tmp_file, GROUND.$_GET['dir']."/Annexes_CSV/");
+            Zip::getZipDir($tmp_file, "../".$_GET['dir']."/Annexes_CSV/");
         }
     }
     if($type=="all") {
         if(isset($_GET['dir'])) {
-            Zip::getZipDir($tmp_file, GROUND.$_GET['dir']."/");
+            Zip::getZipDir($tmp_file, "../".$_GET['dir']."/");
         }
     }
     if($type=="prepa") {
         if(isset($_GET['prepa']) && isset($_GET['plate']) && isset($_GET['tyfact'])) {
             $prepa = json_decode($_GET['prepa']);
-            $dir = GROUND.$_GET['plate']."/".$prepa->year."/".$prepa->month."/".$prepa->version."/".$prepa->run;
-            $tmp_pe = $tmp_dir.'paramedit.csv';
+            $dir = "../".$_GET['plate']."/".$prepa->year."/".$prepa->month."/".$prepa->version."/".$prepa->run;
+            $tmp_pe = TEMP.'paramedit.csv';
             $wm = "";
             $tyfact = "SAP";
             if($_GET['tyfact'] == "proforma") {
@@ -39,7 +38,7 @@ if(isset($_GET['type'])) {
                 $wm = $paramtext->getParam('filigr-prof');
                 $tyfact = "PROFORMA";
             }
-            $array = array(array("Platform", $_GET['plate']), array("Year", $prepa->exp_y), array("Month", $prepa->exp_m), array("Type", $tyfact), array("Watermark", $wm));
+            $array = [["Platform", $_GET['plate']], ["Year", $prepa->exp_y], ["Month", $prepa->exp_m], ["Type", $tyfact], ["Watermark", $wm]];
             $paramedit = new Paramedit();
             $paramedit->write($tmp_pe, $array);
             Zip::getZipDir($tmp_file, $dir."/", $tmp_pe);
@@ -48,7 +47,7 @@ if(isset($_GET['type'])) {
     }
     if($type=="sap") {
         if(isset($_GET['dir'])) {
-            $filename = GROUND.$_GET['dir']."/sap.csv";
+            $filename = "../".$_GET['dir']."/sap.csv";
             header('Content-Type: application/octet-stream');
             header('Content-Disposition: attachment; filename="'.basename($filename).'"');
             header('Content-Length: ' . filesize($filename));

@@ -14,9 +14,9 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
     $filename = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];
     if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
-        $tmp_file = "../tmp/".$filename;
+        $tmp_file = TEMP.$filename;
         if(copy($source, $tmp_file)) {
-            $tmp_dir = '../tmp/test/';
+            $tmp_dir = TEMP.'test/';
             if (file_exists($tmp_dir) || mkdir($tmp_dir, 0777, true)) {
                 $msg = Zip::unzip($tmp_file, $tmp_dir);
                 unlink($tmp_file);
@@ -48,7 +48,7 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                     else {
                         $pathPlate = "../".$plateforme;
                         if($type != "SIMU") {
-                            if(file_exists($path)) {
+                            if(file_exists($pathPlate)) {
                                 $data = Data::availableForFacturation($pathPlate, $messages);
                                 if($data[$type][0]['type'] == "error") {
                                     $msg = $data[$type][0]['msg'];
@@ -69,12 +69,12 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
                                     }
                                     else {
-                                        $msg = runPrefa($tmp_dir, $path, $params->getParam('Year'), $params->getParam('Month'), $sciper);
+                                        $msg = runPrefa($tmp_dir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper);
                                     }
                                 }
                             }
                             else {
-                                $msg = runPrefa($tmp_dir, $path, $params->getParam('Year'), $params->getParam('Month'), $sciper);
+                                $msg = runPrefa($tmp_dir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper);
                             }
                         }
                         else {

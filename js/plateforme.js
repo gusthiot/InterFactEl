@@ -5,6 +5,14 @@ $('#historique').on('click', function () {
     });
 } );
 
+$('#destroy').on('click', function () {
+    window.location.href = "controller/destroy.php?plate="+$('#plateNum').val();
+} );
+
+$('#erase').on('click', function () {
+    window.location.href = "controller/erase.php?plate="+$('#plateNum').val()+"&dir="+$(this).data('dir')+"&run="+$(this).data('run');
+} );
+
 $('#launch').on('click', function () {
     let html = '<form action="controller/uploadPrepa.php" method="post" id="factform" enctype="multipart/form-data" >';
     html += '<input type="file" name="zip_file" id="zip_file" accept=".zip">';

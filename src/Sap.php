@@ -8,7 +8,7 @@ class Sap extends Csv {
     public $bills;
 
     function load($dir) {
-        $this->bills = array();
+        $this->bills = [];
         $lines = $this->extract($dir."/sap.csv");
         foreach($lines as $line) {
             $tab = explode(";", $line);

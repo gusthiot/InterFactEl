@@ -8,7 +8,7 @@ class Modif extends Csv {
     public $modifs;
 
     function __construct($csv) {
-        $this->modifs = array();
+        $this->modifs = [];
         $lines = $this->extract($csv);
         foreach($lines as $line) {
             $this->modifs[] = explode(";", $line);

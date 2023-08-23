@@ -7,7 +7,7 @@ class Paramtext extends Csv {
     public $params;
 
     function __construct($csv) {
-        $this->params = array();
+        $this->params = [];
         $lines = $this->extract($csv);
         foreach($lines as $line) {
             $tab = explode(";", $line);

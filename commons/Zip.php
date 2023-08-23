@@ -61,7 +61,7 @@ class Zip {
     }
 
     static function isAccepted($type) {
-        $accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
+        $accepted_types = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed'];
         return in_array($type, $accepted_types);
     }
 }
