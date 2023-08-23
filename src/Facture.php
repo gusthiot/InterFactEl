@@ -12,9 +12,6 @@ class Facture {
             $this->facture = fread($open, filesize($name));    
             fclose($open);
         }
-        else {
-            $this->facture = "raté";
-        }
         return $this->facture;
     }
 

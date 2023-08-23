@@ -27,40 +27,40 @@ class Data
         return $m < 10 ? "0".$m : $m;
     }
 
-    static function availableForFacturation($plateforme, $messages) {
+    static function availableForFacturation($pathPlate, $messages) {
         $return = array('SAP'=>array(), 'PROFORMA'=>array());   
         $last_y = 0;
         $last_m = 0;
         $last_v = 0;
         $last_r = 0;
         $tree = [];
-        foreach(self::scanDescSan($plateforme) as $year) {
+        foreach(self::scanDescSan($pathPlate) as $year) {
             if($last_y == 0) {
                 $last_y = $year;
             }
-            foreach(self::scanDescSan($plateforme."/".$year) as $month) {
+            foreach(self::scanDescSan($pathPlate."/".$year) as $month) {
                 if($last_m == 0) {
                     $last_m = $month;
                 }
                 $tree[$year][$month] = ['lock'=>FALSE, 'version'=>[]];
-                foreach(self::scanDescSan($plateforme."/".$year."/".$month) as $version) {
+                foreach(self::scanDescSan($pathPlate."/".$year."/".$month) as $version) {
                     if($last_v == 0) {
                         $last_v = $version;
                     }
-                    if (file_exists($plateforme."/".$year."/".$month."/lock.csv")) {
+                    if (file_exists($pathPlate."/".$year."/".$month."/lock.csv")) {
                         $tree[$year][$month]["lock"] = TRUE;
                     }
                     $tree[$year][$month]['versions'][$version] = ['lock'=>FALSE, 'lockruns'=>TRUE];
-                    if (file_exists($plateforme."/".$year."/".$month."/".$version."/lock.csv")) {
+                    if (file_exists($pathPlate."/".$year."/".$month."/".$version."/lock.csv")) {
                         $tree[$year][$month]['versions'][$version]['lock'] = TRUE;
                     }
-                    foreach(self::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
+                    foreach(self::scanDescSan($pathPlate."/".$year."/".$month."/".$version) as $run) {
                         if($last_r == 0) {
                             $last_r = $run;
                             $tree[$year][$month]['versions'][$version]['last_run'] = $run;
                         }
                         /* si un run n'est pas fermé */
-                        if (!file_exists($plateforme."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
+                        if (!file_exists($pathPlate."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
                             $tree[$year][$month]['versions'][$version]['lockruns'] = FALSE;
                         }
                     }

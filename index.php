@@ -47,6 +47,7 @@ if(isset($_GET['message'])) {
                     </form>
                 </div>
                 <div id="message"><?= $message ?></div>
+                <div id="message"><?= GROUND ?></div>
             </div>
             <?php
         ?>

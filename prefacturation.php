@@ -1,6 +1,7 @@
 <?php
 require_once("session.php");
 require_once("src/Label.php");
+
 $plateforme = $_GET['plateforme'];
 $year = $_GET['year'];
 $month = $_GET['month'];

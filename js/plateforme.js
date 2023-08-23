@@ -1,6 +1,6 @@
 
 $('#historique').on('click', function () {
-    $.get("controller/getLogfile.php?plate="+$('#plateInit').val(), function (data) {
+    $.get("controller/getLogfile.php?plate="+$('#plateNum').val(), function (data) {
         $('#display').html(data);
     });
 } );
@@ -8,8 +8,8 @@ $('#historique').on('click', function () {
 $('#launch').on('click', function () {
     let html = '<form action="controller/uploadPrepa.php" method="post" id="factform" enctype="multipart/form-data" >';
     html += '<input type="file" name="zip_file" id="zip_file" accept=".zip">';
-    html += '<input type="hidden" name="plate" id="plate" value="'+$('#plateInit').val()+'">';
-    html += '<input type="hidden" name="sciper" id="sciper" value="'+$('#sciperInit').val()+'">';
+    html += '<input type="hidden" name="plate" id="plate" value="'+$('#plateNum').val()+'">';
+    html += '<input type="hidden" name="sciper" id="sciper" value="'+$('#sciperNum').val()+'">';
     html += '<input type="hidden" name="type" id="type" value="none">';
     html += '<div><button type="button" id="facturation" class="btn btn-outline-dark">Préparer facturation</button><button type="button" id="proforma" class="btn btn-outline-dark">Générer proforma</button><button type="button" id="simu" class="btn btn-outline-dark">Simuler</button></div>';
     $('#display').html(html);
@@ -17,7 +17,7 @@ $('#launch').on('click', function () {
 
 let prepas = null;
 $('#export').on('click', function () {
-    $.get("controller/getPrepas.php?plate="+$('#plateInit').val(), function (json) {
+    $.get("controller/getPrepas.php?plate="+$('#plateNum').val(), function (json) {
         prepas = json;
         let html = '<div>Data OUT <div><select id="exptype"><option value="SAP">SAP</option><option value="PROFORMA">PROFORMA</option></select></div>';
         html += '<div id="date">' + displayMessages('SAP') + '</div>';
@@ -43,7 +43,7 @@ function displayMessages(type) {
 $(document).on("click", ".prepa", function() {
     const tab = $(this).attr("id").split('_');
     const prepa = prepas[tab[0]][tab[1]];
-    window.location.href = "controller/download.php?type=prepa&plate="+$('#plateInit').val()+"&tyfact="+tab[0]+"&prepa="+JSON.stringify(prepa);
+    window.location.href = "controller/download.php?type=prepa&plate="+$('#plateNum').val()+"&tyfact="+tab[0]+"&prepa="+JSON.stringify(prepa);
 } );
 
 $(document).on("change", "#exptype", function() {

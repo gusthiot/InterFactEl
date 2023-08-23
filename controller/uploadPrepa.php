@@ -4,6 +4,7 @@ require_once("../commons/Data.php");
 require_once("../src/Result.php");
 require_once("../src/Paramedit.php");
 require_once("../src/Message.php");
+require_once("../config.php");
 
 if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && isset($_POST['sciper'])) {
     $plateforme = $_POST['plate'];
@@ -45,10 +46,10 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
                     }
                     else {
-                        $path = "../".$plateforme;
+                        $pathPlate = "../".$plateforme;
                         if($type != "SIMU") {
                             if(file_exists($path)) {
-                                $data = Data::availableForFacturation($path, $messages);
+                                $data = Data::availableForFacturation($pathPlate, $messages);
                                 if($data[$type][0]['type'] == "error") {
                                     $msg = $data[$type][0]['msg'];
                                 }
