@@ -17,7 +17,7 @@ class Lock {
     }
     
     function save($dir, $txt) {
-        $file = "../".$dir."/lock.csv";
+        $file = $dir."/lock.csv";
         if((($open = fopen($file, "w")) !== false)) {
             if(fwrite($open, $txt) === FALSE) {                
                 return FALSE;

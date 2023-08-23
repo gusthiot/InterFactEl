@@ -17,7 +17,7 @@ class Label {
     }
     
     function save($dir, $txt) {
-        $file = "../".$dir."/label.txt";
+        $file = $dir."/label.txt";
         if((($open = fopen($file, "w")) !== false)) {
             if(fwrite($open, $txt) === FALSE) {                
                 return FALSE;

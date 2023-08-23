@@ -1,13 +1,14 @@
 <?php
 require_once("../commons/Zip.php");
+require_once("../config.php");
 
 if($_FILES['zip_file']) {
     $filename = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];
     if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
-        $tmp_file = "../tmp/".$filename;
+        $tmp_file = GROUND."tmp/".$filename;
         if(copy($source, $tmp_file)) {
-            $msg = Zip::unzip($tmp_file, '../CONFIG/');
+            $msg = Zip::unzip($tmp_file, GROUND.'CONFIG/');
             unlink($tmp_file);
             header('Location: ../index.php?message='.$msg);
     

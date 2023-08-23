@@ -1,7 +1,6 @@
 
 $('#label').on('click', function () {
-    const dir = "../" + $('#dir').val();
-    $.post("controller/getLabel.php", {dir: dir}, function (data) {
+    $.post("controller/getLabel.php", {dir: $('#dir').val()}, function (data) {
         $('#display').html(data);
     });
 } );

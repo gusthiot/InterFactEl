@@ -3,7 +3,7 @@ require_once("session.php");
 require_once("commons/Data.php");
 require_once("src/Label.php");
 $plateforme = $_GET['plateforme'];
-$path_plate = GROUND.$plateforme;
+$pathPlate = GROUND.$plateforme;
 if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($login)['plates'])) {
     $name = $gestionnaire->getGestionnaire($login)['plates'][$plateforme];
     $sciper = $gestionnaire->getGestionnaire($login)['sciper'];
@@ -45,12 +45,12 @@ if(isset($_GET['message'])) {
         <div class="container-fluid">	
         <a href="index.php"><i class="bi bi-arrow-return-left"></i></a>	
         <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
-        <input type="hidden" id="plateInit" value="<?= $plateforme ?>" />
-        <input type="hidden" id="sciperInit" value="<?= $sciper ?>" />
+        <input type="hidden" id="plateNum" value="<?= $plateforme ?>" />
+        <input type="hidden" id="sciperNum" value="<?= $sciper ?>" />
         
         <div class="text-center">
         <?php
-        if(file_exists($plateforme)) { 
+        if(file_exists($pathPlate)) { 
         ?>
             <button type="button" id="historique" class="btn btn-outline-dark">Consulter l'historique de la plateforme</button>
             <button type="button" id="export" class="btn btn-outline-dark">Exporter des données de préparation</button>
@@ -65,31 +65,31 @@ if(isset($_GET['message'])) {
         <div class="text-center">
             <table class="table table-bordered">
         <?php
-        if(file_exists($plateforme)) {
-            foreach(Data::scanDescSan($plateforme) as $year) {
-                foreach(Data::scanDescSan($plateforme."/".$year) as $month) {
-                    $versions = Data::scanDescSan($plateforme."/".$year."/".$month);
+        if(file_exists($pathPlate)) {
+            foreach(Data::scanDescSan($pathPlate) as $year) {
+                foreach(Data::scanDescSan($pathPlate."/".$year) as $month) {
+                    $versions = Data::scanDescSan($pathPlate."/".$year."/".$month);
                     echo '<tr>';
                     echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
-                    if (file_exists($plateforme."/".$year."/".$month."/lock.csv")) {
+                    if (file_exists($pathPlate."/".$year."/".$month."/lock.csv")) {
                         echo ' <i class="bi bi-lock"></i> ';
                     }
                     echo '</td>';
                     foreach($versions as $version) {
                         echo '<td>'.$version;
-                        if (file_exists($plateforme."/".$year."/".$month."/".$version."/lock.csv")) {
+                        if (file_exists($pathPlate."/".$year."/".$month."/".$version."/lock.csv")) {
                             echo ' <i class="bi bi-lock"></i> ';
                         }
                         echo '</td><td>';
-                        foreach(Data::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
+                        foreach(Data::scanDescSan($pathPlate."/".$year."/".$month."/".$version) as $run) {
                             $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
                             $label = new Label();
-                            $ltxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
+                            $ltxt = $label->load($pathPlate."/".$year."/".$month."/".$version."/".$run);
                             if($ltxt == "") {
                                 $ltxt = $run;
                             }
                             echo ' <button type="button" value="'.$value.'" class="run btn btn-success"> '.$ltxt;
-                            if (file_exists($plateforme."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
+                            if (file_exists($pathPlate."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
                                 echo ' <i class="bi bi-lock"></i> ';
                             }
                             echo '</button> ';
