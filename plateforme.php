@@ -94,7 +94,7 @@ if(isset($_GET['message'])) {
                             $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
                             $label = new Label();
                             $ltxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
-                            if($ltxt == "") {
+                            if(empty($ltxt)) {
                                 $ltxt = $run;
                             }
                             echo ' <button type="button" value="'.$value.'" class="run btn btn-success"> '.$ltxt;

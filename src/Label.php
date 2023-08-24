@@ -1,29 +1,29 @@
 <?php
 
 
-class Label {
+class Label 
+{
 
-
-    public $label;
-
-    function load($dir) {
-        $this->label = "";
+    function load(string $dir): string 
+    {
+        $label = "";
         $file = $dir."/label.txt";
         if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
-            $this->label = fread($open, filesize($file));    
+            $label = fread($open, filesize($file));    
             fclose($open);
         }
-        return $this->label;
+        return $label;
     }
     
-    function save($dir, $txt) {
+    function save(string $dir, string $txt): bool 
+    {
         $file = $dir."/label.txt";
         if((($open = fopen($file, "w")) !== false)) {
-            if(fwrite($open, $txt) === FALSE) {                
-                return FALSE;
+            if(fwrite($open, $txt) === false) {                
+                return false;
             }
             fclose($open);
-            return TRUE;
+            return true;
         }
     }
 

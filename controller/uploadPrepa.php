@@ -11,27 +11,27 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
     $sciper = $_POST['sciper'];
     $messages = new Message();
     $type = $_POST['type'];
-    $filename = $_FILES["zip_file"]["name"];
+    $fileName = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];
     if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
-        $tmp_file = TEMP.$filename;
-        if(copy($source, $tmp_file)) {
-            $tmp_dir = TEMP.'test/';
-            if (file_exists($tmp_dir) || mkdir($tmp_dir, 0777, true)) {
-                $msg = Zip::unzip($tmp_file, $tmp_dir);
-                unlink($tmp_file);
-                if($msg == "") {
-                    $results = new Result($tmp_dir."result.csv");
+        $tmpFile = TEMP.$fileName;
+        if(copy($source, $tmpFile)) {
+            $tmpDir = TEMP.'test/';
+            if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
+                $msg = Zip::unzip($tmpFile, $tmpDir);
+                unlink($tmpFile);
+                if(empty($msg)) {
+                    $results = new Result($tmpDir."result.csv");
                     $params = new Paramedit();
-                    $params->load($tmp_dir."paramedit.csv");
+                    $params->load($tmpDir."paramedit.csv");
                     if($plateforme != $params->getParam('Platform')) {
                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
                     }
-                    elseif($type != $params->getParam('Type')) {
-                        if($type == "SAP") {
+                    elseif($type !== $params->getParam('Type')) {
+                        if($type === "SAP") {
                             $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
                         }
-                        elseif($type == "PROFORMA") {
+                        elseif($type === "PROFORMA") {
                             $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8');
                         }
                         else {
@@ -39,27 +39,27 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                         }
 
                     }
-                    elseif($plateforme != $results->getResult('Platform')) {
+                    elseif($plateforme !== $results->getResult('Platform')) {
                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
                     }
-                    elseif($type != "SIMU" && $results->getResult('Type') != "SAP") {
+                    elseif($type !== "SIMU" && $results->getResult('Type') !== "SAP") {
                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
                     }
                     else {
                         $pathPlate = "../".$plateforme;
-                        if($type != "SIMU") {
+                        if($type !== "SIMU") {
                             if(file_exists($pathPlate)) {
                                 $data = Data::availableForFacturation($pathPlate, $messages);
-                                if($data[$type][0]['type'] == "error") {
+                                if($data[$type][0]['type'] === "error") {
                                     $msg = $data[$type][0]['msg'];
                                 }
                                 else {
-                                    $ok = FALSE;
+                                    $ok = false;
                                     foreach($data[$type] as $option) {
                                         if($option['type'] == "result") {
-                                            if($option['exp_y'] == $params->getParam('Year') && (int)($option['exp_m']) == (int)($params->getParam('Month'))) {
-                                                if($option['year'] == $results->getResult('Year') && (int)($option['month']) == (int)($results->getResult('Month')) && $option['version'] == $results->getResult('Version') && $option['run'] == $results->getResult('Folder')) {
-                                                    $ok = TRUE;
+                                            if($option['exp_y'] === $params->getParam('Year') && (int)($option['exp_m']) === (int)($params->getParam('Month'))) {
+                                                if($option['year'] === $results->getResult('Year') && (int)($option['month']) === (int)($results->getResult('Month')) && $option['version'] === $results->getResult('Version') && $option['run'] === $results->getResult('Folder')) {
+                                                    $ok = true;
                                                     break;
                                                 }
                                             }
@@ -69,12 +69,12 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
                                     }
                                     else {
-                                        $msg = runPrefa($tmp_dir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper);
+                                        $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper);
                                     }
                                 }
                             }
                             else {
-                                $msg = runPrefa($tmp_dir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper);
+                                $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper);
                             }
                         }
                         else {
@@ -82,7 +82,7 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                         }
                     }
                 }
-                delTmpDir($tmp_dir);
+                delTmpDir($tmpDir);
             }
             else {
                 $errors= error_get_last();
@@ -107,18 +107,18 @@ else {
     header('Location: ../index.php?message=post_data_missing');
 }
 
-function delTmpDir($tmp_dir) {
-    foreach(Data::scanDescSan($tmp_dir) as $tmp_file) {
-        unlink($tmp_dir."/".$tmp_file);
+function delTmpDir($tmpDir) {
+    foreach(Data::scanDescSan($tmpDir) as $tmpFile) {
+        unlink($tmpDir."/".$tmpFile);
     }
-    rmdir($tmp_dir);
+    rmdir($tmpDir);
 }
 
-function runPrefa($tmp_dir, $path, $year, $month, $sciper) {
+function runPrefa($tmpDir, $path, $year, $month, $sciper) {
     $unique = time();
-    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmp_dir.' -g -d ../ -u'.$unique.' -s '.$sciper;
+    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper;
     $result = shell_exec($cmd);
-    if(substr($result, 0, 2) == "OK") {
+    if(substr($result, 0, 2) === "OK") {
         $msg = $unique." tout OK";
     }
     else {

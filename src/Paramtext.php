@@ -2,11 +2,13 @@
 
 require_once("Csv.php");
 
-class Paramtext extends Csv {
+class Paramtext extends Csv 
+{
 
-    public $params;
+    public array $params;
 
-    function __construct($csv) {
+    function __construct(string $csv) 
+    {
         $this->params = [];
         $lines = $this->extract($csv);
         foreach($lines as $line) {
@@ -15,7 +17,8 @@ class Paramtext extends Csv {
         }
     }
     
-    function getParam($key) {
+    function getParam(string $key): string 
+    {
         return $this->params[$key];
     }
 

@@ -1,21 +1,23 @@
 <?php
 
 
-class Facture {
+class Facture 
+{
 
 
-    public $facture;
+    public string $facture;
 
-    function __construct($name) {
+    function __construct(string $name) 
+    {
         $this->facture = "";
         if ((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
             $this->facture = fread($open, filesize($name));    
             fclose($open);
         }
-        return $this->facture;
     }
 
-    function getFacture() {
+    function getFacture(): string 
+    {
         return $this->facture;
     }
 

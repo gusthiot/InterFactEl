@@ -2,29 +2,32 @@
 
 require_once("Data.php");
 
-class Zip {
+class Zip 
+{
 
-    static function getZipDir($tmp_file, $dirname, $morefile="") {
+    static function getZipDir(string $tmpFile, string $dirname, string $morefile=""): void 
+    {
         $zip = new ZipArchive;
-        if ($zip->open($tmp_file, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+        if ($zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
             self::tree($zip, $dirname, "");
-            if($morefile != "") {
+            if(!empty($morefile)) {
                 $zip->addFile($morefile, basename($morefile));
             }
             if($zip->close()) {
-                header('Content-disposition: attachment; filename="'.basename($tmp_file).'"');
+                header('Content-disposition: attachment; filename="'.basename($tmpFile).'"');
                 header('Content-type: application/zip');
-                readfile($tmp_file);
+                readfile($tmpFile);
                 ignore_user_abort(true);
-                unlink($tmp_file);
+                unlink($tmpFile);
             }
         }
     }
 
-    static function tree($zip, $dirname, $treename) {
+    static function tree(ZipArchive $zip, string $dirname, string $treename): void 
+    {
         $dir = opendir($dirname);
         while($file = readdir($dir)) {
-            if(in_array($file, Data::$escaped)) {
+            if(in_array($file, Data::ESCAPED)) {
                 continue;
             }
             $path = $dirname.'/'.$file;
@@ -40,15 +43,16 @@ class Zip {
         closedir($dir);
     }
 
-    static function unzip($file, $dest) {
+    static function unzip(string $file, string $dest): string 
+    {
         $zip = new ZipArchive;
         if ($zip->open($file)) {
             $ret = "";
             for($i = 0; $i < $zip->count(); $i++) {
-                $filename = $zip->getNameIndex($i);
-                $fileinfo = pathinfo($filename);
-                if($fileinfo['extension'] != "") {
-                    if(!copy("zip://".$file."#".$filename, $dest.$fileinfo['basename'])) {
+                $fileName = $zip->getNameIndex($i);
+                $fileInfo = pathinfo($fileName);
+                if($fileINfo['extension'] != "") {
+                    if(!copy("zip://".$file."#".$fileName, $dest.$fileINfo['basename'])) {
                         $errors= error_get_last();
                         $ret .= $errors['message'];
                     }
@@ -60,8 +64,9 @@ class Zip {
         return "error";
     }
 
-    static function isAccepted($type) {
-        $accepted_types = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed'];
-        return in_array($type, $accepted_types);
+    static function isAccepted(string $type): bool 
+    {
+        $acceptedTypes = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed'];
+        return in_array($type, $acceptedTypes);
     }
 }

@@ -16,7 +16,7 @@ $suf = "_".$name."_".$year."_".$month."_".$version;
 
 $label = new Label();
 $ltxt = $label->load($dir);
-if($ltxt == "") {
+if(empty($ltxt)) {
     $ltxt = $run;
 }
 ?>

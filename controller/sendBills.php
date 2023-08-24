@@ -15,13 +15,13 @@ if(isset($_POST["bills"]) && isset($_POST['dir'])) {
             if(property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
                 $info = new Info();       
                 $content = $info->load("../".$_POST["dir"]);
-                if($content["Sent"][2] == "") {
+                if(empty($content["Sent"][2])) {
                     $content["Sent"][2] = date('Y-m-d H:i:s');
                     $info->save("../".$_POST["dir"], $content);
                 }
                 $sap = new Sap();
                 $content = $sap->load("../".$_POST["dir"]);                        
-                if($res->E_RESULT->item->IS_ERROR != "") {
+                if(empty($res->E_RESULT->item->IS_ERROR)) {
                     if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
                         $content[$bill][3] = "ERROR";
                         $content[$bill][4] = $res->E_RESULT->item->LOG->item->MESSAGE;
@@ -42,7 +42,8 @@ if(isset($_POST["bills"]) && isset($_POST['dir'])) {
 }
 
 
-function send($data) {
+function send(string $data): string
+{
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
