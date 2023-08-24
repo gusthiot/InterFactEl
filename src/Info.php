@@ -2,22 +2,22 @@
 
 require_once("Csv.php");
 
-class Info extends Csv {
+class Info extends Csv 
+{
 
-
-    public $infos;
-
-    function load($dir) {
-        $this->infos = [];
+    function load(string $dir): array 
+    {
+        $infos = [];
         $lines = $this->extract($dir."/info.csv");
         foreach($lines as $line) {
             $tab = explode(";", $line);
-            $this->infos[$tab[0]] = $tab;
+            $infos[$tab[0]] = $tab;
         }
-        return $this->infos;
+        return $infos;
     }
 
-    function save($dir, $content) {
+    function save(string $dir, array $content): void 
+    {
         $data = [];
         foreach($content as $line) {
             $data[] = $line;

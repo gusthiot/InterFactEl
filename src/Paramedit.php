@@ -2,11 +2,13 @@
 
 require_once("Csv.php");
 
-class Paramedit extends Csv {
+class Paramedit extends Csv 
+{
 
-    public $params;
+    public array $params;
 
-    function load($csv) {
+    function load(string $csv): void 
+    {
         $this->params = [];
         $lines = $this->extract($csv);
         foreach($lines as $line) {
@@ -15,7 +17,8 @@ class Paramedit extends Csv {
         }
     }
     
-    function getParam($key) {
+    function getParam(string $key): string 
+    {
         return $this->params[$key];
     }
 

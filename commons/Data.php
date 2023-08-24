@@ -3,17 +3,19 @@
 class Data 
 {
 
-    static $escaped = ['..', '.','logfile.log', 'lock.csv'];
-    static function scanDescSan($dir) 
+    const ESCAPED = ['..', '.','logfile.log', 'lock.csv'];
+
+    static function scanDescSan(string $dir): array 
     {
-        return array_diff(scandir($dir, SCANDIR_SORT_DESCENDING), self::$escaped);
+        return array_diff(scandir($dir, SCANDIR_SORT_DESCENDING), self::ESCAPED);
     }
 
-    static function removeRun($path, $todel) {
+    static function removeRun(string $path, string $todel): void
+    {
         if(file_exists($path)) {
             foreach(self::scanDescSan($path) as $version) {
                 foreach(self::scanDescSan($path."/".$version) as $run) {
-                    if($run == $todel) {
+                    if($run === $todel) {
                         exec(sprintf("rm -rf %s", escapeshellarg($path."/".$version."/".$run)));
                     }
                 }
@@ -23,45 +25,53 @@ class Data
         }
     }
 
-    static function litMonth($m) {
-        return $m < 10 ? "0".$m : $m;
+    static function addToString(string $txt, int $num): string 
+    {
+        return (string)((int)($txt) + $num);
     }
 
-    static function availableForFacturation($pathPlate, $messages) {
+    static function addToMonth(string $month, int $num): string 
+    {
+        $m = (int)($month) + $num;
+        return $m < 10 ? "0".(string)($m) : (string)($m);
+    }
+
+    static function availableForFacturation(string $pathPlate, Message $messages): array 
+    {
         $return = ['SAP'=>[], 'PROFORMA'=>[]];   
-        $last_y = 0;
-        $last_m = 0;
-        $last_v = 0;
-        $last_r = 0;
+        $last_y = "";
+        $last_m = "";
+        $last_v = "";
+        $last_r = "";
         $tree = [];
         foreach(self::scanDescSan($pathPlate) as $year) {
-            if($last_y == 0) {
+            if(empty($last_y)) {
                 $last_y = $year;
             }
             foreach(self::scanDescSan($pathPlate."/".$year) as $month) {
-                if($last_m == 0) {
+                if(empty($last_m)) {
                     $last_m = $month;
                 }
-                $tree[$year][$month] = ['lock'=>FALSE, 'version'=>[]];
+                $tree[$year][$month] = ['lock'=>false, 'version'=>[]];
                 foreach(self::scanDescSan($pathPlate."/".$year."/".$month) as $version) {
-                    if($last_v == 0) {
+                    if(empty($last_v)) {
                         $last_v = $version;
                     }
                     if (file_exists($pathPlate."/".$year."/".$month."/lock.csv")) {
-                        $tree[$year][$month]["lock"] = TRUE;
+                        $tree[$year][$month]["lock"] = true;
                     }
-                    $tree[$year][$month]['versions'][$version] = ['lock'=>FALSE, 'lockruns'=>TRUE];
+                    $tree[$year][$month]['versions'][$version] = ['lock'=>false, 'lockruns'=>true];
                     if (file_exists($pathPlate."/".$year."/".$month."/".$version."/lock.csv")) {
-                        $tree[$year][$month]['versions'][$version]['lock'] = TRUE;
+                        $tree[$year][$month]['versions'][$version]['lock'] = true;
                     }
                     foreach(self::scanDescSan($pathPlate."/".$year."/".$month."/".$version) as $run) {
-                        if($last_r == 0) {
+                        if(empty($last_r)) {
                             $last_r = $run;
                             $tree[$year][$month]['versions'][$version]['last_run'] = $run;
                         }
                         /* si un run n'est pas fermé */
                         if (!file_exists($pathPlate."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
-                            $tree[$year][$month]['versions'][$version]['lockruns'] = FALSE;
+                            $tree[$year][$month]['versions'][$version]['lockruns'] = false;
                         }
                     }
 
@@ -69,20 +79,20 @@ class Data
             }
         }
         if($last_m == "12") {
-            $next_y = ((int)$last_y)+1;
+            $next_y = self::addToString($last_y, 1);
             $next_m = 01;
         }
         else {
             $next_y = $last_y;
-            $next_m = self::litMonth(((int)$last_m)+1);
+            $next_m = self::addToMonth($last_m, 1);
         }
         if($last_m == "01") {
-            $prev_y = ((int)$last_y)-1;
+            $prev_y = self::addToString($last_y, -1);
             $prev_m = 12;
         }
         else {
             $prev_y = $last_y;
-            $prev_m = self::litMonth(((int)$last_m)-1);
+            $prev_m = self::addToMonth($last_m, -1);
         }
 
         /* si tous les runs fermés */ 
@@ -127,7 +137,7 @@ class Data
                     'type'=>'error',
                     'msg'=>"facturation ".$last_m." ".$last_y.": ".$messages->getMessage('msg2')];
                 // si dernière version = 0 et ouverte
-                if($last_v == 0) {
+                if($last_v === "0") {
                     if(in_array($prev_y,$tree) && in_array($prev_m, $tree[$prev_y])) {
                         $version = arsort(array_keys($tree[$prev_y][$prev_m]['versions']))[0];
                         $run = $tree[$prev_y][$prev_m]['versions'][$version]['last_run'];
@@ -151,7 +161,7 @@ class Data
                 }
                 // si dernière version > 0 et ouverte
                 else {
-                    $version = $last_v-1;
+                    $version = self::addToString($last_v, -1);
                     if(in_array($version,$tree[$last_y][$last_m]['versions'])) {
                         $run = $tree[$last_y][$last_m]['versions'][$version]['last_run'];
                         // retourne m,v-1 pour m,v 

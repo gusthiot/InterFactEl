@@ -2,22 +2,25 @@
 
 require_once("Csv.php");
 
-class Message extends Csv {
+class Message extends Csv 
+{
 
-    public $csv = "../CONFIG/message.csv";
+    const CSV = "../CONFIG/message.csv";
 
-    public $messages;
+    public array $messages;
 
-    function __construct() {
+    function __construct() 
+    {
         $this->messages = [];
-        $lines = $this->extract($this->csv);
+        $lines = $this->extract(self::CSV);
         foreach($lines as $line) {
             $tab = explode(";", $line);
             $this->messages[$tab[0]] = $tab[1];
         }
     }
     
-    function getMessage($id) {
+    function getMessage(string $id): string 
+    {
         return $this->messages[$id];
     }
 

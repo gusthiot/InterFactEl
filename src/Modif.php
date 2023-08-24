@@ -2,12 +2,13 @@
 
 require_once("Csv.php");
 
-class Modif extends Csv {
+class Modif extends Csv 
+{
 
+    public array $modifs;
 
-    public $modifs;
-
-    function __construct($csv) {
+    function __construct($csv) 
+    {
         $this->modifs = [];
         $lines = $this->extract($csv);
         foreach($lines as $line) {
@@ -15,7 +16,8 @@ class Modif extends Csv {
         }
     }
     
-    function getModifs() {
+    function getModifs(): array 
+    {
         return $this->modifs;
     }
 

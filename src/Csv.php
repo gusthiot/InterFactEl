@@ -1,7 +1,9 @@
 <?php
-class Csv {
+class Csv 
+{
 
-    function extract($file) {
+    function extract(string $file): array 
+    {
         $result = [];
         if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
             while (($data = fgetcsv($open, 1000, ",")) !== false) {
@@ -18,7 +20,8 @@ class Csv {
         return $result;
     }
 
-    function write($file, $array) {
+    function write(string $file, array $array): void 
+    {
         if (($open = fopen($file, "w")) !== false) {
             foreach($array as $row) {
                 if(!fputcsv($open, $row,';')) {

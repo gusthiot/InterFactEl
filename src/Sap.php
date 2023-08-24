@@ -2,22 +2,22 @@
 
 require_once("Csv.php");
 
-class Sap extends Csv {
+class Sap extends Csv 
+{
 
-
-    public $bills;
-
-    function load($dir) {
-        $this->bills = [];
+    function load(string $dir): array 
+    {
+        $bills = [];
         $lines = $this->extract($dir."/sap.csv");
         foreach($lines as $line) {
             $tab = explode(";", $line);
-            $this->bills[$tab[1]] = $tab; 
+            $bills[$tab[1]] = $tab; 
         }
-        return $this->bills;
+        return $bills;
     }
     
-    function save($dir, $content) {
+    function save(string $dir, array $content): void 
+    {
         $data = [];
         foreach($content as $line) {
             $data[] = $line;

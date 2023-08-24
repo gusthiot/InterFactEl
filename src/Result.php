@@ -2,11 +2,12 @@
 
 require_once("Csv.php");
 
-class Result extends Csv {
+class Result extends Csv 
+{
+    public array $results;
 
-    public $results;
-
-    function __construct($csv) {
+    function __construct(string $csv) 
+    {
         $this->results = [];
         $lines = $this->extract($csv);
         foreach($lines as $line) {
@@ -15,7 +16,8 @@ class Result extends Csv {
         }
     }
     
-    function getResult($key) {
+    function getResult(string $key): string 
+    {
         return $this->results[$key];
     }
 }
