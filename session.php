@@ -2,6 +2,7 @@
 
 require_once("src/Superviseur.php");
 require_once("src/Gestionnaire.php");
+require_once("src/Message.php");
 require_once("commons/tequila.php");
 require_once("config.php");
 
@@ -11,4 +12,5 @@ $login = $oClient->getValue('user');
 
 $superviseur = new Superviseur();
 $gestionnaire = new Gestionnaire();
+$messages = new Message();
 //$login = "gusthiot";

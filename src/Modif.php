@@ -5,7 +5,7 @@ require_once("Csv.php");
 class Modif extends Csv 
 {
 
-    public array $modifs;
+    private array $modifs;
 
     function __construct($csv) 
     {

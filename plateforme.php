@@ -2,6 +2,8 @@
 require_once("session.php");
 require_once("commons/Data.php");
 require_once("src/Label.php");
+require_once("src/Sap.php");
+require_once("src/Lock.php");
 if(!isset($_GET["plateforme"])) {
     die("Manque un numéro de plateforme !");
 }
@@ -80,25 +82,30 @@ if(isset($_GET['message'])) {
                     $versions = Data::scanDescSan($plateforme."/".$year."/".$month);
                     echo '<tr>';
                     echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
-                    if (file_exists($plateforme."/".$year."/".$month."/lock.csv")) {
+                    if (file_exists($plateforme."/".$year."/".$month."/lockm.csv")) {
                         echo ' <i class="bi bi-lock"></i> ';
                     }
                     echo '</td>';
                     foreach($versions as $version) {
                         echo '<td>'.$version;
-                        if (file_exists($plateforme."/".$year."/".$month."/".$version."/lock.csv")) {
+                        if (file_exists($plateforme."/".$year."/".$month."/".$version."/lockv.csv")) {
                             echo ' <i class="bi bi-lock"></i> ';
                         }
                         echo '</td><td>';
                         foreach(Data::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
                             $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
                             $label = new Label();
-                            $ltxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
-                            if(empty($ltxt)) {
-                                $ltxt = $run;
+                            $labtxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
+                            if(empty($labtxt)) {
+                                $labtxt = $run;
                             }
-                            echo ' <button type="button" value="'.$value.'" class="run btn btn-success"> '.$ltxt;
-                            if (file_exists($plateforme."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
+                            $sap = new Sap();
+                            $sap->load($plateforme."/".$year."/".$month."/".$version."/".$run);
+                            $status = $sap->status();
+                            $lock = new Lock();
+                            $loctxt = $lock->load($plateforme."/".$year."/".$month."/".$version."/".$run, "run");
+                            echo ' <button type="button" value="'.$value.'" class="run btn '.Sap::color($status, $loctxt).'"> '.$labtxt;
+                            if ($loctxt) {
                                 echo ' <i class="bi bi-lock"></i> ';
                             }
                             echo '</button> ';

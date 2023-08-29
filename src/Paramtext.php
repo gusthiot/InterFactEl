@@ -5,7 +5,7 @@ require_once("Csv.php");
 class Paramtext extends Csv 
 {
 
-    public array $params;
+    private array $params;
 
     function __construct(string $csv) 
     {

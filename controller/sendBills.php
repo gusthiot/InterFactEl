@@ -3,25 +3,27 @@
 require_once("../src/Sap.php");
 require_once("../src/Info.php");
 require_once("../src/Facture.php");
+require_once("../config.php");
+require_once("../src/Lock.php");
 
 if(isset($_POST["bills"]) && isset($_POST['dir'])) {
     $bills = $_POST["bills"];
-    $dir = $_POST["dir"];
+    $dir = "../".$_POST["dir"];
     $html = "";
     foreach($bills as $bill) {
-        $facture = new Facture("../".$dir."/Factures_JSON/facture_".$bill.".json");
+        $facture = new Facture($dir."/Factures_JSON/facture_".$bill.".json");
         $res = json_decode(send($facture->getFacture()));
         if($res) {
             if(property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
                 $info = new Info();       
-                $content = $info->load("../".$_POST["dir"]);
+                $content = $info->load($dir);
                 if(empty($content["Sent"][2])) {
                     $content["Sent"][2] = date('Y-m-d H:i:s');
-                    $info->save("../".$_POST["dir"], $content);
+                    $info->save($dir, $content);
                 }
                 $sap = new Sap();
-                $content = $sap->load("../".$_POST["dir"]);                        
-                if(empty($res->E_RESULT->item->IS_ERROR)) {
+                $content = $sap->load($dir);                        
+                if(!empty($res->E_RESULT->item->IS_ERROR)) {
                     if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
                         $content[$bill][3] = "ERROR";
                         $content[$bill][4] = $res->E_RESULT->item->LOG->item->MESSAGE;
@@ -33,12 +35,19 @@ if(isset($_POST["bills"]) && isset($_POST['dir'])) {
                         $content[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
                     }
                 }
-                $sap->save("../".$_POST["dir"], $content);
-                $html .= "saved";
+                $sap->save($dir, $content);
+                if($sap->status() == 4) {
+                    $lock = new Lock();
+                    $lock->save($dir, 'run', "finalized");
+                    $sep = strrpos($dir, "/");
+                    $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
+
+                }
+                $html .= json_encode($res);
             }
         }
     }
-    echo $html;
+    echo $html;//$messages->getMessage('msg7');
 }
 
 

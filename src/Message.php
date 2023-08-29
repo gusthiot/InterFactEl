@@ -5,9 +5,9 @@ require_once("Csv.php");
 class Message extends Csv 
 {
 
-    const CSV = "../CONFIG/message.csv";
+    const CSV = "CONFIG/message.csv";
 
-    public array $messages;
+    private array $messages;
 
     function __construct() 
     {

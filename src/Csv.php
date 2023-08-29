@@ -24,6 +24,7 @@ class Csv
     {
         if (($open = fopen($file, "w")) !== false) {
             foreach($array as $row) {
+                $row = str_replace('"', '', $row);
                 if(!fputcsv($open, $row,';')) {
                     break;
                 }

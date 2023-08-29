@@ -4,7 +4,7 @@ require_once("Csv.php");
 
 class Result extends Csv 
 {
-    public array $results;
+    private array $results;
 
     function __construct(string $csv) 
     {

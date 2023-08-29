@@ -5,8 +5,7 @@ require_once("Csv.php");
 class Journal extends Csv 
 {
 
-
-    public array $modifs;
+    private array $modifs;
 
     function __construct(string $csv) 
     {

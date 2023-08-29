@@ -3,7 +3,7 @@
 class Data 
 {
 
-    const ESCAPED = ['..', '.','logfile.log', 'lock.csv'];
+    const ESCAPED = ['..', '.','logfile.log', 'lockm.csv', 'lockv.csv'];
 
     static function scanDescSan(string $dir): array 
     {
@@ -57,11 +57,11 @@ class Data
                     if(empty($last_v)) {
                         $last_v = $version;
                     }
-                    if (file_exists($pathPlate."/".$year."/".$month."/lock.csv")) {
+                    if (file_exists($pathPlate."/".$year."/".$month."/lockm.csv")) {
                         $tree[$year][$month]["lock"] = true;
                     }
                     $tree[$year][$month]['versions'][$version] = ['lock'=>false, 'lockruns'=>true];
-                    if (file_exists($pathPlate."/".$year."/".$month."/".$version."/lock.csv")) {
+                    if (file_exists($pathPlate."/".$year."/".$month."/".$version."/lockv.csv")) {
                         $tree[$year][$month]['versions'][$version]['lock'] = true;
                     }
                     foreach(self::scanDescSan($pathPlate."/".$year."/".$month."/".$version) as $run) {
