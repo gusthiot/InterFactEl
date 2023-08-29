@@ -51,8 +51,8 @@ class Zip
             for($i = 0; $i < $zip->count(); $i++) {
                 $fileName = $zip->getNameIndex($i);
                 $fileInfo = pathinfo($fileName);
-                if($fileINfo['extension'] != "") {
-                    if(!copy("zip://".$file."#".$fileName, $dest.$fileINfo['basename'])) {
+                if($fileInfo['extension'] != "") {
+                    if(!copy("zip://".$file."#".$fileName, $dest.$fileInfo['basename'])) {
                         $errors= error_get_last();
                         $ret .= $errors['message'];
                     }

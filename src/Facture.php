@@ -5,7 +5,7 @@ class Facture
 {
 
 
-    public string $facture;
+    private string $facture;
 
     function __construct(string $name) 
     {

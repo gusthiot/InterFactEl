@@ -5,7 +5,7 @@ require_once("Csv.php");
 class Paramedit extends Csv 
 {
 
-    public array $params;
+    private array $params;
 
     function load(string $csv): void 
     {

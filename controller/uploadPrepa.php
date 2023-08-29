@@ -3,13 +3,11 @@ require_once("../commons/Zip.php");
 require_once("../commons/Data.php");
 require_once("../src/Result.php");
 require_once("../src/Paramedit.php");
-require_once("../src/Message.php");
 require_once("../config.php");
 
 if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && isset($_POST['sciper'])) {
     $plateforme = $_POST['plate'];
     $sciper = $_POST['sciper'];
-    $messages = new Message();
     $type = $_POST['type'];
     $fileName = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];

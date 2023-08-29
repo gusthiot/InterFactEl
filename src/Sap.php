@@ -4,25 +4,68 @@ require_once("Csv.php");
 
 class Sap extends Csv 
 {
+    private array $bills;
+    private array $title;
 
     function load(string $dir): array 
     {
-        $bills = [];
+        $this->bills = [];
         $lines = $this->extract($dir."/sap.csv");
+        $first = true;
         foreach($lines as $line) {
             $tab = explode(";", $line);
-            $bills[$tab[1]] = $tab; 
+            if($first) {
+                $first = false;
+                $this->title = $tab;
+            }
+            else {
+                $this->bills[$tab[1]] = $tab; 
+            }
         }
-        return $bills;
+        return $this->bills;
+    }
+
+    function status(): int
+    {
+        $status = ['READY'=>0, 'ERROR'=>0, 'SENT'=>0];
+        foreach($this->bills as $bill) {
+                $status[$bill[3]] = 1;
+        }
+        return $status['READY'] + 2*$status['ERROR'] + 4*$status['SENT'];
     }
     
     function save(string $dir, array $content): void 
     {
-        $data = [];
-        foreach($content as $line) {
+        $this->bills = $content;
+        $data = [$this->title];
+        foreach($this->bills as $line) {
             $data[] = $line;
         }
         $this->write($dir."/sap.csv", $data);
     }
+
+    static function color(int $status, bool $lock): string 
+    {
+        switch($status) {
+            case 0:
+                return $lock == "invalidate" ? "btn-secondary": "btn-light";
+            case 1:
+                return $lock == "invalidate" ? "btn-secondary": "btn-light";
+            case 2:
+                return $lock == "invalidate" ? "btn-secondary": "btn-danger";
+            case 3:
+                return $lock == "invalidate" ? "btn-secondary": "btn-danger";
+            case 4:
+                return "btn-success";
+            case 5:
+                return "btn-info";
+            case 6:
+                return "btn-warning";
+            case 7:
+                return "btn-warning";
+            default:
+                return "btn-dark";
+        }
+    } 
 }
 ?>

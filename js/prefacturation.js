@@ -46,7 +46,7 @@ $('#changes').on('click', function () {
 
 $('#invalidate').on('click', function () {
     $.get("controller/invalidate.php?dir="+$('#dir').val(), function (data) {
-        $('#display').html(data);
+        window.location.href = window.location.href + "&message=" + data;
     });
 } );
 
@@ -73,15 +73,23 @@ $(document).on("click", "#sendBills", function() {
     $.each($("input[name='bills']:checked"), function(){
         bills.push($(this).val());
     });
+    $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
     $.post("controller/sendBills.php", {bills: bills, dir: $('#dir').val()}, function (data) {
-        $('#display').html(data);
+        window.location.href = window.location.href + "&message=" + data;
     });
 } );
 
 $('#finalize').on('click', function () {
-    alert("finalize");
+    $.get("controller/finalize.php?dir="+$('#dir').val(), function (data) {
+        window.location.href = window.location.href + "&message=" + data;
+    });
 } );
 
 $('#resend').on('click', function () {
-    alert("resend");
+    if (confirm($(this).data('msg')) == true) {
+        $.post("controller/reselectBills.php", {dir: $('#dir').val()}, function (data) {
+            $('#display').html(data);
+        });
+        
+    } 
 } );

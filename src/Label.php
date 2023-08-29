@@ -25,6 +25,7 @@ class Label
             fclose($open);
             return true;
         }
+        return false;
     }
 
 }

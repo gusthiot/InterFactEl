@@ -7,7 +7,7 @@ class Gestionnaire extends Csv
 
     const CSV = "CONFIG/gestionnaire.csv";
 
-    public array $gestionnaires;
+    private array $gestionnaires;
 
     function __construct() 
     {

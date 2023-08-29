@@ -7,7 +7,7 @@ class Superviseur extends Csv
 
     const CSV = "CONFIG/superviseur.csv";
 
-    public array $superviseurs;
+    private array $superviseurs;
 
     function __construct() 
     {
