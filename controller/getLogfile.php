@@ -1,13 +1,12 @@
 <?php
 
+require_once("../src/Logfile.php");
+
 $txt = "";
 
-if(isset($_GET['plate'])) {
-    $file = "../".$_GET['plate']."/logfile.log";
-    if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
-        $txt = fread($open, filesize($file));    
-        fclose($open);
-    }
+if(isset($_POST['plate'])) {
+    $logfile = new Logfile();
+    $txt = $logfile->load("../".$_POST['plate']);
 }
 
-echo '<div>'.$txt.'</div>';
+echo '<div>'.str_replace(PHP_EOL, "<br />", $txt).'</div>';

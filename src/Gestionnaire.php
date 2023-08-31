@@ -5,14 +5,14 @@ require_once("Csv.php");
 class Gestionnaire extends Csv 
 {
 
-    const CSV = "CONFIG/gestionnaire.csv";
+    const NAME = "gestionnaire.csv";
 
     private array $gestionnaires;
 
     function __construct() 
     {
         $this->gestionnaires = ['sciper'=>'000000', 'plates'=>[]];
-        $lines = $this->extract(self::CSV);
+        $lines = $this->extract(CONFIG.self::NAME);
         foreach($lines as $line) {
             $tab = explode(";", $line);
             if(array_key_exists($tab[0], $this->gestionnaires)) {

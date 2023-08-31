@@ -5,14 +5,14 @@ require_once("Csv.php");
 class Message extends Csv 
 {
 
-    const CSV = "CONFIG/message.csv";
+    const NAME = "message.csv";
 
     private array $messages;
 
     function __construct() 
     {
         $this->messages = [];
-        $lines = $this->extract(self::CSV);
+        $lines = $this->extract(CONFIG.self::NAME);
         foreach($lines as $line) {
             $tab = explode(";", $line);
             $this->messages[$tab[0]] = $tab[1];

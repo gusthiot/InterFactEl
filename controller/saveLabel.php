@@ -11,4 +11,3 @@ if(isset($_POST["txt"]) && isset($_POST["dir"])){
         echo "ko";
     }
 }
-echo "ko";

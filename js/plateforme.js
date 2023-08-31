@@ -1,6 +1,6 @@
 
 $('#historique').on('click', function () {
-    $.get("controller/getLogfile.php?plate="+$('#plateNum').val(), function (data) {
+    $.post("controller/getLogfile.php", {plate: $('#plateNum').val()}, function (data) {
         $('#display').html(data);
     });
 } );
