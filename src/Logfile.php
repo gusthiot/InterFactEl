@@ -1,26 +1,26 @@
 <?php
 
 
-class Label 
+class Logfile 
 {
-    const NAME = "/label.txt";
+    const NAME = "/logfile.log";
 
     function load(string $dir): string 
     {
-        $label = "";
+        $logfile = "";
         $file = $dir.self::NAME;
         if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
-            $label = fread($open, filesize($file));    
+            $logfile = fread($open, filesize($file));    
             fclose($open);
         }
-        return $label;
+        return $logfile;
     }
     
-    function save(string $dir, string $txt): bool 
+    function write(string $dir, string $txt): bool 
     {
         $file = $dir.self::NAME;
-        if((($open = fopen($file, "w")) !== false)) {
-            if(fwrite($open, $txt) === false) {                
+        if((($open = fopen($file, "a")) !== false)) {
+            if(fwrite($open, $txt.PHP_EOL) === false) {                
                 return false;
             }
             fclose($open);

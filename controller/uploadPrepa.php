@@ -2,8 +2,9 @@
 require_once("../commons/Zip.php");
 require_once("../commons/Data.php");
 require_once("../src/Result.php");
+require_once("../src/Logfile.php");
 require_once("../src/Paramedit.php");
-require_once("../config.php");
+require_once("../session.php");
 
 if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && isset($_POST['sciper'])) {
     $plateforme = $_POST['plate'];
@@ -67,12 +68,12 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
                                     }
                                     else {
-                                        $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper);
+                                        $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme);
                                     }
                                 }
                             }
                             else {
-                                $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper);
+                                $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme);
                             }
                         }
                         else {
@@ -112,22 +113,25 @@ function delTmpDir($tmpDir) {
     rmdir($tmpDir);
 }
 
-function runPrefa($tmpDir, $path, $year, $month, $sciper) {
+function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme) {
     $unique = time();
     $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper;
     $result = shell_exec($cmd);
+    $mstr = (int)$month > 9 ? $month : '0'.$month;
     if(substr($result, 0, 2) === "OK") {
         $msg = $unique." tout OK";
+        $logfile = new Logfile();
+        $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$mstr.", version, ".$unique." | ".$unique." | Création préfacturation | - | statut";
+        $logfile->write("../".$plateforme, $txt);
     }
     else {
         $msg = urlencode($result);
-        delPrefa($path, $year, $month, $unique);
+        delPrefa($path, $year, $mstr, $unique);
     }
     return $msg;
 }
 
-function delPrefa($path, $year, $month, $unique) {
-    $mstr = (int)$month > 9 ? $month : '0'.$month;
+function delPrefa($path, $year, $mstr, $unique) {
     Data::removeRun($path."/".$year."/".$mstr, $unique);
     if(file_exists($path)) {
         if(file_exists($path."/".$year)) {

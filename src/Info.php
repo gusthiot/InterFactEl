@@ -4,11 +4,12 @@ require_once("Csv.php");
 
 class Info extends Csv 
 {
+    const NAME = "/info.csv";
 
     function load(string $dir): array 
     {
         $infos = [];
-        $lines = $this->extract($dir."/info.csv");
+        $lines = $this->extract($dir.self::NAME);
         foreach($lines as $line) {
             $tab = explode(";", $line);
             $infos[$tab[0]] = $tab;
@@ -22,7 +23,7 @@ class Info extends Csv
         foreach($content as $line) {
             $data[] = $line;
         }
-        $this->write($dir."/info.csv", $data);
+        $this->write($dir.self::NAME, $data);
     }
 }
 ?>

@@ -5,14 +5,14 @@ require_once("Csv.php");
 class Superviseur extends Csv 
 {
 
-    const CSV = "CONFIG/superviseur.csv";
+    const NAME = "superviseur.csv";
 
     private array $superviseurs;
 
     function __construct() 
     {
         $this->superviseurs = [];
-        $lines = $this->extract(self::CSV);
+        $lines = $this->extract(CONFIG.self::NAME);
         foreach($lines as $line) {
             $this->superviseurs[] = $line;
         }
