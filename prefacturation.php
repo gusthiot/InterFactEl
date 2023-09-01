@@ -13,7 +13,7 @@ $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
 $dir = $plateforme."/".$year."/".$month."/".$version."/".$run;
-$name = $gestionnaire->getGestionnaire($login)['plates'][$plateforme];
+$name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 $suf = "_".$name."_".$year."_".$month."_".$version;
 
 $message = "";
