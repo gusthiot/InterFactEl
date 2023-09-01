@@ -25,6 +25,14 @@ class Data
         }
     }
 
+    static function delDir(string $dir): void 
+    {
+        foreach(Data::scanDescSan($dir) as $file) {
+            unlink($dir."/".$file);
+        }
+        rmdir($dir);
+    }
+
     static function addToString(string $txt, int $num): string 
     {
         return (string)((int)($txt) + $num);
