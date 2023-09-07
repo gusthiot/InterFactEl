@@ -4,3 +4,5 @@ PyFactEl-V11
 tequila-php-client
 tmp
 config.php
+reveal.js
+*.log

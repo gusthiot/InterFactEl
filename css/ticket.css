@@ -1,0 +1,41 @@
+#entete {
+  margin-left: 600px;
+  text-align:left;
+}
+#tableau {
+  border-collapse: collapse;
+  margin: 20px;
+}
+#tableau tr, #tableau td {
+  border: 1px solid black;
+  vertical-align:middle;
+}
+#tableau td {
+  padding: 3px;
+}
+#annexes tr, #annexes td {
+  border: 0px;
+}
+#annexes td {
+  padding: 3px;
+}
+#toright {
+  text-align:right;
+}
+#combo {
+  margin-top: 20px;
+  margin-left: 50px;
+}
+#reference {
+  text-align:left;
+  margin-left: 20px;
+}
+.reveal {
+  font-size: 18px;
+}
+.controls {
+  margin-bottom: 50px;
+}
+.reveal .slides > section > section.present {
+  top: 10px !important;
+}

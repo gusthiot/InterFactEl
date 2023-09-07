@@ -42,7 +42,9 @@ if(isset($_GET['message'])) {
 
 <!DOCTYPE html>
 <html lang="fr">
-    <?php include("commons/header.php");?> 
+    <head>
+        <?php include("commons/header.php");?> 
+    </head>
 
     <body>
         <div class="container-fluid">	
