@@ -28,14 +28,16 @@ if(isset($_GET['message'])) {
 
 <!DOCTYPE html>
 <html lang="fr">
-    <?php include("commons/header.php");?> 
+    <head>
+        <?php include("commons/header.php");?> 
+    </head>
 
     <body>
         <div class="container-fluid">		
         <h1 class="text-center pt-md-5">Interface de facturation</h1>
-        <h2 class="text-center pt-md-5">Welcome <?= $login ?></h2>
+        <h2 class="text-center pt-md-5">Welcome <?= $_SESSION['user'] ?></h2>
         <?php
-            if($superviseur->isSuperviseur($login)) {
+            if($superviseur->isSuperviseur($_SESSION['user'])) {
             ?>
             <h3 class="text-center pt-md-5">Supervision</h3>
             <div class="text-center">
@@ -50,7 +52,7 @@ if(isset($_GET['message'])) {
             </div>
         <?php
             }
-            if($dataGest = $gestionnaire->getGestionnaire($login)) {
+            if($dataGest = $gestionnaire->getGestionnaire($_SESSION['user'])) {
                 ?>                    
                 <h3 class="text-center pt-md-5">Gestion</h3>
                 <div>

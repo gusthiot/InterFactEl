@@ -5,6 +5,7 @@ require_once("../src/Result.php");
 require_once("../src/Logfile.php");
 require_once("../src/Paramedit.php");
 require_once("../session.php");
+require_once("../src/Sap.php");
 
 if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && isset($_POST['sciper'])) {
     $plateforme = $_POST['plate'];
@@ -68,20 +69,20 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
                                     }
                                     else {
-                                        $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme);
+                                        runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
                                     }
                                 }
                             }
                             else {
-                                $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme);
+                                runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
                             }
                         }
                         else {
-                            $msg = "on peut simuler";
+                            runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
                         }
                     }
                 }
-                delTmpDir($tmpDir);
+                Data::delDir($tmpDir);
             }
             else {
                 $errors= error_get_last();
@@ -106,29 +107,38 @@ else {
     header('Location: ../index.php?message=post_data_missing');
 }
 
-function delTmpDir($tmpDir) {
-    foreach(Data::scanDescSan($tmpDir) as $tmpFile) {
-        unlink($tmpDir."/".$tmpFile);
-    }
-    rmdir($tmpDir);
-}
-
-function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme) {
+function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme, $type) {
     $unique = time();
     $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper;
     $result = shell_exec($cmd);
     $mstr = (int)$month > 9 ? $month : '0'.$month;
     if(substr($result, 0, 2) === "OK") {
         $msg = $unique." tout OK";
-        $logfile = new Logfile();
-        $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$mstr.", version, ".$unique." | ".$unique." | Création préfacturation | - | statut";
-        $logfile->write("../".$plateforme, $txt);
+        $tab = explode(" ", $result);
+        $version = $tab[1];
+        $dir = "../".$plateforme."/".$year."/".$mstr."/".$version."/".$unique;
+        if($type === "SAP") {
+            $logfile = new Logfile();
+            $sap = new Sap();
+            $sap->load($dir);
+            $status = $sap->status();
+            $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$status;
+            $logfile->write("../".$plateforme, $txt);
+            Data::delDir($tmpDir);
+            header('Location: ../plateforme.php?plateforme='.$plateforme.'&message='.$unique." tout OK");
+        }
+        else {
+            Zip::getZipDir(TEMP.$type.'.zip', $dir."/");
+            delPrefa($path, $year, $mstr, $unique);
+            Data::delDir($tmpDir);
+            header('Location: ../plateforme.php?plateforme='.$plateforme.'&message='.$unique." tout OK");
+        }
     }
     else {
-        $msg = urlencode($result);
         delPrefa($path, $year, $mstr, $unique);
+        Data::delDir($tmpDir);
+        header('Location: ../plateforme.php?plateforme='.$plateforme.'&message='.urlencode($result));
     }
-    return $msg;
 }
 
 function delPrefa($path, $year, $mstr, $unique) {

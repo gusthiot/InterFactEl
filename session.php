@@ -9,10 +9,10 @@ require_once("config.php");
 
 $oClient = new TequilaClient();//'https://tequila.epfl.ch', 86400, "InterFactEl");
 $oClient->Authenticate();
-$login = $oClient->getValue('user');
+$_SESSION['user'] = $oClient->getValue('user');
 
 $superviseur = new Superviseur();
 $gestionnaire = new Gestionnaire();
 $messages = new Message();
-//$login = "gusthiot";
-//$_SESSION['user'] = $login;
+//$_SESSION['user'] = "gusthiot";
+

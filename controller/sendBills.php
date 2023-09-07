@@ -20,7 +20,7 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['type'])) {
         $res = json_decode(send($facture->getFacture()));
         if($res) {
             if(property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
-                $info = new Info();       
+                $info = new Info();
                 $content = $info->load($dir);
                 if(empty($content["Sent"][2])) {
                     $content["Sent"][2] = date('Y-m-d H:i:s');
@@ -48,6 +48,10 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['type'])) {
                     $lock->save($dir, 'run', "finalized");
                     $sep = strrpos($dir, "/");
                     $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
+                    $info = new Info();
+                    $content = $info->load($dir);
+                    $content["Closed"][2] = date('Y-m-d H:i:s');
+                    $info->save($dir, $content);
 
                 }
                 $html .= json_encode($res);
