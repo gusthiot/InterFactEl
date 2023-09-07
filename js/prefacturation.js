@@ -30,7 +30,7 @@ $(document).on("click", "#saveLabel", function() {
 } );
 
 $('#ticket').on('click', function () {
-    window.open($('#dir').val()+"/"+"Ticket"+$('#suf').val()+".html");
+    window.open("ticket.php"+$(this).data('param')); //$('#dir').val()+"/"+"Ticket"+$('#suf').val()+".html");
 } );
 
 $('#changes').on('click', function () {

@@ -9,12 +9,12 @@ if(!isset($_GET["plateforme"])) {
 }
 $plateforme = $_GET['plateforme'];
 
-if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($login)['plates'])) {
+if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['plates'])) {
     die("Ce numéro de plateforme n'est pas pris en compte !");
 }
 
-$name = $gestionnaire->getGestionnaire($login)['plates'][$plateforme];
-$sciper = $gestionnaire->getGestionnaire($login)['sciper'];
+$name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
+$sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
 $message = "";
 if(isset($_GET['message'])) {
     if($_GET['message'] == "zip") {
@@ -42,7 +42,9 @@ if(isset($_GET['message'])) {
 
 <!DOCTYPE html>
 <html lang="fr">
-    <?php include("commons/header.php");?> 
+    <head>
+        <?php include("commons/header.php");?> 
+    </head>
 
     <body>
         <div class="container-fluid">	
@@ -70,7 +72,7 @@ if(isset($_GET['message'])) {
         <?php
         if(file_exists($plateforme)) {
             
-            if($superviseur->isSuperviseur($login)) {
+            if($superviseur->isSuperviseur($_SESSION['user'])) {
             ?>
             <div class="text-center">
             <button type="button" id="destroy" class="btn btn-danger">Supprimer tous les données de cette plateforme</button>
@@ -109,7 +111,7 @@ if(isset($_GET['message'])) {
                                 echo ' <i class="bi bi-lock"></i> ';
                             }
                             echo '</button> ';
-                            if($superviseur->isSuperviseur($login)) {
+                            if($superviseur->isSuperviseur($_SESSION['user'])) {
                             ?>
                             <button type="button" id="erase" class="btn btn-danger" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
                             <?php
