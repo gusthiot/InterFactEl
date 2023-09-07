@@ -13,6 +13,7 @@ $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
 $dir = $plateforme."/".$year."/".$month."/".$version."/".$run;
+$param = "?plateforme=".$plateforme."&year=".$year."&month=".$month."&version=".$version."&run=".$run;
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 $suf = "_".$name."_".$year."_".$month."_".$version;
 
@@ -38,7 +39,9 @@ $locvtxt = $lock->load($plateforme."/".$year."/".$month."/".$version, "version")
 
 <!DOCTYPE html>
 <html lang="fr">
-    <?php include("commons/header.php");?> 
+    <head>
+        <?php include("commons/header.php");?> 
+    </head>
 
     <body>
         <div class="container-fluid">	
@@ -51,7 +54,7 @@ $locvtxt = $lock->load($plateforme."/".$year."/".$month."/".$version, "version")
             <button type="button" id="label" class="btn btn-outline-dark">Etiqueter</button>
             <button type="button" id="info" class="btn btn-outline-dark">Afficher les infos</button>
             <button type="button" id="bills" class="btn btn-outline-dark">Afficher la liste des factures</button>
-            <button type="button" id="ticket" class="btn btn-outline-dark">Contrôler le ticket</button>
+            <button type="button" id="ticket" data-param="<?= $param ?>" class="btn btn-outline-dark">Contrôler le ticket</button>
             <button type="button" id="changes" class="btn btn-outline-dark">Afficher les modifications</button>
             <?php 
             if(($status < 4) && !$loctxt) {

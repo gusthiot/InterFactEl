@@ -4,10 +4,15 @@ require_once("../src/Lock.php");
 require_once("../src/Logfile.php");
 require_once("../src/Sap.php");
 require_once("../session.php");
+require_once("../src/Info.php");
 
 if(isset($_POST["dir"])){
     $lock = new Lock();
     $lock->save("../".$_POST['dir'], 'run', "invalidate");
+    $info = new Info();
+    $content = $info->load($dir);
+    $content["Closed"][2] = date('Y-m-d H:i:s');
+    $info->save($dir, $content);
     logAction($_POST['dir']);
     echo "invalidé";
 }
