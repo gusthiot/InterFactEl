@@ -109,7 +109,7 @@ else {
 
 function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme, $type) {
     $unique = time();
-    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper;
+    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
     $result = shell_exec($cmd);
     $mstr = (int)$month > 9 ? $month : '0'.$month;
     if(substr($result, 0, 2) === "OK") {

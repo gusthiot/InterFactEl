@@ -8,7 +8,7 @@ if(isset($_POST["dir"])){
     $html = "<table>";
     foreach($info->load("../".$_POST["dir"]) as $line) {
         $html .= "<tr>";
-        $html .= "<td>".$line[1]."</td><td>".$line[2]."</td>";
+        $html .= "<td>".$line[1]."</td><td>".$line[2]."</td><td>".$line[3]."</td>";
         $html .= "</tr>";
 
     }

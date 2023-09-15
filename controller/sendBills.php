@@ -24,6 +24,7 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['type'])) {
                 $content = $info->load($dir);
                 if(empty($content["Sent"][2])) {
                     $content["Sent"][2] = date('Y-m-d H:i:s');
+                    $content["Sent"][3] = $_SESSION['user'];
                     $info->save($dir, $content);
                 }
                 $content = $sap->load($dir);                        
@@ -51,6 +52,7 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['type'])) {
                     $info = new Info();
                     $content = $info->load($dir);
                     $content["Closed"][2] = date('Y-m-d H:i:s');
+                    $content["Closed"][3] = $_SESSION['user'];
                     $info->save($dir, $content);
 
                 }
