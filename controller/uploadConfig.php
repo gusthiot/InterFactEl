@@ -10,6 +10,9 @@ if($_FILES['zip_file']) {
         if(copy($source, $tmpFile)) {
             $msg = Zip::unzip($tmpFile, "../CONFIG/");
             unlink($tmpFile);
+            if(empty($msg)) {
+                $msg = "Fichiers correctement mis à jour !";
+            }
             header('Location: ../index.php?message='.$msg);
     
         }

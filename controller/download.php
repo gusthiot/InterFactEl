@@ -11,22 +11,22 @@ if(isset($_GET['type'])) {
     if($type==="config") {
         Zip::getZipDir($tmpFile, "../CONFIG/");
     }
-    if($type==="bilans") {
+    elseif($type==="bilans") {
         if(isset($_GET['dir'])) {
             Zip::getZipDir($tmpFile, "../".$_GET['dir']."/Bilans_Stats/");
         }
     }
-    if($type==="annexes") {
+    elseif($type==="annexes") {
         if(isset($_GET['dir'])) {
             Zip::getZipDir($tmpFile, "../".$_GET['dir']."/Annexes_CSV/");
         }
     }
-    if($type==="all") {
+    elseif($type==="all") {
         if(isset($_GET['dir'])) {
             Zip::getZipDir($tmpFile, "../".$_GET['dir']."/");
         }
     }
-    if($type==="prepa") {
+    elseif($type==="prepa") {
         if(isset($_GET['prepa']) && isset($_GET['plate']) && isset($_GET['tyfact'])) {
             $prepa = json_decode($_GET['prepa']);
             $dir = "../".$_GET['plate']."/".$prepa->year."/".$prepa->month."/".$prepa->version."/".$prepa->run;
@@ -41,11 +41,11 @@ if(isset($_GET['type'])) {
             $array = [["Platform", $_GET['plate']], ["Year", $prepa->exp_y], ["Month", $prepa->exp_m], ["Type", $tyfact], ["Watermark", $wm]];
             $paramedit = new Paramedit();
             $paramedit->write($tmpPe, $array);
-            Zip::getZipDir($tmpFile, $dir."/", $tmpPe);
+            Zip::getZipDir($tmpFile, $dir."/OUT/", $tmpPe);
             unlink($tmpPe);
         }
     }
-    if($type==="sap") {
+    elseif($type==="sap") {
         if(isset($_GET['dir'])) {
             $fileName = "../".$_GET['dir']."/sap.csv";
             header('Content-Type: application/octet-stream');
@@ -53,6 +53,27 @@ if(isset($_GET['type'])) {
             header('Content-Length: ' . filesize($fileName));
             readfile($fileName);
         }
+    }
+    elseif($type==="modif") {
+        if(isset($_GET['dir']) && isset($_GET['dir'])) {
+            $fileName = "../".$_GET["dir"]."/Modif-factures".$_GET["suf"].".csv";
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
+            header('Content-Length: ' . filesize($fileName));
+            readfile($fileName);
+        }
+    }
+    elseif($type==="journal") {
+        if(isset($_GET['dir']) && isset($_GET['dir'])) {
+            $fileName = "../".$_GET["dir"]."/Journal-modifs".$_GET["suf"].".csv";
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
+            header('Content-Length: ' . filesize($fileName));
+            readfile($fileName);
+        }
+    }
+    else {
+        header('Location: ../index.php?message=erreur');
     }
 }
 
