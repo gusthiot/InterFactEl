@@ -12,7 +12,7 @@ class Csv
 
                 }
                 else {
-                    $result[] = mb_convert_encoding($data[0], 'UTF-8', 'ISO-8859-2');
+                    $result[] = mb_convert_encoding($data[0], 'UTF-8', 'Windows-1252');
                 }
             }
             fclose($open);

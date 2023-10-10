@@ -20,18 +20,19 @@ if(isset($_POST["dir"]) && isset($_POST["suf"])){
     $html .= '<button type="button" id="getModif" class="btn btn-outline-dark">Download Modif-factures</button>';
 
     $journal = new Journal("../".$_POST["dir"]."/Journal-modifs".$_POST["suf"].".csv");
-    $html .= "<table>";
-    foreach($journal->getModifs() as $line) {
-        $html .= "<tr>";
-        foreach($line as $cell) {
-            $html .= "<td>".$cell."</td>";
-        }
-        $html .= "</tr>";
+    if(!empty($journal->getModifs())) {
+        $html .= "<table>";
+        foreach($journal->getModifs() as $line) {
+            $html .= "<tr>";
+            foreach($line as $cell) {
+                $html .= "<td>".$cell."</td>";
+            }
+            $html .= "</tr>";
 
+        }
+        $html .= "</table>";
+        $html .= '<button type="button" id="getJournal" class="btn btn-outline-dark">Download Journal-modifs</button>';
     }
-    $html .= "</table>";
-    
-    $html .= '<button type="button" id="getModif" class="btn btn-outline-dark">Download Journal-modifs</button>';
 
 
     echo $html;

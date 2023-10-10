@@ -63,6 +63,14 @@ $('#send').on('click', function () {
     });
 } );
 
+$(document).on("click", "#getModif", function() {
+    window.location.href = "controller/download.php?type=modif&dir="+$('#dir').val()+"&suf="+$('#suf').val();
+} );
+
+$(document).on("click", "#getJournal", function() {
+    window.location.href = "controller/download.php?type=journal&dir="+$('#dir').val()+"&suf="+$('#suf').val();
+} );
+
 $(document).on("click", "#sendBills", function() {
     sending("Envoi dans SAP");
 } );
@@ -78,8 +86,17 @@ function sending(type) {
     });
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
     $.post("controller/sendBills.php", {bills: bills, dir: $('#dir').val(), type: type}, function (data) {
-        window.location.href = window.location.href + "&message=" + data;
+        sessionStorage.setItem("reloading", data);
+        window.location.reload();
     });
+}
+
+window.onload = function() {
+    var reloading = sessionStorage.getItem("reloading");
+    if (reloading) {
+        $('#message').html(reloading);
+        sessionStorage.removeItem("reloading");
+    }
 }
 
 let all = false;

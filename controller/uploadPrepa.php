@@ -49,7 +49,7 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                         $pathPlate = "../".$plateforme;
                         if($type !== "SIMU") {
                             if(file_exists($pathPlate)) {
-                                $data = Data::availableForFacturation($pathPlate, $messages);
+                                $data = Data::availableForFacturation($pathPlate, $messages, $results);
                                 if($data[$type][0]['type'] === "error") {
                                     $msg = $data[$type][0]['msg'];
                                 }
@@ -109,7 +109,7 @@ else {
 
 function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme, $type) {
     $unique = time();
-    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
+    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -n -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
     $result = shell_exec($cmd);
     $mstr = (int)$month > 9 ? $month : '0'.$month;
     if(substr($result, 0, 2) === "OK") {

@@ -7,14 +7,15 @@ require_once("../session.php");
 require_once("../src/Info.php");
 
 if(isset($_POST["dir"])){
+    $dir = "../".$_POST["dir"];
     $lock = new Lock();
-    $lock->save("../".$_POST['dir'], 'run', "invalidate");
+    $lock->save($dir, 'run', "invalidate");
     $info = new Info();
     $content = $info->load($dir);
     $content["Closed"][2] = date('Y-m-d H:i:s');
     $content["Closed"][3] = $_SESSION['user'];
     $info->save($dir, $content);
-    logAction($_POST['dir']);
+    logAction($_POST["dir"]);
     echo "invalidé";
 }
 
