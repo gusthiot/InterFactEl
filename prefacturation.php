@@ -17,10 +17,6 @@ $param = "?plateforme=".$plateforme."&year=".$year."&month=".$month."&version=".
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 $suf = "_".$name."_".$year."_".$month."_".$version;
 
-$message = "";
-if(isset($_GET['message'])) {
-    $message = $_GET['message'];
-}
 $label = new Label();
 $labtxt = $label->load($dir);
 if(empty($labtxt)) {
@@ -79,7 +75,7 @@ $locvtxt = $lock->load($plateforme."/".$year."/".$month."/".$version, "version")
             ?>
         </div>
 
-        <div class="text-center" id="message"><?= $message ?></div>
+        <div class="text-center" id="message"></div>
 
         <div class="text-center" id="display"></div>
 

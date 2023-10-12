@@ -2,10 +2,13 @@
 
 require_once("../commons/Data.php");
 
+session_start();
 if(isset($_GET["dir"]) && isset($_GET["run"]) && isset($_GET["plate"])){
     Data::removeRun("../".$_GET["dir"], $_GET["run"]);
-    header('Location: ../plateforme.php?plateforme='.$_GET["plate"].'&message=ok');
+    $_SESSION['message'] = "ok";
+    header('Location: ../plateforme.php?plateforme='.$_GET["plate"]);
 }
 else {
-    header('Location: ../index.php?message=post_data_missing');
+    $_SESSION['message'] = "post_data_missing";
+    header('Location: ../index.php');
 }

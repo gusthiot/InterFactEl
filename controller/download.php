@@ -4,6 +4,7 @@ require_once("../src/Paramedit.php");
 require_once("../src/Paramtext.php");
 require_once("../config.php");
 
+session_start();
 if(isset($_GET['type'])) {
     $type = $_GET['type'];
     $tmpFile = TEMP.$type.'.zip';
@@ -73,7 +74,8 @@ if(isset($_GET['type'])) {
         }
     }
     else {
-        header('Location: ../index.php?message=erreur');
+        $_SESSION['message'] = "erreur";
+        header('Location: ../index.php');
     }
 }
 

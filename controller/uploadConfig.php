@@ -2,6 +2,7 @@
 require_once("../commons/Zip.php");
 require_once("../config.php");
 
+session_start();
 if($_FILES['zip_file']) {
     $fileName = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];
@@ -13,20 +14,21 @@ if($_FILES['zip_file']) {
             if(empty($msg)) {
                 $msg = "Fichiers correctement mis à jour !";
             }
-            header('Location: ../index.php?message='.$msg);
+            $_SESSION['message'] = $msg;
     
         }
         else {
-            header('Location: ../index.php?message=copy');
+            $_SESSION['message'] = "copy";
         }
     }
     else {
-        header('Location: ../index.php?message=zip');
+        $_SESSION['message'] = "zip";
     }
 }
 else {
-    header('Location: ../index.php?message=data');
+    $_SESSION['message'] = "data";
 }
+header('Location: ../index.php');
 
 
 
