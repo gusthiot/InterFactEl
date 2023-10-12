@@ -69,16 +69,16 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
                                     }
                                     else {
-                                        runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
+                                        $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
                                     }
                                 }
                             }
                             else {
-                                runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
+                                $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
                             }
                         }
                         else {
-                            runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
+                            $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
                         }
                     }
                 }
@@ -89,22 +89,22 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                 $msg = $errors['message'];
 
             }
-            header('Location: ../plateforme.php?plateforme='.$plateforme.'&message='.$msg);
+            $_SESSION['message'] = $msg;
     
         }
         else {
-            header('Location: ../plateforme.php?plateforme='.$plateforme.'&message=copy');
+            $_SESSION['message'] = "copy";
         }
-
-
     }
     else {
-        header('Location: ../plateforme.php?plateforme='.$plateforme.'&message=zip');
+        $_SESSION['message'] = "zip";
     }
+    header('Location: ../plateforme.php?plateforme='.$plateforme);
         
 }
 else {
-    header('Location: ../index.php?message=post_data_missing');
+    $_SESSION['message'] = "post_data_missing";
+    header('Location: ../index.php');
 }
 
 function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme, $type) {
@@ -124,20 +124,17 @@ function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme, $type) {
             $status = $sap->status();
             $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$status;
             $logfile->write("../".$plateforme, $txt);
-            Data::delDir($tmpDir);
-            header('Location: ../plateforme.php?plateforme='.$plateforme.'&message='.$unique." tout OK");
+            return $unique." tout OK";
         }
         else {
             Zip::getZipDir(TEMP.$type.'.zip', $dir."/");
             delPrefa($path, $year, $mstr, $unique);
-            Data::delDir($tmpDir);
-            header('Location: ../plateforme.php?plateforme='.$plateforme.'&message='.$unique." tout OK");
+            return $unique." tout OK";
         }
     }
     else {
         delPrefa($path, $year, $mstr, $unique);
-        Data::delDir($tmpDir);
-        header('Location: ../plateforme.php?plateforme='.$plateforme.'&message='.urlencode($result));
+        return $result;
     }
 }
 

@@ -2,25 +2,29 @@
 require_once("session.php");
 
 $message = "";
-if(isset($_GET['message'])) {
-    if($_GET['message'] == "zip") {
+if(isset($_SESSION['message'])) {
+    if($_SESSION['message'] == "zip") {
         $message = "Vous devez uploader une archive zip !";
     }
-    elseif($_GET['message'] == "data") {
+    elseif($_SESSION['message'] == "data") {
         $message = "Erreur de données";
     }
-    elseif($_GET['message'] == "copy") {
+    elseif($_SESSION['message'] == "copy") {
         $message = "Erreur de copie sur le disque";
     }
-    elseif($_GET['message'] == "error") {
+    elseif($_SESSION['message'] == "error") {
         $message = "Erreur non documentée";
     }
-    elseif($_GET['message'] == "success") {
+    elseif($_SESSION['message'] == "success") {
         $message = "Les fichiers ont bien été enregistré";
     }
     else {
-        $message = $_GET['message'];
+        $message = $_SESSION['message'];
     }
+    unset($_SESSION['message']); 
+}
+else {
+    $message = "no message";
 }
 
 ?>

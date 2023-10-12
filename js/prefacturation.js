@@ -24,8 +24,8 @@ $(document).on("click", "#getSap", function() {
 $(document).on("click", "#saveLabel", function() {
     const txt = $('#labelArea').val();
     const dir = $('#dir').val();
-    $.post("controller/saveLabel.php", {txt: txt, dir: dir}, function (data) {
-        window.location.href = window.location.href + "&message=" + data;
+    $.post("controller/saveLabel.php", {txt: txt, dir: dir}, function (message) {
+        reloadOnMessage(message);
     });
 } );
 
@@ -40,8 +40,8 @@ $('#changes').on('click', function () {
 } );
 
 $('#invalidate').on('click', function () {
-    $.post("controller/invalidate.php", {dir: $('#dir').val()}, function (data) {
-        window.location.href = window.location.href + "&message=" + data;
+    $.post("controller/invalidate.php", {dir: $('#dir').val()}, function (message) {
+        reloadOnMessage(message);
     });
 } );
 
@@ -85,16 +85,20 @@ function sending(type) {
         bills.push($(this).val());
     });
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
-    $.post("controller/sendBills.php", {bills: bills, dir: $('#dir').val(), type: type}, function (data) {
-        sessionStorage.setItem("reloading", data);
-        window.location.reload();
+    $.post("controller/sendBills.php", {bills: bills, dir: $('#dir').val(), type: type}, function (message) {
+        reloadOnMessage(message);
     });
 }
 
+function reloadOnMessage(message) {
+        sessionStorage.setItem("reloading", message);
+        window.location.reload();
+}
+
 window.onload = function() {
-    var reloading = sessionStorage.getItem("reloading");
-    if (reloading) {
-        $('#message').html(reloading);
+    var message = sessionStorage.getItem("reloading");
+    if (message) {
+        $('#message').html(message);
         sessionStorage.removeItem("reloading");
     }
 }
@@ -118,8 +122,8 @@ $(document).on("click", "#allBills", function() {
 });
 
 $('#finalize').on('click', function () {
-    $.post("controller/finalize.php", {dir: $('#dir').val()}, function (data) {
-        window.location.href = window.location.href + "&message=" + data;
+    $.post("controller/finalize.php", {dir: $('#dir').val()}, function (message) {
+        reloadOnMessage(message);
     });
 } );
 
