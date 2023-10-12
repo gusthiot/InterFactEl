@@ -109,11 +109,11 @@ else {
 
 function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme, $type) {
     $unique = time();
-    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -n -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
+    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
     $result = shell_exec($cmd);
     $mstr = (int)$month > 9 ? $month : '0'.$month;
     if(substr($result, 0, 2) === "OK") {
-        $msg = $unique." tout OK";
+        $msg = $unique." tout OK ".strstr($result, '(');
         $tab = explode(" ", $result);
         $version = $tab[1];
         $dir = "../".$plateforme."/".$year."/".$mstr."/".$version."/".$unique;
@@ -124,12 +124,12 @@ function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme, $type) {
             $status = $sap->status();
             $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$status;
             $logfile->write("../".$plateforme, $txt);
-            return $unique." tout OK";
+            return $msg;
         }
         else {
             Zip::getZipDir(TEMP.$type.'.zip', $dir."/");
             delPrefa($path, $year, $mstr, $unique);
-            return $unique." tout OK";
+            return $msg;
         }
     }
     else {
