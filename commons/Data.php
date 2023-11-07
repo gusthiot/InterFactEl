@@ -104,7 +104,7 @@ class Data
                 $prev_m = self::addToMonth($last_m, -1);
             }
 
-            if($results && ($results->getResult('Month') !== $last_m || $results->getResult('Year') !== $last_y || $results->getResult('Version') !== $last_v || $results->getResult('Folder') !== $last_r)) {    
+            if($results && ((int)($results->getResult('Month')) !== (int)($last_m) || $results->getResult('Year') !== $last_y || $results->getResult('Version') !== $last_v || $results->getResult('Folder') !== $last_r)) {    
                 $return['SAP'][] = [
                     'type'=>'error',
                     'msg'=>"facturation ".$last_m." ".$last_y.": ".$messages->getMessage('msg3.7')];
