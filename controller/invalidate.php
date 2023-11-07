@@ -9,7 +9,7 @@ require_once("../src/Info.php");
 if(isset($_POST["dir"])){
     $dir = "../".$_POST["dir"];
     $lock = new Lock();
-    $lock->save($dir, 'run', "invalidate");
+    $lock->save($dir, 'run', $lock::STATES['invalidate']);
     $info = new Info();
     $content = $info->load($dir);
     $content["Closed"][2] = date('Y-m-d H:i:s');

@@ -9,7 +9,7 @@ $('#destroy').on('click', function () {
     window.location.href = "controller/destroy.php?plate="+$('#plateNum').val();
 } );
 
-$('#erase').on('click', function () {
+$('.erase').on('click', function () {
     window.location.href = "controller/erase.php?plate="+$('#plateNum').val()+"&dir="+$(this).data('dir')+"&run="+$(this).data('run');
 } );
 
