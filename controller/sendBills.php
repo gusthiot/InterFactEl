@@ -46,7 +46,7 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['type'])) {
                 logSap($_POST["dir"], $bill, $content, $logfile);
                 if($sap->status() == 4) {
                     $lock = new Lock();
-                    $lock->save($dir, 'run', "finalized");
+                    $lock->save($dir, 'run', $lock::STATES['finalized']);
                     $sep = strrpos($dir, "/");
                     $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
                     $info = new Info();

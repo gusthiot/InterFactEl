@@ -9,7 +9,7 @@ require_once("../session.php");
 if(isset($_POST["dir"])){
     $dir = "../".$_POST["dir"];
     $lock = new Lock();
-    $lock->save($dir, 'run', "finalized");
+    $lock->save($dir, 'run', $lock::STATES['finalized']);
     $sep = strrpos($dir, "/");
     $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
     $info = new Info();

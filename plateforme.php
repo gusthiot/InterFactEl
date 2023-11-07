@@ -114,7 +114,7 @@ if(isset($_SESSION['message'])) {
                             echo '</button> ';
                             if($superviseur->isSuperviseur($_SESSION['user'])) {
                             ?>
-                            <button type="button" id="erase" class="btn btn-danger" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
+                            <button type="button" class="btn btn-danger erase" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
                             <?php
                             }
                         }

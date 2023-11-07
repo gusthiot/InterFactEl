@@ -4,6 +4,7 @@ require_once("../commons/Data.php");
 require_once("../src/Result.php");
 require_once("../src/Logfile.php");
 require_once("../src/Paramedit.php");
+require_once("../src/Lock.php");
 require_once("../session.php");
 require_once("../src/Sap.php");
 
@@ -48,29 +49,35 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                     else {
                         $pathPlate = "../".$plateforme;
                         if($type !== "SIMU") {
+                            $lock = new Lock();
                             if(file_exists($pathPlate)) {
-                                $data = Data::availableForFacturation($pathPlate, $messages, $results);
-                                if($data[$type][0]['type'] === "error") {
-                                    $msg = $data[$type][0]['msg'];
-                                }
-                                else {
-                                    $ok = false;
-                                    foreach($data[$type] as $option) {
-                                        if($option['type'] == "result") {
-                                            if($option['exp_y'] === $params->getParam('Year') && (int)($option['exp_m']) === (int)($params->getParam('Month'))) {
-                                                if($option['year'] === $results->getResult('Year') && (int)($option['month']) === (int)($results->getResult('Month')) && $option['version'] === $results->getResult('Version') && $option['run'] === $results->getResult('Folder')) {
-                                                    $ok = true;
-                                                    break;
+                                $data = Data::availableForFacturation($pathPlate, $messages, $lock, $results);
+                                if(!empty($data[$type])) {
+                                    if($data[$type][0]['type'] === "error") {
+                                        $msg = $data[$type][0]['msg'];
+                                    }
+                                    else {
+                                        $ok = false;
+                                        foreach($data[$type] as $option) {
+                                            if($option['type'] == "result") {
+                                                if($option['exp_y'] === $params->getParam('Year') && (int)($option['exp_m']) === (int)($params->getParam('Month'))) {
+                                                    if($option['year'] === $results->getResult('Year') && (int)($option['month']) === (int)($results->getResult('Month')) && $option['version'] === $results->getResult('Version') && $option['run'] === $results->getResult('Folder')) {
+                                                        $ok = true;
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
+                                        if(!$ok) {
+                                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
+                                        }
+                                        else {
+                                            $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
+                                        }
                                     }
-                                    if(!$ok) {
-                                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
-                                    }
-                                    else {
-                                        $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
-                                    }
+                                }
+                                else {
+                                    $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
                                 }
                             }
                             else {
