@@ -14,11 +14,16 @@ if(isset($_POST["dir"])){
     $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
     $info = new Info();
     $content = $info->load($dir);
-    $content["Closed"][2] = date('Y-m-d H:i:s');
-    $content["Closed"][3] = $_SESSION['user'];
-    $info->save($dir, $content);
+    $res = "";
+    if(!empty($content)) {
+        $content["Closed"][2] = date('Y-m-d H:i:s');
+        $content["Closed"][3] = $_SESSION['user'];
+        $info->save($dir, $content);
+        $res .= "info vide ? ";
+    }
     logAction($_POST["dir"]);
-    echo "finalisé";
+    $res .= "finalisé";
+    echo $res;
 }
 
 

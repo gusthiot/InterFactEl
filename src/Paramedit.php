@@ -3,17 +3,23 @@
 require_once("Csv.php");
 
 class Paramedit extends Csv 
-{
+{ 
 
     private array $params;
 
-    function load(string $csv): void 
+    function load(string $csv): bool 
     {
         $this->params = [];
         $lines = $this->extract($csv);
-        foreach($lines as $line) {
-            $tab = explode(";", $line);
-            $this->params[$tab[0]] = $tab[1];
+        if(empty($lines)) {
+            return false;
+        }
+        else {
+            foreach($lines as $line) {
+                $tab = explode(";", $line);
+                $this->params[$tab[0]] = $tab[1];
+            }
+            return true;
         }
     }
     

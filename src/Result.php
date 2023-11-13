@@ -6,13 +6,18 @@ class Result extends Csv
 {
     private array $results;
 
-    function __construct(string $csv) 
+    function load(string $csv): bool 
     {
         $this->results = [];
         $lines = $this->extract($csv);
-        foreach($lines as $line) {
-            $tab = explode(";", $line);
-            $this->results[$tab[0]] = $tab[2];
+        if(empty($lines)) {
+            return false;
+        }
+        else {
+            foreach($lines as $line) {
+                $tab = explode(";", $line);
+                $this->results[$tab[0]] = $tab[2];
+            }
         }
     }
     

@@ -35,8 +35,10 @@ if(isset($_GET['type'])) {
             $wm = "";
             $tyfact = "SAP";
             if($_GET['tyfact'] == "proforma") {
-                $paramtext = new Paramtext($dir."/OUT/"."paramtext.csv");
-                $wm = $paramtext->getParam('filigr-prof');
+                $paramtext = new Paramtext();
+                if($paramtext->load($dir."/OUT/"."paramtext.csv")) {
+                    $wm = $paramtext->getParam('filigr-prof');
+                }
                 $tyfact = "PROFORMA";
             }
             $array = [["Platform", $_GET['plate']], ["Year", $prepa->exp_y], ["Month", $prepa->exp_m], ["Type", $tyfact], ["Watermark", $wm]];

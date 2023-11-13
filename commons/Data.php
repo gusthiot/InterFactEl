@@ -14,10 +14,10 @@ class Data
     {
         if(file_exists($path)) {
             foreach(self::scanDescSan($path) as $version) {
-                foreach(self::scanDescSan($path."/".$version) as $run) {
-                    if($run === $todel) {
-                        exec(sprintf("rm -rf %s", escapeshellarg($path."/".$version."/".$run)));
-                    }
+                $dir = $path."/".$version."/".$run;
+                if (file_exists($dir) && is_dir($dir)) {
+                    exec(sprintf("rm -rf %s", escapeshellarg($dir)));
+                    break;
                 }
                 rmdir($path."/".$version);
             }
