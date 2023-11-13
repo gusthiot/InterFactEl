@@ -21,40 +21,43 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['type'])) {
         if($res) {
             if(property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
                 $info = new Info();
-                $content = $info->load($dir);
-                if(empty($content["Sent"][2])) {
-                    $content["Sent"][2] = date('Y-m-d H:i:s');
-                    $content["Sent"][3] = $_SESSION['user'];
-                    $info->save($dir, $content);
-                }
-                $content = $sap->load($dir);                        
-                if(!empty($res->E_RESULT->item->IS_ERROR)) {
-                    if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
-                        $content[$bill][3] = "ERROR";
-                        $content[$bill][4] = $res->E_RESULT->item->LOG->item->MESSAGE;
-                        $txt = $bill." | ERROR | ".$res->E_RESULT->item->LOG->item->MESSAGE;
+                $infos = $info->load($dir);
+                if(!empty($infos)) {
+                    if(empty($infos["Sent"][2])) {
+                        $infos["Sent"][2] = date('Y-m-d H:i:s');
+                        $infos["Sent"][3] = $_SESSION['user'];
+                        $info->save($dir, $infos);
+                    }
+                    $saps = $sap->load($dir);                        
+                    if(!empty($res->E_RESULT->item->IS_ERROR)) {
+                        if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
+                            $saps[$bill][3] = "ERROR";
+                            $saps[$bill][4] = $res->E_RESULT->item->LOG->item->MESSAGE;
+                            $txt = $bill." | ERROR | ".$res->E_RESULT->item->LOG->item->MESSAGE;
+                        }
+                    }
+                    else {
+                        if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
+                            $saps[$bill][3] = "SENT";
+                            $saps[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
+                            $txt = $bill." | SENT | ".$res->E_RESULT->item->DOC_NUMBER;
+                        }
+                    }
+                    $sap->save($dir, $saps);
+                    logSap($_POST["dir"], $bill, $saps, $logfile);
+                    if($sap->status() == 4) {
+                        $lock = new Lock();
+                        $lock->save($dir, 'run', $lock::STATES['finalized']);
+                        $sep = strrpos($dir, "/");
+                        $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
+                        $infos["Closed"][2] = date('Y-m-d H:i:s');
+                        $infos["Closed"][3] = $_SESSION['user'];
+                        $info->save($dir, $infos);
+
                     }
                 }
                 else {
-                    if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
-                        $content[$bill][3] = "SENT";
-                        $content[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
-                        $txt = $bill." | SENT | ".$res->E_RESULT->item->DOC_NUMBER;
-                    }
-                }
-                $sap->save($dir, $content);
-                logSap($_POST["dir"], $bill, $content, $logfile);
-                if($sap->status() == 4) {
-                    $lock = new Lock();
-                    $lock->save($dir, 'run', $lock::STATES['finalized']);
-                    $sep = strrpos($dir, "/");
-                    $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
-                    $info = new Info();
-                    $content = $info->load($dir);
-                    $content["Closed"][2] = date('Y-m-d H:i:s');
-                    $content["Closed"][3] = $_SESSION['user'];
-                    $info->save($dir, $content);
-
+                    $res .= " info vide ? ";
                 }
                 $html .= json_encode($res);
             }

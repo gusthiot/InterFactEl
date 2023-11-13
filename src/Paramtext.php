@@ -7,13 +7,18 @@ class Paramtext extends Csv
 
     private array $params;
 
-    function __construct(string $csv) 
+    function load(string $csv): bool 
     {
         $this->params = [];
         $lines = $this->extract($csv);
-        foreach($lines as $line) {
-            $tab = explode(";", $line);
-            $this->params[$tab[0]] = $tab[1];
+        if(empty($lines)) {
+            return false;
+        }
+        else {
+            foreach($lines as $line) {
+                $tab = explode(";", $line);
+                $this->params[$tab[0]] = $tab[1];
+            }
         }
     }
     
