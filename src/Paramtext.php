@@ -19,6 +19,7 @@ class Paramtext extends Csv
                 $tab = explode(";", $line);
                 $this->params[$tab[0]] = $tab[1];
             }
+            return true;
         }
     }
     

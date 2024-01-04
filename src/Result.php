@@ -18,6 +18,7 @@ class Result extends Csv
                 $tab = explode(";", $line);
                 $this->results[$tab[0]] = $tab[2];
             }
+            return true;
         }
     }
     
