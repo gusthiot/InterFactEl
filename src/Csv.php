@@ -25,6 +25,9 @@ class Csv
         if (($open = fopen($file, "w")) !== false) {
             foreach($array as $row) {
                 $row = str_replace('"', '', $row);
+                if(mb_check_encoding($row, 'UTF-8')) {
+                    $row = mb_convert_encoding($row, 'Windows-1252', 'UTF-8');
+                }
                 if(!fputcsv($open, $row,';')) {
                     break;
                 }
