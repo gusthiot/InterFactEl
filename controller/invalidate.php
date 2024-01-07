@@ -17,6 +17,8 @@ if(isset($_POST["dir"])){
         $content["Closed"][2] = date('Y-m-d H:i:s');
         $content["Closed"][3] = $_SESSION['user'];
         $info->save($dir, $content);
+    }
+    else {
         $res .= "info vide ? ";
     }
     logAction($_POST["dir"]);
