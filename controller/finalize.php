@@ -25,7 +25,7 @@ if(isset($_POST["dir"])){
     }
     logAction($_POST["dir"]);
     $res .= "finalisé";
-    echo $res;
+    $_SESSION['message'] = $res;
 }
 
 

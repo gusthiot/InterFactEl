@@ -1,6 +1,6 @@
 <?php
 require_once("session.php");
-require_once("commons/Data.php");
+require_once("commons/State.php");
 require_once("src/Label.php");
 require_once("src/Sap.php");
 require_once("src/Lock.php");
@@ -12,9 +12,14 @@ $plateforme = $_GET['plateforme'];
 if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['plates'])) {
     die("Ce numéro de plateforme n'est pas pris en compte !");
 }
-
+if(file_exists($plateforme)) { 
+    $lockv = new Lock();
+    $state->lastState($plateforme, $lockv);
+    $state->currentState($plateforme);
+}
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 $sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
+
 $message = "";
 if(isset($_SESSION['message'])) {
     if($_SESSION['message'] == "zip") {
@@ -55,15 +60,28 @@ if(isset($_SESSION['message'])) {
         <input type="hidden" id="sciperNum" value="<?= $sciper ?>" />
         
         <div class="text-center">
+            <p>Facturation en cours : <?php echo (!empty($state->getCurrent())) ? $state->getCurrent() : "aucune";  ?></p>
+            <p>Dernière facturation : <?php echo (!empty($state->getLast())) ? $state->getLast() : "aucune";  ?></p> 
         <?php
         if(file_exists($plateforme)) { 
         ?>
             <button type="button" id="historique" class="btn btn-outline-dark">Consulter l'historique de la plateforme</button>
-            <button type="button" id="export" class="btn btn-outline-dark">Exporter des données de préparation</button>
+        <?php
+            if(empty($state->getCurrent()) && !empty($state->getLast())) {
+                ?>
+                <button type="button" id="redo" class="btn btn-outline-dark">Refaire factures</button>
+                <button type="button" id="month" class="btn btn-outline-dark">Facturation nouveau mois</button>
+                <button type="button" id="proforma" class="btn btn-outline-dark">Facturation Pro Forma</button>
+                <?php
+            }
+        }
+        else {
+        ?>
+            <button type="button" data-type="FIRST" class="btn btn-outline-dark prepare">1ère préparation</button>
         <?php
         }
         ?>
-            <button type="button" id="launch" class="btn btn-outline-dark">Lancer une préfacturation</button>
+        <button type="button" data-type="SIMU" class="btn btn-outline-dark prepare">Simulation</button>
         </div>
 
         <div class="text-center" id="message"><?= $message ?></div>
@@ -80,9 +98,9 @@ if(isset($_SESSION['message'])) {
             </div>
             <?php
             }
-            foreach(Data::scanDescSan($plateforme) as $year) {
-                foreach(Data::scanDescSan($plateforme."/".$year) as $month) {
-                    $versions = Data::scanDescSan($plateforme."/".$year."/".$month);
+            foreach(State::scanDescSan($plateforme) as $year) {
+                foreach(State::scanDescSan($plateforme."/".$year) as $month) {
+                    $versions = State::scanDescSan($plateforme."/".$year."/".$month);
                     echo '<tr>';
                     echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
                     if (file_exists($plateforme."/".$year."/".$month."/lockm.csv")) {
@@ -95,7 +113,7 @@ if(isset($_SESSION['message'])) {
                             echo ' <i class="bi bi-lock"></i> ';
                         }
                         echo '</td><td>';
-                        foreach(Data::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
+                        foreach(State::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
                             $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
                             $label = new Label();
                             $labtxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);

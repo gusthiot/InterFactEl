@@ -3,6 +3,7 @@ require_once("session.php");
 require_once("src/Label.php");
 require_once("src/Sap.php");
 require_once("src/Lock.php");
+require_once("commons/State.php");
 
 if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
     die("Manque un paramètre !");
@@ -13,6 +14,7 @@ $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
 $dir = $plateforme."/".$year."/".$month."/".$version."/".$run;
+$dirMonth = $plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
 $param = "?plateforme=".$plateforme."&year=".$year."&month=".$month."&version=".$version."&run=".$run;
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 $suf = "_".$name."_".$year."_".$month."_".$version;
@@ -44,7 +46,9 @@ $locvtxt = $lock->load($plateforme."/".$year."/".$month."/".$version, "version")
         <a href="plateforme.php?plateforme=<?= $plateforme ?>"><i class="bi bi-arrow-return-left"></i></a>	
         <h1 class="text-center p-1 pt-md-5"><?= $labtxt ?></h1>	
         <input type="hidden" id="dir" value="<?= $dir ?>" />
+        <input type="hidden" id="dirPrevMonth" value="<?= $dirPrevMonth ?>" />
         <input type="hidden" id="suf" value="<?= $suf ?>" />
+        <input type="hidden" id="plate" value="<?= $plateforme ?>" />
         
         <div id="actions" class="text-center">
             <button type="button" id="label" class="btn btn-outline-dark">Etiqueter</button>

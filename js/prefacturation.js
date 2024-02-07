@@ -25,7 +25,7 @@ $(document).on("click", "#saveLabel", function() {
     const txt = $('#labelArea').val();
     const dir = $('#dir').val();
     $.post("controller/saveLabel.php", {txt: txt, dir: dir}, function (message) {
-        reloadOnMessage(message);
+        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
 } );
 
@@ -40,8 +40,8 @@ $('#changes').on('click', function () {
 } );
 
 $('#invalidate').on('click', function () {
-    $.post("controller/invalidate.php", {dir: $('#dir').val()}, function (message) {
-        reloadOnMessage(message);
+    $.post("controller/invalidate.php", {dir: $('#dir').val()}, function () {
+        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
 } );
 
@@ -85,22 +85,9 @@ function sending(type) {
         bills.push($(this).val());
     });
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
-    $.post("controller/sendBills.php", {bills: bills, dir: $('#dir').val(), type: type}, function (message) {
-        reloadOnMessage(message);
+    $.post("controller/sendBills.php", {bills: bills, dir: $('#dir').val(), dirPrevMonth: $('#dirPrevMonth').val(), type: type}, function () {
+        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
-}
-
-function reloadOnMessage(message) {
-        sessionStorage.setItem("reloading", message);
-        window.location.reload();
-}
-
-window.onload = function() {
-    var message = sessionStorage.getItem("reloading");
-    if (message) {
-        $('#message').html(message);
-        sessionStorage.removeItem("reloading");
-    }
 }
 
 let all = false;
@@ -122,8 +109,8 @@ $(document).on("click", "#allBills", function() {
 });
 
 $('#finalize').on('click', function () {
-    $.post("controller/finalize.php", {dir: $('#dir').val()}, function (message) {
-        reloadOnMessage(message);
+    $.post("controller/finalize.php", {dir: $('#dir').val()}, function () {
+        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
 } );
 

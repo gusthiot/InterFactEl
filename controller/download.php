@@ -2,9 +2,10 @@
 require_once("../commons/Zip.php");
 require_once("../src/Paramedit.php");
 require_once("../src/Paramtext.php");
+require_once("../src/Lock.php");
 require_once("../config.php");
+require_once("../session.php");
 
-session_start();
 if(isset($_GET['type'])) {
     $type = $_GET['type'];
     $tmpFile = TEMP.$type.'.zip';
@@ -28,20 +29,30 @@ if(isset($_GET['type'])) {
         }
     }
     elseif($type==="prepa") {
-        if(isset($_GET['prepa']) && isset($_GET['plate']) && isset($_GET['tyfact'])) {
-            $prepa = json_decode($_GET['prepa']);
-            $dir = "../".$_GET['plate']."/".$prepa->year."/".$prepa->month."/".$prepa->version."/".$prepa->run;
+        if(isset($_GET['plate']) && isset($_GET['tyfact'])) {
+            $lockv = new Lock();
+            $state->lastState("../".$_GET['plate'], $lockv);
+            
+            $dir = "../".$_GET['plate']."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun();
             $tmpPe = TEMP.'paramedit.csv';
             $wm = "";
             $tyfact = "SAP";
-            if($_GET['tyfact'] == "proforma") {
+            if($_GET['tyfact'] == "PROFORMA") {
                 $paramtext = new Paramtext();
                 if($paramtext->load($dir."/OUT/"."paramtext.csv")) {
                     $wm = $paramtext->getParam('filigr-prof');
                 }
                 $tyfact = "PROFORMA";
             }
-            $array = [["Platform", $_GET['plate']], ["Year", $prepa->exp_y], ["Month", $prepa->exp_m], ["Type", $tyfact], ["Watermark", $wm]];
+            if($_GET['tyfact'] == "REDO") {
+                $year = $state->getLastYear();
+                $month = $state->getLastMonth();
+            }
+            else {
+                $year = $state->getNextYear();
+                $month = $state->getNextMonth();
+            }
+            $array = [["Platform", $_GET['plate']], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
             $paramedit = new Paramedit();
             $paramedit->write($tmpPe, $array);
             Zip::getZipDir($tmpFile, $dir."/OUT/", $tmpPe);

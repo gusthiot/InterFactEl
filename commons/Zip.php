@@ -1,6 +1,6 @@
 <?php
 
-require_once("Data.php");
+require_once("State.php");
 
 class Zip 
 {
@@ -27,7 +27,7 @@ class Zip
     {
         $dir = opendir($dirname);
         while($file = readdir($dir)) {
-            if(in_array($file, Data::ESCAPED)) {
+            if(in_array($file, State::ESCAPED)) {
                 continue;
             }
             $path = $dirname.'/'.$file;
