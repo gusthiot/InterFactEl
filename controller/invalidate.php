@@ -23,7 +23,7 @@ if(isset($_POST["dir"])){
     }
     logAction($_POST["dir"]);
     $res .= "invalidé";
-    echo $res;
+    $_SESSION['message'] = $res;
 }
 
 function logAction($dir) {

@@ -7,9 +7,10 @@ require_once("../session.php");
 require_once("../src/Lock.php");
 require_once("../src/Logfile.php");
 
-if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['type'])) {
+if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth']) && isset($_POST['type'])) {
     $bills = $_POST["bills"];
     $dir = "../".$_POST["dir"];
+    $dirPrevMonth = "../".$_POST["dirPrevMonth"];
     $html = "";
     $logfile = new Logfile();
     $sap = new Sap();
@@ -27,6 +28,10 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['type'])) {
                         $infos["Sent"][2] = date('Y-m-d H:i:s');
                         $infos["Sent"][3] = $_SESSION['user'];
                         $info->save($dir, $infos);
+                    }
+                    if (!file_exists($dirPrevMonth."/lockm.csv")) {
+                        $lock = new Lock();
+                        $lock->save($dirPrevMonth, 'month', "");
                     }
                     $saps = $sap->load($dir);                        
                     if(!empty($res->E_RESULT->item->IS_ERROR)) {
@@ -64,7 +69,7 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['type'])) {
         }
     }
     logAction($_POST["dir"], $sap, $_POST['type'], $oldStatus, $logfile);
-    echo $html;//$messages->getMessage('msg7');
+    $_SESSION['message'] = $html;
 }
 
 

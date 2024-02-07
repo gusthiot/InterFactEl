@@ -1,6 +1,6 @@
 <?php
 require_once("../commons/Zip.php");
-require_once("../commons/Data.php");
+require_once("../commons/State.php");
 require_once("../src/Result.php");
 require_once("../src/Logfile.php");
 require_once("../src/Paramedit.php");
@@ -24,68 +24,45 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                 if(empty($msg)) {
                     $results = new Result();
                     $params = new Paramedit();
+                    $lockv = new Lock();
+                    $state->lastState("../".$plateforme, $lockv);
                     if($params->load($tmpDir."paramedit.csv") && $results->load($tmpDir."result.csv")) {
                         if($plateforme != $params->getParam('Platform')) {
                             $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
                         }
-                        elseif($type !== $params->getParam('Type')) {
-                            if($type === "SAP") {
-                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
-                            }
-                            elseif($type === "PROFORMA") {
-                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8');
-                            }
-                            else {
-                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.9');
-                            }
-
+                        elseif($type === "SIMU" && $params->getParam('Type') !== "SIMU") {
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.7');
+                        }
+                        elseif($type !== "FIRST" && $type !== "SIMU" && (($type === "PROFORMA" && $params->getParam('Type') !== "PROFORMA") || ($type !== "PROFORMA" && $params->getParam('Type') !== "SAP"))) {
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
+                        }
+                        elseif($type === "REDO" && State::isSame($state->getLastMonth(), $state->getLastYear(), $params->getParam('Month'), $params->getParam('Year'))) {
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
+                        }
+                        elseif(($type === "MONTH" || $type === "PROFORMA") && !State::isNext($state->getLastMonth(), $state->getLastYear(), $params->getParam('Month'), $params->getParam('Year'))) {
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
                         }
                         elseif($plateforme !== $results->getResult('Platform')) {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
+                        }
+                        elseif(($type == "FIRST" || $type == "SIMU") && !State::isNextOrSame($results->getResult('Month'), $results->getResult('Year'), $params->getParam('Month'), $params->getParam('Year'))) {
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8');
                         }
                         elseif($type !== "SIMU" && $results->getResult('Type') !== "SAP") {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
                         }
                         else {
                             $pathPlate = "../".$plateforme;
-                            if($type !== "SIMU") {
-                                $lock = new Lock();
-                                if(file_exists($pathPlate)) {
-                                    $data = Data::availableForFacturation($pathPlate, $messages, $lock, $results);
-                                    if(!empty($data[$type])) {
-                                        if($data[$type][0]['type'] === "error") {
-                                            $msg = $data[$type][0]['msg'];
-                                        }
-                                        else {
-                                            $ok = false;
-                                            foreach($data[$type] as $option) {
-                                                if($option['type'] == "result") {
-                                                    if($option['exp_y'] === $params->getParam('Year') && (int)($option['exp_m']) === (int)($params->getParam('Month'))) {
-                                                        if($option['year'] === $results->getResult('Year') && (int)($option['month']) === (int)($results->getResult('Month')) && $option['version'] === $results->getResult('Version') && $option['run'] === $results->getResult('Folder')) {
-                                                            $ok = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            if(!$ok) {
-                                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
-                                            }
-                                            else {
-                                                $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
-                                            }
-                                        }
-                                    }
-                                    else {
-                                        $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
-                                    }
+                            if($type !== "SIMU" && $type !== "FIRST") {
+                                if((int)$state->getLastMonth() === (int)$results->getResult('Month') && $state->getLastYear() === $results->getResult('Year') && $state->getLastVersion() === $results->getResult('Version') && $state->getLastRun() === $results->getResult('Folder')) {
+                                    $msg = runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme);
                                 }
                                 else {
-                                    $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
                                 }
                             }
                             else {
-                                $msg = runPrefa($tmpDir, $pathPlate, $params->getParam('Year'), $params->getParam('Month'), $sciper, $plateforme, $type);
+                                $msg = runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme);
                             }
                         }
                     }
@@ -93,7 +70,7 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                         $msg = "Fichier(s) paramedit.csv et/ou result.csv vide(s)";
                     }
                 }
-                Data::delDir($tmpDir);
+                State::delDir($tmpDir);
             }
             else {
                 $errors= error_get_last();
@@ -101,7 +78,6 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
 
             }
             $_SESSION['message'] = $msg;
-    
         }
         else {
             $_SESSION['message'] = "copy";
@@ -118,9 +94,12 @@ else {
     header('Location: ../index.php');
 }
 
-function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme, $type) {
+function runPrefa($tmpDir, $path, $params, $sciper, $plateforme) {
     $unique = time();
-    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
+    $month = $params->getParam('Month');
+    $year = $params->getParam('Year');
+    $type = $params->getParam('Type');
+    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -n -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
     $result = shell_exec($cmd);
     $mstr = (int)$month > 9 ? $month : '0'.$month;
     if(substr($result, 0, 2) === "OK") {
@@ -150,7 +129,7 @@ function runPrefa($tmpDir, $path, $year, $month, $sciper, $plateforme, $type) {
 }
 
 function delPrefa($path, $year, $mstr, $unique) {
-    Data::removeRun($path."/".$year."/".$mstr, $unique);
+    State::removeRun($path."/".$year."/".$mstr, $unique);
     if(file_exists($path)) {
         if(file_exists($path."/".$year)) {
             rmdir($path."/".$year);
