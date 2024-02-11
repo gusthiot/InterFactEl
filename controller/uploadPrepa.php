@@ -25,7 +25,9 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                     $results = new Result();
                     $params = new Paramedit();
                     $lockv = new Lock();
-                    $state->lastState("../".$plateforme, $lockv);
+                    if(file_exists("../".$plateforme)) { 
+                        $state->lastState("../".$plateforme, $lockv);
+                    }
                     if($params->load($tmpDir."paramedit.csv") && $results->load($tmpDir."result.csv")) {
                         if($plateforme != $params->getParam('Platform')) {
                             $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
@@ -36,17 +38,17 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                         elseif($type !== "FIRST" && $type !== "SIMU" && (($type === "PROFORMA" && $params->getParam('Type') !== "PROFORMA") || ($type !== "PROFORMA" && $params->getParam('Type') !== "SAP"))) {
                             $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
                         }
-                        elseif($type === "REDO" && State::isSame($state->getLastMonth(), $state->getLastYear(), $params->getParam('Month'), $params->getParam('Year'))) {
+                        elseif($type === "REDO" && !State::isSame($state->getLastMonth(), $state->getLastYear(), $params->getParam('Month'), $params->getParam('Year'))) {
                             $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
                         }
                         elseif(($type === "MONTH" || $type === "PROFORMA") && !State::isNext($state->getLastMonth(), $state->getLastYear(), $params->getParam('Month'), $params->getParam('Year'))) {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3'); // $state->getLastMonth()." ".$state->getLastYear()." ".$params->getParam('Month')." ".$params->getParam('Year');
                         }
                         elseif($plateforme !== $results->getResult('Platform')) {
                             $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
                         }
                         elseif(($type == "FIRST" || $type == "SIMU") && !State::isNextOrSame($results->getResult('Month'), $results->getResult('Year'), $params->getParam('Month'), $params->getParam('Year'))) {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8');
+                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8'); // $results->getResult('Month')." ".$results->getResult('Year')." ".$params->getParam('Month')." ".$params->getParam('Year');
                         }
                         elseif($type !== "SIMU" && $results->getResult('Type') !== "SAP") {
                             $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
@@ -99,7 +101,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme) {
     $month = $params->getParam('Month');
     $year = $params->getParam('Year');
     $type = $params->getParam('Type');
-    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -n -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
+    $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
     $result = shell_exec($cmd);
     $mstr = (int)$month > 9 ? $month : '0'.$month;
     if(substr($result, 0, 2) === "OK") {

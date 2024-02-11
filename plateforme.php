@@ -107,7 +107,11 @@ if(isset($_SESSION['message'])) {
                         echo ' <i class="bi bi-lock"></i> ';
                     }
                     echo '</td>';
+                    $line = 0;
                     foreach($versions as $version) {
+                        if($line > 0){
+                            echo '<tr>';
+                        }
                         echo '<td>'.$version;
                         if (file_exists($plateforme."/".$year."/".$month."/".$version."/lockv.csv")) {
                             echo ' <i class="bi bi-lock"></i> ';
@@ -137,6 +141,11 @@ if(isset($_SESSION['message'])) {
                             }
                         }
                         echo '</td>';
+                        
+                        if($line > 0){
+                            echo '</tr>';
+                        }
+                        $line++;
                     }
                     echo '</tr>';
                 }
