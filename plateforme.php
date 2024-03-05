@@ -75,7 +75,7 @@ if(isset($_SESSION['message'])) {
                 <?php
             }
         }
-        else {
+        if(empty($state->getLast()) && empty($state->getCurrent())) {
         ?>
             <button type="button" data-type="FIRST" class="btn btn-outline-dark prepare">1ère préparation</button>
         <?php
