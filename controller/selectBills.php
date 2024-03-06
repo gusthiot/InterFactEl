@@ -5,7 +5,7 @@ require_once("../src/Lock.php");
 
 if(isset($_POST["dir"]) && isset($_POST["type"])){
     $sap = new Sap();
-    $html = "<div>";
+    $html = "";
     $choices = [];
     $i = 0;
     foreach($sap->load("../".$_POST["dir"]) as $line) {
@@ -25,13 +25,15 @@ if(isset($_POST["dir"]) && isset($_POST["type"])){
         $i++;
 
     }
-    if(count($choices)>1) {
+    if(count($choices)>0) {
+        $html .= "<div>";
         $html .= '<br /><div><button type="button" id="allBills" class="btn btn-outline-dark">Tout sélectionner</button><button type="button" id="'.$_POST["type"].'" class="btn btn-outline-dark">Envoyer</button></div>';
+    
+        foreach($choices as $choice) {
+            $html .= $choice;
+        }
+        $html .= "</div>";
     }
-    foreach($choices as $choice) {
-        $html .= $choice;
-    }
-    $html .= "</div>";
     
     echo $html;
 }

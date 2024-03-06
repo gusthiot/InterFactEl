@@ -103,7 +103,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme) {
     $type = $params->getParam('Type');
     $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
     $result = shell_exec($cmd);
-    $mstr = (int)$month > 9 ? $month : '0'.$month;
+    $mstr = State::addToMonth($month, 0); //(int)$month > 9 ? $month : '0'.$month;
     if(substr($result, 0, 2) === "OK") {
         $msg = $unique." tout OK ".strstr($result, '(');
         $tab = explode(" ", $result);
