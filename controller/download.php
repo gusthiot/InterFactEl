@@ -61,29 +61,12 @@ if(isset($_GET['type'])) {
     }
     elseif($type==="sap") {
         if(isset($_GET['dir'])) {
-            $fileName = "../".$_GET['dir']."/sap.csv";
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
-            header('Content-Length: ' . filesize($fileName));
-            readfile($fileName);
+            readCsv("../".$_GET['dir']."/sap.csv");
         }
     }
     elseif($type==="modif") {
-        if(isset($_GET['dir']) && isset($_GET['dir'])) {
-            $fileName = "../".$_GET["dir"]."/Modif-factures".$_GET["suf"].".csv";
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
-            header('Content-Length: ' . filesize($fileName));
-            readfile($fileName);
-        }
-    }
-    elseif($type==="journal") {
-        if(isset($_GET['dir']) && isset($_GET['dir'])) {
-            $fileName = "../".$_GET["dir"]."/Journal-modifs".$_GET["suf"].".csv";
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
-            header('Content-Length: ' . filesize($fileName));
-            readfile($fileName);
+        if(isset($_GET['dir']) && isset($_GET['name'])) {
+            readCsv("../".$_GET["dir"]."/".$_GET["name"].".csv");
         }
     }
     else {
@@ -92,5 +75,12 @@ if(isset($_GET['type'])) {
     }
 }
 
+function readCsv($fileName) {
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
+    header('Content-Length: ' . filesize($fileName));
+    readfile($fileName);
+
+}
 
 ?>

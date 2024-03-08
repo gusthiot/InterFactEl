@@ -16,6 +16,7 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth'
     $sap = new Sap();
     $sap->load($dir);
     $oldStatus = $sap->status();
+    $oldState = $sap->state();
     foreach($bills as $bill) {
         $facture = new Facture($dir."/Factures_JSON/facture_".$bill.".json");
         $res = json_decode(send($facture->getFacture()));
@@ -33,33 +34,22 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth'
                         $lock = new Lock();
                         $lock->save($dirPrevMonth, 'month', "");
                     }
-                    $saps = $sap->load($dir);                        
+                    $sap_cont = $sap->load($dir);                        
                     if(!empty($res->E_RESULT->item->IS_ERROR)) {
                         if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
-                            $saps[$bill][3] = "ERROR";
-                            $saps[$bill][4] = $res->E_RESULT->item->LOG->item->MESSAGE;
+                            $sap_cont[$bill][3] = "ERROR";
+                            $sap_cont[$bill][4] = $res->E_RESULT->item->LOG->item->MESSAGE;
                             $txt = $bill." | ERROR | ".$res->E_RESULT->item->LOG->item->MESSAGE;
                         }
                     }
                     else {
                         if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
-                            $saps[$bill][3] = "SENT";
-                            $saps[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
+                            $sap_cont[$bill][3] = "SENT";
+                            $sap_cont[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
                             $txt = $bill." | SENT | ".$res->E_RESULT->item->DOC_NUMBER;
                         }
                     }
-                    $sap->save($dir, $saps);
-                    logSap($_POST["dir"], $bill, $saps, $logfile);
-                    if($sap->status() == 4) {
-                        $lock = new Lock();
-                        $lock->save($dir, 'run', $lock::STATES['finalized']);
-                        $sep = strrpos($dir, "/");
-                        $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
-                        $infos["Closed"][2] = date('Y-m-d H:i:s');
-                        $infos["Closed"][3] = $_SESSION['user'];
-                        $info->save($dir, $infos);
-
-                    }
+                    $sap->save($dir, $sap_cont);
                 }
                 else {
                     $res .= " info vide ? ";
@@ -68,22 +58,28 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth'
             }
         }
     }
-    logAction($_POST["dir"], $sap, $_POST['type'], $oldStatus, $logfile);
+    if($sap->status() == 4) {
+        $lock = new Lock();
+        $lock->save($dir, 'run', $lock::STATES['finalized']);
+        $sep = strrpos($dir, "/");
+        $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
+        $infos["Closed"][2] = date('Y-m-d H:i:s');
+        $infos["Closed"][3] = $_SESSION['user'];
+        $info->save($dir, $infos);
+
+    }
+    logAction($_POST["dir"], $sap, $_POST['type'], $oldStatus, $oldState, $logfile, count($bills));
     $_SESSION['message'] = $html;
 }
 
 
-function logSap($dir, $bill, $content, $logfile) {
-    $tab = explode("/", $dir);
-    $txt = $bill." | ".$content[$bill][3]." | ".$content[$bill][4];
-    $logfile->write("../".$tab[0], $txt);
-}
-
-function logAction($dir, $sap, $type, $oldStatus, $logfile) {
+function logAction($dir, $sap, $type, $oldStatus, $oldState, $logfile, $number) {
     $sap->load("../".$dir);
     $status = $sap->status();
+    $state = $sap->state();
     $tab = explode("/", $dir);
-    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$tab[1].", ".$tab[2].", ".$tab[3].", ".$tab[4]." | ".$tab[4]." | ".$type." | ".$oldStatus." | ".$status;
+    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$tab[1].", ".$tab[2].", ".$tab[3].", ".$tab[4]." | ".$tab[4]." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
+    $txt .= $oldState." | ".$number." | ".$state;
     $logfile->write("../".$tab[0], $txt);
 }
 

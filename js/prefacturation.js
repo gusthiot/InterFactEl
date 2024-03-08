@@ -64,11 +64,15 @@ $('#send').on('click', function () {
 } );
 
 $(document).on("click", "#getModif", function() {
-    window.location.href = "controller/download.php?type=modif&dir="+$('#dir').val()+"&suf="+$('#suf').val();
+    window.location.href = "controller/download.php?type=modif&dir="+$('#dir').val()+"&name=Modif-factures"+$('#suf').val();
 } );
 
 $(document).on("click", "#getJournal", function() {
-    window.location.href = "controller/download.php?type=journal&dir="+$('#dir').val()+"&suf="+$('#suf').val();
+    window.location.href = "controller/download.php?type=modif&dir="+$('#dir').val()+"&name=Journal-modifs"+$('#suf').val();
+} );
+
+$(document).on("click", "#getClient", function() {
+    window.location.href = "controller/download.php?type=modif&dir="+$('#dir').val()+"&name=Client-modifs"+$('#suf').val();
 } );
 
 $(document).on("click", "#sendBills", function() {

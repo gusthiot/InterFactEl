@@ -35,6 +35,15 @@ class Sap extends Csv
         return $status['READY'] + 2*$status['ERROR'] + 4*$status['SENT'];
     }
     
+    function state(): string
+    {
+        $state = ['READY'=>0, 'ERROR'=>0, 'SENT'=>0];
+        foreach($this->bills as $bill) {
+                $state[$bill[3]] += 1;
+        }
+        return "SENT = ".$state['SENT'].", ERROR = ".$state['ERROR'].", READY = ".$state['READY'];
+    }
+
     function save(string $dir, array $content): void 
     {
         $this->bills = $content;

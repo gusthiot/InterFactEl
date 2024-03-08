@@ -69,8 +69,8 @@ if(isset($_SESSION['message'])) {
         <?php
             if(empty($state->getCurrent()) && !empty($state->getLast())) {
                 ?>
-                <button type="button" id="redo" class="btn btn-outline-dark">Refaire factures</button>
-                <button type="button" id="month" class="btn btn-outline-dark">Facturation nouveau mois</button>
+                <button type="button" id="redo" class="btn btn-outline-dark">Refaire factures : <?php echo $state->getLastMonth()."/".$state->getLastYear(); ?> </button>
+                <button type="button" id="month" class="btn btn-outline-dark">Facturation nouveau mois : <?php echo $state->getNextMonth()."/".$state->getNextYear(); ?> </button>
                 <button type="button" id="proforma" class="btn btn-outline-dark">Facturation Pro Forma</button>
                 <?php
             }
