@@ -19,8 +19,9 @@ class Logfile
     function write(string $dir, string $txt): bool 
     {
         $file = $dir.self::NAME;
-        if((($open = fopen($file, "a")) !== false)) {
-            if(fwrite($open, $txt.PHP_EOL) === false) {                
+        $content = self::load($dir);
+        if((($open = fopen($file, "w")) !== false)) {
+            if(fwrite($open, $txt.PHP_EOL.$content) === false) {                
                 return false;
             }
             fclose($open);
