@@ -68,11 +68,11 @@ $(document).on("click", "#getModif", function() {
 } );
 
 $(document).on("click", "#getJournal", function() {
-    window.location.href = "controller/download.php?type=modif&dir="+$('#dir').val()+"&name=Journal-modifs"+$('#suf').val();
+    window.location.href = "controller/download.php?type=modif&dir="+$('#dir').val()+"&name=Journal-corrections"+$('#suf').val();
 } );
 
 $(document).on("click", "#getClient", function() {
-    window.location.href = "controller/download.php?type=modif&dir="+$('#dir').val()+"&name=Client-modifs"+$('#suf').val();
+    window.location.href = "controller/download.php?type=modif&dir="+$('#dir').val()+"&name=Clients-modifs"+$('#suf').val();
 } );
 
 $(document).on("click", "#sendBills", function() {

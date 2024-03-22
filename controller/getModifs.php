@@ -20,7 +20,7 @@ if(isset($_POST["dir"]) && isset($_POST["suf"])){
     
     $html .= '<button type="button" id="getModif" class="btn btn-outline-dark">Download Modif-factures</button>';
 
-    $journal = new Journal("../".$_POST["dir"]."/Journal-modifs".$_POST["suf"].".csv");
+    $journal = new Journal("../".$_POST["dir"]."/Journal-corrections".$_POST["suf"].".csv");
     if(!empty($journal->getModifs())) {
         $html .= "<table>";
         foreach($journal->getModifs() as $line) {
@@ -35,7 +35,7 @@ if(isset($_POST["dir"]) && isset($_POST["suf"])){
         $html .= '<button type="button" id="getJournal" class="btn btn-outline-dark">Download Journal-modifs</button>';
     }
 
-    $client = new Client("../".$_POST["dir"]."/Client-modifs".$_POST["suf"].".csv");
+    $client = new Client("../".$_POST["dir"]."/Clients-modifs".$_POST["suf"].".csv");
     if(!empty($client->getModifs())) {
         $html .= "<table>";
         foreach($client->getModifs() as $line) {
