@@ -73,7 +73,7 @@ $locvtxt = $lock->load($plateforme."/".$year."/".$month."/".$version, "version")
             if(in_array($status, [0, 5, 6, 7]) && !$loctxt) {
                 echo '<button type="button" id="finalize" class="btn btn-outline-info">Finaliser SAP</button>';
             }
-                if((in_array($status, [0, 5, 6, 7]) && !$loctxt) || (in_array($status, [4, 5, 6, 7]) && $locvtxt && ($locvtxt == $run))) {
+                if((in_array($status, [4, 5, 6, 7]) && !$loctxt) || (in_array($status, [4, 5, 6, 7]) && $locvtxt && ($locvtxt == $run))) {
             echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg6').'" class="btn btn-outline-danger">Renvoi SAP</button>';
             }
             ?>

@@ -54,7 +54,7 @@ class Sap extends Csv
         $this->write($dir.self::NAME, $data);
     }
 
-    static function color(int $status, bool $lock): string 
+    static function color(int $status, string $lock): string 
     {
         switch($status) {
             case 0:
