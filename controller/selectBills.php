@@ -8,22 +8,30 @@ if(isset($_POST["dir"]) && isset($_POST["type"])){
     $html = "";
     $choices = [];
     $i = 0;
-    foreach($sap->load("../".$_POST["dir"]) as $line) {
-        if($_POST["type"]) {
-            if($line[3] === "READY" || $line[3] === "ERROR") {
-                $choices[] = '<div><input type="checkbox" id="bill'.$i.'" name="bills" value="'.$line[1].'"><label for="bill'.$i.'"> '.$line[0].' '.$line[1].' '.$line[2].' </label></div>';
+    $bills = $sap->load("../".$_POST["dir"]);
+    $lines = [];
+    foreach($bills as $bill) {
+        $lines[$bill[0]][$bill[1]] = $bill;
+    }
+    ksort($lines);
+    foreach($lines as $labo) {
+        ksort($labo);
+        foreach($labo as $line) {
+            if($_POST["type"] == "sendBills") {
+                if($line[3] === "READY" || $line[3] === "ERROR") {
+                    $choices[] = '<div><input type="checkbox" id="bill'.$i.'" name="bills" value="'.$line[1].'"><label for="bill'.$i.'"> '.$line[0].' '.$line[1].' '.$line[2].' '.$line[3].' </label></div>';
+                }
             }
-        }
-        else {
-            $lock = new Lock();
-            $loctxt = $lock->load($dir, "run");
-            if( $line[3] === "SENT" || ($loctxt && $line[3] === "READY") ) {
-                $choices[] = '<div><input type="checkbox" id="bill'.$i.'" name="bills" value="'.$line[1].'"><label for="bill'.$i.'"> '.$line[0].' '.$line[1].' '.$line[2].' </label></div>';
+            else {
+                $lock = new Lock();
+                $loctxt = $lock->load("../".$_POST["dir"], "run");
+                if( $line[3] === "SENT" || ($loctxt && $line[3] === "READY") ) {
+                    $choices[] = '<div><input type="checkbox" id="bill'.$i.'" name="bills" value="'.$line[1].'"><label for="bill'.$i.'"> '.$line[0].' '.$line[1].' '.$line[2].' '.$line[3].' </label></div>';
+                }
             }
+
+            $i++;
         }
-
-        $i++;
-
     }
     if(count($choices)>0) {
         $html .= "<div>";
