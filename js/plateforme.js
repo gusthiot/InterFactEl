@@ -1,8 +1,18 @@
 
 $('#historique').on('click', function () {
-    $.post("controller/getLogfile.php", {plate: $('#plateNum').val()}, function (data) {
+    $('#arbo').hide();
+    $('#buttons').hide();
+    $('#histo').show();
+    $.post("controller/getLogfile.php", {plate: $('#plate').val()}, function (data) {
         $('#display').html(data);
     });
+} );
+
+$('#close-histo').on('click', function () {
+    $('#arbo').show();
+    $('#buttons').show();
+    $('#histo').hide();
+    $('#display').html("");
 } );
 
 $('.run').on('click', function () {
@@ -10,64 +20,52 @@ $('.run').on('click', function () {
 } );
 
 $('#destroy').on('click', function () {
-    window.location.href = "controller/destroy.php?plate="+$('#plateNum').val();
+    window.location.href = "controller/destroy.php?plate="+$('#plate').val();
 } );
 
 $('.erase').on('click', function () {
-    window.location.href = "controller/erase.php?plate="+$('#plateNum').val()+"&dir="+$(this).data('dir')+"&run="+$(this).data('run');
+    window.location.href = "controller/erase.php?plate="+$('#plate').val()+"&dir="+$(this).data('dir')+"&run="+$(this).data('run');
 } );
 
-$(document).on("click", ".prepare", function() {
-    const type = $(this).data('type');
-    let title = "";
-    switch (type) {
-        case 'SIMU':
-            title = "Simuler";
-            break;
-        case 'FIRST':
-            title = "Préparer 1ère facturation";
-            break;
-        case 'MONTH':
-        case 'REDO':
-            title = "Lancer préparation";
-            break;
-        case 'PROFORMA':
-            title = "Générer";
-            break;
-    }     
-    let html = '<form action="controller/uploadPrepa.php" method="post" id="factform" enctype="multipart/form-data" >';
-    html += '<input type="file" name="zip_file" id="zip_file" accept=".zip">';
-    html += '<input type="hidden" name="plate" id="plate" value="'+$('#plateNum').val()+'">';
-    html += '<input type="hidden" name="sciper" id="sciper" value="'+$('#sciperNum').val()+'">';
-    html += '<input type="hidden" name="type" id="type" value="'+type+'">';
-    html += '<div><button type="button" id="facturation" class="btn btn-outline-dark">'+title+'</button></div>';
-    $('#display').html(html);
-});
-
 $('#redo').on('click', function () {
-    $('#display').html('<div><button type="button" data-type="REDO" class="btn btn-outline-dark export">Exporter</button><button type="button" data-type="REDO" class="btn btn-outline-dark prepare">Préparer Facturation</button></div>');
+    $('#display').html(uploader("REDO", "Préparer Facturation"));
 });
 
 $('#month').on('click', function () {
-    $('#display').html('<div><button type="button" data-type="MONTH" class="btn btn-outline-dark export">Exporter</button><button type="button" data-type="MONTH" class="btn btn-outline-dark prepare">Préparer Facturation</button></div>');
+    $('#display').html(uploader("MONTH", "Préparer Facturation"));
 });
 
 $('#proforma').on('click', function () {
-    $('#display').html('<div><button type="button" data-type="PROFORMA" class="btn btn-outline-dark export">Exporter</button><button type="button" data-type="PROFORMA" class="btn btn-outline-dark prepare">Générer Proforma</button></div>');
+    $('#display').html(uploader("PROFORMA", "Générer Proforma"));
 });
 
-$(document).on("click", "#facturation", function() {
-    const file = $('#zip_file').val();
+function uploader(type, title) {
+    let html = '<div><button type="button" data-type="'+type+'" class="btn btn-outline-dark export">Exporter</button>';
+    html += '<label class="up-but">';
+    html += '<input type="file" id="'+type+'" name="zip_file" class="zip_file" accept=".zip">';
+    html += title;
+    html += '</label></div>';
+    return html;
+}
+
+$(document).on("change", ".zip_file", function () {
+    const id = $(this).attr('id');
+    $('#type').val(id);
+    const file = $(this).val();
     if(file.indexOf('.zip') > -1) {
         $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
-        $("#facturation").prop('disabled', true);
         $('#factform').submit();
     }
     else {
         $('#message').text('Vous devez uploader une archive zip !');
     }
-} );
+});
+
 
 $(document).on("click", ".export", function() {
-    window.location.href = "controller/download.php?type=prepa&plate="+$('#plateNum').val()+"&tyfact="+$(this).data('type');
+    window.location.href = "controller/download.php?type=prepa&plate="+$('#plate').val()+"&tyfact="+$(this).data('type');
+} );
+
+$('#tarifs').on('click', function () {
+    window.location.href = "tarifs.php?plateforme="+$('#plate').val();
 } );

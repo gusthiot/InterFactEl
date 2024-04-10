@@ -9,6 +9,9 @@ if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]
     die("Manque un paramètre !");
 }
 $plateforme = $_GET['plateforme'];
+if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['plates'])) {
+    die("Ce numéro de plateforme n'est pas pris en compte !");
+}
 $year = $_GET['year'];
 $month = $_GET['month'];
 $version = $_GET['version'];
@@ -43,7 +46,7 @@ $locvtxt = $lock->load($plateforme."/".$year."/".$month."/".$version, "version")
 
     <body>
         <div class="container-fluid">	
-        <a href="plateforme.php?plateforme=<?= $plateforme ?>"><i class="bi bi-arrow-return-left"></i></a>	
+        <div id="head"><div id="div-logo"><a href="index.php"><img src="img/EPFL_Logo_Digital_RGB_PROD.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > <a href="plateforme.php?plateforme=<?= $plateforme ?>">Facturation <?= $name ?></a> > Prefacturation <?= $labtxt ?></p></div></div>
         <h1 class="text-center p-1 pt-md-5"><?= $labtxt ?></h1>	
         <input type="hidden" id="dir" value="<?= $dir ?>" />
         <input type="hidden" id="dirPrevMonth" value="<?= $dirPrevMonth ?>" />
@@ -83,11 +86,8 @@ $locvtxt = $lock->load($plateforme."/".$year."/".$month."/".$version, "version")
 
         <div class="text-center" id="display"></div>
 
-        <?php
-        ?>
-
         </div>
         <?php include("commons/footer.php");?> 
-        <script src="js/prefacturation.js">var dir = "<?= $dir ?>";</script>
+        <script src="js/prefacturation.js"></script>
 	</body>
 </html>

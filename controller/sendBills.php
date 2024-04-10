@@ -90,9 +90,9 @@ function send(string $data): string
     curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
     curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_setopt($curl, CURLOPT_USERPWD, SAP_SIMU_USER.":".SAP_SIMU_PWD);  
+    curl_setopt($curl, CURLOPT_USERPWD, SAP_USER.":".SAP_PWD);  
 
-    curl_setopt($curl, CURLOPT_URL, "https://testsapservices.epfl.ch/poq/RESTAdapter/api/sd/facture");
+    curl_setopt($curl, CURLOPT_URL, SAP_URL);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
     $result = curl_exec($curl);

@@ -29,5 +29,12 @@ class Label
         return false;
     }
 
+    function remove(string $dir): bool
+    {
+        $file = $dir.self::NAME;
+        return unlink($file);
+
+    }
+
 }
 ?>
