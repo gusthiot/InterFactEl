@@ -3,24 +3,7 @@ require_once("session.php");
 
 $message = "";
 if(isset($_SESSION['message'])) {
-    if($_SESSION['message'] == "zip") {
-        $message = "Vous devez uploader une archive zip !";
-    }
-    elseif($_SESSION['message'] == "data") {
-        $message = "Erreur de données";
-    }
-    elseif($_SESSION['message'] == "copy") {
-        $message = "Erreur de copie sur le disque";
-    }
-    elseif($_SESSION['message'] == "error") {
-        $message = "Erreur non documentée";
-    }
-    elseif($_SESSION['message'] == "success") {
-        $message = "Les fichiers ont bien été enregistré";
-    }
-    else {
-        $message = $_SESSION['message'];
-    }
+    $message = $_SESSION['message'];
     unset($_SESSION['message']); 
 }
 
@@ -82,18 +65,20 @@ if(isset($_SESSION['message'])) {
                             </div>
                         </div>
                         <?php
-                        if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
+                        if(!empty($gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
                             ?>      
                             <div id="index-tarifs">                
                                 <h5 class="">Nouveaux tarifs</h5>
                                 <div class="tiles">
                                 <?php
                                 foreach($dataGest['tarifs'] as $plateforme => $name) {
-                                    echo '<div class="tarifs tile center-three">
-                                            <input type="hidden" id="plateNum" value="'.$plateforme.'" />
-                                            <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
-                                            <i class="bi bi-gear"></i>
-                                        </div>';
+                                    if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
+                                        echo '<div class="tarifs tile center-three">
+                                                <input type="hidden" id="plateNum" value="'.$plateforme.'" />
+                                                <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
+                                                <i class="bi bi-gear"></i>
+                                            </div>';
+                                    }
                                 }
                                 ?>
                             </div>

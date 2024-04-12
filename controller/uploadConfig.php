@@ -18,15 +18,15 @@ if($_FILES['zip_file']) {
     
         }
         else {
-            $_SESSION['message'] = "copy";
+            $_SESSION['message'] = "copy error";
         }
     }
     else {
-        $_SESSION['message'] = "zip";
+        $_SESSION['message'] = "zip not accepted";
     }
 }
 else {
-    $_SESSION['message'] = "data";
+    $_SESSION['message'] = "post_data_missing";
 }
 header('Location: ../index.php');
 

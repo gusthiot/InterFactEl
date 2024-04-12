@@ -70,7 +70,7 @@ if(isset($_GET['type'])) {
         }
     }
     else {
-        $_SESSION['message'] = "erreur";
+        $_SESSION['message'] = "erreur download";
         header('Location: ../index.php');
     }
 }

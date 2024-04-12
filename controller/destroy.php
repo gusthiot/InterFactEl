@@ -2,7 +2,7 @@
 session_start();
 if(isset($_GET["plate"])) {
     exec(sprintf("rm -rf %s", escapeshellarg("../".$_GET["plate"])));
-    $_SESSION['message'] = "ok";
+    $_SESSION['message'] = "données de plateforme correctement effacées";
     header('Location: ../plateforme.php?plateforme='.$_GET["plate"]);
 }
 else {

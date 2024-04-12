@@ -32,26 +32,10 @@ if(empty($state->getCurrent())) {
 
 $message = "";
 if(isset($_SESSION['message'])) {
-    if($_SESSION['message'] == "zip") {
-        $message = "Vous devez uploader une archive zip !";
-    }
-    elseif($_SESSION['message'] == "data") {
-        $message = "Erreur de données";
-    }
-    elseif($_SESSION['message'] == "copy") {
-        $message = "Erreur de copie sur le disque";
-    }
-    elseif($_SESSION['message'] == "error") {
-        $message = "Erreur non documentée";
-    }
-    elseif($_SESSION['message'] == "success") {
-        $message = "Les fichiers ont bien été enregistré";
-    }
-    else {
-        $message = $_SESSION['message'];
-    }
+    $message = $_SESSION['message'];
     unset($_SESSION['message']); 
 }
+
 
 function uploader(string $title, string $id)
 {
