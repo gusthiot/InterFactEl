@@ -29,13 +29,11 @@ if(empty($state->getCurrent())) {
     }
 }
 
-
 $message = "";
 if(isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
     unset($_SESSION['message']); 
 }
-
 
 function uploader(string $title, string $id)
 {
@@ -117,53 +115,55 @@ function uploader(string $title, string $id)
                     foreach(State::scanDescSan($plateforme) as $year) {
                         foreach(State::scanDescSan($plateforme."/".$year) as $month) {
                             $versions = State::scanDescSan($plateforme."/".$year."/".$month);
-                            echo '<tr>';
-                            echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
-                            if (file_exists($plateforme."/".$year."/".$month."/lockm.csv")) {
-                                echo ' <i class="bi bi-lock"></i> ';
-                            }
-                            echo '</td>';
-                            $line = 0;
-                            foreach($versions as $version) {
-                                if($line > 0){
-                                    echo '<tr>';
-                                }
-                                echo '<td>'.$version;
-                                if (file_exists($plateforme."/".$year."/".$month."/".$version."/lockv.csv")) {
+                            if(count($versions) > 0) {
+                                echo '<tr>';
+                                echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
+                                if (file_exists($plateforme."/".$year."/".$month."/lockm.csv")) {
                                     echo ' <i class="bi bi-lock"></i> ';
                                 }
-                                echo '</td><td>';
-                                foreach(State::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
-                                    $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
-                                    $label = new Label();
-                                    $labtxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
-                                    if(empty($labtxt)) {
-                                        $labtxt = $run;
+                                echo '</td>';
+                                $line = 0;
+                                foreach($versions as $version) {
+                                    if($line > 0){
+                                        echo '<tr>';
                                     }
-                                    $sap = new Sap();
-                                    $sap->load($plateforme."/".$year."/".$month."/".$version."/".$run);
-                                    $status = $sap->status();
-                                    $lock = new Lock();
-                                    $loctxt = $lock->load($plateforme."/".$year."/".$month."/".$version."/".$run, "run");
-                                    echo ' <button type="button" value="'.$value.'" class="run btn '.Sap::color($status, $loctxt).'"> '.$labtxt;
-                                    if ($loctxt) {
+                                    echo '<td>'.$version;
+                                    if (file_exists($plateforme."/".$year."/".$month."/".$version."/lockv.csv")) {
                                         echo ' <i class="bi bi-lock"></i> ';
                                     }
-                                    echo '</button> ';
-                                    if($superviseur->isSuperviseur($_SESSION['user'])) {
-                                    ?>
-                                    <button type="button" class="btn btn-danger erase" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
-                                    <?php
+                                    echo '</td><td>';
+                                    foreach(State::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
+                                        $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
+                                        $label = new Label();
+                                        $labtxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
+                                        if(empty($labtxt)) {
+                                            $labtxt = $run;
+                                        }
+                                        $sap = new Sap();
+                                        $sap->load($plateforme."/".$year."/".$month."/".$version."/".$run);
+                                        $status = $sap->status();
+                                        $lock = new Lock();
+                                        $loctxt = $lock->load($plateforme."/".$year."/".$month."/".$version."/".$run, "run");
+                                        echo ' <button type="button" value="'.$value.'" class="run btn '.Sap::color($status, $loctxt).'"> '.$labtxt;
+                                        if ($loctxt) {
+                                            echo ' <i class="bi bi-lock"></i> ';
+                                        }
+                                        echo '</button> ';
+                                        if($superviseur->isSuperviseur($_SESSION['user'])) {
+                                        ?>
+                                        <button type="button" class="btn btn-danger erase" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
+                                        <?php
+                                        }
                                     }
+                                    echo '</td>';
+                                    
+                                    if($line > 0){
+                                        echo '</tr>';
+                                    }
+                                    $line++;
                                 }
-                                echo '</td>';
-                                
-                                if($line > 0){
-                                    echo '</tr>';
-                                }
-                                $line++;
+                                echo '</tr>';
                             }
-                            echo '</tr>';
                         }
                     }
                 ?></table><?php

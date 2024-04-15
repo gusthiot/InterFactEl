@@ -105,7 +105,7 @@ class State
         rmdir($dir);
     }
 
-    const ESCAPED = ['..', '.','logfile.log', 'lockm.csv', 'lockv.csv'];
+    const ESCAPED = ['..', '.','logfile.log', 'lockm.csv', 'lockv.csv', 'parametres.zip', 'label.txt'];
 
     static function scanDescSan(string $dir): array 
     {

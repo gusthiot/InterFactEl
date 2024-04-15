@@ -188,6 +188,12 @@ input[type="file"] {
   padding: 10px;
 }
 
+#arbo {
+  margin: auto;
+  text-align: center;
+  width: 1500px;
+}
+
 #histo {
   padding: 10px;
 }

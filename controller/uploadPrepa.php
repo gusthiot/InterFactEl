@@ -4,6 +4,7 @@ require_once("../commons/State.php");
 require_once("../src/Result.php");
 require_once("../src/Logfile.php");
 require_once("../src/Paramedit.php");
+require_once("../src/Paramtext.php");
 require_once("../src/Lock.php");
 require_once("../session.php");
 require_once("../src/Sap.php");
@@ -21,55 +22,72 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
             if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
                 $msg = Zip::unzip($tmpFile, $tmpDir);
                 unlink($tmpFile);
-                if(empty($msg)) {
-                    $results = new Result();
-                    $params = new Paramedit();
-                    $lockv = new Lock();
-                    if(file_exists("../".$plateforme)) { 
-                        $state->lastState("../".$plateforme, $lockv);
-                    }
-                    if($params->load($tmpDir."paramedit.csv") && $results->load($tmpDir."result.csv")) {
-                        if($plateforme != $params->getParam('Platform')) {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
-                        }
-                        elseif($type === "SIMU" && $params->getParam('Type') !== "SIMU") {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.7');
-                        }
-                        elseif($type !== "FIRST" && $type !== "SIMU" && (($type === "PROFORMA" && $params->getParam('Type') !== "PROFORMA") || ($type !== "PROFORMA" && $params->getParam('Type') !== "SAP"))) {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
-                        }
-                        elseif($type === "REDO" && !State::isSame($state->getLastMonth(), $state->getLastYear(), $params->getParam('Month'), $params->getParam('Year'))) {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
-                        }
-                        elseif(($type === "MONTH" || $type === "PROFORMA") && !State::isNext($state->getLastMonth(), $state->getLastYear(), $params->getParam('Month'), $params->getParam('Year'))) {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3'); // $state->getLastMonth()." ".$state->getLastYear()." ".$params->getParam('Month')." ".$params->getParam('Year');
-                        }
-                        elseif($plateforme !== $results->getResult('Platform')) {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
-                        }
-                        elseif(($type == "FIRST" || $type == "SIMU") && !State::isNextOrSame($results->getResult('Month'), $results->getResult('Year'), $params->getParam('Month'), $params->getParam('Year'))) {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8'); // $results->getResult('Month')." ".$results->getResult('Year')." ".$params->getParam('Month')." ".$params->getParam('Year');
-                        }
-                        elseif($type !== "SIMU" && $results->getResult('Type') !== "SAP") {
-                            $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
+                if(empty($msg)) {                    
+                    if($type == "FIRST" || $type == "SIMU") {
+                        $results = new Result();
+                        $params = new Paramedit();
+                        if($params->load($tmpDir."paramedit.csv") && $results->load($tmpDir."result.csv")) {
+                            if($plateforme !== $params->getParam('Platform')) {
+                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
+                            }
+                            elseif($plateforme !== $results->getResult('Platform')) {
+                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
+                            }
+                            elseif($type === "SIMU" && $params->getParam('Type') !== "SIMU") {
+                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.7');
+                            }
+                            elseif(!State::isNextOrSame($results->getResult('Month'), $results->getResult('Year'), $params->getParam('Month'), $params->getParam('Year'))) {
+                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8');
+                            }
                         }
                         else {
-                            $pathPlate = "../".$plateforme;
-                            if($type !== "SIMU" && $type !== "FIRST") {
-                                if((int)$state->getLastMonth() === (int)$results->getResult('Month') && $state->getLastYear() === $results->getResult('Year') && $state->getLastVersion() === $results->getResult('Version') && $state->getLastRun() === $results->getResult('Folder')) {
-                                    $msg = runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme);
-                                }
-                                else {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
-                                }
-                            }
-                            else {
-                                $msg = runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme);
-                            }
+                            $msg = "Fichier(s) paramedit.csv et/ou result.csv vide(s)";
                         }
                     }
                     else {
-                        $msg = "Fichier(s) paramedit.csv et/ou result.csv vide(s)";
+                        $lockv = new Lock();
+                        $state->lastState("../".$plateforme, $lockv);
+                        $dirOut = "../".$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun()."/OUT/";
+                            
+                        foreach(State::scanDescSan($dirOut) as $file) {
+                            if(!copy($dirOut.$file, $tmpDir.$file)) {
+                                $msg = "erreur de copie ".$dirOut.$file." vers ".$tmpDir.$file;
+                                break;
+                            }
+                        }
+
+                        $tmpPe = $tmpDir.'paramedit.csv';
+                        $wm = "";
+                        $tyfact = "SAP";
+                        if($type == "PROFORMA") {
+                            $paramtext = new Paramtext();
+                            if($paramtext->load($dirOut."paramtext.csv")) {
+                                $wm = $paramtext->getParam('filigr-prof');
+                            }
+                            $tyfact = "PROFORMA";
+                        }
+                        if($type == "REDO") {
+                            $year = $state->getLastYear();
+                            $month = $state->getLastMonth();
+                        }
+                        else {
+                            $year = $state->getNextYear();
+                            $month = $state->getNextMonth();
+                        }
+                        $array = [["Platform", $plateforme], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
+                        $params = new Paramedit();
+                        $params->write($tmpPe, $array);
+                        $params->load($tmpPe);
+
+                        $paramFile = "../".$plateforme."/".$year."/".$month."/parametres.zip";
+                        if(file_exists($paramFile)) {
+                            $msg = Zip::unzip($paramFile, $tmpDir);
+                        }
+                    }
+                    if(empty($msg)) {
+                        $pathPlate = "../".$plateforme;
+                        $msg = runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme);
+
                     }
                 }
                 State::delDir($tmpDir);
@@ -82,11 +100,11 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
             $_SESSION['message'] = $msg;
         }
         else {
-            $_SESSION['message'] = "copy";
+            $_SESSION['message'] = "copy error";
         }
     }
     else {
-        $_SESSION['message'] = "zip";
+        $_SESSION['message'] = "zip not accepted";
     }
     header('Location: ../plateforme.php?plateforme='.$plateforme);
         
