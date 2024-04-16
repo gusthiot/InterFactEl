@@ -58,23 +58,23 @@ class Sap extends Csv
     {
         switch($status) {
             case 0:
-                return $lock == "invalidate" ? "btn-secondary": "btn-light";
+                return $lock == "invalidate" ? "but-grey": "but-white";
             case 1:
-                return $lock == "invalidate" ? "btn-secondary": "btn-light";
+                return $lock == "invalidate" ? "but-grey": "but-white";
             case 2:
-                return $lock == "invalidate" ? "btn-secondary": "btn-danger";
+                return $lock == "invalidate" ? "but-grey": "but-red";
             case 3:
-                return $lock == "invalidate" ? "btn-secondary": "btn-danger";
+                return $lock == "invalidate" ? "but-grey": "but-red";
             case 4:
-                return "btn-success";
+                return "but-green";
             case 5:
-                return "btn-info";
+                return "but-yellow";
             case 6:
-                return "btn-warning";
+                return "but-orange";
             case 7:
-                return "btn-warning";
+                return "but-orange";
             default:
-                return "btn-dark";
+                return "";
         }
     } 
 }

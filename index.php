@@ -32,14 +32,14 @@ if(isset($_SESSION['message'])) {
                     <div class="tiles">
                         <div type="button" id="download" class="tile center-one">
                             <p>Download CONFIG files</p>
-                            <i class="bi bi-download"></i>
+                            <i class="bi bi-download icon-tile"></i>
                         </div>
                         <label class="tile center-one">
                             <form action="controller/uploadConfig.php" method="post" id="upform" enctype="multipart/form-data" >
                                 <input type="file" name="zip_file" id="zip_file" accept=".zip">
                             </form>
                             <p>Upload CONFIG files</p>
-                            <i class="bi bi-upload"></i>
+                            <i class="bi bi-upload icon-tile"></i>
                         </label>
                     </div>
                 </div>
@@ -58,7 +58,7 @@ if(isset($_SESSION['message'])) {
                                 echo '<div class="facturation tile center-two">
                                         <input type="hidden" id="plateNum" value="'.$plateforme.'" />
                                         <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
-                                        <i class="bi bi-cash-coin"></i>
+                                        <i class="bi bi-cash-coin icon-tile"></i>
                                     </div>';
                             }
                             ?>
@@ -73,10 +73,10 @@ if(isset($_SESSION['message'])) {
                                 <?php
                                 foreach($dataGest['tarifs'] as $plateforme => $name) {
                                     if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
-                                        echo '<div class="tarifs tile center-three">
+                                        echo '<div class="tarifs tile center-two">
                                                 <input type="hidden" id="plateNum" value="'.$plateforme.'" />
                                                 <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
-                                                <i class="bi bi-gear"></i>
+                                                <i class="bi bi-gear icon-tile"></i>
                                             </div>';
                                     }
                                 }
