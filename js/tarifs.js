@@ -9,8 +9,9 @@ $(function() {
         if(active != "") {
             $('#more-'+active).html("");
         }
-        $('#more-'+id).html('<button type="button" id="etiquette" class="btn btn-outline-dark">Etiquette</button>'+
-                            '<button type="button" id="export" class="btn btn-outline-dark">Export</button>');
+        $('#more-'+id).html('<button type="button" id="etiquette-'+id+'" class="btn btn-outline-dark etiquette">Etiquette</button>'+
+                            '<button type="button" id="export-'+id+'" class="btn btn-outline-dark export">Export</button>'+
+                            '<div id="label-'+id+'"></div>');
         active = id;
     });
 
@@ -47,5 +48,27 @@ $(function() {
             $('#message').text('Vous devez uploader une archive zip !');
         }
     } );
-    
+
+    $(document).on("click", ".export", function() {
+        const tab = $(this).attr('id').split("-");
+        window.location.href = "controller/download.php?type=tarifs&plate="+$('#plate').val()+"&year="+tab[1]+"&month="+tab[2];
+    } );
+
+    $(document).on("click", ".etiquette", function() {
+        const tab = $(this).attr('id').split("-");
+        const dir = $('#plate').val()+"/"+tab[1]+"/"+tab[2];
+        $.post("controller/getLabel.php", {dir: dir}, function (data) {
+            $('#label-'+tab[1]+'-'+tab[2]).html(data);
+        });
+    } );
+
+    $(document).on("click", "#saveLabel", function() {
+        const tab = $(this).parent().parent().attr('id').split("-");
+        const txt = $('#labelArea').val();
+        const dir = $('#plate').val()+"/"+tab[1]+"/"+tab[2];
+        $.post("controller/saveLabel.php", {txt: txt, dir: dir}, function (message) {
+            window.location.href = "tarifs.php?plateforme="+$('#plate').val();
+        });
+    } );
+
 });

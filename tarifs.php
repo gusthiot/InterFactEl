@@ -40,7 +40,8 @@ if(isset($_SESSION['message'])) {
             <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
             <input type="hidden" id="lastMonth" value="<?= $state->getLastMonth() ?>" />
             <input type="hidden" id="lastYear" value="<?= $state->getLastYear() ?>" />
-            <div class="text-center" id="buttons">
+            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
+                    <div class="text-center" id="buttons">
                 <?php
                 if(file_exists($plateforme)) { 
                     ?>
@@ -70,7 +71,7 @@ if(isset($_SESSION['message'])) {
                                 if(empty($labtxt)) {
                                     $labtxt = "No label ?";
                                 }
-                                $id = $year.$month;
+                                $id = $year."-".$month;
                                 echo '<tr>';
                                 echo '<td>'.$month.' '.$year.'</td>';
                                 echo '<td><span><button id="'.$id.'" type="button" class="btn btn-light param">'.$labtxt.'</button></span><span id="more-'.$id.'"></span></td>';

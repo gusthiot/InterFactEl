@@ -69,6 +69,14 @@ if(isset($_GET['type'])) {
             readCsv("../".$_GET["dir"]."/".$_GET["name"].".csv");
         }
     }
+    elseif($type==="tarifs") {
+        if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {            
+            $fileName = "../".$_GET['plate']."/".$_GET['year']."/".$_GET['month']."/parametres.zip";
+            header('Content-disposition: attachment; filename="'.basename($fileName).'"');
+            header('Content-type: application/zip');
+            readfile($fileName);
+        }
+    }
     else {
         $_SESSION['message'] = "erreur download";
         header('Location: ../index.php');
