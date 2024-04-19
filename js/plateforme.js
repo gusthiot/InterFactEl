@@ -40,7 +40,7 @@ $('#proforma').on('click', function () {
 });
 
 function uploader(type, title) {
-    let html = '<div><button type="button" data-type="'+type+'" class="btn btn-outline-dark export">Exporter</button>';
+    let html = '<div><button type="button" data-type="'+type+'" class="btn but-line export">Exporter</button>';
     html += '<label class="up-but">';
     html += '<input type="file" id="'+type+'" name="zip_file" class="zip_file" accept=".zip">';
     html += title;

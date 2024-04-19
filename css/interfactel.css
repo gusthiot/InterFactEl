@@ -16,6 +16,8 @@
   --marron: #5b3428;
   --ardoise: #453a4c;
   --taupe: #413d3a;
+
+  --casse: #f8f9fa;
 }
 
 body {
@@ -34,30 +36,80 @@ body {
 
 .up-but:hover {
   color: white;
-  background-color: black;
+  background-color: var(--ardoise);
+}
+
+.but-line {
+  color: var(--ardoise);
+  border-color: var(--ardoise);
+}
+
+.but-line:hover {
+  color: white;
+  background-color: var(--ardoise);
+}
+
+.but-line-red {
+  color: var(--groseille);
+  border-color: var(--groseille);
+}
+
+.but-line-red:hover {
+  color: white;
+  background-color: var(--groseille);
+}
+
+.but-line-blue {
+  color: var(--acier);
+  border-color: var(--acier);
+}
+
+.but-line-blue:hover {
+  color: white;
+  background-color: var(--acier);
+}
+
+.but-line-green {
+  color: var(--chartreuse);
+  border-color: var(--chartreuse);
+}
+
+.but-line-green:hover {
+  color: white;
+  background-color: var(--chartreuse);
 }
 
 .but-white {
-  background-color: #fefefe;
+  background-color: var(--casse);
+  border: 0;
+}
+
+.but-white:hover {
+  background-color: var(--ardoise);
+  color: white;
   border: 0;
 }
 
 .but-grey {
   background-color: var(--perle);
   border: 0;
+  color: white;
+}
 
+.but-grey:hover {
+  background-color: white;
+  color: var(--perle);
 }
 
 .but-red {
   background-color: var(--groseille);
   border: 0;
   color: white;
-
 }
 
 .but-red:hover {
-  opacity: 0.7;
-
+  background-color: white;
+  color: var(--groseille);
 }
 
 .but-orange {
@@ -67,21 +119,30 @@ body {
 }
 
 .but-orange:hover {
-  opacity: 0.7;
-
+  background-color: white;
+  color: var(--carotte);
 }
 
-
-.but-yellow {
-  background-color: var(--soufre);
+.but-blue {
+  background-color: var(--acier);
   border: 0;
+  color: white;
+}
 
+.but-blue:hover {
+  background-color: white;
+  color: var(--acier);
 }
 
 .but-green {
   background-color: var(--chartreuse);
   border: 0;
+  color: white;
+}
 
+.but-green:hover {
+  background-color: white;
+  color: var(--chartreuse);
 }
 
 input[type="file"] {
@@ -89,7 +150,7 @@ input[type="file"] {
 }
 
 .red {
-  color: var(--rouge-suisse);
+  color: var(--groseille);
 }
 
 .icon-tile {
@@ -167,9 +228,19 @@ input[type="file"] {
   margin: 5px;
 	border-radius: 5px;
   display: inline-block;
-  /*border: 1px solid var(--ardoise);*/
   box-shadow: 1px 1px 4px 1px #aaa;
   text-align: center;
+}
+
+.desactived-tile {
+  height: 200px;
+	width: 200px;
+  margin: 5px;
+	border-radius: 5px;
+  display: inline-block;
+  box-shadow: 1px 1px 4px 1px #aaa;
+  text-align: center;
+  opacity: 0.5;
 }
 
 .center-one {
@@ -196,7 +267,7 @@ input[type="file"] {
 
 .loader {
   border: 16px solid var(--perle); 
-  border-top: 16px solid var(--leman);
+  border-top: 16px solid var(--acier);
   border-radius: 50%;
   width: 50px;
   height: 50px;

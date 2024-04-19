@@ -18,7 +18,7 @@ if(isset($_POST["dir"]) && isset($_POST["suf"])){
     }
     $html .= "</table>";
     
-    $html .= '<button type="button" id="getModif" class="btn btn-outline-dark">Download Modif-factures</button>';
+    $html .= '<button type="button" id="getModif" class="btn but-line">Download Modif-factures</button>';
 
     $journal = new Journal("../".$_POST["dir"]."/Journal-corrections".$_POST["suf"].".csv");
     if(!empty($journal->getModifs())) {
@@ -32,7 +32,7 @@ if(isset($_POST["dir"]) && isset($_POST["suf"])){
 
         }
         $html .= "</table>";
-        $html .= '<button type="button" id="getJournal" class="btn btn-outline-dark">Download Journal-modifs</button>';
+        $html .= '<button type="button" id="getJournal" class="btn but-line">Download Journal-modifs</button>';
     }
 
     $client = new Client("../".$_POST["dir"]."/Clients-modifs".$_POST["suf"].".csv");
@@ -47,7 +47,7 @@ if(isset($_POST["dir"]) && isset($_POST["suf"])){
 
         }
         $html .= "</table>";
-        $html .= '<button type="button" id="getClient" class="btn btn-outline-dark">Download Client-modifs</button>';
+        $html .= '<button type="button" id="getClient" class="btn but-line">Download Client-modifs</button>';
     }
 
     echo $html;

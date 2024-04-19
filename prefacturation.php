@@ -59,30 +59,30 @@ if(isset($_SESSION['message'])) {
         <input type="hidden" id="plate" value="<?= $plateforme ?>" />
         
         <div id="actions" class="text-center">
-            <button type="button" id="label" class="btn btn-outline-dark">Etiqueter</button>
-            <button type="button" id="info" class="btn btn-outline-dark">Afficher les infos</button>
-            <button type="button" id="bills" class="btn btn-outline-dark">Afficher la liste des factures</button>
-            <button type="button" id="ticket" data-param="<?= $param ?>" class="btn btn-outline-dark">Contrôler le ticket</button>
-            <button type="button" id="changes" class="btn btn-outline-dark">Afficher les modifications</button>
+            <button type="button" id="label" class="btn but-line">Etiqueter</button>
+            <button type="button" id="info" class="btn but-line">Afficher les infos</button>
+            <button type="button" id="bills" class="btn but-line">Afficher la liste des factures</button>
+            <button type="button" id="ticket" data-param="<?= $param ?>" class="btn but-line">Contrôler le ticket</button>
+            <button type="button" id="changes" class="btn but-line">Afficher les modifications</button>
             <?php 
             if(($status < 4) && !$loctxt) {
-                echo '<button type="button" id="invalidate" class="btn btn-outline-dark">Invalider</button>';
+                echo '<button type="button" id="invalidate" class="btn but-line">Invalider</button>';
             } 
             if(in_array($status, [0, 4, 5, 6, 7]) && $locvtxt && ($locvtxt == $run)) {
-                echo '<button type="button" id="bilans" class="btn btn-outline-dark">Exporter Bilans & Stats</button>';
-                echo '<button type="button" id="annexes" class="btn btn-outline-dark">Exporter Annexes csv</button>';
+                echo '<button type="button" id="bilans" class="btn but-line">Exporter Bilans & Stats</button>';
+                echo '<button type="button" id="annexes" class="btn but-line">Exporter Annexes csv</button>';
             } 
             ?>
-            <button type="button" id="all" class="btn btn-outline-dark">Exporter Tout</button>
+            <button type="button" id="all" class="btn but-line">Exporter Tout</button>
             <?php 
             if(in_array($status, [1, 2, 3, 5, 6, 7]) && !$loctxt) {
-                echo '<button type="button" id="send" class="btn btn-outline-success">Envoi SAP</button>';
+                echo '<button type="button" id="send" class="btn but-line-green">Envoi SAP</button>';
             }
             if(in_array($status, [0, 5, 6, 7]) && !$loctxt) {
-                echo '<button type="button" id="finalize" class="btn btn-outline-info">Finaliser SAP</button>';
+                echo '<button type="button" id="finalize" class="btn but-line-blue">Finaliser SAP</button>';
             }
                 if((in_array($status, [4, 5, 6, 7]) && !$loctxt) || (in_array($status, [4, 5, 6, 7]) && $locvtxt && ($locvtxt == $run))) {
-            echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg6').'" class="btn btn-outline-danger">Renvoi SAP</button>';
+            echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg6').'" class="btn but-line-red">Renvoi SAP</button>';
             }
             ?>
         </div>

@@ -9,4 +9,4 @@ if(isset($_POST['dir'])) {
     $txt = $label->load("../".$_POST['dir']);
 }
 
-echo '<div><textarea name="label" id="labelArea">'.$txt.'</textarea><button type="button" id="saveLabel" class="btn btn-outline-dark">Save</button></div>';
+echo '<div><textarea name="label" id="labelArea">'.$txt.'</textarea><button type="button" id="saveLabel" class="btn but-line">Save</button></div>';

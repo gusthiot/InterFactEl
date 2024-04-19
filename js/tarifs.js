@@ -9,8 +9,8 @@ $(function() {
         if(active != "") {
             $('#more-'+active).html("");
         }
-        $('#more-'+id).html('<button type="button" id="etiquette-'+id+'" class="btn btn-outline-dark etiquette">Etiquette</button>'+
-                            '<button type="button" id="export-'+id+'" class="btn btn-outline-dark export">Export</button>'+
+        $('#more-'+id).html('<button type="button" id="etiquette-'+id+'" class="btn but-line etiquette">Etiquette</button>'+
+                            '<button type="button" id="export-'+id+'" class="btn but-line export">Export</button>'+
                             '<div id="label-'+id+'"></div>');
         active = id;
     });

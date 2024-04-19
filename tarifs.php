@@ -16,8 +16,10 @@ if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 $sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
 
-$lockv = new Lock();
-$state->lastState($plateforme, $lockv);
+if(file_exists($plateforme)) { 
+    $lockv = new Lock();
+    $state->lastState($plateforme, $lockv);
+}
 
 $message = "";
 if(isset($_SESSION['message'])) {
@@ -38,8 +40,6 @@ if(isset($_SESSION['message'])) {
         <div class="container-fluid">	
             <div id="head"><div id="div-logo"><a href="index.php"><img src="img/EPFL_Logo_Digital_RGB_PROD.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > Tarifs <?= $name ?></p></div></div>	
             <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
-            <input type="hidden" id="lastMonth" value="<?= $state->getLastMonth() ?>" />
-            <input type="hidden" id="lastYear" value="<?= $state->getLastYear() ?>" />
             <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
                     <div class="text-center" id="buttons">
                 <?php
@@ -47,7 +47,7 @@ if(isset($_SESSION['message'])) {
                     ?>
                     <form action="controller/uploadTarifs.php" method="post" id="upform" enctype="multipart/form-data" >
                         <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
-                        <button type="button" id="import" class="btn btn-outline-dark">Importer de nouveaux tarifs</button>
+                        <button type="button" id="import" class="btn but-line">Importer de nouveaux tarifs</button>
                         <div id="more" class="text-center">
                         </div>
                     </form>
@@ -61,6 +61,8 @@ if(isset($_SESSION['message'])) {
             <?php
             if(file_exists($plateforme)) {   
             ?>
+                <input type="hidden" id="lastMonth" value="<?= $state->getLastMonth() ?>" />
+                <input type="hidden" id="lastYear" value="<?= $state->getLastYear() ?>" />
                 <table class="table table-bordered">
                     <?php
                     foreach(State::scanDescSan($plateforme) as $year) {
@@ -74,7 +76,7 @@ if(isset($_SESSION['message'])) {
                                 $id = $year."-".$month;
                                 echo '<tr>';
                                 echo '<td>'.$month.' '.$year.'</td>';
-                                echo '<td><span><button id="'.$id.'" type="button" class="btn btn-light param">'.$labtxt.'</button></span><span id="more-'.$id.'"></span></td>';
+                                echo '<td><span><button id="'.$id.'" type="button" class="btn but-white param">'.$labtxt.'</button></span><span id="more-'.$id.'"></span></td>';
                                 echo '</tr>';
                             }
                         }

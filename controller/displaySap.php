@@ -23,6 +23,6 @@ if(isset($_POST["dir"])) {
     }
     $html .= "</table>";
     
-    $html .= '<button type="button" id="getSap" class="btn btn-outline-dark">Download File</button>';
+    $html .= '<button type="button" id="getSap" class="btn but-line">Download File</button>';
     echo $html;
 }

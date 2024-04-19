@@ -70,15 +70,15 @@ function uploader(string $title, string $id)
                             <?php 
                                 echo uploader("Simulation", "SIMU");
                                 if(!$first) { 
-                                    echo '<div><button type="button" id="historique" class="btn btn-outline-dark">Ouvrir l\'historique</button></div>';
+                                    echo '<div><button type="button" id="historique" class="btn but-line">Ouvrir l\'historique</button></div>';
                                     if(!$current) { 
-                                        echo '<div><button type="button" id="proforma" class="btn btn-outline-dark">Facturation Pro Forma</button></div>'; 
+                                        echo '<div><button type="button" id="proforma" class="btn but-line">Facturation Pro Forma</button></div>'; 
                                     }   
                                     if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
-                                        echo '<div><button type="button" id="tarifs" class="btn btn-outline-dark">Nouveaux tarifs</button></div>'; 
+                                        echo '<div><button type="button" id="tarifs" class="btn but-line">Nouveaux tarifs</button></div>'; 
                                     }              
                                     if($superviseur->isSuperviseur($_SESSION['user'])) {
-                                        echo '<div><button type="button" id="destroy" class="btn btn-danger">Supprimer tous les données de cette plateforme</button></div>';
+                                        echo '<div><button type="button" id="destroy" class="btn but-red">Supprimer tous les données de cette plateforme</button></div>';
                                     } 
                                 } 
                             ?>
@@ -90,15 +90,15 @@ function uploader(string $title, string $id)
                                 } 
                                 else {
                                     if(!$current) {
-                                        echo '<div><button type="button" id="redo" class="btn btn-outline-dark">Refaire factures : '.$state->getLastMonth()."/".$state->getLastYear().' </button></div>';
-                                        echo '<div><button type="button" id="month" class="btn btn-outline-dark">Facturation nouveau mois : '.$state->getNextMonth()."/".$state->getNextYear().' </button></div>';
+                                        echo '<div><button type="button" id="redo" class="btn but-line">Refaire factures : '.$state->getLastMonth()."/".$state->getLastYear().' </button></div>';
+                                        echo '<div><button type="button" id="month" class="btn but-line">Facturation nouveau mois : '.$state->getNextMonth()."/".$state->getNextYear().' </button></div>';
                                     }
                                 }
                             ?>
                         </div>    
                     </div>
                     <div class="row hidden" id="histo">
-                        <div><button type="button" id="close-histo" class="btn btn-outline-dark">Fermer l'historique</button></div>
+                        <div><button type="button" id="close-histo" class="btn but-line">Fermer l'historique</button></div>
                     </div>
                 </div>
 
@@ -151,7 +151,7 @@ function uploader(string $title, string $id)
                                         echo '</button> ';
                                         if($superviseur->isSuperviseur($_SESSION['user'])) {
                                         ?>
-                                        <button type="button" class="btn btn-danger erase" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
+                                        <button type="button" class="btn but-red erase" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
                                         <?php
                                         }
                                     }

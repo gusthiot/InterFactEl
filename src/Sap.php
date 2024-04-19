@@ -68,7 +68,7 @@ class Sap extends Csv
             case 4:
                 return "but-green";
             case 5:
-                return "but-yellow";
+                return "but-blue";
             case 6:
                 return "but-orange";
             case 7:

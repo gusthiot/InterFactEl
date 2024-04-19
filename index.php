@@ -73,11 +73,19 @@ if(isset($_SESSION['message'])) {
                                 <?php
                                 foreach($dataGest['tarifs'] as $plateforme => $name) {
                                     if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
-                                        echo '<div class="tarifs tile center-two">
-                                                <input type="hidden" id="plateNum" value="'.$plateforme.'" />
-                                                <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
-                                                <i class="bi bi-gear icon-tile"></i>
-                                            </div>';
+                                        if(file_exists($plateforme)) {   
+                                            echo '<div class="tarifs tile center-two">
+                                                    <input type="hidden" id="plateNum" value="'.$plateforme.'" />
+                                                    <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
+                                                    <i class="bi bi-gear icon-tile"></i>
+                                                </div>';
+                                        }
+                                        else {  
+                                            echo '<div class="center-two desactived-tile">
+                                                    <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
+                                                    <i class="bi bi-gear"></i>
+                                                </div>';
+                                        }
                                     }
                                 }
                                 ?>
