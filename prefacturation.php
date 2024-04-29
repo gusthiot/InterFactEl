@@ -33,7 +33,14 @@ $status = $sap->status();
 $lock = new Lock();
 $loctxt = $lock->load($dir, "run");
 $lockv = new Lock();
-$locvtxt = $lock->load($plateforme."/".$year."/".$month."/".$version, "version");
+$locvtxt = $lockv->load($plateforme."/".$year."/".$month."/".$version, "version");
+
+$locklast = new Lock();
+$state->lastState($plateforme, $locklast);
+$dirTarifs = "";
+if(empty($state->getLast())) {
+    $dirTarifs = $plateforme."/".$year."/".$month;
+}
 
 if(isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
@@ -57,6 +64,7 @@ if(isset($_SESSION['message'])) {
         <input type="hidden" id="dirPrevMonth" value="<?= $dirPrevMonth ?>" />
         <input type="hidden" id="suf" value="<?= $suf ?>" />
         <input type="hidden" id="plate" value="<?= $plateforme ?>" />
+        <input type="hidden" id="dirTarifs" value="<?= $dirTarifs ?>" />
         
         <div id="actions" class="text-center">
             <button type="button" id="label" class="btn but-line">Etiqueter</button>

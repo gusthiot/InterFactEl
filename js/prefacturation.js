@@ -89,7 +89,7 @@ function sending(type) {
         bills.push($(this).val());
     });
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
-    $.post("controller/sendBills.php", {bills: bills, dir: $('#dir').val(), dirPrevMonth: $('#dirPrevMonth').val(), type: type}, function () {
+    $.post("controller/sendBills.php", {bills: bills, dir: $('#dir').val(), dirPrevMonth: $('#dirPrevMonth').val(), type: type, dirTarifs: $('#dirTarifs').val()}, function () {
         window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
 }
@@ -113,7 +113,7 @@ $(document).on("click", "#allBills", function() {
 });
 
 $('#finalize').on('click', function () {
-    $.post("controller/finalize.php", {dir: $('#dir').val()}, function () {
+    $.post("controller/finalize.php", {dir: $('#dir').val(), dirTarifs: $('#dirTarifs').val()}, function () {
         window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
 } );

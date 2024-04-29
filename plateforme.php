@@ -28,6 +28,10 @@ if(empty($state->getCurrent())) {
         $first = true;
     }
 }
+$complet = false;
+if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
+    $complet = true;
+}
 
 $message = "";
 if(isset($_SESSION['message'])) {
@@ -85,15 +89,17 @@ function uploader(string $title, string $id)
                         </div>
                         <div class="col-sm">
                             <?php
-                                if($first) { 
-                                    echo uploader("Préparer 1ère facturation", "FIRST");
-                                } 
-                                else {
+                                if(!$first) { 
                                     if(!$current) {
                                         echo '<div><button type="button" id="redo" class="btn but-line">Refaire factures : '.$state->getLastMonth()."/".$state->getLastYear().' </button></div>';
                                         echo '<div><button type="button" id="month" class="btn but-line">Facturation nouveau mois : '.$state->getNextMonth()."/".$state->getNextYear().' </button></div>';
                                     }
                                 }
+                                else {
+                                    if($complet) {
+                                        echo uploader("Préparer 1ère facturation", "FIRST");
+                                    }
+                                } 
                             ?>
                         </div>    
                     </div>
