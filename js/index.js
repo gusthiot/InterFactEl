@@ -21,3 +21,4 @@ $('.facturation').on('click', function () {
 $('.tarifs').on('click', function () {
     window.location.href = "tarifs.php?plateforme="+$(this).find('#plateNum').val();
 } );
+
