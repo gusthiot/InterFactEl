@@ -57,7 +57,7 @@ class Zip
                         $ret .= $errors['message'];
                     }
                 }
-            }                   
+            }
             $zip->close();
             return $ret;
         }
