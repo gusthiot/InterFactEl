@@ -86,8 +86,16 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                     }
                     if(empty($msg)) {
                         $pathPlate = "../".$plateforme;
-                        $msg = runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme);
-
+                        $unique = time();
+                        $lockp = new Lock();
+                        $lockp->save("../", 'prefa', $plateforme." ".$unique);
+                        try {
+                            $msg = runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme, $unique);
+                        }
+                        catch(Exception $e) {
+                            $msg = $e->getMesage(); 
+                        }
+                        unlink("../".Lock::FILES['prefa']);
                     }
                 }
                 State::delDir($tmpDir);
@@ -114,14 +122,13 @@ else {
     header('Location: ../index.php');
 }
 
-function runPrefa($tmpDir, $path, $params, $sciper, $plateforme) {
-    $unique = time();
+function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique) {
     $month = $params->getParam('Month');
     $year = $params->getParam('Year');
     $type = $params->getParam('Type');
     $cmd = '/usr/bin/python3.10 ../PyFactEl-V11/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
     $result = shell_exec($cmd);
-    $mstr = State::addToMonth($month, 0); //(int)$month > 9 ? $month : '0'.$month;
+    $mstr = State::addToMonth($month, 0);
     if(substr($result, 0, 2) === "OK") {
         $msg = $unique." tout OK ".strstr($result, '(');
         $tab = explode(" ", $result);

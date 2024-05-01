@@ -40,9 +40,9 @@ $('#proforma').on('click', function () {
 });
 
 function uploader(type, title) {
-    let html = '<div><button type="button" data-type="'+type+'" class="btn but-line export">Exporter</button>';
-    html += '<label class="up-but">';
-    html += '<input type="file" id="'+type+'" name="zip_file" class="zip_file" accept=".zip">';
+    let html = '<div><button type="button" data-type="'+type+'" class="btn but-line export lockable">Exporter</button>';
+    html += '<input type="file" id="'+type+'" name="zip_file" class="zip_file lockable" accept=".zip">';
+    html += '<label class="up-but" for="'+type+'">';
     html += title;
     html += '</label></div>';
     return html;
@@ -53,8 +53,9 @@ $(document).on("change", ".zip_file", function () {
     $('#type').val(id);
     const file = $(this).val();
     if(file.indexOf('.zip') > -1) {
-        $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
         $('#factform').submit();
+        $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
+        $(".lockable").prop('disabled', true);
     }
     else {
         $('#message').text('Vous devez uploader une archive zip !');

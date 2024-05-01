@@ -84,13 +84,13 @@ if(isset($_SESSION['message'])) {
             <button type="button" id="all" class="btn but-line">Exporter Tout</button>
             <?php 
             if(in_array($status, [1, 2, 3, 5, 6, 7]) && !$loctxt) {
-                echo '<button type="button" id="send" class="btn but-line-green">Envoi SAP</button>';
+                echo '<button type="button" id="send" class="btn but-line-green lockable">Envoi SAP</button>';
             }
             if(in_array($status, [0, 5, 6, 7]) && !$loctxt) {
-                echo '<button type="button" id="finalize" class="btn but-line-blue">Finaliser SAP</button>';
+                echo '<button type="button" id="finalize" class="btn but-line-blue lockable">Finaliser SAP</button>';
             }
                 if((in_array($status, [4, 5, 6, 7]) && !$loctxt) || (in_array($status, [4, 5, 6, 7]) && $locvtxt && ($locvtxt == $run))) {
-            echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg6').'" class="btn but-line-red">Renvoi SAP</button>';
+            echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg6').'" class="btn but-line-red lockable">Renvoi SAP</button>';
             }
             ?>
         </div>

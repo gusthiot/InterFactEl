@@ -35,7 +35,7 @@ if(isset($_POST["dir"]) && isset($_POST["type"])){
     }
     if(count($choices)>0) {
         $html .= "<div>";
-        $html .= '<br /><div><button type="button" id="allBills" class="btn but-line">Tout sélectionner</button><button type="button" id="'.$_POST["type"].'" class="btn but-line">Envoyer</button></div>';
+        $html .= '<br /><div><button type="button" id="allBills" class="btn but-line lockable">Tout sélectionner</button><button type="button" id="'.$_POST["type"].'" class="btn but-line lockable">Envoyer</button></div>';
     
         foreach($choices as $choice) {
             $html .= $choice;

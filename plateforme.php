@@ -39,15 +39,32 @@ if(isset($_SESSION['message'])) {
     unset($_SESSION['message']); 
 }
 
-function uploader(string $title, string $id)
+function uploader(string $title, string $id, string $disabled)
 {
-    $html = '<label class="up-but">';
-    $html .= '<input id="'.$id.'" type="file" name="zip_file" class="zip_file" accept=".zip">';
+    $html = '<input id="'.$id.'" type="file" name="zip_file" '.$disabled.' class="zip_file lockable" accept=".zip">';
+    $html .= '<label class="up-but" for="'.$id.'">';
     $html .= $title;
     $html .= '</label>';
     return $html;
 }
 
+$lockp = new Lock();
+$lockedTxt = $lockp->load("./", "prefa");
+$lockedPlate = "";
+$lockedRun = "";
+$disabled = "";
+if(!empty($lockedTxt)) {
+    $disabled = "disabled";
+    $lockedTab = explode(" ", $lockedTxt);
+    $lockedPlate = $lockedTab[0];
+    $lockedRun = $lockedTab[1];
+    if($lockedPlate = $plateforme) {
+        $message = '<div>Une préfacturation est en cours. Veuillez patientez et rafraîchir la page...</div>';
+    }
+    else {
+        $message = '<div>Une préfacturation est en cours pour une autre plateforme. Veuillez patientez et rafraîchir la page...</div>';
+    }
+}
 ?>
 
 
@@ -72,17 +89,17 @@ function uploader(string $title, string $id)
                     <div class="row" id="buttons">
                         <div class="col-sm">
                             <?php 
-                                echo uploader("Simulation", "SIMU");
+                                echo uploader("Simulation", "SIMU", $disabled);
                                 if(!$first) { 
                                     echo '<div><button type="button" id="historique" class="btn but-line">Ouvrir l\'historique</button></div>';
                                     if(!$current) { 
-                                        echo '<div><button type="button" id="proforma" class="btn but-line">Facturation Pro Forma</button></div>'; 
+                                        echo '<div><button type="button" id="proforma" '.$disabled.' class="btn but-line lockable">Facturation Pro Forma</button></div>'; 
                                     }   
                                     if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
                                         echo '<div><button type="button" id="tarifs" class="btn but-line">Nouveaux tarifs</button></div>'; 
                                     }              
                                     if($superviseur->isSuperviseur($_SESSION['user'])) {
-                                        echo '<div><button type="button" id="destroy" class="btn but-red">Supprimer tous les données de cette plateforme</button></div>';
+                                        echo '<div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Supprimer tous les données de cette plateforme</button></div>';
                                     } 
                                 } 
                             ?>
@@ -91,13 +108,13 @@ function uploader(string $title, string $id)
                             <?php
                                 if(!$first) { 
                                     if(!$current) {
-                                        echo '<div><button type="button" id="redo" class="btn but-line">Refaire factures : '.$state->getLastMonth()."/".$state->getLastYear().' </button></div>';
-                                        echo '<div><button type="button" id="month" class="btn but-line">Facturation nouveau mois : '.$state->getNextMonth()."/".$state->getNextYear().' </button></div>';
+                                        echo '<div><button type="button" id="redo" '.$disabled.' class="btn but-line lockable">Refaire factures : '.$state->getLastMonth()."/".$state->getLastYear().' </button></div>';
+                                        echo '<div><button type="button" id="month" '.$disabled.' class="btn but-line lockable">Facturation nouveau mois : '.$state->getNextMonth()."/".$state->getNextYear().' </button></div>';
                                     }
                                 }
                                 else {
                                     if($complet) {
-                                        echo uploader("Préparer 1ère facturation", "FIRST");
+                                        echo uploader("Préparer 1ère facturation", "FIRST", $disabled);
                                     }
                                 } 
                             ?>
@@ -139,26 +156,28 @@ function uploader(string $title, string $id)
                                     }
                                     echo '</td><td>';
                                     foreach(State::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
-                                        $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
-                                        $label = new Label();
-                                        $labtxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
-                                        if(empty($labtxt)) {
-                                            $labtxt = $run;
-                                        }
-                                        $sap = new Sap();
-                                        $sap->load($plateforme."/".$year."/".$month."/".$version."/".$run);
-                                        $status = $sap->status();
-                                        $lock = new Lock();
-                                        $loctxt = $lock->load($plateforme."/".$year."/".$month."/".$version."/".$run, "run");
-                                        echo ' <button type="button" value="'.$value.'" class="run btn '.Sap::color($status, $loctxt).'"> '.$labtxt;
-                                        if ($loctxt) {
-                                            echo ' <i class="bi bi-lock"></i> ';
-                                        }
-                                        echo '</button> ';
-                                        if($superviseur->isSuperviseur($_SESSION['user'])) {
-                                        ?>
-                                        <button type="button" class="btn but-red erase" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
-                                        <?php
+                                        if($run != $lockedRun) {
+                                            $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
+                                            $label = new Label();
+                                            $labtxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
+                                            if(empty($labtxt)) {
+                                                $labtxt = $run;
+                                            }
+                                            $sap = new Sap();
+                                            $sap->load($plateforme."/".$year."/".$month."/".$version."/".$run);
+                                            $status = $sap->status();
+                                            $lock = new Lock();
+                                            $loctxt = $lock->load($plateforme."/".$year."/".$month."/".$version."/".$run, "run");
+                                            echo ' <button type="button" value="'.$value.'" class="run btn '.Sap::color($status, $loctxt).'"> '.$labtxt;
+                                            if ($loctxt) {
+                                                echo ' <i class="bi bi-lock"></i> ';
+                                            }
+                                            echo '</button> ';
+                                            if($superviseur->isSuperviseur($_SESSION['user'])) {
+                                            ?>
+                                            <button type="button" <?= $disabled ?> class="btn but-red erase lockable" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
+                                            <?php
+                                            }
                                         }
                                     }
                                     echo '</td>';

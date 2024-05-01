@@ -39,6 +39,12 @@ body {
   background-color: var(--ardoise);
 }
 
+.lockable[disabled]+label {
+  cursor: not-allowed;
+  pointer-events:none;
+  opacity: 0.6;
+}
+
 .but-line {
   color: var(--ardoise);
   border-color: var(--ardoise);

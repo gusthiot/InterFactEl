@@ -88,6 +88,7 @@ function sending(type) {
     $.each($("input[name='bills']:checked"), function(){
         bills.push($(this).val());
     });
+    $(".lockable").prop('disabled', true);
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
     $.post("controller/sendBills.php", {bills: bills, dir: $('#dir').val(), dirPrevMonth: $('#dirPrevMonth').val(), type: type, dirTarifs: $('#dirTarifs').val()}, function () {
         window.location.href = "plateforme.php?plateforme="+$('#plate').val();
