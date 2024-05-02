@@ -88,14 +88,14 @@ if(($_FILES['zip_file']) && isset($_POST['plate']) && isset($_POST['type']) && i
                         $pathPlate = "../".$plateforme;
                         $unique = time();
                         $lockp = new Lock();
-                        $lockp->save("../", 'prefa', $plateforme." ".$unique);
+                        $lockp->save("../", 'process', "prefa ".$plateforme." ".$unique);
                         try {
                             $msg = runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme, $unique);
                         }
                         catch(Exception $e) {
                             $msg = $e->getMesage(); 
                         }
-                        unlink("../".Lock::FILES['prefa']);
+                        unlink("../".Lock::FILES['process']);
                     }
                 }
                 State::delDir($tmpDir);

@@ -49,21 +49,27 @@ function uploader(string $title, string $id, string $disabled)
 }
 
 $lockp = new Lock();
-$lockedTxt = $lockp->load("./", "prefa");
+$lockedTxt = $lockp->load("./", "process");
 $lockedPlate = "";
 $lockedRun = "";
+$lockedProcess = "";
 $disabled = "";
 if(!empty($lockedTxt)) {
     $disabled = "disabled";
     $lockedTab = explode(" ", $lockedTxt);
-    $lockedPlate = $lockedTab[0];
-    $lockedRun = $lockedTab[1];
-    if($lockedPlate = $plateforme) {
-        $message = '<div>Une préfacturation est en cours. Veuillez patientez et rafraîchir la page...</div>';
+    if($lockedTab[0] == "prefa") {
+        $lockedProcess = "Une préfacturation";
     }
     else {
-        $message = '<div>Une préfacturation est en cours pour une autre plateforme. Veuillez patientez et rafraîchir la page...</div>';
+        $lockedProcess = "Un envoi SAP";
     }
+    $lockedPlate = $lockedTab[1];
+    $lockedRun = $lockedTab[2];
+    $other = "";
+    if($lockedPlate != $plateforme) {
+        $other = " pour une autre plateforme";
+    }
+    $message = '<div>'.$lockedProcess.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
 }
 ?>
 
@@ -156,7 +162,7 @@ if(!empty($lockedTxt)) {
                                     }
                                     echo '</td><td>';
                                     foreach(State::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
-                                        if($run != $lockedRun) {
+                                        if($run != $lockedRun || $lockedProcess != "Une préfacturation") {
                                             $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
                                             $label = new Label();
                                             $labtxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);

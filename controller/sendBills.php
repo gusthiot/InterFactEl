@@ -13,60 +13,72 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth'
     $dir = "../".$_POST["dir"];
     $dirPrevMonth = "../".$_POST["dirPrevMonth"];
     $html = "";
+//    $more = "";
     $logfile = new Logfile();
     $sap = new Sap();
     $sap->load($dir);
     $oldStatus = $sap->status();
     $oldState = $sap->state();
     $oks = "";
-    foreach($bills as $bill) {
-        $facture = new Facture($dir."/Factures_JSON/facture_".$bill.".json");
-        $resArray = send($facture->getFacture());
-        if($resArray[0] && !$resArray[1]) {
-            $res = json_decode($resArray[0]);
-            if(property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
-                $info = new Info();
-                $infos = $info->load($dir);
-                if(!empty($infos)) {
-                    if(empty($infos["Sent"][2])) {
-                        $infos["Sent"][2] = date('Y-m-d H:i:s');
-                        $infos["Sent"][3] = $_SESSION['user'];
-                        $info->save($dir, $infos);
-                    }
-                    if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/lockm.csv")) {
-                        $lock = new Lock();
-                        $lock->save($dirPrevMonth, 'month', "");
-                    }
-                    $sap_cont = $sap->load($dir);
-                    if(!empty($res->E_RESULT->item->IS_ERROR)) {
-                        if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
-                            $sap_cont[$bill][3] = "ERROR";
-                            $sap_cont[$bill][4] = $res->E_RESULT->item->LOG->item->MESSAGE;
-                            $txt = $bill." | ERROR | ".$res->E_RESULT->item->LOG->item->MESSAGE;
+    $tab = explode("/", $_POST["dir"]);
+
+    $lockp = new Lock();
+    $lockp->save("../", 'process', "send ".$tab[0]." ".$tab[4]);
+    try {
+        foreach($bills as $bill) {
+            $facture = new Facture($dir."/Factures_JSON/facture_".$bill.".json");
+            $resArray = send($facture->getFacture());
+            if($resArray[0] && !$resArray[1]) {
+                $res = json_decode($resArray[0]);
+                if(property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
+                    $info = new Info();
+                    $infos = $info->load($dir);
+                    if(!empty($infos)) {
+                        if(empty($infos["Sent"][2])) {
+                            $infos["Sent"][2] = date('Y-m-d H:i:s');
+                            $infos["Sent"][3] = $_SESSION['user'];
+                            $info->save($dir, $infos);
                         }
+                        if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/lockm.csv")) {
+                            $lock = new Lock();
+                            $lock->save($dirPrevMonth, 'month', "");
+                        }
+                        $sap_cont = $sap->load($dir);
+                        if(!empty($res->E_RESULT->item->IS_ERROR)) {
+                            if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
+                                $sap_cont[$bill][3] = "ERROR";
+                                $sap_cont[$bill][4] = $res->E_RESULT->item->LOG->item->MESSAGE;
+                                $txt = $bill." | ERROR | ".$res->E_RESULT->item->LOG->item->MESSAGE;
+                            }
+                        }
+                        else {
+                            if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
+                                $sap_cont[$bill][3] = "SENT";
+                                $sap_cont[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
+                                $txt = $bill." | SENT | ".$res->E_RESULT->item->DOC_NUMBER;
+                            }
+                        }
+                        $sap->save($dir, $sap_cont);
+                        if(!empty($oks)) {
+                            $oks .= ", ";
+                        }
+                        $oks .= $bill;
                     }
                     else {
-                        if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
-                            $sap_cont[$bill][3] = "SENT";
-                            $sap_cont[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
-                            $txt = $bill." | SENT | ".$res->E_RESULT->item->DOC_NUMBER;
-                        }
+                        $html .= $bill.": info vide ? <br />";
                     }
-                    $sap->save($dir, $sap_cont);
-                    if(!empty($oks)) {
-                        $oks .= ", ";
-                    }
-                    $oks .= $bill;
-                }
-                else {
-                    $html .= $bill.": info vide ? <br />";
+                    //$more .= json_encode($res);
                 }
             }
-        }
-        else {
-                $html .= $bill.": ".json_encode($resArray[1])."<br />";
+            else {
+                    $html .= $bill.": ".json_encode($resArray[1])."<br />";
+            }
         }
     }
+    catch(Exception $e) {
+        $html .= $e->getMesage(); 
+    }
+    unlink("../".Lock::FILES['process']);
     $html .= $oks." : ok <br />";
 
     if($sap->status() == 4) {
@@ -88,6 +100,7 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth'
 
     logAction($_POST["dir"], $sap, $_POST['type'], $oldStatus, $oldState, $logfile, count($bills));
     $_SESSION['message'] = $html;
+//    $_SESSION['more'] = $more;
 }
 
 

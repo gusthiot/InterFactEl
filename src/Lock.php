@@ -3,7 +3,7 @@
 
 class Lock 
 {
-    const FILES = ['month'=>"/lockm.csv", 'version'=>"/lockv.csv", 'run'=>"/lock.csv", 'prefa'=>"/prefa.lock"];
+    const FILES = ['month'=>"/lockm.csv", 'version'=>"/lockv.csv", 'run'=>"/lock.csv", 'process'=>"/process.lock"];
     const STATES = ['finalized'=>"finalized", 'invalidate'=>"invalidate"];
 
     function load(string $dir, string $type): string 

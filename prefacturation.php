@@ -47,6 +47,28 @@ if(isset($_SESSION['message'])) {
     unset($_SESSION['message']); 
 }
 
+$lockp = new Lock();
+$lockedTxt = $lockp->load("./", "process");
+$lockedPlate = "";
+$lockedProcess = "";
+$disabled = "";
+
+if(!empty($lockedTxt)) {
+    $disabled = "disabled";
+    $lockedTab = explode(" ", $lockedTxt);
+    if($lockedTab[0] == "prefa") {
+        $lockedProcess = "Une préfacturation";
+    }
+    else {
+        $lockedProcess = "Un envoi SAP";
+    }
+    $lockedPlate = $lockedTab[1];
+    $other = "";
+    if($lockedPlate != $plateforme) {
+        $other = " pour une autre plateforme";
+    }
+    $message = '<div>'.$lockedProcess.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
+}
 ?>
 
 
@@ -84,13 +106,13 @@ if(isset($_SESSION['message'])) {
             <button type="button" id="all" class="btn but-line">Exporter Tout</button>
             <?php 
             if(in_array($status, [1, 2, 3, 5, 6, 7]) && !$loctxt) {
-                echo '<button type="button" id="send" class="btn but-line-green lockable">Envoi SAP</button>';
+                echo '<button type="button" id="send" '.$disabled.' class="btn but-line-green lockable">Envoi SAP</button>';
             }
             if(in_array($status, [0, 5, 6, 7]) && !$loctxt) {
-                echo '<button type="button" id="finalize" class="btn but-line-blue lockable">Finaliser SAP</button>';
+                echo '<button type="button" id="finalize" '.$disabled.' class="btn but-line-blue lockable">Finaliser SAP</button>';
             }
                 if((in_array($status, [4, 5, 6, 7]) && !$loctxt) || (in_array($status, [4, 5, 6, 7]) && $locvtxt && ($locvtxt == $run))) {
-            echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg6').'" class="btn but-line-red lockable">Renvoi SAP</button>';
+            echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg6').'" '.$disabled.' class="btn but-line-red lockable">Renvoi SAP</button>';
             }
             ?>
         </div>
