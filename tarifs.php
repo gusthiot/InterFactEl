@@ -91,8 +91,8 @@ if(isset($_SESSION['message'])) {
             </div>
         </div>
         <?php include("commons/footer.php");?> 
-        <script src="jquery-ui/jquery-ui.js"></script>
-        <link rel="stylesheet" href="jquery-ui/jquery-ui.css">
+        <script src="js/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="css/jquery-ui.min.css">
         <script src="js/tarifs.js"></script>
 	</body>
 </html>
