@@ -1,19 +1,19 @@
 
 $('#label').on('click', function () {
     $.post("controller/getLabel.php", {dir: $('#dir').val()}, function (data) {
-        $('#display').html(data);
+        $('#content').html(data);
     });
 } );
 
 $('#info').on('click', function () {  
     $.post("controller/getInfos.php", {dir: $('#dir').val()}, function (data) {
-        $('#display').html(data);
+        $('#content').html(data);
     });
 } );
 
 $('#bills').on('click', function () {
     $.post("controller/displaySap.php", {dir: $('#dir').val()}, function (data) {
-        $('#display').html(data);
+        $('#content').html(data);
     });
 } );
 
@@ -35,7 +35,7 @@ $('#ticket').on('click', function () {
 
 $('#changes').on('click', function () {
     $.post("controller/getModifs.php", {dir: $('#dir').val(), suf: $('#suf').val()}, function (data) {
-        $('#display').html(data);
+        $('#content').html(data);
     });
 } );
 
@@ -59,7 +59,7 @@ $('#all').on('click', function () {
 
 $('#send').on('click', function () {
     $.post("controller/selectBills.php", {dir: $('#dir').val(), type: "sendBills"}, function (data) {
-        $('#display').html(data);
+        $('#content').html(data);
     });
 } );
 
@@ -122,7 +122,7 @@ $('#finalize').on('click', function () {
 $('#resend').on('click', function () {
     if (confirm($(this).data('msg')) == true) {
         $.post("controller/selectBills.php", {dir: $('#dir').val(), type: "resendBills"}, function (data) {
-            $('#display').html(data);
+            $('#content').html(data);
         });
         
     } 

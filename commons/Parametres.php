@@ -33,31 +33,36 @@ class Parametres
         return false;
     }
 
-    static function getFiles(string $plate): array
+    static function getFiles(string $plate, string $plt): array
     {
-        $tmpFile = TEMP."plateforme.csv";
-        foreach(State::scanDescSan("../".$plate) as $year) {
-            foreach(State::scanDescSan("../".$plate."/".$year) as $month) {
-                $zipFile = "../".$plate."/".$year."/".$month."/parametres.zip";
-                if (file_exists($zipFile)) {
-                    $zip = new ZipArchive;
-                    if ($zip->open($zipFile)) {
-                        for($i = 0; $i < $zip->count(); $i++) {
-                            $fileName = $zip->getNameIndex($i);
-                            $fileInfo = pathinfo($fileName);
-                            if($fileInfo['basename'] == "plateforme.csv") {
-                                copy("zip://".$zipFile."#".$fileName, $tmpFile);
+        if(empty($plt)) {
+            $tmpFile = TEMP."plateforme.csv";
+            foreach(State::scanDescSan("../".$plate) as $year) {
+                foreach(State::scanDescSan("../".$plate."/".$year) as $month) {
+                    $zipFile = "../".$plate."/".$year."/".$month."/parametres.zip";
+                    if (file_exists($zipFile)) {
+                        $zip = new ZipArchive;
+                        if ($zip->open($zipFile)) {
+                            for($i = 0; $i < $zip->count(); $i++) {
+                                $fileName = $zip->getNameIndex($i);
+                                $fileInfo = pathinfo($fileName);
+                                if($fileInfo['basename'] == "plateforme.csv") {
+                                    copy("zip://".$zipFile."#".$fileName, $tmpFile);
+                                }
                             }
+                            $zip->close();
                         }
-                        $zip->close();
                     }
                 }
             }
+            $plateforme = new Plateforme($tmpFile);
+            unlink($tmpFile);
         }
-        $plateforme = new Plateforme($tmpFile);
-        $priceFile = $plateforme->getFile($plate).".pdf";
-        unlink($tmpFile);
+        else {
+            $plateforme = new Plateforme($plt);
+        }
         
+        $priceFile = $plateforme->getFile($plate).".pdf";
         $ret = self::FILES;
         $ret[] = $priceFile;
         return $ret;
@@ -74,7 +79,11 @@ class Parametres
                 if(empty($msg)) {
                     $zip = new ZipArchive;
                     if ($zip->open($dirTarifs.self::NAME, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-                        foreach(self::getFiles($plate) as $file) {
+                        $plt = "";
+                        if(file_exists($tmpDir."plateforme.csv")) {
+                            $plt = $tmpDir."plateforme.csv";
+                        }
+                        foreach(self::getFiles($plate, $plt) as $file) {
                             if(file_exists($tmpDir.$file)) {
                                 $zip->addFile($tmpDir.$file, $file);
                             }

@@ -73,13 +73,13 @@ class State
 
     static function addToString(string $txt, int $num): string 
     {
-        return (string)((int)($txt) + $num);
+        return strval(intval($txt) + $num);
     }
 
     static function addToMonth(string $month, int $num): string 
     {
-        $m = (int)($month) + $num;
-        return $m < 10 ? "0".(string)($m) : (string)($m);
+        $m = intval($month) + $num;
+        return $m < 10 ? "0".strval($m) : strval($m);
     }
 
     static function removeRun(string $path, string $todel): void
@@ -115,21 +115,21 @@ class State
     static function isNext($month, $year, $m, $y): bool
     {
         if($year == $y) {
-            return ((int)$m == ((int)($month)+1));
+            return (intval($m) == (intval($month)+1));
         }
         else {
             if($y < $year) {
                 return false;
             }
             else {
-                return ((int)$m == 1 && (int)$month == 12);
+                return (intval($m) == 1 && intval($month) == 12);
             }
         }
     }
 
     static function isSame($month, $year, $m, $y): bool
     {
-        if((int)$month == (int)$m && $year == $y) {
+        if(intval($month) == intval($m) && $year == $y) {
             return true;
         }
         return false;
@@ -137,7 +137,7 @@ class State
 
     static function isNextOrSame($month, $year, $m, $y) //: bool
     {
-        if((int)$month == (int)$m && $year == $y) {
+        if(intval($month) == intval($m) && $year == $y) {
             return true;
         }
         else {

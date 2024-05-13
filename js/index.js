@@ -21,3 +21,15 @@ $('.facturation').on('click', function () {
 $('.tarifs').on('click', function () {
     window.location.href = "tarifs.php?plateforme="+$(this).find('#plateNum').val();
 } );
+
+$(document).on("change", ".zip_file", function () {
+    const file = $(this).val();
+    if(file.indexOf('.zip') > -1) {
+        $(this).closest("form").submit();
+        $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
+        $(".lockable").prop('disabled', true);
+    }
+    else {
+        $('#message').text('Vous devez uploader une archive zip !');
+    }
+});

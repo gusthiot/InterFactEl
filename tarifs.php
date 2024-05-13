@@ -9,7 +9,7 @@ if(!isset($_GET["plateforme"])) {
 
 $plateforme = $_GET['plateforme'];
 
-if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
+if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['complet'])) {
     die("Ce numéro de plateforme n'est pas pris en compte !");
 }
 
@@ -38,7 +38,7 @@ if(isset($_SESSION['message'])) {
 
     <body>
         <div class="container-fluid">	
-            <div id="head"><div id="div-logo"><a href="index.php"><img src="img/EPFL_Logo_Digital_RGB_PROD.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > Tarifs <?= $name ?></p></div></div>	
+            <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > Tarifs <?= $name ?></p></div></div>	
             <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
             <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
                     <div class="text-center" id="buttons">
@@ -47,8 +47,12 @@ if(isset($_SESSION['message'])) {
                     ?>
                     <form action="controller/uploadTarifs.php" method="post" id="upform" enctype="multipart/form-data" >
                         <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
-                        <button type="button" id="import" class="btn but-line">Importer de nouveaux tarifs</button>
-                        <div id="more" class="text-center">
+                        <input name="month-picker" id="month-picker" class="date-picker"/>
+                        <div>
+                            <label class="btn but-line">
+                                <input type="file" id="zip-tarifs" name="zip_file" class="zip_file" accept=".zip">
+                                Importer de nouveaux tarifs applicables dès ce mois
+                            </label>
                         </div>
                     </form>
                     <?php
@@ -63,7 +67,7 @@ if(isset($_SESSION['message'])) {
             ?>
                 <input type="hidden" id="lastMonth" value="<?= $state->getLastMonth() ?>" />
                 <input type="hidden" id="lastYear" value="<?= $state->getLastYear() ?>" />
-                <table class="table table-bordered">
+                <table class="table table-boxed">
                     <?php
                     foreach(State::scanDescSan($plateforme) as $year) {
                         foreach(State::scanDescSan($plateforme."/".$year) as $month) {
@@ -87,8 +91,8 @@ if(isset($_SESSION['message'])) {
             </div>
         </div>
         <?php include("commons/footer.php");?> 
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="jquery-ui/jquery-ui.js"></script>
+        <link rel="stylesheet" href="jquery-ui/jquery-ui.css">
         <script src="js/tarifs.js"></script>
 	</body>
 </html>

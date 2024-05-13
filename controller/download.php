@@ -28,37 +28,6 @@ if(isset($_GET['type'])) {
             Zip::getZipDir($tmpFile, "../".$_GET['dir']."/");
         }
     }
-    elseif($type==="prepa") {
-        if(isset($_GET['plate']) && isset($_GET['tyfact'])) {
-            $lockv = new Lock();
-            $state->lastState("../".$_GET['plate'], $lockv);
-            
-            $dir = "../".$_GET['plate']."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun();
-            $tmpPe = TEMP.'paramedit.csv';
-            $wm = "";
-            $tyfact = "SAP";
-            if($_GET['tyfact'] == "PROFORMA") {
-                $paramtext = new Paramtext();
-                if($paramtext->load($dir."/OUT/"."paramtext.csv")) {
-                    $wm = $paramtext->getParam('filigr-prof');
-                }
-                $tyfact = "PROFORMA";
-            }
-            if($_GET['tyfact'] == "REDO") {
-                $year = $state->getLastYear();
-                $month = $state->getLastMonth();
-            }
-            else {
-                $year = $state->getNextYear();
-                $month = $state->getNextMonth();
-            }
-            $array = [["Platform", $_GET['plate']], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
-            $paramedit = new Paramedit();
-            $paramedit->write($tmpPe, $array);
-            Zip::getZipDir($tmpFile, $dir."/OUT/", $tmpPe);
-            unlink($tmpPe);
-        }
-    }
     elseif($type==="sap") {
         if(isset($_GET['dir'])) {
             readCsv("../".$_GET['dir']."/sap.csv");

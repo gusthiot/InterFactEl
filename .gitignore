@@ -1,9 +1,9 @@
 CONFIG
-PyFactEl-V11
+PyFactEl
 219455
-tequila-php-client
 tmp
 config.php
 config.dev.php
 config.prod.php
 reveal.js
+jquery-ui

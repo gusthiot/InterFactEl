@@ -5,50 +5,36 @@ require_once("../src/Journal.php");
 require_once("../src/Modif.php");
 
 if(isset($_POST["dir"]) && isset($_POST["suf"])){
-
+    $html = "";
     $modif = new Modif("../".$_POST["dir"]."/Modif-factures".$_POST["suf"].".csv");
-    $html = "<table>";
-    foreach($modif->getModifs() as $line) {
-        $html .= "<tr>";
-        foreach($line as $cell) {
-            $html .= "<td>".$cell."</td>";
-        }
-        $html .= "</tr>";
-
-    }
-    $html .= "</table>";
-    
-    $html .= '<button type="button" id="getModif" class="btn but-line">Download Modif-factures</button>';
+    $html .= table($modif->getModifs(), "getModif", "Modif-modifs", "modifs", [7, 8]);
 
     $journal = new Journal("../".$_POST["dir"]."/Journal-corrections".$_POST["suf"].".csv");
-    if(!empty($journal->getModifs())) {
-        $html .= "<table>";
-        foreach($journal->getModifs() as $line) {
-            $html .= "<tr>";
-            foreach($line as $cell) {
-                $html .= "<td>".$cell."</td>";
-            }
-            $html .= "</tr>";
-
-        }
-        $html .= "</table>";
-        $html .= '<button type="button" id="getJournal" class="btn but-line">Download Journal-modifs</button>';
-    }
+    $html .= table($journal->getModifs(), "getJournal", "Journal-modifs", "journal", []);
 
     $client = new Client("../".$_POST["dir"]."/Clients-modifs".$_POST["suf"].".csv");
-    if(!empty($client->getModifs())) {
-        $html .= "<table>";
-        foreach($client->getModifs() as $line) {
+    $html .= table($client->getModifs(), "getClient", "Client-modifs", "client", []);
+
+    echo $html;
+}
+
+function table(array $modifs, string $id, string $title, string $class, array $prices): string
+{
+    $html = "";
+    if(!empty($modifs)) {
+        $html .= '<table class="table '.$class.'">';
+        foreach($modifs as $key=>$line) {
             $html .= "<tr>";
-            foreach($line as $cell) {
-                $html .= "<td>".$cell."</td>";
+            foreach($line as $col=>$cell) {
+                in_array($col, $prices) ? $case = number_format(floatval($cell), 2, ".", "'") : 
+                    (($col==1) ? $case = ((intval($cell) < 10) ? "0".$cell : $cell) : $case = $cell);
+                ($key==0) ? $html .= "<th>".$cell."</th>" : $html .= "<td>".$case."</td>";
             }
             $html .= "</tr>";
 
         }
         $html .= "</table>";
-        $html .= '<button type="button" id="getClient" class="btn but-line">Download Client-modifs</button>';
+        $html .= '<button type="button" id="'.$id.'" class="btn but-line">Download '.$title.'</button>';
     }
-
-    echo $html;
+    return $html;
 }

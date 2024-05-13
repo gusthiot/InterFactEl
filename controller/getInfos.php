@@ -5,13 +5,13 @@ require_once("../src/Info.php");
 
 if(isset($_POST["dir"])){
     $info = new Info();
-    $html = "<table>";
+    $html = '<table class="table">';
     foreach($info->load("../".$_POST["dir"]) as $line) {
-        $html .= "<tr>";
-        $html .= "<td>".$line[1]."</td><td>".$line[2]."</td><td>".$line[3]."</td>";
-        $html .= "</tr>";
+        $html .= '<tr>';
+        $html .= '<th>'.str_replace('"', '', $line[1]).'</th><td>'.str_replace('"', '', $line[2]).'</td><td>'.$line[3].'</td>';
+        $html .= '</tr>';
 
     }
-    $html .= "</table>";
+    $html .= '</table>';
     echo $html;
 }

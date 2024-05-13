@@ -14,29 +14,21 @@ $(function() {
                             '<div id="label-'+id+'"></div>');
         active = id;
     });
-
-    $('#import').on('click', function () {
-        $('#more').html('<input name="month-picker" id="month-picker" class="date-picker"/>'+
-                        '<label class="up-but">'+
-                        '<input type="file" id="zip-tarifs" name="zip_file" class="zip_file" accept=".zip">'+
-                        'Importer'+
-                        '</label>');
         
-        $('#month-picker').datepicker({
-            dateFormat: "mm yy",
-            changeMonth: true,
-            changeYear: true, 
-            showButtonPanel: true,
-            minDate: new Date(lastYear, lastMonth, 1),
-            maxDate: '+5Y',
-            onClose: function(e){
-                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                $(this).datepicker("setDate",new Date(year,month,1));
-            }
-        })
-        .datepicker("setDate",new Date(lastYear,lastMonth,1));
-    });
+    $('#month-picker').datepicker({
+        dateFormat: "mm yy",
+        changeMonth: true,
+        changeYear: true, 
+        showButtonPanel: true,
+        minDate: new Date(lastYear, lastMonth, 1),
+        maxDate: '+5Y',
+        onClose: function(e){
+            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+            $(this).datepicker("setDate",new Date(year,month,1));
+        }
+    })
+    .datepicker("setDate",new Date(lastYear,lastMonth,1));
 
     $(document).on("change", "#zip-tarifs", function () {
         const file = $('#zip-tarifs').val();

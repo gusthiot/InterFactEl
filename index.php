@@ -1,5 +1,8 @@
 <?php
 require_once("session.php");
+require_once("src/Lock.php");
+
+$sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
 
 $message = "";
 if(isset($_SESSION['message'])) {
@@ -7,6 +10,12 @@ if(isset($_SESSION['message'])) {
     unset($_SESSION['message']); 
 }
 
+$lockp = new Lock();
+$lockedTxt = $lockp->load("./", "process");
+$disabled = "";
+if(!empty($lockedTxt)) {
+    $disabled = "disabled";
+}
 ?>
 
 
@@ -18,10 +27,10 @@ if(isset($_SESSION['message'])) {
 
     <body>
         <div class="container-fluid">	
-            <div id="head"><div id="div-logo"><a href="index.php"><img src="img/EPFL_Logo_Digital_RGB_PROD.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p>Accueil</p></div></div>	
+            <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p>Accueil</p></div></div>	
             <h1 class="text-center">Interface de facturation</h1>
             <h6 class="text-center">Welcome <i><?= $_SESSION['user'] ?></i></h6>
-            <div id="message"><?= $message ?></div>
+            <div class="text-center" id="message"><?= $message ?></div>
             <div id="canevas">
             <?php
                 if($superviseur->isSuperviseur($_SESSION['user'])) {
@@ -32,14 +41,18 @@ if(isset($_SESSION['message'])) {
                     <div class="tiles">
                         <div type="button" id="download" class="tile center-one">
                             <p>Download CONFIG files</p>
-                            <i class="bi bi-download icon-tile"></i>
+                            <svg class="icon feather icon-tile" aria-hidden="true">
+                                <use xlink:href="#download-cloud"></use>
+                            </svg>
                         </div>
                         <label class="tile center-one">
                             <form action="controller/uploadConfig.php" method="post" id="upform" enctype="multipart/form-data" >
                                 <input type="file" name="zip_file" id="zip_file" accept=".zip">
                             </form>
                             <p>Upload CONFIG files</p>
-                            <i class="bi bi-upload icon-tile"></i>
+                            <svg class="icon feather icon-tile" aria-hidden="true">
+                                <use xlink:href="#upload-cloud"></use>
+                            </svg>
                         </label>
                     </div>
                 </div>
@@ -57,27 +70,31 @@ if(isset($_SESSION['message'])) {
                             foreach($dataGest['plates'] as $plateforme => $name) {
                                 echo '<div class="facturation tile center-two">
                                         <input type="hidden" id="plateNum" value="'.$plateforme.'" />
-                                        <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
-                                        <i class="bi bi-cash-coin icon-tile"></i>
+                                        <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>  
+                                        <svg class="icon feather icon-tile" aria-hidden="true">
+                                            <use xlink:href="#dollar-sign"></use>
+                                        </svg>
                                     </div>';
                             }
                             ?>
                             </div>
                         </div>
                         <?php
-                        if(!empty($gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
+                        if(!empty($dataGest['complet'])) {
                             ?>      
                             <div id="index-tarifs">                
                                 <h5 class="">Nouveaux tarifs</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach($dataGest['tarifs'] as $plateforme => $name) {
-                                    if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
+                                foreach($dataGest['complet'] as $plateforme => $name) {
+                                    if(array_key_exists($plateforme, $dataGest['complet'])) {
                                         if(file_exists($plateforme)) {   
                                             echo '<div class="tarifs tile center-two">
                                                     <input type="hidden" id="plateNum" value="'.$plateforme.'" />
                                                     <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
-                                                    <i class="bi bi-gear icon-tile"></i>
+                                                    <svg class="icon feather icon-tile" aria-hidden="true">
+                                                        <use xlink:href="#settings"></use>
+                                                    </svg>
                                                 </div>';
                                         }
                                         else {  
@@ -86,6 +103,28 @@ if(isset($_SESSION['message'])) {
                                                     <i class="bi bi-gear"></i>
                                                 </div>';
                                         }
+                                    }
+                                }
+                                ?>
+                            </div>   
+                            <div id="simulation">                
+                                <h5 class="">Simulation</h5>
+                                <div class="tiles">
+                                <?php
+                                foreach($dataGest['complet'] as $plateforme => $name) {
+                                    if(array_key_exists($plateforme, $dataGest['complet'])) {
+                                        echo '<label class="simulation tile center-two">
+                                                <form action="controller/uploadPrepa.php" method="post" class="factform" enctype="multipart/form-data" >
+                                                    <input type="hidden" name="plate" id="plate" value="'.$plateforme.'" />
+                                                    <input type="hidden" name="sciper" id="sciper" value="'.$sciper.'" />
+                                                    <input type="hidden" name="type" id="type" value="SIMU">   
+                                                    <input id="SIMU" type="file" name="SIMU" '.$disabled.' class="zip_file lockable" accept=".zip">
+                                                </form>
+                                                <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
+                                                <svg class="icon icon-tile" aria-hidden="true">
+                                                    <use xlink:href="#activity"></use>
+                                                </svg>
+                                            </label>';
                                     }
                                 }
                                 ?>

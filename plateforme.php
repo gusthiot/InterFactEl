@@ -29,7 +29,7 @@ if(empty($state->getCurrent())) {
     }
 }
 $complet = false;
-if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
+if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['complet'])) {
     $complet = true;
 }
 
@@ -41,8 +41,8 @@ if(isset($_SESSION['message'])) {
 
 function uploader(string $title, string $id, string $disabled)
 {
-    $html = '<input id="'.$id.'" type="file" name="zip_file" '.$disabled.' class="zip_file lockable" accept=".zip">';
-    $html .= '<label class="up-but" for="'.$id.'">';
+    $html = '<input id="'.$id.'" type="file" name="'.$id.'" '.$disabled.' class="zip_file lockable" accept=".zip">';
+    $html .= '<label class="btn but-line" for="'.$id.'">';
     $html .= $title;
     $html .= '</label>';
     return $html;
@@ -82,7 +82,14 @@ if(!empty($lockedTxt)) {
 
     <body>
         <div class="container-fluid">	
-            <div id="head"><div id="div-logo"><a href="index.php"><img src="img/EPFL_Logo_Digital_RGB_PROD.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > Facturation <?= $name ?></p></div></div>	
+            <div id="head">
+                <div id="div-logo">
+                    <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
+                </div>
+                <div id="div-path">
+                    <p><a href="index.php">Accueil</a> > Facturation <?= $name ?></p>
+                </div>
+            </div>	
             <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
             
             <form action="controller/uploadPrepa.php" method="post" id="factform" enctype="multipart/form-data" >
@@ -94,16 +101,12 @@ if(!empty($lockedTxt)) {
                     <input type="hidden" name="type" id="type" value="SAP">   
                     <div class="row" id="buttons">
                         <div class="col-sm">
-                            <?php 
-                                echo uploader("Simulation", "SIMU", $disabled);
+                            <?php
                                 if(!$first) { 
                                     echo '<div><button type="button" id="historique" class="btn but-line">Ouvrir l\'historique</button></div>';
                                     if(!$current) { 
-                                        echo '<div><button type="button" id="proforma" '.$disabled.' class="btn but-line lockable">Facturation Pro Forma</button></div>'; 
-                                    }   
-                                    if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['tarifs'])) {
-                                        echo '<div><button type="button" id="tarifs" class="btn but-line">Nouveaux tarifs</button></div>'; 
-                                    }              
+                                        echo uploader("Facturation Pro Forma", "PROFORMA", $disabled);
+                                    }             
                                     if($superviseur->isSuperviseur($_SESSION['user'])) {
                                         echo '<div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Supprimer tous les données de cette plateforme</button></div>';
                                     } 
@@ -114,8 +117,8 @@ if(!empty($lockedTxt)) {
                             <?php
                                 if(!$first) { 
                                     if(!$current) {
-                                        echo '<div><button type="button" id="redo" '.$disabled.' class="btn but-line lockable">Refaire factures : '.$state->getLastMonth()."/".$state->getLastYear().' </button></div>';
-                                        echo '<div><button type="button" id="month" '.$disabled.' class="btn but-line lockable">Facturation nouveau mois : '.$state->getNextMonth()."/".$state->getNextYear().' </button></div>';
+                                        echo uploader("Refaire factures : ".$state->getLastMonth()."/".$state->getLastYear(), "REDO", $disabled);
+                                        echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $disabled);
                                     }
                                 }
                                 else {
@@ -139,7 +142,7 @@ if(!empty($lockedTxt)) {
             <?php
             if(file_exists($plateforme)) {   
             ?>
-                <table class="table table-bordered">
+                <table class="table table-boxed">
                     <?php
                     foreach(State::scanDescSan($plateforme) as $year) {
                         foreach(State::scanDescSan($plateforme."/".$year) as $month) {
@@ -148,7 +151,9 @@ if(!empty($lockedTxt)) {
                                 echo '<tr>';
                                 echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
                                 if (file_exists($plateforme."/".$year."/".$month."/lockm.csv")) {
-                                    echo ' <i class="bi bi-lock"></i> ';
+                                    echo ' <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#lock"></use>
+                                            </svg> ';
                                 }
                                 echo '</td>';
                                 $line = 0;
@@ -158,7 +163,9 @@ if(!empty($lockedTxt)) {
                                     }
                                     echo '<td>'.$version;
                                     if (file_exists($plateforme."/".$year."/".$month."/".$version."/lockv.csv")) {
-                                        echo ' <i class="bi bi-lock"></i> ';
+                                        echo ' <svg class="icon" aria-hidden="true">
+                                                    <use xlink:href="#lock"></use>
+                                                </svg> ';
                                     }
                                     echo '</td><td>';
                                     foreach(State::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
@@ -176,7 +183,9 @@ if(!empty($lockedTxt)) {
                                             $loctxt = $lock->load($plateforme."/".$year."/".$month."/".$version."/".$run, "run");
                                             echo ' <button type="button" value="'.$value.'" class="run btn '.Sap::color($status, $loctxt).'"> '.$labtxt;
                                             if ($loctxt) {
-                                                echo ' <i class="bi bi-lock"></i> ';
+                                                echo ' <svg class="icon" aria-hidden="true">
+                                                            <use xlink:href="#lock"></use>
+                                                        </svg> ';
                                             }
                                             echo '</button> ';
                                             if($superviseur->isSuperviseur($_SESSION['user'])) {

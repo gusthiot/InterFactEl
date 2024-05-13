@@ -19,14 +19,20 @@ if(isset($_POST["dir"]) && isset($_POST["type"])){
         foreach($labo as $line) {
             if($_POST["type"] == "sendBills") {
                 if($line[3] === "READY" || $line[3] === "ERROR") {
-                    $choices[] = '<div><input type="checkbox" id="bill'.$i.'" name="bills" value="'.$line[1].'"><label for="bill'.$i.'"> '.$line[0].' '.$line[1].' '.$line[2].' '.$line[3].' </label></div>';
+                    $choices[] = '<div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="bill'.$i.'" name="bills" value="'.$line[1].'">
+                                    <label class="custom-control-label" for="bill'.$i.'"> '.$line[0].' '.$line[1].' '.$line[2].' '.$line[3].' </label>
+                                </div>';
                 }
             }
             else {
                 $lock = new Lock();
                 $loctxt = $lock->load("../".$_POST["dir"], "run");
                 if( $line[3] === "SENT" || ($loctxt && $line[3] === "READY") ) {
-                    $choices[] = '<div><input type="checkbox" id="bill'.$i.'" name="bills" value="'.$line[1].'"><label for="bill'.$i.'"> '.$line[0].' '.$line[1].' '.$line[2].' '.$line[3].' </label></div>';
+                    $choices[] = '<div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="bill'.$i.'" name="bills" value="'.$line[1].'">
+                                    <label class="custom-control-label" for="bill'.$i.'"> '.$line[0].' '.$line[1].' '.$line[2].' '.$line[3].' </label>
+                                </div>';
                 }
             }
 

@@ -26,6 +26,11 @@ class Sap extends Csv
         return $this->bills;
     }
 
+    function getTitle(): array
+    {
+        return $this->title;
+    }
+
     function status(): int
     {
         $status = ['READY'=>0, 'ERROR'=>0, 'SENT'=>0];
