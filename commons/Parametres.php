@@ -1,6 +1,5 @@
 <?php
 
-require_once("../src/Plateforme.php");
 require_once("../src/Label.php");
 require_once("State.php");
 require_once("Zip.php");
@@ -8,7 +7,7 @@ require_once("Zip.php");
 class Parametres
 {
     const FILES = ["articlesap.csv", "categorie.csv", "categprix.csv", "classeclient.csv", "classeprestation.csv", "coeffprestation.csv", 
-        "groupe.csv", "overhead.csv", "paramfact.csv", "paramtext.csv", "partenaire.csv", "plateforme.csv", "logo.pdf"];
+        "groupe.csv", "overhead.csv", "paramfact.csv", "paramtext.csv", "partenaire.csv", "plateforme.csv", "logo.pdf", "grille.pdf"];
 
     const NAME = "/parametres.zip";
 
@@ -20,10 +19,6 @@ class Parametres
             foreach(self::FILES as $file) {
                 $zip->addFile($in.$file, $file);
             }
-            $plateforme = new Plateforme($in."plateforme.csv");
-            $tab = explode("/", $dir);
-            $file = $plateforme->getFile($tab[1]).".pdf";
-            $zip->addFile($in.$file, $file);
             if($zip->close()) {
                 $label = new Label();
                 $label->save($dirTarifs, "New");
@@ -32,42 +27,6 @@ class Parametres
         }
         return false;
     }
-
-    static function getFiles(string $plate, string $plt): array
-    {
-        if(empty($plt)) {
-            $tmpFile = TEMP."plateforme.csv";
-            foreach(State::scanDescSan("../".$plate) as $year) {
-                foreach(State::scanDescSan("../".$plate."/".$year) as $month) {
-                    $zipFile = "../".$plate."/".$year."/".$month."/parametres.zip";
-                    if (file_exists($zipFile)) {
-                        $zip = new ZipArchive;
-                        if ($zip->open($zipFile)) {
-                            for($i = 0; $i < $zip->count(); $i++) {
-                                $fileName = $zip->getNameIndex($i);
-                                $fileInfo = pathinfo($fileName);
-                                if($fileInfo['basename'] == "plateforme.csv") {
-                                    copy("zip://".$zipFile."#".$fileName, $tmpFile);
-                                }
-                            }
-                            $zip->close();
-                        }
-                    }
-                }
-            }
-            $plateforme = new Plateforme($tmpFile);
-            unlink($tmpFile);
-        }
-        else {
-            $plateforme = new Plateforme($plt);
-        }
-        
-        $priceFile = $plateforme->getFile($plate).".pdf";
-        $ret = self::FILES;
-        $ret[] = $priceFile;
-        return $ret;
-    }
-
 
     static function importNew(string $dirTarifs, string $file, string $plate): string
     {
@@ -79,20 +38,16 @@ class Parametres
                 if(empty($msg)) {
                     $zip = new ZipArchive;
                     if ($zip->open($dirTarifs.self::NAME, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-                        $plt = "";
-                        if(file_exists($tmpDir."plateforme.csv")) {
-                            $plt = $tmpDir."plateforme.csv";
-                        }
-                        foreach(self::getFiles($plate, $plt) as $file) {
+                        foreach(self::FILES as $file) {
                             if(file_exists($tmpDir.$file)) {
                                 $zip->addFile($tmpDir.$file, $file);
                             }
                         }
                         if($zip->close()) {
-                            $msg = "Zip correctement sauvegardé !";
+                            $msg = "";
                             $label = new Label();
                             if(!$label->save($dirTarifs, "New")) {
-                                $msg .= " problème avec le label";
+                                $msg = "Problème avec le label";
                             }
                         }
                         else {

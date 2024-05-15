@@ -23,7 +23,13 @@ if(isset($_POST["dir"])){
     }
     logAction($_POST["dir"]);
     $res .= "invalidé";
+    $_SESSION['type'] = "alert-success";
     $_SESSION['message'] = $res;
+}
+else {
+    $_SESSION['type'] = "alert-danger";
+    $_SESSION['message'] = "post_data_missing";
+    header('Location: ../index.php');
 }
 
 function logAction($dir) {

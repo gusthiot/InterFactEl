@@ -12,31 +12,26 @@ $plateforme = $_GET['plateforme'];
 if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['plates'])) {
     die("Ce numéro de plateforme n'est pas pris en compte !");
 }
+$first = true;
+$current = false;
 if(file_exists($plateforme)) { 
-    $lockv = new Lock();
-    $state->lastState($plateforme, $lockv);
+    $state->lastState($plateforme, new Lock());
     $state->currentState($plateforme);
+    $first = false;
+    $current = true;
+    if(empty($state->getCurrent())) {
+        $current = false;
+        if(empty($state->getLast())) {
+            $first = true;
+        }
+    }
 }
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 $sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
 
-$first = false;
-$current = true;
-if(empty($state->getCurrent())) {
-    $current = false;
-    if(empty($state->getLast())) {
-        $first = true;
-    }
-}
 $complet = false;
 if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['complet'])) {
     $complet = true;
-}
-
-$message = "";
-if(isset($_SESSION['message'])) {
-    $message = $_SESSION['message'];
-    unset($_SESSION['message']); 
 }
 
 function uploader(string $title, string $id, string $disabled)
@@ -134,7 +129,7 @@ if(!empty($lockedTxt)) {
                     </div>
                 </div>
 
-                <div class="text-center" id="message"><?= $message ?></div>
+                <?php include("commons/message.php"); ?>
                 <div class="text-center" id="display"></div>
             </form>
 

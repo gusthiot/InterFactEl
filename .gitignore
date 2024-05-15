@@ -6,4 +6,3 @@ config.php
 config.dev.php
 config.prod.php
 reveal.js
-jquery-ui

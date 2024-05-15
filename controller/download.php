@@ -47,6 +47,7 @@ if(isset($_GET['type'])) {
         }
     }
     else {
+        $_SESSION['type'] = "alert-danger";
         $_SESSION['message'] = "erreur download";
         header('Location: ../index.php');
     }

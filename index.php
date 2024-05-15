@@ -1,14 +1,9 @@
 <?php
 require_once("session.php");
 require_once("src/Lock.php");
+require_once("commons/State.php");
 
 $sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
-
-$message = "";
-if(isset($_SESSION['message'])) {
-    $message = $_SESSION['message'];
-    unset($_SESSION['message']); 
-}
 
 $lockp = new Lock();
 $lockedTxt = $lockp->load("./", "process");
@@ -30,7 +25,7 @@ if(!empty($lockedTxt)) {
             <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p>Accueil</p></div></div>	
             <h1 class="text-center">Interface de facturation</h1>
             <h6 class="text-center">Welcome <i><?= $_SESSION['user'] ?></i></h6>
-            <div class="text-center" id="message"><?= $message ?></div>
+            <?php include("commons/message.php"); ?>
             <div id="canevas">
             <?php
                 if($superviseur->isSuperviseur($_SESSION['user'])) {
@@ -88,7 +83,15 @@ if(!empty($lockedTxt)) {
                                 <?php
                                 foreach($dataGest['complet'] as $plateforme => $name) {
                                     if(array_key_exists($plateforme, $dataGest['complet'])) {
-                                        if(file_exists($plateforme)) {   
+                                        $available = false;
+                                        if(file_exists($plateforme)) { 
+                                            $available = true;
+                                            $state->lastState($plateforme, new Lock());
+                                            if(empty($state->getLast())) {
+                                                $available = false;
+                                            }
+                                        }
+                                        if($available) {   
                                             echo '<div class="tarifs tile center-two">
                                                     <input type="hidden" id="plateNum" value="'.$plateforme.'" />
                                                     <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>

@@ -42,11 +42,6 @@ if(empty($state->getLast())) {
     $dirTarifs = $plateforme."/".$year."/".$month;
 }
 
-if(isset($_SESSION['message'])) {
-    $message = $_SESSION['message'];
-    unset($_SESSION['message']); 
-}
-
 $lockp = new Lock();
 $lockedTxt = $lockp->load("./", "process");
 $lockedPlate = "";
@@ -117,7 +112,7 @@ if(!empty($lockedTxt)) {
                 ?>
             </div>
 
-            <div class="text-center" id="message"></div>
+            <?php include("commons/message.php"); ?>
 
             <div class="text-center" id="content"></div>
 

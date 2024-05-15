@@ -5,6 +5,7 @@ require_once("../src/Label.php");
 require_once("../commons/Parametres.php");
 
 session_start();
+$_SESSION['type'] = "alert-danger";
 if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['month-picker'])) {
     $plateforme = $_POST['plate'];
     $date = explode(" ", $_POST['month-picker']);
@@ -14,7 +15,12 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['month-picker']
     if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
         $tmpFile = TEMP.$fileName;
         if(copy($source, $tmpFile)) {
-            $_SESSION['message'] = Parametres::importNew($dirTarifs, $tmpFile, $plateforme);
+            $msg = Parametres::importNew($dirTarifs, $tmpFile, $plateforme);
+            if(empty($msg)) {
+                $_SESSION['type'] = "alert-success";
+                $msg = "Zip correctement sauvegardé !";
+            }
+            $_SESSION['message'] = $msg;
             unlink($tmpFile);
         }
         else {

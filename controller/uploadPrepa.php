@@ -9,6 +9,7 @@ require_once("../src/Lock.php");
 require_once("../session.php");
 require_once("../src/Sap.php");
 
+$_SESSION['type'] = "alert-danger";
 if(isset($_POST['plate']) && isset($_POST['type']) && isset($_POST['sciper'])) {
     $plateforme = $_POST['plate'];
     $sciper = $_POST['sciper'];
@@ -137,11 +138,12 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique) {
     $month = $params->getParam('Month');
     $year = $params->getParam('Year');
     $type = $params->getParam('Type');
-    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
+    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.' -g -n -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
     $result = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($result, 0, 2) === "OK") {
         $msg = $unique." tout OK ".strstr($result, '(');
+        $_SESSION['type'] = "alert-success";
         $tab = explode(" ", $result);
         $version = $tab[1];
         $dir = "../".$plateforme."/".$year."/".$mstr."/".$version."/".$unique;

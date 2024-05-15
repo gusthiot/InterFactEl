@@ -99,8 +99,14 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth'
     }
 
     logAction($_POST["dir"], $sap, $_POST['type'], $oldStatus, $oldState, $logfile, count($bills));
+    $_SESSION['type'] = "alert-info";
     $_SESSION['message'] = $html;
 //    $_SESSION['more'] = $more;
+}
+else {
+    $_SESSION['type'] = "alert-danger";
+    $_SESSION['message'] = "post_data_missing";
+    header('Location: ../index.php');
 }
 
 

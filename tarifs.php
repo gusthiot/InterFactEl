@@ -16,15 +16,13 @@ if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 $sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
 
+$available = false;
 if(file_exists($plateforme)) { 
-    $lockv = new Lock();
-    $state->lastState($plateforme, $lockv);
-}
-
-$message = "";
-if(isset($_SESSION['message'])) {
-    $message = $_SESSION['message'];
-    unset($_SESSION['message']); 
+    $available = true;
+    $state->lastState($plateforme, new Lock());
+    if(empty($state->getLast())) {
+        $available = false;
+    }
 }
 
 ?>
@@ -43,7 +41,7 @@ if(isset($_SESSION['message'])) {
             <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
                     <div class="text-center" id="buttons">
                 <?php
-                if(file_exists($plateforme)) { 
+                if($available) { 
                     ?>
                     <form action="controller/uploadTarifs.php" method="post" id="upform" enctype="multipart/form-data" >
                         <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
@@ -60,10 +58,10 @@ if(isset($_SESSION['message'])) {
                 ?>
             </div>
 
-            <div class="text-center" id="message"><?= $message ?></div>
+            <?php include("commons/message.php"); ?>
             <div class="text-center" id="arbo">
             <?php
-            if(file_exists($plateforme)) {   
+            if($available) {
             ?>
                 <input type="hidden" id="lastMonth" value="<?= $state->getLastMonth() ?>" />
                 <input type="hidden" id="lastYear" value="<?= $state->getLastYear() ?>" />

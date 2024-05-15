@@ -13,10 +13,12 @@ if(isset($_POST["dir"]) && isset($_POST["dirTarifs"])){
     $lock->save($dir, 'run', $lock::STATES['finalized']);
     $sep = strrpos($dir, "/");
     $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
+    $alert = "alert-success";
     $res = "";
     if(!empty($_POST["dirTarifs"])) {
         $dirTarifs = "../".$_POST["dirTarifs"];
         if(!Parametres::saveFirst($dir, $dirTarifs)) {
+            $alert = "alert-danger";
             $res .= "erreur sauvegarde paramètres ";
         }   
     }
@@ -32,7 +34,13 @@ if(isset($_POST["dir"]) && isset($_POST["dirTarifs"])){
     }
     logAction($_POST["dir"]);
     $res .= "finalisé";
+    $_SESSION['type'] = $alert;
     $_SESSION['message'] = $res;
+}
+else {
+    $_SESSION['type'] = "alert-danger";
+    $_SESSION['message'] = "post_data_missing";
+    header('Location: ../index.php');
 }
 
 
