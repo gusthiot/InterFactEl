@@ -3,14 +3,19 @@ $('#download').on('click', function () {
     window.location.href = "controller/download.php?type=config";
 } );
 
-$('#zip_file').on('change', function () {
-    const file = $('#zip_file').val();
+$('#zip_config').on('change', function () {
+    const file = $('#zip_config').val();
     if(file.indexOf('.zip') > -1) {
         $('#upform').submit();
         $('#message').text('');
     }
     else {
-        $('#message').text('Vous devez uploader une archive zip !');
+        $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
+                                'Vous devez uploader une archive zip !'+
+                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                                    '<span aria-hidden="true">&times;</span>'+
+                                '</button>'+
+                            '</div>');
     }
 } );
 
@@ -22,7 +27,7 @@ $('.tarifs').on('click', function () {
     window.location.href = "tarifs.php?plateforme="+$(this).find('#plateNum').val();
 } );
 
-$(document).on("change", ".zip_file", function () {
+$(document).on("change", ".zip_simu", function () {
     const file = $(this).val();
     if(file.indexOf('.zip') > -1) {
         $(this).closest("form").submit();
@@ -30,6 +35,11 @@ $(document).on("change", ".zip_file", function () {
         $(".lockable").prop('disabled', true);
     }
     else {
-        $('#message').text('Vous devez uploader une archive zip !');
+        $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
+                                'Vous devez uploader une archive zip !'+
+                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                                    '<span aria-hidden="true">&times;</span>'+
+                                '</button>'+
+                            '</div>');
     }
 });

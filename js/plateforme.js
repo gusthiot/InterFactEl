@@ -37,7 +37,12 @@ $(document).on("change", ".zip_file", function () {
         $(".lockable").prop('disabled', true);
     }
     else {
-        $('#message').text('Vous devez uploader une archive zip !');
+        $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
+                                'Vous devez uploader une archive zip !'+
+                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                                    '<span aria-hidden="true">&times;</span>'+
+                                '</button>'+
+                            '</div>');
     }
 });
 

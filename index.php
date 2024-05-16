@@ -42,7 +42,7 @@ if(!empty($lockedTxt)) {
                         </div>
                         <label class="tile center-one">
                             <form action="controller/uploadConfig.php" method="post" id="upform" enctype="multipart/form-data" >
-                                <input type="file" name="zip_file" id="zip_file" accept=".zip">
+                                <input type="file" name="zip_file" id="zip_config" accept=".zip">
                             </form>
                             <p>Upload CONFIG files</p>
                             <svg class="icon feather icon-tile" aria-hidden="true">
@@ -121,7 +121,7 @@ if(!empty($lockedTxt)) {
                                                     <input type="hidden" name="plate" id="plate" value="'.$plateforme.'" />
                                                     <input type="hidden" name="sciper" id="sciper" value="'.$sciper.'" />
                                                     <input type="hidden" name="type" id="type" value="SIMU">   
-                                                    <input id="SIMU" type="file" name="SIMU" '.$disabled.' class="zip_file lockable" accept=".zip">
+                                                    <input id="SIMU" type="file" name="SIMU" '.$disabled.' class="zip_simu lockable" accept=".zip">
                                                 </form>
                                                 <p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>
                                                 <svg class="icon icon-tile" aria-hidden="true">
