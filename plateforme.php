@@ -27,7 +27,6 @@ if(file_exists($plateforme)) {
     }
 }
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
-$sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
 
 $complet = false;
 if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['complet'])) {
@@ -43,29 +42,8 @@ function uploader(string $title, string $id, string $disabled)
     return $html;
 }
 
-$lockp = new Lock();
-$lockedTxt = $lockp->load("./", "process");
-$lockedPlate = "";
-$lockedRun = "";
-$lockedProcess = "";
-$disabled = "";
-if(!empty($lockedTxt)) {
-    $disabled = "disabled";
-    $lockedTab = explode(" ", $lockedTxt);
-    if($lockedTab[0] == "prefa") {
-        $lockedProcess = "Une préfacturation";
-    }
-    else {
-        $lockedProcess = "Un envoi SAP";
-    }
-    $lockedPlate = $lockedTab[1];
-    $lockedRun = $lockedTab[2];
-    $other = "";
-    if($lockedPlate != $plateforme) {
-        $other = " pour une autre plateforme";
-    }
-    $message = '<div>'.$lockedProcess.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
-}
+include("commons/lock.php");
+
 ?>
 
 
@@ -92,7 +70,6 @@ if(!empty($lockedTxt)) {
                     <p>Facturation en cours : <?php echo (!empty($state->getCurrent())) ? $state->getCurrent() : "aucune";  ?></p>
                     <p>Dernière facturation : <?php echo (!empty($state->getLast())) ? $state->getLast() : "aucune";  ?></p> 
                     <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
-                    <input type="hidden" name="sciper" id="sciper" value="<?= $sciper ?>" />
                     <input type="hidden" name="type" id="type" value="SAP">   
                     <div class="row" id="buttons">
                         <div class="col-sm">
@@ -129,7 +106,19 @@ if(!empty($lockedTxt)) {
                     </div>
                 </div>
 
-                <?php include("commons/message.php"); ?>
+                <?php include("commons/message.php");
+
+                if(!empty($lockedTxt)) {
+                    $other = "";
+                    if($lockedPlate != $plateforme) {
+                        $other = " pour une autre plateforme";
+                    }
+                    echo'<div>'.$lockedProcess.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
+                }
+                if(!empty($lockedUser)) {
+                    echo'<div class="text-center">'.$dlTxt.'</div>';
+                }
+                ?>
                 <div class="text-center" id="display"></div>
             </form>
 

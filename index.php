@@ -3,14 +3,8 @@ require_once("session.php");
 require_once("src/Lock.php");
 require_once("commons/State.php");
 
-$sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
+include("commons/lock.php");
 
-$lockp = new Lock();
-$lockedTxt = $lockp->load("./", "process");
-$disabled = "";
-if(!empty($lockedTxt)) {
-    $disabled = "disabled";
-}
 ?>
 
 
@@ -25,7 +19,11 @@ if(!empty($lockedTxt)) {
             <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p>Accueil</p></div></div>	
             <h1 class="text-center">Interface de facturation</h1>
             <h6 class="text-center">Welcome <i><?= $_SESSION['user'] ?></i></h6>
-            <?php include("commons/message.php"); ?>
+            <?php include("commons/message.php"); 
+            if(!empty($lockedUser)) {
+                echo'<div class="text-center">'.$dlTxt.'</div>';
+            }
+            ?>
             <div id="canevas">
             <?php
                 if($superviseur->isSuperviseur($_SESSION['user'])) {
@@ -119,7 +117,6 @@ if(!empty($lockedTxt)) {
                                         echo '<label class="simulation tile center-two">
                                                 <form action="controller/uploadPrepa.php" method="post" class="factform" enctype="multipart/form-data" >
                                                     <input type="hidden" name="plate" id="plate" value="'.$plateforme.'" />
-                                                    <input type="hidden" name="sciper" id="sciper" value="'.$sciper.'" />
                                                     <input type="hidden" name="type" id="type" value="SIMU">   
                                                     <input id="SIMU" type="file" name="SIMU" '.$disabled.' class="zip_simu lockable" accept=".zip">
                                                 </form>

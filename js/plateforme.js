@@ -15,6 +15,10 @@ $('#close-histo').on('click', function () {
     $('#display').html("");
 } );
 
+$('#dl_prefa').on('click', function () {
+    window.location.href = "controller/download.php?type=prefa";
+} );
+
 $('.run').on('click', function () {
     window.location.href = "prefacturation.php?"+$(this).val();
 } );

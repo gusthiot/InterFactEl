@@ -8,11 +8,21 @@ require_once("../src/Lock.php");
 require_once("../src/Logfile.php");
 require_once("../commons/Parametres.php");
 
-if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth']) && isset($_POST['type']) && isset($_POST["dirTarifs"])) {
+if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
+
     $bills = $_POST["bills"];
-    $dir = "../".$_POST["dir"];
-    $dirPrevMonth = "../".$_POST["dirPrevMonth"];
-    $html = "";
+    $plateforme = $_POST["plate"];
+    $year = $_POST["year"];
+    $month = $_POST["month"];
+    $run = $_POST["run"];
+    $type = $_POST['type'];
+    $version = $_POST["version"];
+
+    $dir = "../".$plateforme."/".$year."/".$month."/".$version."/".$run;
+    $dirPrevMonth = "../".$plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
+
+    $warn = "";
+    $error = "";
 //    $more = "";
     $logfile = new Logfile();
     $sap = new Sap();
@@ -20,10 +30,9 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth'
     $oldStatus = $sap->status();
     $oldState = $sap->state();
     $oks = "";
-    $tab = explode("/", $_POST["dir"]);
 
     $lockp = new Lock();
-    $lockp->save("../", 'process', "send ".$tab[0]." ".$tab[4]);
+    $lockp->save("../", 'process', "send ".$plateforme." ".$run);
     try {
         foreach($bills as $bill) {
             $facture = new Facture($dir."/Factures_JSON/facture_".$bill.".json");
@@ -65,29 +74,31 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth'
                         $oks .= $bill;
                     }
                     else {
-                        $html .= $bill.": info vide ? <br />";
+                        $warn .= $bill.": info vide ? <br />";
                     }
                     //$more .= json_encode($res);
                 }
             }
             else {
-                    $html .= $bill.": ".json_encode($resArray[1])."<br />";
+                    $error .= $bill.": ".json_encode($resArray[1])."<br />";
             }
         }
     }
     catch(Exception $e) {
-        $html .= $e->getMesage(); 
+        $error .= $e->getMesage(); 
     }
     unlink("../".Lock::FILES['process']);
-    $html .= $oks." : ok <br />";
 
     if($sap->status() == 4) {
         $lock = new Lock();
         $lock->save($dir, 'run', $lock::STATES['finalized']);
         $sep = strrpos($dir, "/");
         $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
-        if(!empty($_POST["dirTarifs"])) {
-            $dirTarifs = "../".$_POST["dirTarifs"];
+        
+        $locklast = new Lock();
+        $state->lastState("../".$plateforme, $locklast);
+        if(empty($state->getLast())) {
+            $dirTarifs = "../".$plateforme."/".$year."/".$month;
             if(!Parametres::saveFirst($dir, $dirTarifs)) {
                 $res .= "erreur sauvegarde paramètres ";
             }   
@@ -98,26 +109,30 @@ if(isset($_POST["bills"]) && isset($_POST['dir']) && isset($_POST['dirPrevMonth'
 
     }
 
-    logAction($_POST["dir"], $sap, $_POST['type'], $oldStatus, $oldState, $logfile, count($bills));
-    $_SESSION['type'] = "alert-info";
-    $_SESSION['message'] = $html;
+    $txt = $year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus;
+    logAction($dir, $sap, $oldState, $logfile, count($bills), $txt, $plateforme);
+    if(ëmpty($warn)) {
+        $_SESSION['alert-warning'] = $warn;
+    }
+    if(ëmpty($error)) {
+        $_SESSION['alert-danger'] = $error;
+    }
+    $_SESSION['alert-success'] = $messages->getMessage('msg6')."<br/>".$oks;
 //    $_SESSION['more'] = $more;
 }
 else {
-    $_SESSION['type'] = "alert-danger";
-    $_SESSION['message'] = "post_data_missing";
+    $_SESSION['alert-danger'] = "post_data_missing";
     header('Location: ../index.php');
 }
 
 
-function logAction($dir, $sap, $type, $oldStatus, $oldState, $logfile, $number) {
-    $sap->load("../".$dir);
+function logAction($dir, $sap, $oldState, $logfile, $number, $inter, $plateforme) {
+    $sap->load($dir);
     $status = $sap->status();
     $state = $sap->state();
-    $tab = explode("/", $dir);
-    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$tab[1].", ".$tab[2].", ".$tab[3].", ".$tab[4]." | ".$tab[4]." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
+    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$inter." | ".$status.PHP_EOL;
     $txt .= $oldState." | ".$number." | ".$state;
-    $logfile->write("../".$tab[0], $txt);
+    $logfile->write("../".$plateforme, $txt);
 }
 
 function send(string $data): array

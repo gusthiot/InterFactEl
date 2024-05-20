@@ -14,7 +14,6 @@ if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user
 }
 
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
-$sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
 
 $available = false;
 if(file_exists($plateforme)) { 

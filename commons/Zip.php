@@ -23,6 +23,18 @@ class Zip
         }
     }
 
+    static function setZipDir(string $tmpFile, string $dirname, string $morefile=""): void 
+    {
+        $zip = new ZipArchive;
+        if ($zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+            self::tree($zip, $dirname, "");
+            if(!empty($morefile)) {
+                $zip->addFile($morefile, basename($morefile));
+            }
+            $zip->close();
+        }
+    }
+
     static function tree(ZipArchive $zip, string $dirname, string $treename): void 
     {
         $dir = opendir($dirname);

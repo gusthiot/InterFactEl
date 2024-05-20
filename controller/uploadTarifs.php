@@ -5,7 +5,6 @@ require_once("../src/Label.php");
 require_once("../commons/Parametres.php");
 
 session_start();
-$_SESSION['type'] = "alert-danger";
 if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['month-picker'])) {
     $plateforme = $_POST['plate'];
     $date = explode(" ", $_POST['month-picker']);
@@ -17,23 +16,24 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['month-picker']
         if(copy($source, $tmpFile)) {
             $msg = Parametres::importNew($dirTarifs, $tmpFile, $plateforme);
             if(empty($msg)) {
-                $_SESSION['type'] = "alert-success";
-                $msg = "Zip correctement sauvegardé !";
+                $_SESSION['alert-success'] = "Zip correctement sauvegardé !";"alert-success";
             }
-            $_SESSION['message'] = $msg;
+            else {
+                $_SESSION['alert-danger'] = $msg;
+            }
             unlink($tmpFile);
         }
         else {
-            $_SESSION['message'] = "copy error";
+            $_SESSION['alert-danger'] = "copy error";
         }
     }
     else {
-        $_SESSION['message'] = "zip not accepted";
+        $_SESSION['alert-danger'] = "zip not accepted";
     }
     header('Location: ../tarifs.php?plateforme='.$plateforme);
 }
 else {
-    $_SESSION['message'] = "post_data_missing";
+    $_SESSION['alert-danger'] = "post_data_missing";
     header('Location: ../index.php');
 }
 

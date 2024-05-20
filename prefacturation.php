@@ -3,7 +3,6 @@ require_once("session.php");
 require_once("src/Label.php");
 require_once("src/Sap.php");
 require_once("src/Lock.php");
-require_once("commons/State.php");
 
 if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
     die("Manque un paramètre !");
@@ -17,7 +16,6 @@ $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
 $dir = $plateforme."/".$year."/".$month."/".$version."/".$run;
-$dirPrevMonth = $plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
 $param = "?plateforme=".$plateforme."&year=".$year."&month=".$month."&version=".$version."&run=".$run;
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 $suf = "_".$name."_".$year."_".$month."_".$version;
@@ -35,35 +33,8 @@ $loctxt = $lock->load($dir, "run");
 $lockv = new Lock();
 $locvtxt = $lockv->load($plateforme."/".$year."/".$month."/".$version, "version");
 
-$locklast = new Lock();
-$state->lastState($plateforme, $locklast);
-$dirTarifs = "";
-if(empty($state->getLast())) {
-    $dirTarifs = $plateforme."/".$year."/".$month;
-}
+include("commons/lock.php");
 
-$lockp = new Lock();
-$lockedTxt = $lockp->load("./", "process");
-$lockedPlate = "";
-$lockedProcess = "";
-$disabled = "";
-
-if(!empty($lockedTxt)) {
-    $disabled = "disabled";
-    $lockedTab = explode(" ", $lockedTxt);
-    if($lockedTab[0] == "prefa") {
-        $lockedProcess = "Une préfacturation";
-    }
-    else {
-        $lockedProcess = "Un envoi SAP";
-    }
-    $lockedPlate = $lockedTab[1];
-    $other = "";
-    if($lockedPlate != $plateforme) {
-        $other = " pour une autre plateforme";
-    }
-    $message = '<div>'.$lockedProcess.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
-}
 ?>
 
 
@@ -76,12 +47,13 @@ if(!empty($lockedTxt)) {
     <body>
         <div class="container-fluid">	
             <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > <a href="plateforme.php?plateforme=<?= $plateforme ?>">Facturation <?= $name ?></a> > Prefacturation <?= $labtxt ?></p></div></div>
-            <h1 class="text-center p-1 pt-md-5"><?= $labtxt ?></h1>	
-            <input type="hidden" id="dir" value="<?= $dir ?>" />
-            <input type="hidden" id="dirPrevMonth" value="<?= $dirPrevMonth ?>" />
-            <input type="hidden" id="suf" value="<?= $suf ?>" />
+            <h1 class="text-center p-1 pt-md-5"><?= $labtxt ?></h1>
+            <input type="hidden" id="name" value="<?= $name ?>" />
             <input type="hidden" id="plate" value="<?= $plateforme ?>" />
-            <input type="hidden" id="dirTarifs" value="<?= $dirTarifs ?>" />
+            <input type="hidden" id="year" value="<?= $year ?>" />
+            <input type="hidden" id="month" value="<?= $month ?>" />
+            <input type="hidden" id="version" value="<?= $version ?>" />
+            <input type="hidden" id="run" value="<?= $run ?>" />
             
             <div id="actions" class="text-center">
                 <button type="button" id="label" class="btn but-line">Etiqueter</button>
@@ -107,12 +79,24 @@ if(!empty($lockedTxt)) {
                     echo '<button type="button" id="finalize" '.$disabled.' class="btn but-line-blue lockable">Finaliser SAP</button>';
                 }
                     if((in_array($status, [4, 5, 6, 7]) && !$loctxt) || (in_array($status, [4, 5, 6, 7]) && $locvtxt && ($locvtxt == $run))) {
-                echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg6').'" '.$disabled.' class="btn but-line-red lockable">Renvoi SAP</button>';
+                echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg5').'" '.$disabled.' class="btn but-line-red lockable">Renvoi SAP</button>';
                 }
                 ?>
             </div>
 
-            <?php include("commons/message.php"); ?>
+            <?php include("commons/message.php");
+
+                if(!empty($lockedTxt)) {
+                    $other = "";
+                    if($lockedPlate != $plateforme) {
+                        $other = " pour une autre plateforme";
+                    }
+                    echo'<div>'.$lockedProcess.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
+                }
+                if(!empty($lockedUser)) {
+                    echo'<div class="text-center">'.$dlTxt.'</div>';
+                }
+                ?>
 
             <div class="text-center" id="content"></div>
 

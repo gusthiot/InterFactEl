@@ -7,19 +7,25 @@ require_once("../src/Info.php");
 require_once("../session.php");
 require_once("../commons/Parametres.php");
 
-if(isset($_POST["dir"]) && isset($_POST["dirTarifs"])){
-    $dir = "../".$_POST["dir"];
+if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])){
+    $plateforme = $_POST["plate"];
+    $year = $_POST["year"];
+    $month = $_POST["month"];
+    $run = $_POST["run"];
+    $version = $_POST["version"];
+
+    $dir = "../".$plateforme."/".$year."/".$month."/".$version."/".$run;
     $lock = new Lock();
     $lock->save($dir, 'run', $lock::STATES['finalized']);
     $sep = strrpos($dir, "/");
     $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
-    $alert = "alert-success";
-    $res = "";
-    if(!empty($_POST["dirTarifs"])) {
-        $dirTarifs = "../".$_POST["dirTarifs"];
+
+    $locklast = new Lock();
+    $state->lastState("../".$plateforme, $locklast);
+    if(empty($state->getLast())) {
+        $dirTarifs = "../".$plateforme."/".$year."/".$month;
         if(!Parametres::saveFirst($dir, $dirTarifs)) {
-            $alert = "alert-danger";
-            $res .= "erreur sauvegarde paramètres ";
+            $_SESSION['alert-danger'] = "erreur sauvegarde paramètres ";
         }   
     }
     $info = new Info();
@@ -30,26 +36,26 @@ if(isset($_POST["dir"]) && isset($_POST["dirTarifs"])){
         $info->save($dir, $content);
     }
     else {
-        $res .= "info vide ? ";
+        $_SESSION['alert-warning'] = "info vide ? ";
     }
-    logAction($_POST["dir"]);
-    $res .= "finalisé";
-    $_SESSION['type'] = $alert;
-    $_SESSION['message'] = $res;
+    $inter = $year.", ".$month.", ".$version.", ".$run." | ".$run;
+    logAction($dir, $inter, $plateforme);
+    if(!empty($alert)) {
+        $_SESSION['alert-warning'] = $alert;
+    }
+    $_SESSION['alert-success'] = "finalisé";
 }
 else {
-    $_SESSION['type'] = "alert-danger";
-    $_SESSION['message'] = "post_data_missing";
+    $_SESSION['alert-danger'] = "post_data_missing";
     header('Location: ../index.php');
 }
 
 
-function logAction($dir) {
+function logAction($dir, $inter, $plateforme) {
     $sap = new Sap();
-    $sap->load("../".$dir);
+    $sap->load($dir);
     $status = $sap->status();
-    $tab = explode("/", $dir);
-    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$tab[1].", ".$tab[2].", ".$tab[3].", ".$tab[4]." | ".$tab[4]." | Finalisation manuelle | ".$status." | ".$status;
+    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$inter." | Finalisation manuelle | ".$status." | ".$status;
     $logfile = new Logfile();
-    $logfile->write("../".$tab[0], $txt);
+    $logfile->write("../".$plateforme, $txt);
 }

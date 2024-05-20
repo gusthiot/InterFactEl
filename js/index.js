@@ -3,6 +3,10 @@ $('#download').on('click', function () {
     window.location.href = "controller/download.php?type=config";
 } );
 
+$('#dl_prefa').on('click', function () {
+    window.location.href = "controller/download.php?type=prefa";
+} );
+
 $('#zip_config').on('change', function () {
     const file = $('#zip_config').val();
     if(file.indexOf('.zip') > -1) {

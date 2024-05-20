@@ -3,7 +3,6 @@ require_once("../commons/Zip.php");
 require_once("../config.php");
 
 session_start();
-$_SESSION['type'] = "alert-danger";
 if($_FILES['zip_file']) {
     $fileName = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];
@@ -13,24 +12,23 @@ if($_FILES['zip_file']) {
             $msg = Zip::unzip($tmpFile, "../CONFIG/");
             unlink($tmpFile);
             if(empty($msg)) {
-                $_SESSION['type'] = "alert-success";
-                $_SESSION['message'] = "Fichiers correctement mis à jour !";
+                $_SESSION['alert-success'] = "Fichiers correctement mis à jour !";
             }
             else {
-                $_SESSION['message'] = $msg;
+                $_SESSION['alert-danger'] = $msg;
             }
     
         }
         else {
-            $_SESSION['message'] = "copy error";
+            $_SESSION['alert-danger'] = "copy error";
         }
     }
     else {
-        $_SESSION['message'] = "zip not accepted";
+        $_SESSION['alert-danger'] = "zip not accepted";
     }
 }
 else {
-    $_SESSION['message'] = "post_data_missing";
+    $_SESSION['alert-danger'] = "post_data_missing";
 }
 header('Location: ../index.php');
 

@@ -1,6 +1,5 @@
 <?php
 require_once("../commons/Zip.php");
-require_once("../commons/State.php");
 require_once("../src/Result.php");
 require_once("../src/Logfile.php");
 require_once("../src/Paramedit.php");
@@ -9,10 +8,8 @@ require_once("../src/Lock.php");
 require_once("../session.php");
 require_once("../src/Sap.php");
 
-$_SESSION['type'] = "alert-danger";
-if(isset($_POST['plate']) && isset($_POST['type']) && isset($_POST['sciper'])) {
+if(isset($_POST['plate']) && isset($_POST['type'])) {
     $plateforme = $_POST['plate'];
-    $sciper = $_POST['sciper'];
     $type = $_POST['type'];
     if(isset($_FILES[$type])) {
         $zip = $_FILES[$type];
@@ -93,33 +90,38 @@ if(isset($_POST['plate']) && isset($_POST['type']) && isset($_POST['sciper'])) {
                             $lockp = new Lock();
                             $lockp->save("../", 'process', "prefa ".$plateforme." ".$unique);
                             try {
-                                $msg = runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme, $unique);
+                                runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme, $unique, $messages);
                             }
                             catch(Exception $e) {
                                 $msg = $e->getMessage(); 
                             }
                             unlink("../".Lock::FILES['process']);
                         }
+                        else {
+                            $_SESSION['alert-danger'] = $msg;
+                        }
+                    }
+                    else {
+                        $_SESSION['alert-danger'] = $msg;
                     }
                     State::delDir($tmpDir);
                 }
                 else {
                     $errors= error_get_last();
-                    $msg = $errors['message'];
+                    $_SESSION['alert-danger'] = $errors['message'];
 
                 }
-                $_SESSION['message'] = $msg;
             }
             else {
-                $_SESSION['message'] = "copy error";
+                $_SESSION['alert-danger'] = "copy error";
             }
         }
         else {
-            $_SESSION['message'] =  "zip not accepted";
+            $_SESSION['alert-danger'] = "zip not accepted";
         }
     }
     else {
-        $_SESSION['message'] =  "zip missing";
+        $_SESSION['alert-danger'] =  "zip missing";
     }
     if($type == "SIMU") {
         header('Location: ../index.php');
@@ -130,11 +132,11 @@ if(isset($_POST['plate']) && isset($_POST['type']) && isset($_POST['sciper'])) {
         
 }
 else {
-    $_SESSION['message'] = "post_data_missing";
+    $_SESSION['alert-danger'] = "post_data_missing";
     header('Location: ../index.php');
 }
 
-function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique) {
+function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messages) {
     $month = $params->getParam('Month');
     $year = $params->getParam('Year');
     $type = $params->getParam('Type');
@@ -142,8 +144,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique) {
     $result = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($result, 0, 2) === "OK") {
-        $msg = $unique." tout OK ".strstr($result, '(');
-        $_SESSION['type'] = "alert-success";
+        //$msg = $unique." tout OK ".strstr($result, '(');
         $tab = explode(" ", $result);
         $version = $tab[1];
         $dir = "../".$plateforme."/".$year."/".$mstr."/".$version."/".$unique;
@@ -154,17 +155,20 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique) {
             $status = $sap->status();
             $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$status;
             $logfile->write("../".$plateforme, $txt);
-            return $msg;
+            $_SESSION['alert-success'] = $messages->getMessage('msg1');//."<br/>".$msg;
         }
         else {
-            Zip::getZipDir(TEMP.$type.'.zip', $dir."/");
+            $lock = new Lock();
+            $name = $sciper."_".$type.'.zip';
+            $lock->save("../", "../".$sciper.".lock", TEMP.$name);
+            Zip::setZipDir(TEMP.$name, $dir."/");
             delPrefa($path, $year, $mstr, $unique);
-            return $msg;
+            $_SESSION['alert-success'] = $messages->getMessage('msg2');//."<br/>".$msg;
         }
     }
     else {
         delPrefa($path, $year, $mstr, $unique);
-        return $result;
+        $_SESSION['alert-danger'] = $messages->getMessage('msg4')."<br/>".$result;
     }
 }
 

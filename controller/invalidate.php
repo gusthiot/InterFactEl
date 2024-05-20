@@ -12,23 +12,19 @@ if(isset($_POST["dir"])){
     $lock->save($dir, 'run', $lock::STATES['invalidate']);
     $info = new Info();
     $content = $info->load($dir);
-    $res = "";
     if(!empty($content)) {
         $content["Closed"][2] = date('Y-m-d H:i:s');
         $content["Closed"][3] = $_SESSION['user'];
         $info->save($dir, $content);
     }
     else {
-        $res .= "info vide ? ";
+        $_SESSION['alert-warning'] = "info vide ? ";
     }
     logAction($_POST["dir"]);
-    $res .= "invalidé";
-    $_SESSION['type'] = "alert-success";
-    $_SESSION['message'] = $res;
+    $_SESSION['alert-success'] = "invalidé";
 }
 else {
-    $_SESSION['type'] = "alert-danger";
-    $_SESSION['message'] = "post_data_missing";
+    $_SESSION['alert-danger'] = "post_data_missing";
     header('Location: ../index.php');
 }
 

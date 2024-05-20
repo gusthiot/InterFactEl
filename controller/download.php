@@ -46,9 +46,19 @@ if(isset($_GET['type'])) {
             readfile($fileName);
         }
     }
+    elseif($type==="prefa") {     
+        $locku = new Lock();
+        $fileName = $locku->load("../", $sciper.".lock");
+        if(!empty($fileName)) {   
+            header('Content-disposition: attachment; filename="'.basename($fileName).'"');
+            header('Content-type: application/zip');
+            readfile($fileName);
+            unlink($tmpFile);
+            unlink("../".$sciper.".lock");
+        }
+    }
     else {
-        $_SESSION['type'] = "alert-danger";
-        $_SESSION['message'] = "erreur download";
+        $_SESSION['alert-danger'] = "erreur download";
         header('Location: ../index.php');
     }
 }
