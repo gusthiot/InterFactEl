@@ -1,7 +1,7 @@
 <?php
 require_once("../commons/Zip.php");
 require_once("../config.php");
-require_once("../src/Label.php");
+require_once("../assets/Label.php");
 require_once("../commons/Parametres.php");
 
 session_start();

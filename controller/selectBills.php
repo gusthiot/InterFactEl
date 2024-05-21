@@ -1,14 +1,15 @@
 <?php
 
-require_once("../src/Sap.php");
-require_once("../src/Lock.php");
+require_once("../assets/Sap.php");
+require_once("../assets/Lock.php");
 
-if(isset($_POST["dir"]) && isset($_POST["type"])){
+if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"]) && isset($_POST["type"])){
+    $dir = "../".$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $sap = new Sap();
     $html = "";
     $choices = [];
     $i = 0;
-    $bills = $sap->load("../".$_POST["dir"]);
+    $bills = $sap->load($dir);
     $lines = [];
     foreach($bills as $bill) {
         $lines[$bill[0]][$bill[1]] = $bill;
@@ -24,7 +25,7 @@ if(isset($_POST["dir"]) && isset($_POST["type"])){
             }
             else {
                 $lock = new Lock();
-                $loctxt = $lock->load("../".$_POST["dir"], "run");
+                $loctxt = $lock->load($dir, "run");
                 if( $line[3] === "SENT" || ($loctxt && $line[3] === "READY") ) {
                     $choices[] = choice($i, $line);
                 }

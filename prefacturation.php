@@ -1,8 +1,8 @@
 <?php
 require_once("session.php");
-require_once("src/Label.php");
-require_once("src/Sap.php");
-require_once("src/Lock.php");
+require_once("assets/Label.php");
+require_once("assets/Sap.php");
+require_once("assets/Lock.php");
 
 if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
     die("Manque un paramètre !");
@@ -16,9 +16,7 @@ $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
 $dir = $plateforme."/".$year."/".$month."/".$version."/".$run;
-$param = "?plateforme=".$plateforme."&year=".$year."&month=".$month."&version=".$version."&run=".$run;
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
-$suf = "_".$name."_".$year."_".$month."_".$version;
 
 $label = new Label();
 $labtxt = $label->load($dir);
@@ -48,7 +46,6 @@ include("commons/lock.php");
         <div class="container-fluid">	
             <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > <a href="plateforme.php?plateforme=<?= $plateforme ?>">Facturation <?= $name ?></a> > Prefacturation <?= $labtxt ?></p></div></div>
             <h1 class="text-center p-1 pt-md-5"><?= $labtxt ?></h1>
-            <input type="hidden" id="name" value="<?= $name ?>" />
             <input type="hidden" id="plate" value="<?= $plateforme ?>" />
             <input type="hidden" id="year" value="<?= $year ?>" />
             <input type="hidden" id="month" value="<?= $month ?>" />
@@ -59,7 +56,7 @@ include("commons/lock.php");
                 <button type="button" id="label" class="btn but-line">Etiqueter</button>
                 <button type="button" id="info" class="btn but-line">Afficher les infos</button>
                 <button type="button" id="bills" class="btn but-line">Afficher la liste des factures</button>
-                <button type="button" id="ticket" data-param="<?= $param ?>" class="btn but-line">Contrôler le ticket</button>
+                <button type="button" id="ticket" class="btn but-line">Contrôler le ticket</button>
                 <button type="button" id="changes" class="btn but-line">Afficher les modifications</button>
                 <?php 
                 if(($status < 4) && !$loctxt) { ?>

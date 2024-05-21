@@ -3,8 +3,9 @@
 require_once("../commons/State.php");
 
 session_start();
-if(isset($_GET["dir"]) && isset($_GET["run"]) && isset($_GET["plate"])){
-    State::removeRun("../".$_GET["dir"], $_GET["run"]);
+if(isset($_GET["year"]) && isset($_GET["month"]) && isset($_GET["run"]) && isset($_GET["plate"])){
+    $dir = "../".$_GET["plate"]."/".$_GET["year"]."/".$_GET["month"];
+    State::removeRun($dir, $_GET["run"]);
     $_SESSION['alert-success'] = "run correctement effacé";
     header('Location: ../plateforme.php?plateforme='.$_GET["plate"]);
 }

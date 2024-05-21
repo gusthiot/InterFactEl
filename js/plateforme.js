@@ -28,7 +28,7 @@ $('#destroy').on('click', function () {
 } );
 
 $('.erase').on('click', function () {
-    window.location.href = "controller/erase.php?plate="+$('#plate').val()+"&dir="+$(this).data('dir')+"&run="+$(this).data('run');
+    window.location.href = "controller/erase.php?plate="+$('#plate').val()+"&year="+$(this).data('year')+"&month="+$(this).data('month')+"&run="+$(this).data('run');
 } );
 
 $(document).on("change", ".zip_file", function () {

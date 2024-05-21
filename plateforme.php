@@ -1,9 +1,9 @@
 <?php
 require_once("session.php");
 require_once("commons/State.php");
-require_once("src/Label.php");
-require_once("src/Sap.php");
-require_once("src/Lock.php");
+require_once("assets/Label.php");
+require_once("assets/Sap.php");
+require_once("assets/Lock.php");
 if(!isset($_GET["plateforme"])) {
     die("Manque un numéro de plateforme !");
 }
@@ -174,7 +174,10 @@ include("commons/lock.php");
                                             echo '</button> ';
                                             if($superviseur->isSuperviseur($_SESSION['user'])) {
                                             ?>
-                                            <button type="button" <?= $disabled ?> class="btn but-red erase lockable" data-dir="<?= $plateforme."/".$year."/".$month ?>" data-run="<?= $run ?>">X</button>
+                                            <button type="button" <?= $disabled ?> class="btn but-red erase lockable" 
+                                                                                        data-year="<?= $year ?>" 
+                                                                                        data-month="<?= $month ?>" 
+                                                                                        data-run="<?= $run ?>">X</button>
                                             <?php
                                             }
                                         }

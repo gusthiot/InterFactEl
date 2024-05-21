@@ -1,11 +1,12 @@
 <?php
 
-require_once("../src/Label.php");
+require_once("../assets/Label.php");
 
-if(isset($_POST["txt"]) && isset($_POST["dir"])){
+if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"]) && isset($_POST["txt"])){
+    $dir = "../".$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $label = new Label();
     if(!empty($_POST["txt"])) {
-        if($label->save("../".$_POST['dir'], $_POST["txt"])) {
+        if($label->save($dir, $_POST["txt"])) {
             $_SESSION['alert-success'] = "Label sauvegardé";
         }
         else {
@@ -13,7 +14,7 @@ if(isset($_POST["txt"]) && isset($_POST["dir"])){
         }
     }
     else {
-        if($label->remove("../".$_POST['dir'])) {
+        if($label->remove($dir)) {
             $_SESSION['alert-success'] = "Label supprimé";
         }
         else {

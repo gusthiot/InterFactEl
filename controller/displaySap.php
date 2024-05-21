@@ -1,11 +1,12 @@
 <?php
 
-require_once("../src/Sap.php");
+require_once("../assets/Sap.php");
 
-if(isset($_POST["dir"])) {
+if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
+    $dir = "../".$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $sap = new Sap();
     $html = '<div class="over"><table class="table factures"><tr>';
-    $bills = $sap->load("../".$_POST["dir"]);
+    $bills = $sap->load($dir);
     $lines = [];
     foreach($sap->getTitle() as $title) {
         $html .= '<th>'.str_replace('"', '', $title).'</th>';

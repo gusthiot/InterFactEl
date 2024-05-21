@@ -1,9 +1,8 @@
-const dir = $('#plate').val()+"/"+$('#year').val()+"/"+$('#month').val()+"/"+$('#version').val()+"/"+$('#run').val();
-const suf = "_"+$('#name').val()+"_"+$('#year').val()+"_"+$('#month').val()+"_"+$('#version').val();
-
+const getDir = "plate="+$('#plate').val()+"&year="+$('#year').val()+"&month="+$('#month').val()+"&version="+$('#version').val()+"&run="+$('#run').val();
+const postDir = {plate: $('#plate').val(), year: $('#year').val(), month: $('#month').val(), version: $('#version').val(), run: $('#run').val()};
 
 $('#label').on('click', function () {
-    $.post("controller/getLabel.php", {dir: dir}, function (data) {
+    $.post("controller/getLabel.php", postDir, function (data) {
         $('#content').html(data);
     });
 } );
@@ -13,72 +12,72 @@ $('#dl_prefa').on('click', function () {
 } );
 
 $('#info').on('click', function () {  
-    $.post("controller/getInfos.php", {dir: dir}, function (data) {
+    $.post("controller/getInfos.php", postDir, function (data) {
         $('#content').html(data);
     });
 } );
 
 $('#bills').on('click', function () {
-    $.post("controller/displaySap.php", {dir: dir}, function (data) {
+    $.post("controller/displaySap.php", postDir, function (data) {
         $('#content').html(data);
     });
 } );
 
 $(document).on("click", "#getSap", function() {
-    window.location.href = "controller/download.php?type=sap&dir="+dir;
+    window.location.href = "controller/download.php?type=sap&"+getDir;
 } );
 
 $(document).on("click", "#saveLabel", function() {
     const txt = $('#labelArea').val();
-    $.post("controller/saveLabel.php", {txt: txt, dir: dir}, function (message) {
+    $.post("controller/saveLabel.php", Object.assign({}, postDir, {txt: txt}), function () {
         window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
 } );
 
 $('#ticket').on('click', function () {
-    window.open("ticket.php"+$(this).data('param'));
+    window.open("ticket.php?"+getDir);
 } );
 
 $('#changes').on('click', function () {
-    $.post("controller/getModifs.php", {dir: dir, suf: suf}, function (data) {
+    $.post("controller/getModifs.php", postDir, function (data) {
         $('#content').html(data);
     });
 } );
 
 $('#invalidate').on('click', function () {
-    $.post("controller/invalidate.php", {dir: dir}, function () {
+    $.post("controller/invalidate.php", postDir, function () {
         window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
 } );
 
 $('#bilans').on('click', function () {
-    window.location.href = "controller/download.php?type=bilans&dir="+dir;
+    window.location.href = "controller/download.php?type=bilans&"+getDir;
 } );
 
 $('#annexes').on('click', function () {
-    window.location.href = "controller/download.php?type=annexes&dir="+dir;
+    window.location.href = "controller/download.php?type=annexes&"+getDir;
 } );
 
 $('#all').on('click', function () {
-    window.location.href = "controller/download.php?type=all&dir="+dir;
+    window.location.href = "controller/download.php?type=all&"+getDir;
 } );
 
 $('#send').on('click', function () {
-    $.post("controller/selectBills.php", {dir: dir, type: "sendBills"}, function (data) {
+    $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "sendBills"}), function (data) {
         $('#content').html(data);
     });
 } );
 
 $(document).on("click", "#getModif", function() {
-    window.location.href = "controller/download.php?type=modif&dir="+dir+"&name=Modif-factures"+suf;
+    window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Modif-factures";
 } );
 
 $(document).on("click", "#getJournal", function() {
-    window.location.href = "controller/download.php?type=modif&dir="+dir+"&name=Journal-corrections"+suf;
+    window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Journal-corrections";
 } );
 
 $(document).on("click", "#getClient", function() {
-    window.location.href = "controller/download.php?type=modif&dir="+dir+"&name=Clients-modifs"+suf;
+    window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Clients-modifs";
 } );
 
 $(document).on("click", "#sendBills", function() {
@@ -96,7 +95,7 @@ function sending(type) {
     });
     $(".lockable").prop('disabled', true);
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
-    $.post("controller/sendBills.php", {bills: bills, type: type, plate: $('#plate').val(), year: $('#year').val(), month: $('#month').val(), version: $('#version').val(), run: $('#run').val()}, function () {
+    $.post("controller/sendBills.php", Object.assign({}, postDir, {bills: bills, type: type}), function () {
         window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
 }
@@ -120,14 +119,14 @@ $(document).on("click", "#allBills", function() {
 });
 
 $('#finalize').on('click', function () {
-    $.post("controller/finalize.php", {plate: $('#plate').val(), year: $('#year').val(), month: $('#month').val(), version: $('#version').val(), run: $('#run').val()}, function () {
+    $.post("controller/finalize.php", postDir, function () {
         window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
 } );
 
 $('#resend').on('click', function () {
     if (confirm($(this).data('msg')) == true) {
-        $.post("controller/selectBills.php", {dir: dir, type: "resendBills"}, function (data) {
+        $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "resendBills"}), function (data) {
             $('#content').html(data);
         });
         

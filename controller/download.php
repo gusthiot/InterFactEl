@@ -1,8 +1,8 @@
 <?php
 require_once("../commons/Zip.php");
-require_once("../src/Paramedit.php");
-require_once("../src/Paramtext.php");
-require_once("../src/Lock.php");
+require_once("../assets/Paramedit.php");
+require_once("../assets/Paramtext.php");
+require_once("../assets/Lock.php");
 require_once("../config.php");
 require_once("../session.php");
 
@@ -13,39 +13,6 @@ if(isset($_GET['type'])) {
     if($type==="config") {
         Zip::getZipDir($tmpFile, "../CONFIG/");
     }
-    elseif($type==="bilans") {
-        if(isset($_GET['dir'])) {
-            Zip::getZipDir($tmpFile, "../".$_GET['dir']."/Bilans_Stats/");
-        }
-    }
-    elseif($type==="annexes") {
-        if(isset($_GET['dir'])) {
-            Zip::getZipDir($tmpFile, "../".$_GET['dir']."/Annexes_CSV/");
-        }
-    }
-    elseif($type==="all") {
-        if(isset($_GET['dir'])) {
-            Zip::getZipDir($tmpFile, "../".$_GET['dir']."/");
-        }
-    }
-    elseif($type==="sap") {
-        if(isset($_GET['dir'])) {
-            readCsv("../".$_GET['dir']."/sap.csv");
-        }
-    }
-    elseif($type==="modif") {
-        if(isset($_GET['dir']) && isset($_GET['name'])) {
-            readCsv("../".$_GET["dir"]."/".$_GET["name"].".csv");
-        }
-    }
-    elseif($type==="tarifs") {
-        if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {            
-            $fileName = "../".$_GET['plate']."/".$_GET['year']."/".$_GET['month']."/parametres.zip";
-            header('Content-disposition: attachment; filename="'.basename($fileName).'"');
-            header('Content-type: application/zip');
-            readfile($fileName);
-        }
-    }
     elseif($type==="prefa") {     
         $locku = new Lock();
         $fileName = $locku->load("../", $sciper.".lock");
@@ -53,15 +20,62 @@ if(isset($_GET['type'])) {
             header('Content-disposition: attachment; filename="'.basename($fileName).'"');
             header('Content-type: application/zip');
             readfile($fileName);
-            unlink($tmpFile);
+            unlink($fileName);
             unlink("../".$sciper.".lock");
+        }
+        else {
+            $_SESSION['alert-danger'] = "ce fichier n'est plus disponible";
         }
     }
     else {
-        $_SESSION['alert-danger'] = "erreur download";
-        header('Location: ../index.php');
+        if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
+            $dirMonth = "../".$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
+            if($type==="tarifs") {  
+                $fileName = $dirMonth."/parametres.zip";
+                header('Content-disposition: attachment; filename="'.basename($fileName).'"');
+                header('Content-type: application/zip');
+                readfile($fileName);
+            }
+            else {
+                if(isset($_GET['version']) && isset($_GET['run'])) {
+                    $dirRun = $dirMonth."/".$_GET['version']."/".$_GET['run'];
+                    if($type==="bilans") {
+                        Zip::getZipDir($tmpFile, $dirRun."/Bilans_Stats/");
+                    }
+                    elseif($type==="annexes") {
+                        Zip::getZipDir($tmpFile, $dirRun."/Annexes_CSV/");
+                    }
+                    elseif($type==="all") {
+                        Zip::getZipDir($tmpFile, $dirRun."/");
+                    }
+                    elseif($type==="sap") {
+                        readCsv($dirRun."/sap.csv");
+                    }
+                    elseif($type==="modif") {
+                        if(isset($_GET['pre'])) {               
+                            $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$_GET['plate']];
+                            $filename = $_GET['pre']."_".$name."_".$_GET['year']."_".$_GET['month']."_".$_GET['version'];
+                            readCsv($dirRun."/".$filename.".csv");
+                        }
+                    }
+                    else {
+                        $_SESSION['alert-danger'] = "erreur download";
+                    }
+                }
+                else {
+                    $_SESSION['alert-danger'] = "erreur download";
+                }
+            }
+        }
+        else {
+            $_SESSION['alert-danger'] = "erreur download";
+        }
     }
 }
+else {
+    $_SESSION['alert-danger'] = "erreur download";
+}
+header('Location: ../index.php');
 
 function readCsv($fileName) {
     header('Content-Type: application/octet-stream');

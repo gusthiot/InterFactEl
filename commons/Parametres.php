@@ -1,6 +1,6 @@
 <?php
 
-require_once("../src/Label.php");
+require_once("../assets/Label.php");
 require_once("State.php");
 require_once("Zip.php");
 

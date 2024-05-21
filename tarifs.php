@@ -1,8 +1,8 @@
 <?php
 require_once("session.php");
 require_once("commons/State.php");
-require_once("src/Lock.php");
-require_once("src/Label.php");
+require_once("assets/Lock.php");
+require_once("assets/Label.php");
 if(!isset($_GET["plateforme"])) {
     die("Manque un numéro de plateforme !");
 }
@@ -37,7 +37,6 @@ if(file_exists($plateforme)) {
         <div class="container-fluid">	
             <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > Tarifs <?= $name ?></p></div></div>	
             <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
-            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
                     <div class="text-center" id="buttons">
                 <?php
                 if($available) { 

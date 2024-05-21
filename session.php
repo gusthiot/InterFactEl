@@ -1,8 +1,8 @@
 <?php
 
-require_once("src/Superviseur.php");
-require_once("src/Gestionnaire.php");
-require_once("src/Message.php");
+require_once("assets/Superviseur.php");
+require_once("assets/Gestionnaire.php");
+require_once("assets/Message.php");
 require_once("commons/Tequila.php");
 require_once("commons/State.php");
 require_once("config.php");

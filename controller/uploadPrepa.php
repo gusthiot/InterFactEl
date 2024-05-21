@@ -1,12 +1,12 @@
 <?php
 require_once("../commons/Zip.php");
-require_once("../src/Result.php");
-require_once("../src/Logfile.php");
-require_once("../src/Paramedit.php");
-require_once("../src/Paramtext.php");
-require_once("../src/Lock.php");
+require_once("../assets/Result.php");
+require_once("../assets/Logfile.php");
+require_once("../assets/Paramedit.php");
+require_once("../assets/Paramtext.php");
+require_once("../assets/Lock.php");
 require_once("../session.php");
-require_once("../src/Sap.php");
+require_once("../assets/Sap.php");
 
 if(isset($_POST['plate']) && isset($_POST['type'])) {
     $plateforme = $_POST['plate'];

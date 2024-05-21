@@ -1,11 +1,11 @@
 <?php
 
-require_once("../src/Sap.php");
-require_once("../src/Info.php");
-require_once("../src/Facture.php");
+require_once("../assets/Sap.php");
+require_once("../assets/Info.php");
+require_once("../assets/Facture.php");
 require_once("../session.php");
-require_once("../src/Lock.php");
-require_once("../src/Logfile.php");
+require_once("../assets/Lock.php");
+require_once("../assets/Logfile.php");
 require_once("../commons/Parametres.php");
 
 if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
@@ -106,8 +106,12 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
 
     }
 
-    $txt = $year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus;
-    logAction($dir, $sap, $oldState, $logfile, count($bills), $txt, $plateforme);
+    $sap->load($dir);
+    $status = $sap->status();
+    $state = $sap->state();
+    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
+    $txt .= $oldState." | ".$number." | ".$state;
+    $logfile->write("../".$plateforme, $txt);
     if(!empty($warn)) {
         $_SESSION['alert-warning'] = $warn;
     }
@@ -124,16 +128,6 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
 else {
     $_SESSION['alert-danger'] = "post_data_missing";
     header('Location: ../index.php');
-}
-
-
-function logAction($dir, $sap, $oldState, $logfile, $number, $inter, $plateforme) {
-    $sap->load($dir);
-    $status = $sap->status();
-    $state = $sap->state();
-    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$inter." | ".$status.PHP_EOL;
-    $txt .= $oldState." | ".$number." | ".$state;
-    $logfile->write("../".$plateforme, $txt);
 }
 
 function send(string $data): array

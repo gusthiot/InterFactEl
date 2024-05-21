@@ -1,9 +1,9 @@
 <?php
 
-require_once("../src/Lock.php");
-require_once("../src/Logfile.php");
-require_once("../src/Sap.php");
-require_once("../src/Info.php");
+require_once("../assets/Lock.php");
+require_once("../assets/Logfile.php");
+require_once("../assets/Sap.php");
+require_once("../assets/Info.php");
 require_once("../session.php");
 require_once("../commons/Parametres.php");
 
@@ -38,8 +38,12 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     else {
         $_SESSION['alert-warning'] = "info vide ? ";
     }
-    $inter = $year.", ".$month.", ".$version.", ".$run." | ".$run;
-    logAction($dir, $inter, $plateforme);
+    $sap = new Sap();
+    $sap->load($dir);
+    $status = $sap->status();
+    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;
+    $logfile = new Logfile();
+    $logfile->write("../".$plateforme, $txt);
     if(!empty($alert)) {
         $_SESSION['alert-warning'] = $alert;
     }
@@ -48,14 +52,4 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
 else {
     $_SESSION['alert-danger'] = "post_data_missing";
     header('Location: ../index.php');
-}
-
-
-function logAction($dir, $inter, $plateforme) {
-    $sap = new Sap();
-    $sap->load($dir);
-    $status = $sap->status();
-    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$inter." | Finalisation manuelle | ".$status." | ".$status;
-    $logfile = new Logfile();
-    $logfile->write("../".$plateforme, $txt);
 }

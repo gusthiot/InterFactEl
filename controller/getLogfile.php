@@ -1,7 +1,7 @@
 <?php
 
-require_once("../src/Logfile.php");
-require_once("../src/Label.php");
+require_once("../assets/Logfile.php");
+require_once("../assets/Label.php");
 
 $txt = "";
 

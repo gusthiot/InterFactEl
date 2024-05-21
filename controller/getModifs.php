@@ -1,18 +1,22 @@
 <?php
 
-require_once("../src/Client.php");
-require_once("../src/Journal.php");
-require_once("../src/Modif.php");
+require_once("../assets/Client.php");
+require_once("../assets/Journal.php");
+require_once("../assets/Modif.php");
+require_once("../session.php");
 
-if(isset($_POST["dir"]) && isset($_POST["suf"])){
+if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
+    $dir = "../".$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
+    $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$_POST['plate']];
+    $suf = "_".$name."_".$_POST['year']."_".$_POST['month']."_".$_POST['version'];
     $html = "";
-    $modif = new Modif("../".$_POST["dir"]."/Modif-factures".$_POST["suf"].".csv");
+    $modif = new Modif($dir."/Modif-factures".$suf.".csv");
     $html .= table($modif->getModifs(), "getModif", "Factures-modifs", "modifs", [7, 8]);
 
-    $journal = new Journal("../".$_POST["dir"]."/Journal-corrections".$_POST["suf"].".csv");
+    $journal = new Journal($dir."/Journal-corrections".$suf.".csv");
     $html .= table($journal->getModifs(), "getJournal", "Journal-modifs", "journal", []);
 
-    $client = new Client("../".$_POST["dir"]."/Clients-modifs".$_POST["suf"].".csv");
+    $client = new Client($dir."/Clients-modifs".$suf.".csv");
     $html .= table($client->getModifs(), "getClient", "Client-modifs", "client", []);
 
     echo $html;

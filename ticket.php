@@ -1,16 +1,12 @@
 <?php
 require_once("session.php");
-require_once("src/Ticket.php");
+require_once("assets/Ticket.php");
 
-if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
+if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
     die("Manque un paramètre !");
 }
-$plateforme = $_GET['plateforme'];
-$year = $_GET['year'];
-$month = $_GET['month'];
-$version = $_GET['version'];
-$run = $_GET['run'];
-$dir = $plateforme."/".$year."/".$month."/".$version."/".$run;
+
+$dir = $_GET['plate']."/".$_GET['year']."/".$_GET['month']."/".$_GET['version']."/".$_GET['run'];
 
 $s = [];
 
