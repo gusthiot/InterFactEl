@@ -4,7 +4,7 @@ require_once("../src/Sap.php");
 
 if(isset($_POST["dir"])) {
     $sap = new Sap();
-    $html = '<table class="table factures"><tr>';
+    $html = '<div class="over"><table class="table factures"><tr>';
     $bills = $sap->load("../".$_POST["dir"]);
     $lines = [];
     foreach($sap->getTitle() as $title) {
@@ -25,7 +25,7 @@ if(isset($_POST["dir"])) {
             $html .= '</tr>';
         }
     }
-    $html .= '</table>';
+    $html .= '</table></div>';
     
     $html .= '<button type="button" id="getSap" class="btn but-line">Download File</button>';
     echo $html;

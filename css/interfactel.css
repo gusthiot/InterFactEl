@@ -296,13 +296,6 @@ input[type="file"] {
   width: 1500px;
 }
 
-#content {
-  margin: auto;
-  padding: 20px;
-  text-align: center;
-  width: 1500px;
-}
-
 #histo {
   padding: 10px;
 }
@@ -319,12 +312,45 @@ input[type="file"] {
 
 /** prefacturation **/
 
+#content {
+  margin: auto;
+  padding: 20px;
+}
+
 table.factures td:nth-child(1), table.factures td:nth-child(4) { text-align: left; }
 table.factures td:nth-child(2), table.factures td:nth-child(3) { text-align: right; }
 
 table.modifs td:nth-child(1), table.modifs td:nth-child(2), table.modifs td:nth-child(3) { text-align: center; }
 table.modifs td:nth-child(4), table.modifs td:nth-child(6), table.modifs td:nth-child(7) { text-align: left; }
 table.modifs td:nth-child(5), table.modifs td:nth-child(8), table.modifs td:nth-child(9) { text-align: right; }
+
+table.infos td:nth-child(1), table.infos td:nth-child(3) { text-align: left; }
+
+.over {
+  margin: 0 auto;
+  width: 90%;
+  display: block;
+  overflow-x: auto;
+}
+
+#over-bills {
+  margin: 0 auto;
+  max-width: 600px;
+  display: block;
+  overflow-x: auto;
+}
+
+#bills-tab td {
+  border-bottom: 0px;
+  font-size: 1rem;
+}
+
+.yellow {
+  background-color: var(--soufre);
+}
+
+table#bills-tab td:nth-child(1), table#bills-tab td:nth-child(4) { text-align: left; }
+table#bills-tab td:nth-child(2), table#bills-tab td:nth-child(3) { text-align: right; }
 
 /** tarifs **/
 

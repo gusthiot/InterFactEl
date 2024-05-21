@@ -19,20 +19,14 @@ if(isset($_POST["dir"]) && isset($_POST["type"])){
         foreach($labo as $line) {
             if($_POST["type"] == "sendBills") {
                 if($line[3] === "READY" || $line[3] === "ERROR") {
-                    $choices[] = '<div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="bill'.$i.'" name="bills" value="'.$line[1].'">
-                                    <label class="custom-control-label" for="bill'.$i.'"> '.$line[0].' '.$line[1].' '.$line[2].' '.$line[3].' </label>
-                                </div>';
+                    $choices[] = choice($i, $line);
                 }
             }
             else {
                 $lock = new Lock();
                 $loctxt = $lock->load("../".$_POST["dir"], "run");
                 if( $line[3] === "SENT" || ($loctxt && $line[3] === "READY") ) {
-                    $choices[] = '<div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="bill'.$i.'" name="bills" value="'.$line[1].'">
-                                    <label class="custom-control-label" for="bill'.$i.'"> '.$line[0].' '.$line[1].' '.$line[2].' '.$line[3].' </label>
-                                </div>';
+                    $choices[] = choice($i, $line);
                 }
             }
 
@@ -40,14 +34,28 @@ if(isset($_POST["dir"]) && isset($_POST["type"])){
         }
     }
     if(count($choices)>0) {
-        $html .= "<div>";
-        $html .= '<br /><div><button type="button" id="allBills" class="btn but-line lockable">Tout sélectionner</button><button type="button" id="'.$_POST["type"].'" class="btn but-line lockable">Envoyer</button></div>';
+        $html .= '<br /><div><button type="button" id="allBills" class="btn but-line lockable">Tout sélectionner</button><button type="button" id="'.$_POST["type"].'" class="btn but-line lockable">Envoyer</button></div><div id="over-bills"><table class="table" id="bills-tab">';
     
         foreach($choices as $choice) {
             $html .= $choice;
         }
-        $html .= "</div>";
+        $html .= "</table></div>";
     }
     
     echo $html;
+}
+
+function choice(int $i, array $line): string 
+{
+    return '<tr>
+                <td>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="bill'.$i.'" name="bills" value="'.$line[1].'">
+                        <label class="custom-control-label" for="bill'.$i.'"> '.$line[0].'</label>
+                    </div>
+                </td>
+                <td>'.$line[1].'</td>
+                <td>'.number_format(floatval($line[2]), 2, ".", "'").'</td>
+                <td>'.$line[3].'</td>
+            </tr>';
 }

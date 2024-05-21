@@ -23,13 +23,13 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
 
     $warn = "";
     $error = "";
-//    $more = "";
     $logfile = new Logfile();
     $sap = new Sap();
     $sap->load($dir);
     $oldStatus = $sap->status();
     $oldState = $sap->state();
-    $oks = "";
+    $oks = 0;
+    $kos = 0;
 
     $lockp = new Lock();
     $lockp->save("../", 'process', "send ".$plateforme." ".$run);
@@ -68,19 +68,16 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                             }
                         }
                         $sap->save($dir, $sap_cont);
-                        if(!empty($oks)) {
-                            $oks .= ", ";
-                        }
-                        $oks .= $bill;
+                        $oks++;
                     }
                     else {
                         $warn .= $bill.": info vide ? <br />";
                     }
-                    //$more .= json_encode($res);
                 }
             }
             else {
-                    $error .= $bill.": ".json_encode($resArray[1])."<br />";
+                    //$error .= $bill.": ".json_encode($resArray[1])."<br />";
+                    $kos++;
             }
         }
     }
@@ -111,14 +108,18 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
 
     $txt = $year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus;
     logAction($dir, $sap, $oldState, $logfile, count($bills), $txt, $plateforme);
-    if(ëmpty($warn)) {
+    if(!empty($warn)) {
         $_SESSION['alert-warning'] = $warn;
     }
-    if(ëmpty($error)) {
+    if(!empty($error)) {
         $_SESSION['alert-danger'] = $error;
     }
-    $_SESSION['alert-success'] = $messages->getMessage('msg6')."<br/>".$oks;
-//    $_SESSION['more'] = $more;
+    if($oks > 0) {
+        $_SESSION['alert-success'] = $messages->getMessage('msg6')."<br/>".$oks." factures envoyées avec succès";
+    }
+    if($kos > 0) {
+        $_SESSION['alert-danger'] = $kos." factures n'ont pu être envoyées";
+    }
 }
 else {
     $_SESSION['alert-danger'] = "post_data_missing";
