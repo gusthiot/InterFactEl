@@ -46,8 +46,8 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                         }
                         else {
                             $lockv = new Lock();
-                            $state->lastState("../".$plateforme, $lockv);
-                            $dirOut = "../".$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun()."/OUT/";
+                            $state->lastState(DATA.$plateforme, $lockv);
+                            $dirOut = DATA.$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun()."/OUT/";
                                 
                             foreach(State::scanDescSan($dirOut) as $file) {
                                 if(!copy($dirOut.$file, $tmpDir.$file)) {
@@ -79,13 +79,13 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                             $params->write($tmpPe, $array);
                             $params->load($tmpPe);
 
-                            $paramFile = "../".$plateforme."/".$year."/".$month."/parametres.zip";
+                            $paramFile = DATA.$plateforme."/".$year."/".$month."/parametres.zip";
                             if(file_exists($paramFile)) {
                                 $msg = Zip::unzip($paramFile, $tmpDir);
                             }
                         }
                         if(empty($msg)) {
-                            $pathPlate = "../".$plateforme;
+                            $pathPlate = DATA.$plateforme;
                             $unique = time();
                             $lockp = new Lock();
                             $lockp->save("../", 'process', "prefa ".$plateforme." ".$unique);
@@ -140,27 +140,27 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messa
     $month = $params->getParam('Month');
     $year = $params->getParam('Year');
     $type = $params->getParam('Type');
-    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.' -g -d ../ -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
+    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.' -g -d '.DATA.' -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
     $result = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($result, 0, 2) === "OK") {
         //$msg = $unique." tout OK ".strstr($result, '(');
         $tab = explode(" ", $result);
         $version = $tab[1];
-        $dir = "../".$plateforme."/".$year."/".$mstr."/".$version."/".$unique;
+        $dir = DATA.$plateforme."/".$year."/".$mstr."/".$version."/".$unique;
         if($type === "SAP") {
             $logfile = new Logfile();
             $sap = new Sap();
             $sap->load($dir);
             $status = $sap->status();
             $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$status;
-            $logfile->write("../".$plateforme, $txt);
+            $logfile->write(DATA.$plateforme, $txt);
             $_SESSION['alert-success'] = $messages->getMessage('msg1');//."<br/>".$msg;
         }
         else {
             $lock = new Lock();
             $name = $sciper."_".$type.'.zip';
-            $lock->save("../", "../".$sciper.".lock", TEMP.$name);
+            $lock->saveByName("../".$sciper.".lock", TEMP.$name);
             Zip::setZipDir(TEMP.$name, $dir."/");
             delPrefa($path, $year, $mstr, $unique);
             $_SESSION['alert-success'] = $messages->getMessage('msg2');//."<br/>".$msg;
@@ -168,7 +168,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messa
     }
     else {
         delPrefa($path, $year, $mstr, $unique);
-        $_SESSION['alert-danger'] = $messages->getMessage('msg4')."<br/>".$result;
+        $_SESSION['alert-danger'] = $messages->getMessage('msg4')."<br/>".nl2br($result);
     }
 }
 

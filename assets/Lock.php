@@ -10,29 +10,32 @@ class Lock
     {
         $lock = "";
         if(array_key_exists($type, self::FILES)) {
-            $file = $dir.self::FILES[$type];
+            return $this->loadByName($dir.self::FILES[$type]);
+
         }
-        else {
-            $file = $dir.$type;
-        }
+        return false;
+    }
+
+    function loadByName(string $file): string
+    {
         if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
             $lock = fread($open, filesize($file));    
             fclose($open);
             return $lock;
         }
-        else {
-            return false;
-        }
+        return false;
     }
     
     function save(string $dir, string $type, string $txt): bool 
     {
         if(array_key_exists($type, self::FILES)) {
-            $file = $dir.self::FILES[$type];
+            return $this->saveByName($dir.self::FILES[$type], $txt);
         }
-        else {
-            $file = $type;
-        }
+        return false;
+    }
+
+    function saveByName(string $file, string $txt): bool
+    {
         if((($open = fopen($file, "w")) !== false)) {
             if(fwrite($open, $txt) === false) {                
                 return false;
@@ -42,5 +45,6 @@ class Lock
         }
         return false;
     }
+
 }
 ?>

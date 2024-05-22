@@ -156,6 +156,14 @@ input[type="file"] {
   font-size: 24px;
 }
 
+.reduce {
+  max-height: 300px;
+  margin: 0 auto;
+  width: 90%;
+  display: block;
+  overflow-x: auto;
+}
+
 /** head **/
 
 #logo {

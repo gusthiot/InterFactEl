@@ -14,11 +14,11 @@ if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user
 }
 
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
-
+$dir = DATA.$plateforme;
 $available = false;
-if(file_exists($plateforme)) { 
+if(file_exists($dir)) { 
     $available = true;
-    $state->lastState($plateforme, new Lock());
+    $state->lastState($dir, new Lock());
     if(empty($state->getLast())) {
         $available = false;
     }
@@ -65,11 +65,11 @@ if(file_exists($plateforme)) {
                 <input type="hidden" id="lastYear" value="<?= $state->getLastYear() ?>" />
                 <table class="table table-boxed">
                     <?php
-                    foreach(State::scanDescSan($plateforme) as $year) {
-                        foreach(State::scanDescSan($plateforme."/".$year) as $month) {
-                            if (file_exists($plateforme."/".$year."/".$month."/parametres.zip")) {
+                    foreach(State::scanDescSan($dir) as $year) {
+                        foreach(State::scanDescSan($dir."/".$year) as $month) {
+                            if (file_exists($dir."/".$year."/".$month."/parametres.zip")) {
                                 $label = new Label();
-                                $labtxt = $label->load($plateforme."/".$year."/".$month);
+                                $labtxt = $label->load($dir."/".$year."/".$month);
                                 if(empty($labtxt)) {
                                     $labtxt = "No label ?";
                                 }

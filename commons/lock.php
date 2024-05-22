@@ -3,7 +3,7 @@
 $disabled = "";
 $dlTxt = "";
 $locku = new Lock();
-$lockedUser = $locku->load("./", $sciper.".lock");
+$lockedUser = $locku->loadByName($sciper.".lock");
 if(!empty($lockedUser)) {
     $disabled = "disabled";
     $dlTxt = '<a href="#" id="dl_prefa">Vous avez une préfacturation à télécharger avant de pouvoir en faire une nouvelle.</a>';

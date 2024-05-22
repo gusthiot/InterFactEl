@@ -2,13 +2,14 @@
 
 require_once("../assets/Logfile.php");
 require_once("../assets/Label.php");
+require_once("../session.php");
 
 $txt = "";
 
 if(isset($_POST['plate'])) {
     $logfile = new Logfile();
     $label = new Label();
-    $plate = "../".$_POST['plate'];
+    $plate = DATA.$_POST['plate'];
     $lines = explode(PHP_EOL, $logfile->load($plate));
     $txt = "<div id='log'>";
     foreach($lines as $line) {

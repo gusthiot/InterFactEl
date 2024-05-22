@@ -18,8 +18,8 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $type = $_POST['type'];
     $version = $_POST["version"];
 
-    $dir = "../".$plateforme."/".$year."/".$month."/".$version."/".$run;
-    $dirPrevMonth = "../".$plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
+    $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
+    $dirPrevMonth = DATA.$plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
 
     $warn = "";
     $error = "";
@@ -86,24 +86,25 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     }
     unlink("../".Lock::FILES['process']);
 
-    if($sap->status() == 4) {
-        $lock = new Lock();
-        $lock->save($dir, 'run', $lock::STATES['finalized']);
-        $sep = strrpos($dir, "/");
-        $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
-        
+    if($sap->status() == 4) {    
         $locklast = new Lock();
-        $state->lastState("../".$plateforme, $locklast);
+        $state->lastState(DATA.$plateforme, $locklast);
         if(empty($state->getLast())) {
-            $dirTarifs = "../".$plateforme."/".$year."/".$month;
+            $dirTarifs = DATA.$plateforme."/".$year."/".$month;
             if(!Parametres::saveFirst($dir, $dirTarifs)) {
                 $res .= "erreur sauvegarde paramètres ";
             }   
         }
+
+        $lock = new Lock();
+        $lock->save($dir, 'run', $lock::STATES['finalized']);
+        $sep = strrpos($dir, "/");
+        $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
+
+
         $infos["Closed"][2] = date('Y-m-d H:i:s');
         $infos["Closed"][3] = $_SESSION['user'];
         $info->save($dir, $infos);
-
     }
 
     $sap->load($dir);
@@ -111,7 +112,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $state = $sap->state();
     $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
     $txt .= $oldState." | ".$number." | ".$state;
-    $logfile->write("../".$plateforme, $txt);
+    $logfile->write(DATA.$plateforme, $txt);
     if(!empty($warn)) {
         $_SESSION['alert-warning'] = $warn;
     }

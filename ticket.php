@@ -6,7 +6,7 @@ if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || 
     die("Manque un paramètre !");
 }
 
-$dir = $_GET['plate']."/".$_GET['year']."/".$_GET['month']."/".$_GET['version']."/".$_GET['run'];
+$dir = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month']."/".$_GET['version']."/".$_GET['run'];
 
 $s = [];
 

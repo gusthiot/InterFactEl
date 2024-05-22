@@ -13,7 +13,8 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $run = $_POST["run"];
     $version = $_POST["version"];
 
-    $dir = "../".$plateforme."/".$year."/".$month."/".$version."/".$run;$lock = new Lock();
+    $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
+    $lock = new Lock();
     $lock->save($dir, 'run', $lock::STATES['invalidate']);
     $info = new Info();
     $content = $info->load($dir);
@@ -30,7 +31,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $status = $sap->status();
     $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Invalidation | ".$status." | ".$status;
     $logfile = new Logfile();
-    $logfile->write("../".$plateforme, $txt);
+    $logfile->write(DATA.$plateforme, $txt);
     $_SESSION['alert-success'] = "invalidé";
 }
 else {

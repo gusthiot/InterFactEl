@@ -14,20 +14,22 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $run = $_POST["run"];
     $version = $_POST["version"];
 
-    $dir = "../".$plateforme."/".$year."/".$month."/".$version."/".$run;
+    $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
+
+    $locklast = new Lock();
+    $state->lastState(DATA.$plateforme, $locklast);
+    if(empty($state->getLast())) {
+        $dirTarifs = DATA.$plateforme."/".$year."/".$month;
+        if(!Parametres::saveFirst($dir, $dirTarifs)) {
+            $_SESSION['alert-danger'] = "erreur sauvegarde paramètres ";
+        }
+    }
+
     $lock = new Lock();
     $lock->save($dir, 'run', $lock::STATES['finalized']);
     $sep = strrpos($dir, "/");
     $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
 
-    $locklast = new Lock();
-    $state->lastState("../".$plateforme, $locklast);
-    if(empty($state->getLast())) {
-        $dirTarifs = "../".$plateforme."/".$year."/".$month;
-        if(!Parametres::saveFirst($dir, $dirTarifs)) {
-            $_SESSION['alert-danger'] = "erreur sauvegarde paramètres ";
-        }   
-    }
     $info = new Info();
     $content = $info->load($dir);
     if(!empty($content)) {
@@ -43,7 +45,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $status = $sap->status();
     $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;
     $logfile = new Logfile();
-    $logfile->write("../".$plateforme, $txt);
+    $logfile->write(DATA.$plateforme, $txt);
     if(!empty($alert)) {
         $_SESSION['alert-warning'] = $alert;
     }

@@ -9,7 +9,7 @@ if($_FILES['zip_file']) {
     if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
         $tmpFile = TEMP.$fileName;
         if(copy($source, $tmpFile)) {
-            $msg = Zip::unzip($tmpFile, "../CONFIG/");
+            $msg = Zip::unzip($tmpFile, CONFIG);
             unlink($tmpFile);
             if(empty($msg)) {
                 $_SESSION['alert-success'] = "Fichiers correctement mis à jour !";

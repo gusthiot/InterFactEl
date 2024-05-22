@@ -3,6 +3,7 @@ require_once("../commons/Zip.php");
 require_once("../config.php");
 require_once("../assets/Label.php");
 require_once("../commons/Parametres.php");
+require_once("../session.php");
 
 session_start();
 if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['month-picker'])) {
@@ -10,7 +11,7 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['month-picker']
     $date = explode(" ", $_POST['month-picker']);
     $fileName = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];
-    $dirTarifs = "../".$plateforme."/".$date[1]."/".$date[0]."/";
+    $dirTarifs = DATA.$plateforme."/".$date[1]."/".$date[0]."/";
     if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
         $tmpFile = TEMP.$fileName;
         if(copy($source, $tmpFile)) {
