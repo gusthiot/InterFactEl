@@ -31,7 +31,7 @@ class Lock
             $file = $dir.self::FILES[$type];
         }
         else {
-            $file = $type;
+            $file = $dir.$type;
         }
         if((($open = fopen($file, "w")) !== false)) {
             if(fwrite($open, $txt) === false) {                

@@ -82,9 +82,9 @@ include("commons/lock.php");
                                 foreach($dataGest['complet'] as $plateforme => $name) {
                                     if(array_key_exists($plateforme, $dataGest['complet'])) {
                                         $available = false;
-                                        if(file_exists($plateforme)) { 
+                                        if(file_exists(DATA.$plateforme)) { 
                                             $available = true;
-                                            $state->lastState($plateforme, new Lock());
+                                            $state->lastState(DATA.$plateforme, new Lock());
                                             if(empty($state->getLast())) {
                                                 $available = false;
                                             }

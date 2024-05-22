@@ -12,11 +12,12 @@ $plateforme = $_GET['plateforme'];
 if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['plates'])) {
     die("Ce numéro de plateforme n'est pas pris en compte !");
 }
+$dir = DATA.$plateforme;
 $first = true;
 $current = false;
-if(file_exists($plateforme)) { 
-    $state->lastState($plateforme, new Lock());
-    $state->currentState($plateforme);
+if(file_exists($dir)) { 
+    $state->lastState($dir, new Lock());
+    $state->currentState($dir);
     $first = false;
     $current = true;
     if(empty($state->getCurrent())) {
@@ -124,17 +125,17 @@ include("commons/lock.php");
 
             <div class="text-center" id="arbo">
             <?php
-            if(file_exists($plateforme)) {   
+            if(file_exists($dir)) {   
             ?>
                 <table class="table table-boxed">
                     <?php
-                    foreach(State::scanDescSan($plateforme) as $year) {
-                        foreach(State::scanDescSan($plateforme."/".$year) as $month) {
-                            $versions = State::scanDescSan($plateforme."/".$year."/".$month);
+                    foreach(State::scanDescSan($dir) as $year) {
+                        foreach(State::scanDescSan($dir."/".$year) as $month) {
+                            $versions = State::scanDescSan($dir."/".$year."/".$month);
                             if(count($versions) > 0) {
                                 echo '<tr>';
                                 echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
-                                if (file_exists($plateforme."/".$year."/".$month."/lockm.csv")) {
+                                if (file_exists($dir."/".$year."/".$month."/lockm.csv")) {
                                     echo ' <svg class="icon" aria-hidden="true">
                                                 <use xlink:href="#lock"></use>
                                             </svg> ';
@@ -146,25 +147,25 @@ include("commons/lock.php");
                                         echo '<tr>';
                                     }
                                     echo '<td>'.$version;
-                                    if (file_exists($plateforme."/".$year."/".$month."/".$version."/lockv.csv")) {
+                                    if (file_exists($dir."/".$year."/".$month."/".$version."/lockv.csv")) {
                                         echo ' <svg class="icon" aria-hidden="true">
                                                     <use xlink:href="#lock"></use>
                                                 </svg> ';
                                     }
                                     echo '</td><td>';
-                                    foreach(State::scanDescSan($plateforme."/".$year."/".$month."/".$version) as $run) {
+                                    foreach(State::scanDescSan($dir."/".$year."/".$month."/".$version) as $run) {
                                         if($run != $lockedRun || $lockedProcess != "Une préfacturation") {
-                                            $value = 'plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
+                                            $value = 'year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
                                             $label = new Label();
-                                            $labtxt = $label->load($plateforme."/".$year."/".$month."/".$version."/".$run);
+                                            $labtxt = $label->load($dir."/".$year."/".$month."/".$version."/".$run);
                                             if(empty($labtxt)) {
                                                 $labtxt = $run;
                                             }
                                             $sap = new Sap();
-                                            $sap->load($plateforme."/".$year."/".$month."/".$version."/".$run);
+                                            $sap->load($dir."/".$year."/".$month."/".$version."/".$run);
                                             $status = $sap->status();
                                             $lock = new Lock();
-                                            $loctxt = $lock->load($plateforme."/".$year."/".$month."/".$version."/".$run, "run");
+                                            $loctxt = $lock->load($dir."/".$year."/".$month."/".$version."/".$run, "run");
                                             echo ' <button type="button" value="'.$value.'" class="run btn '.Sap::color($status, $loctxt).'"> '.$labtxt;
                                             if ($loctxt) {
                                                 echo ' <svg class="icon" aria-hidden="true">
@@ -173,11 +174,9 @@ include("commons/lock.php");
                                             }
                                             echo '</button> ';
                                             if($superviseur->isSuperviseur($_SESSION['user'])) {
+                                                $value = 'year='.$year.'&month='.$month.'&run='.$run;
                                             ?>
-                                            <button type="button" <?= $disabled ?> class="btn but-red erase lockable" 
-                                                                                        data-year="<?= $year ?>" 
-                                                                                        data-month="<?= $month ?>" 
-                                                                                        data-run="<?= $run ?>">X</button>
+                                            <button type="button" <?= $disabled ?> class="btn but-red erase lockable" value="<?= $value ?>">X</button>
                                             <?php
                                             }
                                         }

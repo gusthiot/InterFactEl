@@ -1,9 +1,10 @@
 <?php
 
 require_once("../assets/Label.php");
+require_once("../session.php");
 
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"]) && isset($_POST["txt"])){
-    $dir = "../".$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
+    $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $label = new Label();
     if(!empty($_POST["txt"])) {
         if($label->save($dir, $_POST["txt"])) {

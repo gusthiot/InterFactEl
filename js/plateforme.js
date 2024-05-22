@@ -20,7 +20,7 @@ $('#dl_prefa').on('click', function () {
 } );
 
 $('.run').on('click', function () {
-    window.location.href = "prefacturation.php?"+$(this).val();
+    window.location.href = "prefacturation.php?plateforme="+$('#plate').val()+"&"+$(this).val();
 } );
 
 $('#destroy').on('click', function () {
@@ -28,7 +28,7 @@ $('#destroy').on('click', function () {
 } );
 
 $('.erase').on('click', function () {
-    window.location.href = "controller/erase.php?plate="+$('#plate').val()+"&year="+$(this).data('year')+"&month="+$(this).data('month')+"&run="+$(this).data('run');
+    window.location.href = "controller/erase.php?plate="+$('#plate').val()+"&"+$(this).val();
 } );
 
 $(document).on("change", ".zip_file", function () {

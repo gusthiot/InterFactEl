@@ -11,7 +11,7 @@ if(isset($_GET['type'])) {
     $tmpFile = TEMP.$type.'.zip';
    
     if($type==="config") {
-        Zip::getZipDir($tmpFile, "../CONFIG/");
+        Zip::getZipDir($tmpFile, CONFIG);
     }
     elseif($type==="prefa") {     
         $locku = new Lock();
@@ -29,7 +29,7 @@ if(isset($_GET['type'])) {
     }
     else {
         if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
-            $dirMonth = "../".$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
+            $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
             if($type==="tarifs") {  
                 $fileName = $dirMonth."/parametres.zip";
                 header('Content-disposition: attachment; filename="'.basename($fileName).'"');

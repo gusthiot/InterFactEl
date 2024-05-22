@@ -6,7 +6,7 @@ require_once("../assets/Modif.php");
 require_once("../session.php");
 
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
-    $dir = "../".$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
+    $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$_POST['plate']];
     $suf = "_".$name."_".$_POST['year']."_".$_POST['month']."_".$_POST['version'];
     $html = "";

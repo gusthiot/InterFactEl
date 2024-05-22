@@ -15,7 +15,7 @@ $year = $_GET['year'];
 $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
-$dir = $plateforme."/".$year."/".$month."/".$version."/".$run;
+$dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 
 $label = new Label();
@@ -29,7 +29,7 @@ $status = $sap->status();
 $lock = new Lock();
 $loctxt = $lock->load($dir, "run");
 $lockv = new Lock();
-$locvtxt = $lockv->load($plateforme."/".$year."/".$month."/".$version, "version");
+$locvtxt = $lockv->load(DATA.$plateforme."/".$year."/".$month."/".$version, "version");
 
 include("commons/lock.php");
 
