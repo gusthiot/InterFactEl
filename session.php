@@ -19,6 +19,6 @@ $superviseur = new Superviseur();
 $gestionnaire = new Gestionnaire();
 $state = new State();
 $messages = new Message();
-$_SESSION['user'] = "gusthiot";
+//$_SESSION['user'] = "gusthiot";
 
-//$sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
+$sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
