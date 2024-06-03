@@ -2,6 +2,9 @@
 require_once("session.php");
 require_once("assets/Ticket.php");
 
+if(!$dataGest) {
+    header('Location: index.php');
+}
 if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
     die("Manque un paramètre !");
 }

@@ -21,4 +21,10 @@ $state = new State();
 $messages = new Message();
 //$_SESSION['user'] = "gusthiot";
 
-$sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
+$dataGest = $gestionnaire->getGestionnaire($_SESSION['user']);
+if($dataGest) {
+    $sciper = $gestionnaire->getGestionnaire($_SESSION['user'])['sciper'];
+}
+else {
+    $_SESSION['alert-info'] = "Vous n'avez aucun droit de gestion";
+}

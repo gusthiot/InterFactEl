@@ -3,7 +3,9 @@ require_once("session.php");
 require_once("assets/Lock.php");
 require_once("commons/State.php");
 
-include("commons/lock.php");
+if($dataGest) {
+    include("commons/lock.php");
+}
 
 ?>
 
@@ -51,7 +53,7 @@ include("commons/lock.php");
                 </div>
             <?php
                 }
-                if($dataGest = $gestionnaire->getGestionnaire($_SESSION['user'])) {
+                if($dataGest) {
                     ?>  
                     
                     <div id="gestion">                  

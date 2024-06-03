@@ -111,7 +111,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $status = $sap->status();
     $state = $sap->state();
     $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
-    $txt .= $oldState." | ".$number." | ".$state;
+    $txt .= $oldState." | ".count($bills)." | ".$state;
     $logfile->write(DATA.$plateforme, $txt);
     if(!empty($warn)) {
         $_SESSION['alert-warning'] = $warn;

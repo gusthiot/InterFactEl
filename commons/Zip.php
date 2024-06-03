@@ -5,37 +5,26 @@ require_once("State.php");
 class Zip 
 {
 
-    static function getZipDir(string $tmpFile, string $dirname, string $morefile=""): void 
+    static function setZipDir(string $tmpFile, string $dirname, string $morefile=""): string 
     {
         $zip = new ZipArchive;
-        if ($zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+        $res = $zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        if ($res === true) {
             self::tree($zip, $dirname, "");
             if(!empty($morefile)) {
                 $zip->addFile($morefile, basename($morefile));
             }
-            if($zip->close()) {
-                header('Content-disposition: attachment; filename="'.basename($tmpFile).'"');
-                header('Content-type: application/zip');
-                readfile($tmpFile);
-                ignore_user_abort(true);
-                unlink($tmpFile);
+            if(!$zip->close()) {
+                return "error to close zip";
             }
+            return "";
+        }
+        else {
+            return $res;
         }
     }
 
-    static function setZipDir(string $tmpFile, string $dirname, string $morefile=""): void 
-    {
-        $zip = new ZipArchive;
-        if ($zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-            self::tree($zip, $dirname, "");
-            if(!empty($morefile)) {
-                $zip->addFile($morefile, basename($morefile));
-            }
-            $zip->close();
-        }
-    }
-
-    static function tree(ZipArchive $zip, string $dirname, string $treename): void 
+    static function tree(ZipArchive $zip, string $dirname, string $treename): void
     {
         $dir = opendir($dirname);
         while($file = readdir($dir)) {
@@ -58,22 +47,26 @@ class Zip
     static function unzip(string $file, string $dest): string 
     {
         $zip = new ZipArchive;
-        if ($zip->open($file)) {
-            $ret = "";
+        $res = $zip->open($file);
+        if ($res === true) {
             for($i = 0; $i < $zip->count(); $i++) {
                 $fileName = $zip->getNameIndex($i);
                 $fileInfo = pathinfo($fileName);
                 if(array_key_exists('extension', $fileInfo)) {
                     if(!copy("zip://".$file."#".$fileName, $dest.$fileInfo['basename'])) {
                         $errors= error_get_last();
-                        $ret .= $errors['message'];
+                        return $errors['message'];
                     }
                 }
             }
-            $zip->close();
-            return $ret;
+            if(!$zip->close()) {
+                return "error to close zip";
+            }
+            return "";
         }
-        return "error";
+        else {
+            return $res;
+        }
     }
 
     static function isAccepted(string $type): bool 

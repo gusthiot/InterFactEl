@@ -11,7 +11,7 @@ if(isset($_GET['type'])) {
     $tmpFile = TEMP.$type.'.zip';
    
     if($type==="config") {
-        Zip::getZipDir($tmpFile, CONFIG);
+        readZip($tmpFile, CONFIG);
     }
     elseif($type==="prefa") {     
         $locku = new Lock();
@@ -25,6 +25,7 @@ if(isset($_GET['type'])) {
         }
         else {
             $_SESSION['alert-danger'] = "ce fichier n'est plus disponible";
+            header('Location: ../index.php');
         }
     }
     else {
@@ -40,13 +41,13 @@ if(isset($_GET['type'])) {
                 if(isset($_GET['version']) && isset($_GET['run'])) {
                     $dirRun = $dirMonth."/".$_GET['version']."/".$_GET['run'];
                     if($type==="bilans") {
-                        Zip::getZipDir($tmpFile, $dirRun."/Bilans_Stats/");
+                        readZip($tmpFile, $dirRun."/Bilans_Stats/");
                     }
                     elseif($type==="annexes") {
-                        Zip::getZipDir($tmpFile, $dirRun."/Annexes_CSV/");
+                        readZip($tmpFile, $dirRun."/Annexes_CSV/");
                     }
                     elseif($type==="all") {
-                        Zip::getZipDir($tmpFile, $dirRun."/");
+                        readZip($tmpFile, $dirRun."/");
                     }
                     elseif($type==="sap") {
                         readCsv($dirRun."/sap.csv");
@@ -60,29 +61,50 @@ if(isset($_GET['type'])) {
                     }
                     else {
                         $_SESSION['alert-danger'] = "erreur download";
+                        header('Location: ../index.php');
                     }
                 }
                 else {
                     $_SESSION['alert-danger'] = "erreur download";
+                    header('Location: ../index.php');
                 }
             }
         }
         else {
             $_SESSION['alert-danger'] = "erreur download";
+            header('Location: ../index.php');
         }
     }
 }
 else {
     $_SESSION['alert-danger'] = "erreur download";
+    header('Location: ../index.php');
 }
-header('Location: ../index.php');
 
-function readCsv($fileName) {
+function readCsv(string $fileName): void 
+{
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
     header('Content-Length: ' . filesize($fileName));
     readfile($fileName);
 
+}
+
+function readZip(string $tmpFile, string $dest): void
+{
+    $res = Zip::setZipDir($tmpFile, $dest);
+    if(empty($res)) {
+        header('Content-disposition: attachment; filename="'.basename($tmpFile).'"');
+        header('Content-type: application/zip');
+        readfile($tmpFile);
+        ignore_user_abort(true);
+        unlink($tmpFile);
+    }
+    else {
+        unlink($tmpFile);
+        $_SESSION['alert-danger'] = $res;
+        header('Location: ../index.php');
+    }
 }
 
 ?>

@@ -357,6 +357,11 @@ table.infos td:nth-child(1), table.infos td:nth-child(3) { text-align: left; }
   background-color: var(--soufre);
 }
 
+#labelLine {
+  display: inline-flex;
+  flex: auto;
+}
+
 table#bills-tab td:nth-child(1), table#bills-tab td:nth-child(4) { text-align: left; }
 table#bills-tab td:nth-child(2), table#bills-tab td:nth-child(3) { text-align: right; }
 

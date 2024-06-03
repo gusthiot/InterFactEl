@@ -3,6 +3,10 @@ require_once("session.php");
 require_once("commons/State.php");
 require_once("assets/Lock.php");
 require_once("assets/Label.php");
+
+if(!$dataGest) {
+    header('Location: index.php');
+}
 if(!isset($_GET["plateforme"])) {
     die("Manque un numéro de plateforme !");
 }
@@ -76,7 +80,7 @@ if(file_exists($dir)) {
                                 $id = $year."-".$month;
                                 echo '<tr>';
                                 echo '<td>'.$month.' '.$year.'</td>';
-                                echo '<td><span><button id="'.$id.'" type="button" class="btn but-white param">'.$labtxt.'</button></span><span id="more-'.$id.'"></span></td>';
+                                echo '<td><div><button id="'.$id.'" type="button" class="btn but-white param">'.$labtxt.'</button></div><div id="more-'.$id.'"></div></td>';
                                 echo '</tr>';
                             }
                         }

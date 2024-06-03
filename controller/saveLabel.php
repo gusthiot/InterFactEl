@@ -3,8 +3,13 @@
 require_once("../assets/Label.php");
 require_once("../session.php");
 
-if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"]) && isset($_POST["txt"])){
-    $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
+if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["txt"])) {
+    if(isset($_POST["version"]) && isset($_POST["run"])){
+        $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
+    }
+    else {
+        $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month'];
+    }
     $label = new Label();
     if(!empty($_POST["txt"])) {
         if($label->save($dir, $_POST["txt"])) {
@@ -23,4 +28,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         }
 
     }
+}
+else {
+    $_SESSION['alert-danger'] = "post_data_missing";
 }

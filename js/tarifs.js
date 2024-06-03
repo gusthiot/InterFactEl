@@ -62,8 +62,7 @@ $(function() {
     $(document).on("click", "#saveLabel", function() {
         const tab = $(this).parent().parent().attr('id').split("-");
         const txt = $('#labelArea').val();
-        const dir = $('#plate').val()+"/"+tab[1]+"/"+tab[2];
-        $.post("controller/saveLabel.php", {txt: txt, dir: dir}, function (message) {
+        $.post("controller/saveLabel.php", {txt: txt, plate: $('#plate').val(), year: tab[1], month: tab[2]}, function (message) {
             window.location.href = "tarifs.php?plateforme="+$('#plate').val();
         });
     } );

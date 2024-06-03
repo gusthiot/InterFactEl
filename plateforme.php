@@ -4,6 +4,10 @@ require_once("commons/State.php");
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");
+
+if(!$dataGest) {
+    header('Location: index.php');
+}
 if(!isset($_GET["plateforme"])) {
     die("Manque un numéro de plateforme !");
 }
