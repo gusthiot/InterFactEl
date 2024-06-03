@@ -140,7 +140,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messa
     $month = $params->getParam('Month');
     $year = $params->getParam('Year');
     $type = $params->getParam('Type');
-    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.' -g -d '.DATA.' -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
+    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.' -g -n -d '.DATA.' -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
     $result = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($result, 0, 2) === "OK") {
