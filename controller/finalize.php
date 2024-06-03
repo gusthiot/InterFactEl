@@ -22,9 +22,9 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         $dirTarifs = DATA.$plateforme."/".$year."/".$month;
         if(!Parametres::saveFirst($dir, $dirTarifs)) {
             $_SESSION['alert-danger'] = "erreur sauvegarde paramètres ";
-        }   
+        }
     }
-    
+
     $lock = new Lock();
     $lock->save($dir, 'run', $lock::STATES['finalized']);
     $sep = strrpos($dir, "/");

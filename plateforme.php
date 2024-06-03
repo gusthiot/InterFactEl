@@ -176,10 +176,6 @@ include("commons/lock.php");
                                             if($superviseur->isSuperviseur($_SESSION['user'])) {
                                                 $value = 'year='.$year.'&month='.$month.'&run='.$run;
                                             ?>
-                                            <button type="button" <?= $disabled ?> class="btn but-red erase lockable" 
-                                                                                        data-year="<?= $year ?>" 
-                                                                                        data-month="<?= $month ?>" 
-                                                                                        data-run="<?= $run ?>">X</button>
                                             <?php
                                             }
                                         }
