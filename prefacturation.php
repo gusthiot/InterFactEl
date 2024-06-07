@@ -91,7 +91,7 @@ include("commons/lock.php");
                     if($lockedPlate != $plateforme) {
                         $other = " pour une autre plateforme";
                     }
-                    echo'<div>'.$lockedProcess.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
+                    echo'<div class="text-center" >'.$lockedProcess.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
                 }
                 if(!empty($lockedUser)) {
                     echo'<div class="text-center">'.$dlTxt.'</div>';

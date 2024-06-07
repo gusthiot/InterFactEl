@@ -58,6 +58,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                                 $sap_cont[$bill][3] = "ERROR";
                                 $sap_cont[$bill][4] = $res->E_RESULT->item->LOG->item->MESSAGE;
                                 $txt = $bill." | ERROR | ".$res->E_RESULT->item->LOG->item->MESSAGE;
+                                $kos++;
                             }
                         }
                         else {
@@ -65,10 +66,10 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                                 $sap_cont[$bill][3] = "SENT";
                                 $sap_cont[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
                                 $txt = $bill." | SENT | ".$res->E_RESULT->item->DOC_NUMBER;
+                                $oks++;
                             }
                         }
                         $sap->save($dir, $sap_cont);
-                        $oks++;
                     }
                     else {
                         $warn .= $bill.": info vide ? <br />";
@@ -120,10 +121,20 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
         $_SESSION['alert-danger'] = $error;
     }
     if($oks > 0) {
-        $_SESSION['alert-success'] = $messages->getMessage('msg6')."<br/>".$oks." factures envoyées avec succès";
+        if($oks > 1) {
+            $_SESSION['alert-success'] = $messages->getMessage('msg6')."<br/>".$oks." factures envoyées avec succès";
+        }
+        else {
+            $_SESSION['alert-success'] = $messages->getMessage('msg6')."<br/> 1 facture envoyée avec succès";
+        }
     }
     if($kos > 0) {
-        $_SESSION['alert-danger'] = $kos." factures n'ont pu être envoyées";
+        if($kos > 1) {
+            $_SESSION['alert-danger'] = $kos." factures n'ont pu être envoyées";
+        }
+        else {
+            $_SESSION['alert-danger'] = "1 facture n'a pu être envoyée";
+        }
     }
 }
 else {
