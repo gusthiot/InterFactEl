@@ -29,11 +29,14 @@ function table(array $modifs, string $id, string $title, string $class, array $p
 {
     $html = "";
     if(count($modifs)>1) {
-        $html .= '<div class="over"><table class="table '.$class.'">';
+        $html .= '<div class="over"><table class="table '.$class.'"><thead>';
         $prev = null;
         foreach($modifs as $key=>$line) {
             if($key%2 != 0) {
                 $prev = $line;
+            }
+            if($key==1) {
+                $html .= "</thead><tbody>";
             }
             $html .= "<tr>";
             foreach($line as $col=>$cell) {
@@ -48,7 +51,7 @@ function table(array $modifs, string $id, string $title, string $class, array $p
             $html .= "</tr>";
 
         }
-        $html .= "</table></div>";
+        $html .= "</tbody></table></div>";
         $html .= '<button type="button" id="'.$id.'" class="btn but-line">Download '.$title.'</button>';
     }
     return $html;

@@ -334,7 +334,15 @@ table.modifs td:nth-child(5), table.modifs td:nth-child(8), table.modifs td:nth-
 
 table.infos td:nth-child(1), table.infos td:nth-child(3) { text-align: left; }
 
+table.journal thead tr th {
+  background-color: white;
+  position: sticky;
+  z-index: 100;
+  top: 0;
+}
+
 .over {
+  max-height: 700px;
   margin: 0 auto;
   width: 90%;
   display: block;
