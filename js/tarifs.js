@@ -6,11 +6,25 @@ $(function() {
 
     $('.param').on('click', function () {
         const id = $(this).attr('id');
+        const status = $(this).data("status");
+        let more = "";
+        if(status == 1) {
+            more = '<label class="btn but-line">'+
+                        '<form action="controller/uploadTarifs.php" method="post" id="corform" enctype="multipart/form-data" >'+
+                            '<input type="hidden" name="plate" id="plate" value="'+$('#plate').val()+'" />'+
+                            '<input type="hidden" name="type" value="correct" />'+
+                            '<input type="file" id="zip-correct" name="zip_file" class="zip_file" accept=".zip">'+
+                        '</form>'+
+                    'Corriger</label>';
+        }
+        if(status == 2) {
+            more = '<button type="button" id="suppress-'+id+'" class="btn but-line suppress">Supprimer</button>';
+        }
         if(active != "") {
             $('#more-'+active).html("");
         }
         $('#more-'+id).html('<button type="button" id="etiquette-'+id+'" class="btn but-line etiquette">Etiquette</button>'+
-                            '<button type="button" id="export-'+id+'" class="btn but-line export">Export</button>'+
+                            '<button type="button" id="export-'+id+'" class="btn but-line export">Export</button>'+ more +
                             '<div id="label-'+id+'"></div>');
         active = id;
     });
@@ -46,9 +60,30 @@ $(function() {
         }
     } );
 
+    $(document).on("change", "#zip-correct", function () {
+        const file = $('#zip-correct').val();
+        if(file.indexOf('.zip') > -1) {
+            $('#corform').submit();
+            $('#message').text('');
+        }
+        else {
+            $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
+                                    'Vous devez uploader une archive zip !'+
+                                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                                        '<span aria-hidden="true">&times;</span>'+
+                                    '</button>'+
+                                '</div>');
+        }
+    } );
+
     $(document).on("click", ".export", function() {
         const tab = $(this).attr('id').split("-");
         window.location.href = "controller/download.php?type=tarifs&plate="+$('#plate').val()+"&year="+tab[1]+"&month="+tab[2];
+    } );
+
+    $(document).on("click", ".suppress", function() {
+        const tab = $(this).attr('id').split("-");
+        window.location.href = "controller/suppressTarifs.php?plate="+$('#plate').val()+"&year="+tab[1]+"&month="+tab[2];
     } );
 
     $(document).on("click", ".etiquette", function() {

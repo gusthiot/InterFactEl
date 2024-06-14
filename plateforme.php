@@ -19,6 +19,7 @@ if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user
 $dir = DATA.$plateforme;
 $first = true;
 $current = false;
+$state = new State();
 if(file_exists($dir)) { 
     $state->lastState($dir, new Lock());
     $state->currentState($dir);
@@ -133,9 +134,9 @@ include("commons/lock.php");
             ?>
                 <table class="table table-boxed">
                     <?php
-                    foreach(State::scanDescSan($dir) as $year) {
-                        foreach(State::scanDescSan($dir."/".$year) as $month) {
-                            $versions = State::scanDescSan($dir."/".$year."/".$month);
+                    foreach(State::scanDesc($dir) as $year) {
+                        foreach(State::scanDesc($dir."/".$year) as $month) {
+                            $versions = State::scanDesc($dir."/".$year."/".$month);
                             if(count($versions) > 0) {
                                 echo '<tr>';
                                 echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
@@ -157,7 +158,7 @@ include("commons/lock.php");
                                                 </svg> ';
                                     }
                                     echo '</td><td>';
-                                    foreach(State::scanDescSan($dir."/".$year."/".$month."/".$version) as $run) {
+                                    foreach(State::scanDesc($dir."/".$year."/".$month."/".$version) as $run) {
                                         if($run != $lockedRun || $lockedProcess != "Une préfacturation") {
                                             $value = 'year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
                                             $label = new Label();

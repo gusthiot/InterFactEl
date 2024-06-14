@@ -6,7 +6,9 @@ require_once("../assets/Facture.php");
 require_once("../session.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Logfile.php");
-require_once("../commons/Parametres.php");
+require_once("../commons/Params.php");
+require_once("../commons/State.php");
+require_once("../assets/Message.php");
 
 if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
 
@@ -24,7 +26,9 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $warn = "";
     $error = "";
     $logfile = new Logfile();
+    $messages = new Message();
     $sap = new Sap();
+    $state = new State();
     $sap->load($dir);
     $oldStatus = $sap->status();
     $oldState = $sap->state();
@@ -91,10 +95,11 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
         $locklast = new Lock();
         $state->lastState(DATA.$plateforme, $locklast);
         if(empty($state->getLast())) {
-            $dirTarifs = DATA.$plateforme."/".$year."/".$month;
-            if(!Parametres::saveFirst($dir, $dirTarifs)) {
-                $res .= "erreur sauvegarde paramètres ";
-            }   
+            $dirTarifs = DATA.$plateforme."/".$year."/".$month."/";
+            $msg = Params::saveFirst($dir, $dirTarifs);
+            if(!empty($msg)) {
+                $res .= $msg;
+            }  
         }
 
         $lock = new Lock();
@@ -113,7 +118,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $state = $sap->state();
     $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
     $txt .= $oldState." | ".count($bills)." | ".$state;
-    $logfile->write(DATA.$plateforme, $txt);
+    $logfile->write(DATA.$plateforme."/", $txt);
     if(!empty($warn)) {
         $_SESSION['alert-warning'] = $warn;
     }

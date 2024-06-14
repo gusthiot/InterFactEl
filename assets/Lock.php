@@ -3,14 +3,14 @@
 
 class Lock 
 {
-    const FILES = ['month'=>"/lockm.csv", 'version'=>"/lockv.csv", 'run'=>"/lock.csv", 'process'=>"/process.lock"];
+    const FILES = ['month'=>"lockm.csv", 'version'=>"lockv.csv", 'run'=>"lock.csv", 'process'=>"process.lock"];
     const STATES = ['finalized'=>"finalized", 'invalidate'=>"invalidate"];
 
     function load(string $dir, string $type): string 
     {
         $lock = "";
         if(array_key_exists($type, self::FILES)) {
-            return $this->loadByName($dir.self::FILES[$type]);
+            return $this->loadByName($dir."/".self::FILES[$type]);
 
         }
         return false;
@@ -29,7 +29,7 @@ class Lock
     function save(string $dir, string $type, string $txt): bool 
     {
         if(array_key_exists($type, self::FILES)) {
-            return $this->saveByName($dir.self::FILES[$type], $txt);
+            return $this->saveByName($dir."/".self::FILES[$type], $txt);
         }
         return false;
     }

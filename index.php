@@ -81,6 +81,7 @@ if($dataGest) {
                                 <h5 class="">Nouveaux tarifs</h5>
                                 <div class="tiles">
                                 <?php
+                                $state = new State();
                                 foreach($dataGest['complet'] as $plateforme => $name) {
                                     if(array_key_exists($plateforme, $dataGest['complet'])) {
                                         $available = false;

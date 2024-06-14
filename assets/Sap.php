@@ -4,14 +4,14 @@ require_once("Csv.php");
 
 class Sap extends Csv 
 {
-    const NAME = "/sap.csv";
+    const NAME = "sap.csv";
     private array $bills;
     private array $title;
 
     function load(string $dir): array 
     {
         $this->bills = [];
-        $lines = $this->extract($dir.self::NAME);
+        $lines = $this->extract($dir."/".self::NAME);
         $first = true;
         foreach($lines as $line) {
             $tab = explode(";", $line);
@@ -56,7 +56,7 @@ class Sap extends Csv
         foreach($this->bills as $line) {
             $data[] = $line;
         }
-        $this->write($dir.self::NAME, $data);
+        $this->write($dir."/".self::NAME, $data);
     }
 
     static function color(int $status, string $lock): string 

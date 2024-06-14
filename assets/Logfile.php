@@ -3,12 +3,12 @@
 
 class Logfile 
 {
-    const NAME = "/logfile.log";
+    const NAME = "logfile.log";
 
     function load(string $dir): string 
     {
         $logfile = "";
-        $file = $dir.self::NAME;
+        $file = $dir."/".self::NAME;
         if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
             $logfile = fread($open, filesize($file));    
             fclose($open);
@@ -18,7 +18,7 @@ class Logfile
     
     function write(string $dir, string $txt): bool 
     {
-        $file = $dir.self::NAME;
+        $file = $dir."/".self::NAME;
         $content = self::load($dir);
         if((($open = fopen($file, "w")) !== false)) {
             if(fwrite($open, $txt.PHP_EOL.$content) === false) {                

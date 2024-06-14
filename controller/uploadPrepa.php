@@ -1,16 +1,20 @@
 <?php
 require_once("../commons/Zip.php");
+require_once("../assets/Parametres.php");
+require_once("../commons/State.php");
 require_once("../assets/Result.php");
 require_once("../assets/Logfile.php");
 require_once("../assets/Paramedit.php");
 require_once("../assets/Paramtext.php");
 require_once("../assets/Lock.php");
+require_once("../assets/Message.php");
 require_once("../session.php");
 require_once("../assets/Sap.php");
 
 if(isset($_POST['plate']) && isset($_POST['type'])) {
     $plateforme = $_POST['plate'];
     $type = $_POST['type'];
+    $messages = new Message();
     if(isset($_FILES[$type])) {
         $zip = $_FILES[$type];
         $fileName = $zip["name"];
@@ -46,10 +50,11 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                         }
                         else {
                             $lockv = new Lock();
+                            $state = new State();
                             $state->lastState(DATA.$plateforme, $lockv);
                             $dirOut = DATA.$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun()."/OUT/";
                                 
-                            foreach(State::scanDescSan($dirOut) as $file) {
+                            foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
                                 if(!copy($dirOut.$file, $tmpDir.$file)) {
                                     $msg = "erreur de copie ".$dirOut.$file." vers ".$tmpDir.$file;
                                     break;
@@ -79,7 +84,7 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                             $params->write($tmpPe, $array);
                             $params->load($tmpPe);
 
-                            $paramFile = DATA.$plateforme."/".$year."/".$month."/parametres.zip";
+                            $paramFile = DATA.$plateforme."/".$year."/".$month."/".Parametres::NAME;
                             if(file_exists($paramFile)) {
                                 $msg = Zip::unzip($paramFile, $tmpDir);
                             }
@@ -161,7 +166,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messa
             $lock = new Lock();
             $name = $sciper."_".$type.'.zip';
             $lock->saveByName("../".$sciper.".lock", TEMP.$name);
-            Zip::setZipDir(TEMP.$name, $dir."/");
+            Zip::setZipDir(TEMP.$name, $dir."/", Lock::FILES['run']);
             delPrefa($path, $year, $mstr, $unique);
             $_SESSION['alert-success'] = $messages->getMessage('msg2');//."<br/>".$msg;
         }

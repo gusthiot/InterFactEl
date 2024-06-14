@@ -1,8 +1,8 @@
 <?php
 require_once("../commons/Zip.php");
 require_once("../config.php");
+require_once("../session.php");
 
-session_start();
 if($_FILES['zip_file']) {
     $fileName = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];

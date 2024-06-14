@@ -6,13 +6,13 @@ require_once("../assets/Sap.php");
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $sap = new Sap();
-    $html = '<div class="over"><table class="table factures"><tr>';
+    $html = '<div class="over"><table class="table factures"><thead><tr>';
     $bills = $sap->load($dir);
     $lines = [];
     foreach($sap->getTitle() as $title) {
         $html .= '<th>'.str_replace('"', '', $title).'</th>';
     }
-    $html .= '</tr>';
+    $html .= '</tr></thead><tbody>';
     foreach($bills as $bill) {
         $lines[$bill[0]][$bill[1]] = $bill;
     }
@@ -27,7 +27,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
             $html .= '</tr>';
         }
     }
-    $html .= '</table></div>';
+    $html .= '</table></tbody></div>';
     
     $html .= '<button type="button" id="getSap" class="btn but-line">Download File</button>';
     echo $html;

@@ -1,6 +1,7 @@
 <?php
 require_once("session.php");
 require_once("commons/State.php");
+require_once("assets/Parametres.php");
 require_once("assets/Lock.php");
 require_once("assets/Label.php");
 
@@ -20,6 +21,7 @@ if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 $dir = DATA.$plateforme;
 $available = false;
+$state = new State();
 if(file_exists($dir)) { 
     $available = true;
     $state->lastState($dir, new Lock());
@@ -47,6 +49,7 @@ if(file_exists($dir)) {
                     ?>
                     <form action="controller/uploadTarifs.php" method="post" id="upform" enctype="multipart/form-data" >
                         <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
+                        <input type="hidden" name="type" value="new" />
                         <input name="month-picker" id="month-picker" class="date-picker"/>
                         <div>
                             <label class="btn but-line">
@@ -69,18 +72,25 @@ if(file_exists($dir)) {
                 <input type="hidden" id="lastYear" value="<?= $state->getLastYear() ?>" />
                 <table class="table table-boxed">
                     <?php
-                    foreach(State::scanDescSan($dir) as $year) {
-                        foreach(State::scanDescSan($dir."/".$year) as $month) {
-                            if (file_exists($dir."/".$year."/".$month."/parametres.zip")) {
+                    foreach(State::scanDesc($dir) as $year) {
+                        foreach(State::scanDesc($dir."/".$year) as $month) {
+                            if (file_exists($dir."/".$year."/".$month."/".Parametres::NAME)) {
                                 $label = new Label();
                                 $labtxt = $label->load($dir."/".$year."/".$month);
                                 if(empty($labtxt)) {
                                     $labtxt = "No label ?";
                                 }
+                                $status = 0;
+                                if(State::isSame($state->getLastMonth(), $state->getLastYear(), $month, $year)) {
+                                    $status = 1;
+                                }
+                                elseif(State::isLater($state->getLastMonth(), $state->getLastYear(), $month, $year)) {
+                                    $status = 2;
+                                }
                                 $id = $year."-".$month;
                                 echo '<tr>';
                                 echo '<td>'.$month.' '.$year.'</td>';
-                                echo '<td><div><button id="'.$id.'" type="button" class="btn but-white param">'.$labtxt.'</button></div><div id="more-'.$id.'"></div></td>';
+                                echo '<td><div><button id="'.$id.'" type="button" class="btn but-white param" data-status="'.$status.'">'.$labtxt.'</button></div><div id="more-'.$id.'"></div></td>';
                                 echo '</tr>';
                             }
                         }

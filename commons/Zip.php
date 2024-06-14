@@ -1,16 +1,14 @@
 <?php
 
-require_once("State.php");
-
 class Zip 
 {
 
-    static function setZipDir(string $tmpFile, string $dirname, string $morefile=""): string 
+    static function setZipDir(string $tmpFile, string $dirname, string $lockFileName, string $morefile=""): string 
     {
         $zip = new ZipArchive;
         $res = $zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
         if ($res === true) {
-            self::tree($zip, $dirname, "");
+            self::tree($zip, $dirname, "", $lockFileName);
             if(!empty($morefile)) {
                 $zip->addFile($morefile, basename($morefile));
             }
@@ -24,11 +22,11 @@ class Zip
         }
     }
 
-    static function tree(ZipArchive $zip, string $dirname, string $treename): void
+    static function tree(ZipArchive $zip, string $dirname, string $treename, string $lockFileName): void
     {
         $dir = opendir($dirname);
         while($file = readdir($dir)) {
-            if(in_array($file, State::ESCAPED)) {
+            if(in_array($file, ['.', '..', $lockFileName])) {
                 continue;
             }
             $path = $dirname.'/'.$file;
@@ -38,7 +36,7 @@ class Zip
             }
             if(is_dir($path)) {
                 $zip->addEmptyDir($file);
-                self::tree($zip, $path, $treepath);
+                self::tree($zip, $path, $treepath, $lockFileName);
             }
         }
         closedir($dir);

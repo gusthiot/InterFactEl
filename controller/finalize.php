@@ -5,7 +5,8 @@ require_once("../assets/Logfile.php");
 require_once("../assets/Sap.php");
 require_once("../assets/Info.php");
 require_once("../session.php");
-require_once("../commons/Parametres.php");
+require_once("../commons/Params.php");
+require_once("../commons/State.php");
 
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])){
     $plateforme = $_POST["plate"];
@@ -17,11 +18,13 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
 
     $locklast = new Lock();
+    $state = new State();
     $state->lastState(DATA.$plateforme, $locklast);
     if(empty($state->getLast())) {
         $dirTarifs = DATA.$plateforme."/".$year."/".$month;
-        if(!Parametres::saveFirst($dir, $dirTarifs)) {
-            $_SESSION['alert-danger'] = "erreur sauvegarde paramètres ";
+        $msg = Params::saveFirst($dir, $dirTarifs);
+        if(!empty($msg)) {
+            $_SESSION['alert-danger'] = $msg;
         }
     }
 

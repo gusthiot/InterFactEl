@@ -85,7 +85,7 @@ class State
     static function removeRun(string $path, string $todel): void
     {
         if(file_exists($path)) {
-            foreach(self::scanDescSan($path) as $version) {
+            foreach(self::scanDesc($path) as $version) {
                 $dir = $path."/".$version."/".$todel;
                 if (file_exists($dir) && is_dir($dir)) {
                     exec(sprintf("rm -rf %s", escapeshellarg($dir)));
@@ -99,17 +99,22 @@ class State
 
     static function delDir(string $dir): void 
     {
-        foreach(self::scanDescSan($dir) as $file) {
+        foreach(array_diff(scandir($dir), ['.', '..']) as $file) {
             unlink($dir."/".$file);
         }
         rmdir($dir);
     }
 
-    const ESCAPED = ['..', '.','logfile.log', 'lockm.csv', 'lockv.csv', 'parametres.zip', 'label.txt'];
-
-    static function scanDescSan(string $dir): array 
+    static function scanDesc(string $dir): array 
     {
-        return array_diff(scandir($dir, SCANDIR_SORT_DESCENDING), self::ESCAPED);
+        $files = array_diff(scandir($dir, SCANDIR_SORT_DESCENDING), ['.', '..']);
+        $res = [];
+        foreach($files as $file) {
+            if(is_dir($dir."/".$file)) {
+                $res[] = $file;
+            }
+        }
+        return $res;
     }
 
     static function isNext($month, $year, $m, $y): bool
@@ -123,6 +128,21 @@ class State
             }
             else {
                 return (intval($m) == 1 && intval($month) == 12);
+            }
+        }
+    }
+
+    static function isLater($month, $year, $m, $y): bool
+    {
+        if($year == $y) {
+            return (intval($m) > (intval($month)));
+        }
+        else {
+            if($y < $year) {
+                return false;
+            }
+            else {
+                return true;
             }
         }
     }
@@ -147,9 +167,9 @@ class State
 
     function lastState(string $pathPlate, Lock $lock): void         
     {
-        foreach(self::scanDescSan($pathPlate) as $year) {
-            foreach(self::scanDescSan($pathPlate."/".$year) as $month) {
-                foreach(self::scanDescSan($pathPlate."/".$year."/".$month) as $version) {
+        foreach(self::scanDesc($pathPlate) as $year) {
+            foreach(self::scanDesc($pathPlate."/".$year) as $month) {
+                foreach(self::scanDesc($pathPlate."/".$year."/".$month) as $version) {
                     if (file_exists($pathPlate."/".$year."/".$month."/".$version."/lockv.csv")) {
                         $this->last_y = $year;
                         $this->last_m = $month;
@@ -166,10 +186,10 @@ class State
 
     function currentState(string $pathPlate): void         
     {
-        foreach(self::scanDescSan($pathPlate) as $year) {
-            foreach(self::scanDescSan($pathPlate."/".$year) as $month) {
-                foreach(self::scanDescSan($pathPlate."/".$year."/".$month) as $version) {
-                    foreach(self::scanDescSan($pathPlate."/".$year."/".$month."/".$version) as $run) {
+        foreach(self::scanDesc($pathPlate) as $year) {
+            foreach(self::scanDesc($pathPlate."/".$year) as $month) {
+                foreach(self::scanDesc($pathPlate."/".$year."/".$month) as $version) {
+                    foreach(self::scanDesc($pathPlate."/".$year."/".$month."/".$version) as $run) {
                         if (!file_exists($pathPlate."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
                             $this->current = "(".$month." ".$year.", ".$version.")";
                             return;

@@ -1,5 +1,6 @@
 <?php
 require_once("../commons/Zip.php");
+require_once("../assets/Parametres.php");
 require_once("../assets/Paramedit.php");
 require_once("../assets/Paramtext.php");
 require_once("../assets/Lock.php");
@@ -32,7 +33,7 @@ if(isset($_GET['type'])) {
         if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
             if($type==="tarifs") {  
-                $fileName = $dirMonth."/parametres.zip";
+                $fileName = $dirMonth."/".Parametres::NAME;
                 header('Content-disposition: attachment; filename="'.basename($fileName).'"');
                 header('Content-type: application/zip');
                 readfile($fileName);
@@ -92,7 +93,7 @@ function readCsv(string $fileName): void
 
 function readZip(string $tmpFile, string $dest): void
 {
-    $res = Zip::setZipDir($tmpFile, $dest);
+    $res = Zip::setZipDir($tmpFile, $dest, Lock::FILES['run']);
     if(empty($res)) {
         header('Content-disposition: attachment; filename="'.basename($tmpFile).'"');
         header('Content-type: application/zip');

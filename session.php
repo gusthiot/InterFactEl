@@ -2,9 +2,7 @@
 
 require_once("assets/Superviseur.php");
 require_once("assets/Gestionnaire.php");
-require_once("assets/Message.php");
 require_once("commons/Tequila.php");
-require_once("commons/State.php");
 require_once("config.php");
 
 ini_set('display_errors', DISPLAY_ERRORS);
@@ -17,8 +15,6 @@ $oClient->authenticate(['uniqueid'], "", 'group=cmi-fact');
 
 $superviseur = new Superviseur();
 $gestionnaire = new Gestionnaire();
-$state = new State();
-$messages = new Message();
 //$_SESSION['user'] = "gusthiot";
 
 $dataGest = $gestionnaire->getGestionnaire($_SESSION['user']);

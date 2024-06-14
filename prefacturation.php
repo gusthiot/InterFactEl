@@ -3,6 +3,7 @@ require_once("session.php");
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");
+require_once("assets/Message.php");
 
 if(!$dataGest) {
     header('Location: index.php');
@@ -21,6 +22,7 @@ $run = $_GET['run'];
 $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
 
+$messages = new Message();
 $label = new Label();
 $labtxt = $label->load($dir);
 if(empty($labtxt)) {
