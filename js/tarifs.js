@@ -2,29 +2,37 @@
 $(function() {
     let lastYear = $('#lastYear').val();
     let lastMonth = $('#lastMonth').val();
+    let plateforme = $('#plate').val();
     let active = "";
+    let keep = "";
 
-    $('.param').on('click', function () {
+    $(document).on("click", ".param", function () {
         const id = $(this).attr('id');
-        const status = $(this).data("status");
+        const moment = $(this).data("moment");
+        const run = $(this).data("run");
+        const version = $(this).data("version");
         let more = "";
-        if(status == 1) {
-            more = '<label class="btn but-line">'+
+        if(run > 0) {
+            more += '<button type="button" id="all-'+id+'" data-run="'+run+'" data-version="'+version+'" class="btn but-line all">Exporter tout</button>';
+        }
+        if(moment == 1) {
+            more += '<label class="btn but-line">'+
                         '<form action="controller/uploadTarifs.php" method="post" id="corform" enctype="multipart/form-data" >'+
-                            '<input type="hidden" name="plate" id="plate" value="'+$('#plate').val()+'" />'+
+                            '<input type="hidden" name="plate" id="plate" value="'+plateforme+'" />'+
                             '<input type="hidden" name="type" value="correct" />'+
                             '<input type="file" id="zip-correct" name="zip_file" class="zip_file" accept=".zip">'+
                         '</form>'+
                     'Corriger</label>';
         }
-        if(status == 2) {
-            more = '<button type="button" id="suppress-'+id+'" class="btn but-line suppress">Supprimer</button>';
+        if(moment == 2) {
+            more += '<button type="button" id="suppress-'+id+'" class="btn but-line suppress">Supprimer</button>';
         }
         if(active != "") {
-            $('#more-'+active).html("");
+            $('#cell-'+active).html(keep);
         }
-        $('#more-'+id).html('<button type="button" id="etiquette-'+id+'" class="btn but-line etiquette">Etiquette</button>'+
-                            '<button type="button" id="export-'+id+'" class="btn but-line export">Export</button>'+ more +
+        keep = $('#cell-'+id).html();
+        $('#cell-'+id).html('<button type="button" id="etiquette-'+id+'" class="btn but-line etiquette">Etiquette</button>'+
+                            '<button type="button" id="export-'+id+'" class="btn but-line export">Exporter</button>'+ more +
                             '<div id="label-'+id+'"></div>');
         active = id;
     });
@@ -78,18 +86,24 @@ $(function() {
 
     $(document).on("click", ".export", function() {
         const tab = $(this).attr('id').split("-");
-        window.location.href = "controller/download.php?type=tarifs&plate="+$('#plate').val()+"&year="+tab[1]+"&month="+tab[2];
+        window.location.href = "controller/download.php?type=tarifs&plate="+plateforme+"&year="+tab[1]+"&month="+tab[2];
+    } );
+
+    $(document).on("click", ".all", function() {
+        const tab = $(this).attr('id').split("-");
+        const run = $(this).data("run");
+        const version = $(this).data("version");
+        window.location.href = "controller/download.php?type=alltarifs&plate="+plateforme+"&year="+tab[1]+"&month="+tab[2]+"&version="+version+"&run="+run;
     } );
 
     $(document).on("click", ".suppress", function() {
         const tab = $(this).attr('id').split("-");
-        window.location.href = "controller/suppressTarifs.php?plate="+$('#plate').val()+"&year="+tab[1]+"&month="+tab[2];
+        window.location.href = "controller/suppressTarifs.php?plate="+plateforme+"&year="+tab[1]+"&month="+tab[2];
     } );
 
     $(document).on("click", ".etiquette", function() {
         const tab = $(this).attr('id').split("-");
-        const dir = $('#plate').val()+"/"+tab[1]+"/"+tab[2];
-        $.post("controller/getLabel.php", {dir: dir}, function (data) {
+        $.post("controller/getLabel.php", {plate: plateforme, year: tab[1], month: tab[2]}, function (data) {
             $('#label-'+tab[1]+'-'+tab[2]).html(data);
         });
     } );
@@ -97,8 +111,8 @@ $(function() {
     $(document).on("click", "#saveLabel", function() {
         const tab = $(this).parent().parent().attr('id').split("-");
         const txt = $('#labelArea').val();
-        $.post("controller/saveLabel.php", {txt: txt, plate: $('#plate').val(), year: tab[1], month: tab[2]}, function (message) {
-            window.location.href = "tarifs.php?plateforme="+$('#plate').val();
+        $.post("controller/saveLabel.php", {txt: txt, plate: plateforme, year: tab[1], month: tab[2]}, function () {
+            window.location.href = "tarifs.php?plateforme="+plateforme;
         });
     } );
 

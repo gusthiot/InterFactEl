@@ -4,6 +4,7 @@ require_once("commons/State.php");
 require_once("assets/Parametres.php");
 require_once("assets/Lock.php");
 require_once("assets/Label.php");
+require_once("assets/Sap.php");
 
 if(!$dataGest) {
     header('Location: index.php');
@@ -80,17 +81,36 @@ if(file_exists($dir)) {
                                 if(empty($labtxt)) {
                                     $labtxt = "No label ?";
                                 }
-                                $status = 0;
+                                $moment = 0;
+
                                 if(State::isSame($state->getLastMonth(), $state->getLastYear(), $month, $year)) {
-                                    $status = 1;
+                                    $moment = 1;
                                 }
                                 elseif(State::isLater($state->getLastMonth(), $state->getLastYear(), $month, $year)) {
-                                    $status = 2;
+                                    $moment = 2;
+                                }
+
+                                $lastRun = 0;
+                                $lastVersion = 0;
+                                foreach(State::scanDesc($dir."/".$year."/".$month) as $version) {
+                                    foreach(State::scanDesc($dir."/".$year."/".$month."/".$version) as $run) {                                        
+                                        $sap = new Sap();
+                                        $sap->load($dir."/".$year."/".$month."/".$version."/".$run);
+                                        $status = $sap->status();
+                                        if($status > 1) {
+                                            $lastRun = $run;
+                                            $lastVersion == $version;
+                                            break;
+                                        }
+                                    }
+                                    if($lastRun > 0) {
+                                        break;
+                                    }
                                 }
                                 $id = $year."-".$month;
                                 echo '<tr>';
                                 echo '<td>'.$month.' '.$year.'</td>';
-                                echo '<td><div><button id="'.$id.'" type="button" class="btn but-white param" data-status="'.$status.'">'.$labtxt.'</button></div><div id="more-'.$id.'"></div></td>';
+                                echo '<td><div id="cell-'.$id.'"><button id="'.$id.'" type="button" class="btn but-white param" data-moment="'.$moment.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'">'.$labtxt.'</button></div></td>';
                                 echo '</tr>';
                             }
                         }

@@ -70,6 +70,27 @@ class Params
         return error_get_last();
     }
 
+    static function exportLast(string $tmpFile, string $dir): string 
+    {
+        $zip = new ZipArchive;
+        if ($zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+            foreach(self::FILES as $file) {
+                if(file_exists($dir."/IN/".$file)) {
+                    $zip->addFile($dir."/IN/".$file, $file);
+                }
+            }
+            if($zip->close()) {
+                return "";
+            }
+            else {
+                return "close error";
+            }
+        }
+        else {
+            return "open error";
+        }
+    }
+
     static function createZip(string $dest, string $from): string
     {
         $zip = new ZipArchive;

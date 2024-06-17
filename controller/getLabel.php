@@ -5,8 +5,11 @@ require_once("../session.php");
 
 $txt = "";
 
-if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
-    $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
+if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"])) {
+    $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month'];
+    if(isset($_POST["version"]) && isset($_POST["run"])) {
+        $dir .= "/".$_POST['version']."/".$_POST['run'];
+    }
     $label = new Label();
     $txt = $label->load($dir);
 }

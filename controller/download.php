@@ -1,5 +1,6 @@
 <?php
 require_once("../commons/Zip.php");
+require_once("../commons/Params.php");
 require_once("../assets/Parametres.php");
 require_once("../assets/Paramedit.php");
 require_once("../assets/Paramtext.php");
@@ -34,7 +35,7 @@ if(isset($_GET['type'])) {
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
             if($type==="tarifs") {  
                 $fileName = $dirMonth."/".Parametres::NAME;
-                header('Content-disposition: attachment; filename="'.basename($fileName).'"');
+                header('Content-disposition: attachment; filename="'.Parametres::NAME.'"');
                 header('Content-type: application/zip');
                 readfile($fileName);
             }
@@ -58,6 +59,21 @@ if(isset($_GET['type'])) {
                             $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$_GET['plate']];
                             $filename = $_GET['pre']."_".$name."_".$_GET['year']."_".$_GET['month']."_".$_GET['version'];
                             readCsv($dirRun."/".$filename.".csv");
+                        }
+                    }
+                    elseif($type==="alltarifs") {
+                        $res =Params::exportLast($tmpFile, $dirRun);
+                        if(empty($res)) {
+                            header('Content-disposition: attachment; filename="'.Parametres::NAME.'"');
+                            header('Content-type: application/zip');
+                            readfile($tmpFile);
+                            ignore_user_abort(true);
+                            unlink($tmpFile);
+                        }
+                        else {
+                            unlink($tmpFile);
+                            $_SESSION['alert-danger'] = $res;
+                            header('Location: ../index.php');
                         }
                     }
                     else {
