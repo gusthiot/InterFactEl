@@ -325,8 +325,8 @@ input[type="file"] {
   padding: 20px;
 }
 
-table.factures td:nth-child(1), table.factures td:nth-child(4) { text-align: left; }
-table.factures td:nth-child(2), table.factures td:nth-child(3) { text-align: right; }
+table.factures td:nth-child(1), table.factures td:nth-child(4), table.factures td:nth-child(6) { text-align: left; }
+table.factures td:nth-child(2), table.factures td:nth-child(3), table.factures td:nth-child(5) { text-align: right; }
 
 table.modifs td:nth-child(1), table.modifs td:nth-child(2), table.modifs td:nth-child(3) { text-align: center; }
 table.modifs td:nth-child(4), table.modifs td:nth-child(6), table.modifs td:nth-child(7) { text-align: left; }
@@ -378,4 +378,8 @@ table#bills-tab td:nth-child(2), table#bills-tab td:nth-child(3) { text-align: r
 .ui-datepicker-calendar {
   display: none;
   }
+
+.collapse-title.collapse-title-desktop {
+  border-width: 0px;
+}
 

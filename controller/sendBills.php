@@ -60,7 +60,8 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                         if(!empty($res->E_RESULT->item->IS_ERROR)) {
                             if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
                                 $sap_cont[$bill][3] = "ERROR";
-                                $sap_cont[$bill][4] = $res->E_RESULT->item->LOG->item->MESSAGE;
+                                $sap_cont[$bill][4] = "-";
+                                $sap_cont[$bill][5] = $res->E_RESULT->item->LOG->item->MESSAGE;
                                 $txt = $bill." | ERROR | ".$res->E_RESULT->item->LOG->item->MESSAGE;
                                 $kos++;
                             }
@@ -69,6 +70,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                             if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
                                 $sap_cont[$bill][3] = "SENT";
                                 $sap_cont[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
+                                $sap_cont[$bill][5] = "";
                                 $txt = $bill." | SENT | ".$res->E_RESULT->item->DOC_NUMBER;
                                 $oks++;
                             }

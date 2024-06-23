@@ -69,8 +69,8 @@ if(file_exists($dir)) {
             <?php
             if($available) {
             ?>
-                <input type="hidden" id="lastMonth" value="<?= $state->getLastMonth() ?>" />
-                <input type="hidden" id="lastYear" value="<?= $state->getLastYear() ?>" />
+                <input type="hidden" id="lastMonth" value="<?= State::getPreviousMonth($state->getLastYear(), $state->getLastMonth()) ?>" />
+                <input type="hidden" id="lastYear" value="<?= State::getPreviousYear($state->getLastYear(), $state->getLastMonth()) ?>" />
                 <table class="table table-boxed">
                     <?php
                     foreach(State::scanDesc($dir) as $year) {
@@ -109,9 +109,33 @@ if(file_exists($dir)) {
                                 }
                                 $id = $year."-".$month;
                                 echo '<tr>';
-                                echo '<td>'.$month.' '.$year.'</td>';
-                                echo '<td><div id="cell-'.$id.'"><button id="'.$id.'" type="button" class="btn but-white param" data-moment="'.$moment.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'">'.$labtxt.'</button></div></td>';
-                                echo '</tr>';
+                                echo '<td>'.$month.' '.$year;
+                                if (file_exists($dir."/".$year."/".$month."/lockm.csv")) {
+                                    echo ' <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#lock"></use>
+                                            </svg> ';
+                                }
+                                echo '</td><td><button id="'.$id.'" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-'.$id.'" aria-expanded="false" aria-controls="collapse-'.$id.'">'.$labtxt.'</button>';
+                                echo '<div class="collapse collapse-item collapse-item-desktop" id="collapse-'.$id.'">';
+                                echo '<button type="button" id="etiquette-'.$id.'" class="btn but-line etiquette">Etiquette</button>';
+                                echo '<button type="button" id="export-'.$id.'" class="btn but-line export">Exporter</button>';                            
+                                if($lastRun > 0) {
+                                    echo '<button type="button" id="all-'.$id.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'" class="btn but-line all">Exporter tout</button>';
+                                }
+                                if($moment == 1) {
+                                    echo '<label class="btn but-line">'.
+                                            '<form action="controller/uploadTarifs.php" method="post" id="corform" enctype="multipart/form-data" >'.
+                                                '<input type="hidden" name="plate" id="plate" value="'.$plateforme.'" />'.
+                                                '<input type="hidden" name="type" value="correct" />'.
+                                                '<input type="file" id="zip-correct" name="zip_file" class="zip_file" accept=".zip">'.
+                                            '</form>'.
+                                            'Corriger</label>';
+                                }
+                                if($moment == 2) {
+                                    echo '<button type="button" id="suppress-'.$id.'" class="btn but-line suppress">Supprimer</button>';
+                                }
+                                echo '<div id="label-'.$id.'"></div>';
+                                echo '</div></td></tr>';
                             }
                         }
                     }

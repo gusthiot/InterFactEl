@@ -61,10 +61,27 @@ if(isset($_GET['type'])) {
                             readCsv($dirRun."/".$filename.".csv");
                         }
                     }
+                    elseif($type==="ticketcsv") {
+                        if(isset($_GET['nom'])) { 
+                            $fileName =  $dirRun."/Annexes_CSV/".$_GET['nom'];
+                            header('Content-type: application/zip');
+                            header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
+                            readfile($fileName);
+                        }
+                    }
+                    elseif($type==="ticketpdf") {
+                        if(isset($_GET['nom'])) { 
+                            $fileName =  $dirRun."/Annexes_PDF/".$_GET['nom'];
+                            header('Content-Type: application/octet-stream');
+                            header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
+                            header('Content-Length: ' . filesize($fileName));
+                            readfile($fileName);
+                        }
+                    }
                     elseif($type==="alltarifs") {
                         $res =Params::exportLast($tmpFile, $dirRun);
                         if(empty($res)) {
-                            header('Content-disposition: attachment; filename="'.Parametres::NAME.'"');
+                            header('Content-disposition: attachment; filename="'.$dirRun.'"');//Parametres::NAME.'"');
                             header('Content-type: application/zip');
                             readfile($tmpFile);
                             ignore_user_abort(true);
@@ -104,7 +121,6 @@ function readCsv(string $fileName): void
     header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
     header('Content-Length: ' . filesize($fileName));
     readfile($fileName);
-
 }
 
 function readZip(string $tmpFile, string $dest): void

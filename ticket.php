@@ -9,8 +9,16 @@ if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || 
     die("Manque un paramètre !");
 }
 
-$dir = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month']."/".$_GET['version']."/".$_GET['run'];
+$plateforme = $_GET['plate'];
+if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['plates'])) {
+    die("Ce numéro de plateforme n'est pas pris en compte !");
+}
+$year = $_GET['year'];
+$month = $_GET['month'];
+$version = $_GET['version'];
+$run = $_GET['run'];
 
+$dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
 $s = [];
 
 $ticket = new Ticket($dir."/ticket.json");
@@ -30,6 +38,11 @@ ksort($clients);
     </head>
 
     <body>
+        <input type="hidden" id="plate" value="<?= $plateforme ?>" />
+        <input type="hidden" id="year" value="<?= $year ?>" />
+        <input type="hidden" id="month" value="<?= $month ?>" />
+        <input type="hidden" id="version" value="<?= $version ?>" />
+        <input type="hidden" id="run" value="<?= $run ?>" />
         <div id="combo">
             <select name="client" onchange="changeClient(this)">
             <?php
@@ -80,7 +93,7 @@ ksort($clients);
                             <table id="annexes">
                                 <tr>
                                     <td>
-                                        <a href="<?php echo $dir."/Annexes_CSV/".$client['nom_zip']; ?>" target="new"><?=$client['nom_zip']?></a>
+                                        <a href="#" class="csv" target="new"><?=$client['nom_zip']?></a>
                                     </td>
                                 </tr>
                             </table>
@@ -122,7 +135,7 @@ ksort($clients);
                         <table id="annexes">
                             <tr>
                                 <td>
-                                    <a href="<?php echo $dir."/Annexes_PDF/".$facture['nom_pdf']; ?>" target="new"><?=$facture['nom_pdf']?></a>
+                                    <a href="#" class="pdf" target="new"><?=$facture['nom_pdf']?></a>
                                 </td>
                             </tr>
                         </table>
@@ -139,6 +152,7 @@ ksort($clients);
         <?php 
         include("commons/footer.php");?> 
         <script src="reveal.js/dist/reveal.js"></script>
+        <script src="js/ticket.js"></script>
         <script>
             Reveal.initialize();
         </script>
