@@ -81,7 +81,7 @@ if(isset($_GET['type'])) {
                     elseif($type==="alltarifs") {
                         $res =Params::exportLast($tmpFile, $dirRun);
                         if(empty($res)) {
-                            header('Content-disposition: attachment; filename="'.$dirRun.'"');//Parametres::NAME.'"');
+                            header('Content-disposition: attachment; filename="'.Parametres::NAME.'"');
                             header('Content-type: application/zip');
                             readfile($tmpFile);
                             ignore_user_abort(true);

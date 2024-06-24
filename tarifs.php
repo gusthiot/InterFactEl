@@ -99,7 +99,7 @@ if(file_exists($dir)) {
                                         $status = $sap->status();
                                         if($status > 1) {
                                             $lastRun = $run;
-                                            $lastVersion == $version;
+                                            $lastVersion = $version;
                                             break;
                                         }
                                     }
