@@ -10,7 +10,7 @@ require_once("../session.php");
 
 if(isset($_GET['type'])) {
     $type = $_GET['type'];
-    $tmpFile = TEMP.$type.'.zip';
+    $tmpFile = TEMP.$type.'_'.time().'.zip';
    
     if($type==="config") {
         readZip($tmpFile, CONFIG);

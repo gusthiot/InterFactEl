@@ -8,15 +8,20 @@ require_once("assets/Sap.php");
 
 if(!$dataGest) {
     header('Location: index.php');
+    exit;
 }
 if(!isset($_GET["plateforme"])) {
-    die("Manque un numéro de plateforme !");
+    $_SESSION['alert-danger'] = "Manque un numéro de plateforme !";
+    header('Location: ../index.php');
+    exit;
 }
 
 $plateforme = $_GET['plateforme'];
 
 if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['complet'])) {
-    die("Ce numéro de plateforme n'est pas pris en compte !");
+    $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
+    header('Location: ../index.php');
+    exit;
 }
 
 $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];

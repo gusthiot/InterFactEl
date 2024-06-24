@@ -20,9 +20,9 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
         $fileName = $zip["name"];
         $source = $zip["tmp_name"];
         if(Zip::isAccepted($zip["type"])) {
-            $tmpFile = TEMP.$fileName;
+            $tmpFile = TEMP.time().'_'.$fileName;
             if(copy($source, $tmpFile)) {
-                $tmpDir = TEMP.'test/';
+                $tmpDir = TEMP.'test_'.time().'/';
                 if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
                     $msg = Zip::unzip($tmpFile, $tmpDir);
                     unlink($tmpFile);

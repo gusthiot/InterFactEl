@@ -20,7 +20,7 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
             $date = explode(" ", $_POST['month-picker']);
             $dirTarifs = DATA.$plateforme."/".$date[1]."/".$date[0]."/";
             if (!file_exists($dirTarifs."/".Parametres::NAME)) {
-                $tmpFile = TEMP.$fileName;
+                $tmpFile = TEMP.time().'_'.$fileName;
                 if(copy($source, $tmpFile)) {
                     $msg = Params::importNew($dirTarifs, $tmpFile);
                     if(empty($msg)) {
@@ -46,7 +46,7 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
         }
         elseif($_POST['type'] == "correct") {
             $dirTarifs = DATA.$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/";
-            $tmpFile = TEMP.$fileName;
+            $tmpFile = TEMP.time().'_'.$fileName;
             if(copy($source, $tmpFile)) {
                 $msg = Params::correct($dirTarifs, $tmpFile);
                 if(empty($msg)) {

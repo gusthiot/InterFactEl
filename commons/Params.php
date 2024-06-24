@@ -32,7 +32,7 @@ class Params
 
     static function correct(string $dirTarifs, string $file): string
     {
-        $tmpDir = TEMP.'tarifs/';
+        $tmpDir = TEMP.'tarifs_'.time().'/';
         if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
             $msg = Zip::unzip($dirTarifs."/".Parametres::NAME, $tmpDir);
             if(empty($msg)) {
@@ -51,7 +51,7 @@ class Params
     static function importNew(string $dirTarifs, string $file): string
     {
         if (file_exists($dirTarifs) || mkdir($dirTarifs, 0777, true)) {
-            $tmpDir = TEMP.'tarifs/';
+            $tmpDir = TEMP.'tarifs_'.time().'/';
             if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
                 $msg = Zip::unzip($file, $tmpDir);
                 if(empty($msg)) {
