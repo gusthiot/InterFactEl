@@ -43,13 +43,13 @@ if(isset($_GET['type'])) {
                 if(isset($_GET['version']) && isset($_GET['run'])) {
                     $dirRun = $dirMonth."/".$_GET['version']."/".$_GET['run'];
                     if($type==="bilans") {
-                        readZip($tmpFile, $dirRun."/Bilans_Stats/");
+                        readZip($type.'.zip', $tmpFile, $dirRun."/Bilans_Stats/");
                     }
                     elseif($type==="annexes") {
-                        readZip($tmpFile, $dirRun."/Annexes_CSV/");
+                        readZip($type.'.zip', $tmpFile, $dirRun."/Annexes_CSV/");
                     }
                     elseif($type==="all") {
-                        readZip($tmpFile, $dirRun."/");
+                        readZip($type.'.zip', $tmpFile, $dirRun."/");
                     }
                     elseif($type==="sap") {
                         readCsv($dirRun."/sap.csv");
@@ -123,11 +123,11 @@ function readCsv(string $fileName): void
     readfile($fileName);
 }
 
-function readZip(string $tmpFile, string $dest): void
+function readZip(string $name, string $tmpFile, string $dest): void
 {
     $res = Zip::setZipDir($tmpFile, $dest, Lock::FILES['run']);
     if(empty($res)) {
-        header('Content-disposition: attachment; filename="'.basename($tmpFile).'"');
+        header('Content-disposition: attachment; filename="'.$name.'"');
         header('Content-type: application/zip');
         readfile($tmpFile);
         ignore_user_abort(true);

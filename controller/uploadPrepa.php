@@ -11,6 +11,21 @@ require_once("../assets/Message.php");
 require_once("../session.php");
 require_once("../assets/Sap.php");
 
+$lockp = new Lock();
+$lockedTxt = $lockp->load("../", "process");
+if(!empty($lockedTxt)) {
+    $lockedTab = explode(" ", $lockedTxt);
+    if($lockedTab[0] == "prefa") {
+        $lockedProcess = "Une préfacturation";
+    }
+    else {
+        $lockedProcess = "Un envoi SAP";
+    }
+    $_SESSION['alert-danger'] = $lockedProcess.' est en cours. Veuillez patientez et rafraîchir la page...</div>';;
+    header('Location: ../index.php');
+    exit;
+}
+
 if(isset($_POST['plate']) && isset($_POST['type'])) {
     $plateforme = $_POST['plate'];
     $type = $_POST['type'];

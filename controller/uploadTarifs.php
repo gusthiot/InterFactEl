@@ -7,12 +7,14 @@ require_once("../commons/State.php");
 require_once("../session.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Parametres.php");
+require_once("../assets/Message.php");
 
 if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
     $plateforme = $_POST['plate'];
     $fileName = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];
     $locklast = new Lock();
+    $messages = new Message();
     $state = new State();
     $state->lastState(DATA.$plateforme, $locklast);
     if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
@@ -37,10 +39,10 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
             }
             else{
                 if(State::isSame($state->getLastMonth(), $state->getLastYear(), $date[0], $date[1])) {
-                    $_SESSION['alert-danger'] = "Des paramètres sont déjà sauvegardés pour ce mois, vous ne pouvez que les corriger.";
+                    $_SESSION['alert-danger'] = $messages->getMessage('msg8');
                 }
                 else {
-                    $_SESSION['alert-danger'] = "Des paramètres sont déjà sauvegardés pour ce mois, vous devez d'abord les supprimer.";
+                    $_SESSION['alert-danger'] = $messages->getMessage('msg7');
                 }
             }
         }
