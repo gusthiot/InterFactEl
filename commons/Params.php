@@ -43,7 +43,6 @@ class Params
             }
             State::delDir($tmpDir);
             return $msg;
-        
         }
         return error_get_last();
     }

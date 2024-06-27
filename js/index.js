@@ -1,16 +1,16 @@
 
-$('#download').on('click', function () {
+$('#download-config').on('click', function () {
     window.location.href = "controller/download.php?type=config";
 } );
 
-$('#dl_prefa').on('click', function () {
+$('#download-prefa').on('click', function () {
     window.location.href = "controller/download.php?type=prefa";
 } );
 
-$('#zip_config').on('change', function () {
-    const file = $('#zip_config').val();
+$('#zip-config').on('change', function () {
+    const file = $(this).val();
     if(file.indexOf('.zip') > -1) {
-        $('#upform').submit();
+        $('#form-config').submit();
         $('#message').text('');
     }
     else {
@@ -24,14 +24,14 @@ $('#zip_config').on('change', function () {
 } );
 
 $('.facturation').on('click', function () {
-    window.location.href = "plateforme.php?plateforme="+$(this).find('#plateNum').val();
+    window.location.href = "plateforme.php?plateforme="+$(this).find('#plate-fact').val();
 } );
 
 $('.tarifs').on('click', function () {
-    window.location.href = "tarifs.php?plateforme="+$(this).find('#plateNum').val();
+    window.location.href = "tarifs.php?plateforme="+$(this).find('#plate-tarifs').val();
 } );
 
-$(document).on("change", ".zip_simu", function () {
+$(document).on("change", ".zip-simu", function () {
     const file = $(this).val();
     if(file.indexOf('.zip') > -1) {
         $(this).closest("form").submit();

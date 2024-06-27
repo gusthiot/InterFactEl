@@ -13,7 +13,7 @@ if(isset($_GET['type'])) {
     $tmpFile = TEMP.$type.'_'.time().'.zip';
    
     if($type==="config") {
-        readZip($tmpFile, CONFIG);
+        readZip($type, $tmpFile, CONFIG);
     }
     elseif($type==="prefa") {     
         $locku = new Lock();
@@ -43,20 +43,20 @@ if(isset($_GET['type'])) {
                 if(isset($_GET['version']) && isset($_GET['run'])) {
                     $dirRun = $dirMonth."/".$_GET['version']."/".$_GET['run'];
                     if($type==="bilans") {
-                        readZip($type.'.zip', $tmpFile, $dirRun."/Bilans_Stats/");
+                        readZip($type, $tmpFile, $dirRun."/Bilans_Stats/");
                     }
                     elseif($type==="annexes") {
-                        readZip($type.'.zip', $tmpFile, $dirRun."/Annexes_CSV/");
+                        readZip($type, $tmpFile, $dirRun."/Annexes_CSV/");
                     }
                     elseif($type==="all") {
-                        readZip($type.'.zip', $tmpFile, $dirRun."/");
+                        readZip($type, $tmpFile, $dirRun."/");
                     }
                     elseif($type==="sap") {
                         readCsv($dirRun."/sap.csv");
                     }
                     elseif($type==="modif") {
                         if(isset($_GET['pre'])) {               
-                            $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$_GET['plate']];
+                            $name = $gestionnaire->getGestionnaire($user)['plates'][$_GET['plate']];
                             $filename = $_GET['pre']."_".$name."_".$_GET['year']."_".$_GET['month']."_".$_GET['version'];
                             readCsv($dirRun."/".$filename.".csv");
                         }
@@ -127,7 +127,7 @@ function readZip(string $name, string $tmpFile, string $dest): void
 {
     $res = Zip::setZipDir($tmpFile, $dest, Lock::FILES['run']);
     if(empty($res)) {
-        header('Content-disposition: attachment; filename="'.$name.'"');
+        header('Content-disposition: attachment; filename="'.$name.'.zip"');
         header('Content-type: application/zip');
         readfile($tmpFile);
         ignore_user_abort(true);

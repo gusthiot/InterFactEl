@@ -8,14 +8,14 @@ if(!$dataGest) {
 }
 if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
     $_SESSION['alert-danger'] = "Manque un paramètre !";
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 
 $plateforme = $_GET['plate'];
-if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['plates'])) {
+if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($user)['plates'])) {
     $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 $year = $_GET['year'];

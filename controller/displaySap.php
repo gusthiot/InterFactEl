@@ -29,6 +29,9 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     }
     $html .= '</table></tbody></div>';
     
-    $html .= '<button type="button" id="getSap" class="btn but-line">Download File</button>';
+    $html .= '<button type="button" id="get-sap" class="btn but-line">Download File</button>';
     echo $html;
+}
+else {
+    echo "post_data_missing";
 }

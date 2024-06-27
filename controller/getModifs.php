@@ -7,17 +7,17 @@ require_once("../session.php");
 
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
-    $name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$_POST['plate']];
+    $name = $gestionnaire->getGestionnaire($user)['plates'][$_POST['plate']];
     $suf = "_".$name."_".$_POST['year']."_".$_POST['month']."_".$_POST['version'];
     $html = "";
     $modif = new Modif($dir."/Modif-factures".$suf.".csv");
-    $html .= table($modif->getModifs(), "getModif", "Factures-modifs", "modifs", [7, 8]);
+    $html .= table($modif->getModifs(), "get-modif", "Factures-modifs", "modifs", [7, 8]);
 
     $journal = new Journal($dir."/Journal-corrections".$suf.".csv");
-    $html .= table($journal->getModifs(), "getJournal", "Journal-modifs", "journal", []);
+    $html .= table($journal->getModifs(), "get-journal", "Journal-modifs", "journal", []);
 
     $client = new Client($dir."/Clients-modifs".$suf.".csv");
-    $html .= table($client->getModifs(), "getClient", "Client-modifs", "client", []);
+    $html .= table($client->getModifs(), "get-client", "Client-modifs", "client", []);
 
     if($html == "") {
         $html = "<p>Aucune modification</p>";
@@ -41,7 +41,7 @@ function table(array $modifs, string $id, string $title, string $class, array $p
             $html .= "<tr>";
             foreach($line as $col=>$cell) {
                 $color = "";
-                if(($id != "getModif") && ($key>0) && ($key%2 == 0) && ($col != 2) && ($cell != $prev[$col])) {
+                if(($class != "modifs") && ($key>0) && ($key%2 == 0) && ($col != 2) && ($cell != $prev[$col])) {
                     $color = ' class="yellow"';
                 }
                 in_array($col, $prices) ? $case = number_format(floatval($cell), 2, ".", "'") : 

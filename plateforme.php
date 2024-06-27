@@ -11,14 +11,14 @@ if(!$dataGest) {
 }
 if(!isset($_GET["plateforme"])) {
     $_SESSION['alert-danger'] = "Manque un numéro de plateforme !";
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 $plateforme = $_GET['plateforme'];
 
-if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['plates'])) {
+if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($user)['plates'])) {
     $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 $dir = DATA.$plateforme;
@@ -37,16 +37,16 @@ if(file_exists($dir)) {
         }
     }
 }
-$name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
+$name = $gestionnaire->getGestionnaire($user)['plates'][$plateforme];
 
 $complet = false;
-if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['complet'])) {
+if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($user)['complet'])) {
     $complet = true;
 }
 
 function uploader(string $title, string $id, string $disabled)
 {
-    $html = '<input id="'.$id.'" type="file" name="'.$id.'" '.$disabled.' class="zip_file lockable" accept=".zip">';
+    $html = '<input id="'.$id.'" type="file" name="'.$id.'" '.$disabled.' class="zip-file lockable" accept=".zip">';
     $html .= '<label class="btn but-line" for="'.$id.'">';
     $html .= $title;
     $html .= '</label>';
@@ -76,7 +76,7 @@ include("commons/lock.php");
             </div>	
             <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
             
-            <form action="controller/uploadPrepa.php" method="post" id="factform" enctype="multipart/form-data" >
+            <form action="controller/uploadPrepa.php" method="post" id="form-fact" enctype="multipart/form-data" >
                 <div class="text-center">
                     <p>Facturation en cours : <?php echo (!empty($state->getCurrent())) ? $state->getCurrent() : "aucune";  ?></p>
                     <p>Dernière facturation : <?php echo (!empty($state->getLast())) ? $state->getLast() : "aucune";  ?></p> 
@@ -85,14 +85,15 @@ include("commons/lock.php");
                     <div class="row" id="buttons">
                         <div class="col-sm">
                             <?php
-                                if(!$first) { 
-                                    echo '<div><button type="button" id="historique" class="btn but-line">Ouvrir l\'historique</button></div>';
+                                if(!$first) { ?>
+                                    <div><button type="button" id="open-historique" class="btn but-line">Ouvrir l'historique</button></div>
+                                    <?php 
                                     if(!$current) { 
                                         echo uploader("Facturation Pro Forma", "PROFORMA", $disabled);
                                     }             
-                                    if($superviseur->isSuperviseur($_SESSION['user'])) {
-                                        echo '<div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button></div>';
-                                    } 
+                                    if($superviseur->isSuperviseur($user) && MODE == "TEST") { ?>
+                                        <div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button></div>
+                                    <?php } 
                                 } 
                             ?>
                         </div>
@@ -112,8 +113,8 @@ include("commons/lock.php");
                             ?>
                         </div>    
                     </div>
-                    <div class="row hidden" id="histo">
-                        <div><button type="button" id="close-histo" class="btn but-line">Fermer l'historique</button></div>
+                    <div class="row hidden" id="historique-div">
+                        <div><button type="button" id="close-historique" class="btn but-line">Fermer l'historique</button></div>
                     </div>
                 </div>
 
@@ -133,7 +134,7 @@ include("commons/lock.php");
                 <div class="text-center" id="display"></div>
             </form>
 
-            <div class="text-center" id="arbo">
+            <div class="text-center" id="plate-content">
             <?php
             if(file_exists($dir)) {   
             ?>
@@ -145,11 +146,11 @@ include("commons/lock.php");
                             if(count($versions) > 0) {
                                 echo '<tr>';
                                 echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
-                                if (file_exists($dir."/".$year."/".$month."/lockm.csv")) {
-                                    echo ' <svg class="icon" aria-hidden="true">
-                                                <use xlink:href="#lock"></use>
-                                            </svg> ';
-                                }
+                                if (file_exists($dir."/".$year."/".$month."/lockm.csv")) { ?>
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#lock"></use>
+                                    </svg>
+                                <?php }
                                 echo '</td>';
                                 $line = 0;
                                 foreach($versions as $version) {
@@ -157,11 +158,11 @@ include("commons/lock.php");
                                         echo '<tr>';
                                     }
                                     echo '<td>'.$version;
-                                    if (file_exists($dir."/".$year."/".$month."/".$version."/lockv.csv")) {
-                                        echo ' <svg class="icon" aria-hidden="true">
-                                                    <use xlink:href="#lock"></use>
-                                                </svg> ';
-                                    }
+                                    if (file_exists($dir."/".$year."/".$month."/".$version."/lockv.csv")) { ?>
+                                        <svg class="icon" aria-hidden="true">
+                                            <use xlink:href="#lock"></use>
+                                        </svg>
+                                    <?php }
                                     echo '</td><td>';
                                     foreach(State::scanDesc($dir."/".$year."/".$month."/".$version) as $run) {
                                         if($run != $lockedRun || $lockedProcess != "Une préfacturation") {
@@ -176,13 +177,13 @@ include("commons/lock.php");
                                             $status = $sap->status();
                                             $lock = new Lock();
                                             $loctxt = $lock->load($dir."/".$year."/".$month."/".$version."/".$run, "run");
-                                            echo ' <button type="button" value="'.$value.'" class="run btn '.Sap::color($status, $loctxt).'"> '.$labtxt;
-                                            if ($loctxt) {
-                                                echo ' <svg class="icon" aria-hidden="true">
-                                                            <use xlink:href="#lock"></use>
-                                                        </svg> ';
-                                            }
-                                            echo '</button> ';
+                                            echo ' <button type="button" value="'.$value.'" class="open-run btn '.Sap::color($status, $loctxt).'"> '.$labtxt;
+                                            if ($loctxt) { ?>
+                                                <svg class="icon" aria-hidden="true">
+                                                    <use xlink:href="#lock"></use>
+                                                </svg>
+                                            <?php }
+                                            echo '</button>';
                                         }
                                     }
                                     echo '</td>';

@@ -12,19 +12,19 @@ if(!$dataGest) {
 }
 if(!isset($_GET["plateforme"])) {
     $_SESSION['alert-danger'] = "Manque un numéro de plateforme !";
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 
 $plateforme = $_GET['plateforme'];
 
-if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['complet'])) {
+if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($user)['complet'])) {
     $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 
-$name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
+$name = $gestionnaire->getGestionnaire($user)['plates'][$plateforme];
 $dir = DATA.$plateforme;
 $available = false;
 $state = new State();
@@ -53,13 +53,13 @@ if(file_exists($dir)) {
                 <?php
                 if($available) { 
                     ?>
-                    <form action="controller/uploadTarifs.php" method="post" id="upform" enctype="multipart/form-data" >
+                    <form action="controller/uploadTarifs.php" method="post" id="form-tarifs" enctype="multipart/form-data" >
                         <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
                         <input type="hidden" name="type" value="new" />
                         <input name="month-picker" id="month-picker" class="date-picker"/>
                         <div>
                             <label class="btn but-line">
-                                <input type="file" id="zip-tarifs" name="zip_file" class="zip_file" accept=".zip">
+                                <input type="file" id="zip-tarifs" name="zip_file" class="zip-file" accept=".zip">
                                 Importer de nouveaux tarifs applicables dès ce mois
                             </label>
                         </div>
@@ -70,13 +70,13 @@ if(file_exists($dir)) {
             </div>
 
             <?php include("commons/message.php"); ?>
-            <div class="text-center" id="arbo">
+            <div class="text-center" id="tarifs-content">
             <?php
             if($available) {
             ?>
-                <input type="hidden" id="lastMonth" value="<?= State::getPreviousMonth($state->getLastYear(), $state->getLastMonth()) ?>" />
-                <input type="hidden" id="lastYear" value="<?= State::getPreviousYear($state->getLastYear(), $state->getLastMonth()) ?>" />
-                <table class="table table-boxed">
+                <input type="hidden" id="last-month" value="<?= State::getPreviousMonth($state->getLastYear(), $state->getLastMonth()) ?>" />
+                <input type="hidden" id="last-year" value="<?= State::getPreviousYear($state->getLastYear(), $state->getLastMonth()) ?>" />
+                <table id="tarifs" class="table table-boxed">
                     <?php
                     foreach(State::scanDesc($dir) as $year) {
                         foreach(State::scanDesc($dir."/".$year) as $month) {
@@ -115,33 +115,35 @@ if(file_exists($dir)) {
                                 $id = $year."-".$month;
                                 echo '<tr>';
                                 echo '<td>'.$month.' '.$year;
-                                if (file_exists($dir."/".$year."/".$month."/lockm.csv")) {
-                                    echo ' <svg class="icon" aria-hidden="true">
-                                                <use xlink:href="#lock"></use>
-                                            </svg> ';
-                                }
-                                echo '</td><td><button id="'.$id.'" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-'.$id.'" aria-expanded="false" aria-controls="collapse-'.$id.'">'.$labtxt.'</button>';
-                                echo '<div class="collapse collapse-item collapse-item-desktop" id="collapse-'.$id.'">';
-                                echo '<button type="button" id="etiquette-'.$id.'" class="btn but-line etiquette">Etiquette</button>';
-                                echo '<button type="button" id="export-'.$id.'" class="btn but-line export">Exporter</button>';                            
-                                if($lastRun > 0) {
+                                if (file_exists($dir."/".$year."/".$month."/lockm.csv")) { ?>
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#lock"></use>
+                                    </svg>
+                                <?php } ?>
+                                </td>
+                                <td>
+                                    <button id="<?= $id ?>" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-<?= $id ?>" aria-expanded="false" aria-controls="collapse-<?= $id ?>"><?= $labtxt?></button>
+                                    <div class="collapse collapse-item collapse-item-desktop" id="collapse-<?= $id ?>">
+                                        <button type="button" id="etiquette-<?= $id ?>" class="btn but-line etiquette">Etiquette</button>
+                                        <button type="button" id="export-<?= $id ?>" class="btn but-line export">Exporter</button>                            
+                                <?php if($lastRun > 0) {
                                     echo '<button type="button" id="all-'.$id.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'" class="btn but-line all">Exporter tout</button>';
                                 }
-                                if($moment == 1) {
-                                    echo '<label class="btn but-line">'.
-                                            '<form action="controller/uploadTarifs.php" method="post" id="corform" enctype="multipart/form-data" >'.
-                                                '<input type="hidden" name="plate" id="plate" value="'.$plateforme.'" />'.
-                                                '<input type="hidden" name="type" value="correct" />'.
-                                                '<input type="file" id="zip-correct" name="zip_file" class="zip_file" accept=".zip">'.
-                                            '</form>'.
-                                            'Corriger</label>';
-                                }
+                                if($moment == 1) { ?>
+                                    <label class="btn but-line">
+                                        <form action="controller/uploadTarifs.php" method="post" id="form-correct" enctype="multipart/form-data" >
+                                            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
+                                            <input type="hidden" name="type" value="correct" />
+                                            <input type="file" id="zip-correct" name="zip_file" class="zip-file" accept=".zip">
+                                        </form>
+                                        Corriger</label>
+                                <?php }
                                 if($moment == 2) {
                                     echo '<button type="button" id="suppress-'.$id.'" class="btn but-line suppress">Supprimer</button>';
-                                }
-                                echo '<div id="label-'.$id.'"></div>';
-                                echo '</div></td></tr>';
-                            }
+                                } ?>
+                                <div id="label-<?= $id ?>"></div>
+                                </div></td></tr>
+                            <?php }
                         }
                     }
                 ?></table><?php

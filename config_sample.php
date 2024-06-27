@@ -1,5 +1,6 @@
 <?php
 
+define( 'MODE', 'MODE' );
 define( 'TEMP', '.' );
 define( 'CONFIG', '.' );
 define( 'DATA', '.' );

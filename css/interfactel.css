@@ -200,20 +200,20 @@ input[type="file"] {
 
 /** index **/
 
-#canevas {
+#index-canevas {
   margin: 20px;
 }
 
-#supervision {
+#index-supervision {
   padding-bottom: 30px;
 }
 
-#gestion {
+#index-gestion {
   clear: both;
   padding-bottom: 30px;
 }
 
-#facturation {
+#index-facturation {
   margin: 10px;
 }
 
@@ -222,7 +222,7 @@ input[type="file"] {
   clear: both;
 }
 
-#simulation {
+#index-simulation {
   clear: both;
 }
 
@@ -298,13 +298,13 @@ input[type="file"] {
   padding: 10px;
 }
 
-#arbo {
+#plate-content {
   margin: auto;
   text-align: center;
   width: 1500px;
 }
 
-#histo {
+#historique-div {
   padding: 10px;
 }
 
@@ -320,7 +320,7 @@ input[type="file"] {
 
 /** prefacturation **/
 
-#content {
+#prefa-content {
   margin: auto;
   padding: 20px;
 }
@@ -356,7 +356,7 @@ table.modifs thead tr th, table.journal thead tr th, table.client thead tr th, t
   overflow-x: auto;
 }
 
-#bills-tab td {
+#bills td {
   border-bottom: 0px;
   font-size: 1rem;
 }
@@ -365,13 +365,13 @@ table.modifs thead tr th, table.journal thead tr th, table.client thead tr th, t
   background-color: var(--soufre);
 }
 
-#labelLine {
+#label-line {
   display: inline-flex;
   flex: auto;
 }
 
-table#bills-tab td:nth-child(1), table#bills-tab td:nth-child(4) { text-align: left; }
-table#bills-tab td:nth-child(2), table#bills-tab td:nth-child(3) { text-align: right; }
+table#bills td:nth-child(1), table#bills td:nth-child(4) { text-align: left; }
+table#bills td:nth-child(2), table#bills td:nth-child(3) { text-align: right; }
 
 /** tarifs **/
 
@@ -383,3 +383,10 @@ table#bills-tab td:nth-child(2), table#bills-tab td:nth-child(3) { text-align: r
   border-width: 0px;
 }
 
+table#tarifs td:nth-child(1) { width: 20%; }
+
+#tarifs-content {
+  margin: auto;
+  text-align: center;
+  width: 1500px;
+}

@@ -11,13 +11,13 @@ if(!$dataGest) {
 }
 if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
     $_SESSION['alert-danger'] = "Manque un paramètre !";
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 $plateforme = $_GET['plateforme'];
-if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($_SESSION['user'])['plates'])) {
+if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($user)['plates'])) {
     $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 $year = $_GET['year'];
@@ -25,7 +25,7 @@ $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
 $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
-$name = $gestionnaire->getGestionnaire($_SESSION['user'])['plates'][$plateforme];
+$name = $gestionnaire->getGestionnaire($user)['plates'][$plateforme];
 
 $messages = new Message();
 $label = new Label();
@@ -63,11 +63,11 @@ include("commons/lock.php");
             <input type="hidden" id="run" value="<?= $run ?>" />
             
             <div id="actions" class="text-center">
-                <button type="button" id="label" class="btn but-line">Etiqueter</button>
-                <button type="button" id="info" class="btn but-line">Afficher les infos</button>
-                <button type="button" id="bills" class="btn but-line">Afficher la liste des factures</button>
-                <button type="button" id="ticket" class="btn but-line">Contrôler le ticket</button>
-                <button type="button" id="changes" class="btn but-line">Afficher les modifications</button>
+                <button type="button" id="open-label" class="btn but-line">Etiqueter</button>
+                <button type="button" id="open-info" class="btn but-line">Afficher les infos</button>
+                <button type="button" id="open-bills" class="btn but-line">Afficher la liste des factures</button>
+                <button type="button" id="open-ticket" class="btn but-line">Contrôler le ticket</button>
+                <button type="button" id="open-changes" class="btn but-line">Afficher les modifications</button>
                 <?php 
                 if(($status < 4) && !$loctxt) { ?>
                     <button type="button" id="invalidate" class="btn but-line">Invalider</button>
@@ -105,7 +105,7 @@ include("commons/lock.php");
                 }
                 ?>
 
-            <div class="text-center" id="content"></div>
+            <div class="text-center" id="prefa-content"></div>
 
         </div>
         <?php include("commons/footer.php");?> 

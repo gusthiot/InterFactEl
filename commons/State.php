@@ -155,7 +155,7 @@ class State
         return false;
     }
 
-    static function isNextOrSame($month, $year, $m, $y) //: bool
+    static function isNextOrSame($month, $year, $m, $y): bool
     {
         if(intval($month) == intval($m) && $year == $y) {
             return true;

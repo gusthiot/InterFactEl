@@ -36,7 +36,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         }
     }
     if(count($choices)>0) {
-        $html .= '<br /><div><button type="button" id="allBills" class="btn but-line lockable">Tout sélectionner</button><button type="button" id="'.$_POST["type"].'" class="btn but-line lockable">Envoyer</button></div><div id="over-bills"><table class="table" id="bills-tab">';
+        $html .= '<br /><div><button type="button" id="all-bills" class="btn but-line lockable">Tout sélectionner</button><button type="button" id="'.$_POST["type"].'" class="btn but-line lockable">Envoyer</button></div><div id="over-bills"><table class="table" id="bills">';
     
         foreach($choices as $choice) {
             $html .= $choice;
@@ -52,8 +52,8 @@ function choice(int $i, array $line): string
     return '<tr>
                 <td>
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="bill'.$i.'" name="bills" value="'.$line[1].'">
-                        <label class="custom-control-label" for="bill'.$i.'"> '.$line[0].'</label>
+                        <input type="checkbox" class="custom-control-input" id="bill-'.$i.'" name="bills" value="'.$line[1].'">
+                        <label class="custom-control-label" for="bill-'.$i.'"> '.$line[0].'</label>
                     </div>
                 </td>
                 <td>'.$line[1].'</td>

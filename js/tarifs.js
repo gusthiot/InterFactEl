@@ -1,6 +1,6 @@
 
-let lastYear = $('#lastYear').val();
-let lastMonth = $('#lastMonth').val();
+let lastYear = $('#last-year').val();
+let lastMonth = $('#last-month').val();
 let plateforme = $('#plate').val();
     
 $('#month-picker').datepicker({
@@ -21,7 +21,7 @@ $('#month-picker').datepicker({
 $(document).on("change", "#zip-tarifs", function () {
     const file = $('#zip-tarifs').val();
     if(file.indexOf('.zip') > -1) {
-        $('#upform').submit();
+        $('#form-tarifs').submit();
         $('#message').text('');
     }
     else {
@@ -37,7 +37,7 @@ $(document).on("change", "#zip-tarifs", function () {
 $(document).on("change", "#zip-correct", function () {
     const file = $('#zip-correct').val();
     if(file.indexOf('.zip') > -1) {
-        $('#corform').submit();
+        $('#form-correct').submit();
         $('#message').text('');
     }
     else {
@@ -74,9 +74,9 @@ $(document).on("click", ".etiquette", function() {
     });
 } );
 
-$(document).on("click", "#saveLabel", function() {
+$(document).on("click", "#save-label", function() {
     const tab = $(this).parent().parent().attr('id').split("-");
-    const txt = $('#labelArea').val();
+    const txt = $('#label-area').val();
     $.post("controller/saveLabel.php", {txt: txt, plate: plateforme, year: tab[1], month: tab[2]}, function () {
         window.location.href = "tarifs.php?plateforme="+plateforme;
     });

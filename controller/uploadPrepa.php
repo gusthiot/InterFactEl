@@ -11,23 +11,17 @@ require_once("../assets/Message.php");
 require_once("../session.php");
 require_once("../assets/Sap.php");
 
-$lockp = new Lock();
-$lockedTxt = $lockp->load("../", "process");
-if(!empty($lockedTxt)) {
-    $lockedTab = explode(" ", $lockedTxt);
-    if($lockedTab[0] == "prefa") {
-        $lockedProcess = "Une préfacturation";
-    }
-    else {
-        $lockedProcess = "Un envoi SAP";
-    }
-    $_SESSION['alert-danger'] = $lockedProcess.' est en cours. Veuillez patientez et rafraîchir la page...</div>';;
-    header('Location: ../index.php');
-    exit;
-}
-
 if(isset($_POST['plate']) && isset($_POST['type'])) {
+    
     $plateforme = $_POST['plate'];
+    $lockp = new Lock();
+    $lockedTxt = $lockp->load("../", "process");
+    if(!empty($lockedTxt)) {
+        $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';;
+        header('Location: ../plateforme.php?plateforme='.$plateforme);
+        exit;
+    }
+ 
     $type = $_POST['type'];
     $messages = new Message();
     if(isset($_FILES[$type])) {
@@ -160,7 +154,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messa
     $month = $params->getParam('Month');
     $year = $params->getParam('Year');
     $type = $params->getParam('Type');
-    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.' -g -d '.DATA.' -u'.$unique.' -s '.$sciper.' -l '.$_SESSION['user'];
+    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.' -g -d '.DATA.' -u'.$unique.' -s '.$sciper.' -l '.$user;
     $result = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($result, 0, 2) === "OK") {
@@ -173,7 +167,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messa
             $sap = new Sap();
             $sap->load($dir);
             $status = $sap->status();
-            $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$status;
+            $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$status;
             $logfile->write(DATA.$plateforme, $txt);
             $_SESSION['alert-success'] = $messages->getMessage('msg1');//."<br/>".$msg;
         }

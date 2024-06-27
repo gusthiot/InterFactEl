@@ -1,46 +1,46 @@
 const getDir = "plate="+$('#plate').val()+"&year="+$('#year').val()+"&month="+$('#month').val()+"&version="+$('#version').val()+"&run="+$('#run').val();
 const postDir = {plate: $('#plate').val(), year: $('#year').val(), month: $('#month').val(), version: $('#version').val(), run: $('#run').val()};
 
-$('#label').on('click', function () {
+$('#open-label').on('click', function () {
     $.post("controller/getLabel.php", postDir, function (data) {
-        $('#content').html(data);
+        $('#prefa-content').html(data);
     });
 } );
 
-$('#dl_prefa').on('click', function () {
+$('#download-prefa').on('click', function () {
     window.location.href = "controller/download.php?type=prefa";
 } );
 
-$('#info').on('click', function () {  
+$('#open-info').on('click', function () {  
     $.post("controller/getInfos.php", postDir, function (data) {
-        $('#content').html(data);
+        $('#prefa-content').html(data);
     });
 } );
 
-$('#bills').on('click', function () {
+$('#open-bills').on('click', function () {
     $.post("controller/displaySap.php", postDir, function (data) {
-        $('#content').html(data);
+        $('#prefa-content').html(data);
     });
 } );
 
-$(document).on("click", "#getSap", function() {
-    window.location.href = "controller/download.php?type=sap&"+getDir;
-} );
-
-$(document).on("click", "#saveLabel", function() {
-    const txt = $('#labelArea').val();
-    $.post("controller/saveLabel.php", Object.assign({}, postDir, {txt: txt}), function () {
-        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
-    });
-} );
-
-$('#ticket').on('click', function () {
+$('#open-ticket').on('click', function () {
     window.open("ticket.php?"+getDir);
 } );
 
-$('#changes').on('click', function () {
+$('#open-changes').on('click', function () {
     $.post("controller/getModifs.php", postDir, function (data) {
-        $('#content').html(data);
+        $('#prefa-content').html(data);
+    });
+} );
+
+$(document).on("click", "#get-sap", function() {
+    window.location.href = "controller/download.php?type=sap&"+getDir;
+} );
+
+$(document).on("click", "#save-label", function() {
+    const txt = $('#label-area').val();
+    $.post("controller/saveLabel.php", Object.assign({}, postDir, {txt: txt}), function () {
+        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
     });
 } );
 
@@ -64,27 +64,27 @@ $('#all').on('click', function () {
 
 $('#send').on('click', function () {
     $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "sendBills"}), function (data) {
-        $('#content').html(data);
+        $('#prefa-content').html(data);
     });
 } );
 
-$(document).on("click", "#getModif", function() {
+$(document).on("click", "#get-modif", function() {
     window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Modif-factures";
 } );
 
-$(document).on("click", "#getJournal", function() {
+$(document).on("click", "#get-journal", function() {
     window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Journal-corrections";
 } );
 
-$(document).on("click", "#getClient", function() {
+$(document).on("click", "#get-client", function() {
     window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Clients-modifs";
 } );
 
-$(document).on("click", "#sendBills", function() {
+$(document).on("click", "#send-bills", function() {
     sending("Envoi dans SAP");
 } );
 
-$(document).on("click", "#resendBills", function() {
+$(document).on("click", "#resend-bills", function() {
     sending("Renvoi dans SAP");
 } );
 
@@ -101,16 +101,16 @@ function sending(type) {
 }
 
 let all = false;
-$(document).on("click", "#allBills", function() {
+$(document).on("click", "#all-bills", function() {
     if(all) {
-        $('#allBills').text("Tout sélectionner");
+        $('#all-bills').text("Tout sélectionner");
         $.each($("input[name='bills']"), function(){
             $(this).prop('checked', false);
         });
         all = false;
     }
     else {
-        $('#allBills').text("Tout désélectionner");
+        $('#all-bills').text("Tout désélectionner");
         $.each($("input[name='bills']"), function(){
             $(this).prop('checked', true);
         });
@@ -127,7 +127,7 @@ $('#finalize').on('click', function () {
 $('#resend').on('click', function () {
     if (confirm($(this).data('msg')) == true) {
         $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "resendBills"}), function (data) {
-            $('#content').html(data);
+            $('#prefa-content').html(data);
         });
         
     } 

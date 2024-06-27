@@ -37,7 +37,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $content = $info->load($dir);
     if(!empty($content)) {
         $content["Closed"][2] = date('Y-m-d H:i:s');
-        $content["Closed"][3] = $_SESSION['user'];
+        $content["Closed"][3] = $user;
         $info->save($dir, $content);
     }
     else {
@@ -46,12 +46,9 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $sap = new Sap();
     $sap->load($dir);
     $status = $sap->status();
-    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;
+    $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;
     $logfile = new Logfile();
     $logfile->write(DATA.$plateforme, $txt);
-    if(!empty($alert)) {
-        $_SESSION['alert-warning'] = $alert;
-    }
     $_SESSION['alert-success'] = "finalisé";
 }
 else {

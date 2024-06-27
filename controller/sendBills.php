@@ -10,30 +10,23 @@ require_once("../commons/Params.php");
 require_once("../commons/State.php");
 require_once("../assets/Message.php");
 
-$lockp = new Lock();
-$lockedTxt = $lockp->load("../", "process");
-if(!empty($lockedTxt)) {
-    $lockedTab = explode(" ", $lockedTxt);
-    if($lockedTab[0] == "prefa") {
-        $lockedProcess = "Une préfacturation";
-    }
-    else {
-        $lockedProcess = "Un envoi SAP";
-    }
-    $_SESSION['alert-danger'] = $lockedProcess.' est en cours. Veuillez patientez et rafraîchir la page...</div>';;
-    header('Location: ../index.php');
-    exit;
-}
 
 if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
 
-    $bills = $_POST["bills"];
     $plateforme = $_POST["plate"];
     $year = $_POST["year"];
     $month = $_POST["month"];
     $run = $_POST["run"];
     $type = $_POST['type'];
     $version = $_POST["version"];
+    $lockp = new Lock();
+    $lockedTxt = $lockp->load("../", "process");
+    if(!empty($lockedTxt)) {
+        $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';;
+        header('Location: ../prefacturation.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
+        exit;
+    }
+    $bills = $_POST["bills"];
 
     $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
     $dirPrevMonth = DATA.$plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
@@ -64,7 +57,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                     if(!empty($infos)) {
                         if(empty($infos["Sent"][2])) {
                             $infos["Sent"][2] = date('Y-m-d H:i:s');
-                            $infos["Sent"][3] = $_SESSION['user'];
+                            $infos["Sent"][3] = $user;
                             $info->save($dir, $infos);
                         }
                         if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/lockm.csv")) {
@@ -98,8 +91,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                 }
             }
             else {
-                    //$error .= $bill.": ".json_encode($resArray[1])."<br />";
-                    $kos++;
+                $kos++;
             }
         }
     }
@@ -126,14 +118,14 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
 
 
         $infos["Closed"][2] = date('Y-m-d H:i:s');
-        $infos["Closed"][3] = $_SESSION['user'];
+        $infos["Closed"][3] = $user;
         $info->save($dir, $infos);
     }
 
     $sap->load($dir);
     $status = $sap->status();
     $state = $sap->state();
-    $txt = date('Y-m-d H:i:s')." | ".$_SESSION['user']." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
+    $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
     $txt .= $oldState." | ".count($bills)." | ".$state;
     $logfile->write(DATA.$plateforme."/", $txt);
     if(!empty($warn)) {
