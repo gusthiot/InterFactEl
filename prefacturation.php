@@ -35,7 +35,7 @@ $loctxt = $lock->load($dir, "run");
 $lockv = new Lock();
 $locvtxt = $lockv->load(DATA.$plateforme."/".$year."/".$month."/".$version, "version");
 
-include("commons/lock.php");
+include("includes/lock.php");
 
 ?>
 
@@ -43,7 +43,7 @@ include("commons/lock.php");
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("commons/header.php");?> 
+        <?php include("includes/header.php");?> 
     </head>
 
     <body>
@@ -85,7 +85,7 @@ include("commons/lock.php");
                 ?>
             </div>
 
-            <?php include("commons/message.php");
+            <?php include("includes/message.php");
 
                 if(!empty($lockedTxt)) {
                     $other = "";
@@ -102,7 +102,7 @@ include("commons/lock.php");
             <div class="text-center" id="prefa-content"></div>
 
         </div>
-        <?php include("commons/footer.php");?> 
+        <?php include("includes/footer.php");?> 
         <script src="js/prefacturation.js"></script>
 	</body>
 </html>

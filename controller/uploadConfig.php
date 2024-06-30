@@ -1,5 +1,5 @@
 <?php
-require_once("../commons/Zip.php");
+require_once("../includes/Zip.php");
 require_once("../session.php");
 
 if($superviseur->isSuperviseur($user)) {

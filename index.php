@@ -1,19 +1,17 @@
 <?php
 require_once("session.php");
 require_once("assets/Lock.php");
-require_once("commons/State.php");
+require_once("includes/State.php");
 
 if($dataGest) {
-    include("commons/lock.php");
+    include("includes/lock.php");
 }
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("commons/header.php");?> 
+        <?php include("includes/header.php");?> 
     </head>
 
     <body>
@@ -21,7 +19,7 @@ if($dataGest) {
             <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p>Accueil</p></div></div>	
             <h1 class="text-center">Interface de facturation</h1>
             <h6 class="text-center">Welcome <i><?= $user ?></i></h6>
-            <?php include("commons/message.php"); 
+            <?php include("includes/message.php"); 
             if(!empty($lockedUser)) { ?>
                 <div class="text-center"><?= $dlTxt ?></div>
             <?php }
@@ -146,7 +144,7 @@ if($dataGest) {
             ?>
             </div>
         </div>
-        <?php include("commons/footer.php");?> 
+        <?php include("includes/footer.php");?> 
         <script src="js/index.js"></script>
   
 	</body>

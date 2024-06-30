@@ -1,6 +1,6 @@
 <?php
 require_once("session.php");
-require_once("commons/State.php");
+require_once("includes/State.php");
 require_once("assets/Parametres.php");
 require_once("assets/Lock.php");
 require_once("assets/Label.php");
@@ -34,7 +34,7 @@ if(file_exists($dir)) {
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("commons/header.php");?> 
+        <?php include("includes/header.php");?> 
     </head>
 
     <body>
@@ -61,7 +61,7 @@ if(file_exists($dir)) {
                 ?>
             </div>
 
-            <?php include("commons/message.php"); ?>
+            <?php include("includes/message.php"); ?>
             <div class="text-center" id="tarifs-content">
             <?php
             if($available) {
@@ -143,7 +143,7 @@ if(file_exists($dir)) {
             ?>
             </div>
         </div>
-        <?php include("commons/footer.php");?> 
+        <?php include("includes/footer.php");?> 
         <script src="js/jquery-ui.min.js"></script>
         <link rel="stylesheet" href="css/jquery-ui.min.css">
         <script src="js/tarifs.js"></script>

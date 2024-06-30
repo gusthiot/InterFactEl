@@ -1,6 +1,6 @@
 <?php
 
-require_once("../commons/Params.php");
+require_once("../includes/Params.php");
 require_once("../session.php");
 
 checkGest($dataGest);

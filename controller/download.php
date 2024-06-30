@@ -1,6 +1,6 @@
 <?php
-require_once("../commons/Zip.php");
-require_once("../commons/Params.php");
+require_once("../includes/Zip.php");
+require_once("../includes/Params.php");
 require_once("../assets/Parametres.php");
 require_once("../assets/Paramedit.php");
 require_once("../assets/Paramtext.php");

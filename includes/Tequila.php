@@ -25,13 +25,8 @@ class TequilaClient {
     const VERSION = "4.2.0";
 
     const TEQUILA_BIN    = "/cgi-bin/tequila";
-    const COOKIE_NAME    = "TequilaPHP-".MODE;
     const COOKIE_LIFE    = 0;
     const BODY_GLUE      = "+";
-
-    const SESSION_KEY      = "Tequila-Session-Key-".MODE;
-    const SESSION_USER      = "user-".MODE;
-    const SESSION_CREATION = "Tequila-Session-Creation-".MODE;
 
     const LANGUAGE_FRENCH  = 0;
     const LANGUAGE_ENGLISH = 1;

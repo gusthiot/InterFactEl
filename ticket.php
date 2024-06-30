@@ -30,7 +30,7 @@ ksort($clients);
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("commons/header.php");?> 
+        <?php include("includes/header.php");?> 
         <link rel="stylesheet" href="reveal.js/dist/reveal.css">
         <link rel="stylesheet" href="reveal.js/dist/theme/white.css">
         <link rel="stylesheet" href="css/ticket.css">
@@ -149,7 +149,7 @@ ksort($clients);
             </div>
         </div>
         <?php 
-        include("commons/footer.php");?> 
+        include("includes/footer.php");?> 
         <script src="reveal.js/dist/reveal.js"></script>
         <script src="js/ticket.js"></script>
         <script>

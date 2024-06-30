@@ -1,7 +1,7 @@
 <?php
-require_once("../commons/Zip.php");
+require_once("../includes/Zip.php");
 require_once("../assets/Parametres.php");
-require_once("../commons/State.php");
+require_once("../includes/State.php");
 require_once("../assets/Result.php");
 require_once("../assets/Logfile.php");
 require_once("../assets/Paramedit.php");
@@ -155,11 +155,14 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messa
     $month = $params->getParam('Month');
     $year = $params->getParam('Year');
     $type = $params->getParam('Type');
-    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.' -g -d '.DATA.' -u'.$unique.' -s '.$sciper.' -l '.$user;
+    $dev = "";
+    if(DEV_MODE) {
+        $dev = " -n";
+    }
+    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -d '.DATA.' -u'.$unique.' -s '.$sciper.' -l '.$user;
     $result = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($result, 0, 2) === "OK") {
-        //$msg = $unique." tout OK ".strstr($result, '(');
         $tab = explode(" ", $result);
         $version = $tab[1];
         $dir = DATA.$plateforme."/".$year."/".$mstr."/".$version."/".$unique;
@@ -170,7 +173,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messa
             $status = $sap->status();
             $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$status;
             $logfile->write(DATA.$plateforme, $txt);
-            $_SESSION['alert-success'] = $messages->getMessage('msg1');//."<br/>".$msg;
+            $_SESSION['alert-success'] = $messages->getMessage('msg1');
         }
         else {
             $lock = new Lock();
@@ -178,7 +181,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messa
             $lock->saveByName("../".$sciper.".lock", TEMP.$name);
             Zip::setZipDir(TEMP.$name, $dir."/", Lock::FILES['run']);
             delPrefa($path, $year, $mstr, $unique);
-            $_SESSION['alert-success'] = $messages->getMessage('msg2');//."<br/>".$msg;
+            $_SESSION['alert-success'] = $messages->getMessage('msg2');
         }
     }
     else {

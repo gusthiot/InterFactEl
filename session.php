@@ -3,21 +3,24 @@
 require_once("config.php");
 require_once("assets/Superviseur.php");
 require_once("assets/Gestionnaire.php");
-require_once("commons/Tequila.php");
+require_once("includes/Tequila.php");
 
 ini_set('display_errors', DISPLAY_ERRORS);
 error_reporting(ERROR_REPORTING);
 
 session_start();
 $oClient = new TequilaClient('https://tequila.epfl.ch', 86400, "InterFactEl", "", TequilaClient::LANGUAGE_FRENCH);
-$oClient->authenticate(['uniqueid'], "", 'group=cmi-fact');
-////$oClient->logout();
+if(DEV_MODE) {
+    $user = "gusthiot";
+}
+else {
+    $oClient->authenticate(['uniqueid'], "", 'group=cmi-fact');
+    $user = $_SESSION['user'];
+}
+//$oClient->logout();
 
 $superviseur = new Superviseur();
 $gestionnaire = new Gestionnaire();
-$user = $_SESSION['user-'.MODE];
-//$user = "gusthiot";
-
 $dataGest = $gestionnaire->getGestionnaire($user);
 if($dataGest) {
     $sciper = $gestionnaire->getGestionnaire($user)['sciper'];

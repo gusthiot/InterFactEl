@@ -1,6 +1,6 @@
 <?php
 require_once("session.php");
-require_once("commons/State.php");
+require_once("includes/State.php");
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");
@@ -46,7 +46,7 @@ function uploader(string $title, string $id, string $disabled)
     return $html;
 }
 
-include("commons/lock.php");
+include("includes/lock.php");
 
 ?>
 
@@ -54,7 +54,7 @@ include("commons/lock.php");
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("commons/header.php");?> 
+        <?php include("includes/header.php");?> 
     </head>
 
     <body>
@@ -111,7 +111,7 @@ include("commons/lock.php");
                     </div>
                 </div>
 
-                <?php include("commons/message.php");
+                <?php include("includes/message.php");
 
                 if(!empty($lockedTxt)) {
                     $other = "";
@@ -195,7 +195,7 @@ include("commons/lock.php");
             ?>
             </div>
         </div>
-        <?php include("commons/footer.php");?> 
+        <?php include("includes/footer.php");?> 
         <script src="js/plateforme.js"></script>
   
 	</body>
