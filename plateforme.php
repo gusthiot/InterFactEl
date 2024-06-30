@@ -84,7 +84,7 @@ include("includes/lock.php");
                                     if(!$current) { 
                                         echo uploader("Facturation Pro Forma", "PROFORMA", $disabled);
                                     }             
-                                    if($superviseur->isSuperviseur($user) && MODE == "TEST") { ?>
+                                    if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") { ?>
                                         <div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button></div>
                                     <?php } 
                                 } 
