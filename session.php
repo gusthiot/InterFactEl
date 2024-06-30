@@ -15,7 +15,7 @@ if(DEV_MODE) {
 }
 else {
     $oClient->authenticate(['uniqueid'], "", 'group=cmi-fact');
-    $user = $_SESSION['user'];
+    $user = $_SESSION['Tequila-Session-User'];
 }
 //$oClient->logout();
 
