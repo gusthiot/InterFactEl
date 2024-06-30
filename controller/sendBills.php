@@ -10,9 +10,9 @@ require_once("../commons/Params.php");
 require_once("../commons/State.php");
 require_once("../assets/Message.php");
 
-
+checkGest($dataGest);
 if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
-
+    checkPlateforme($dataGest, $_POST["plate"]);
     $plateforme = $_POST["plate"];
     $year = $_POST["year"];
     $month = $_POST["month"];

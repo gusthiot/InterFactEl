@@ -2,10 +2,7 @@
 require_once("session.php");
 require_once("assets/Ticket.php");
 
-if(!$dataGest) {
-    header('Location: index.php');
-    exit;
-}
+checkGest($dataGest);
 if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
     $_SESSION['alert-danger'] = "Manque un paramètre !";
     header('Location: index.php');
@@ -13,11 +10,8 @@ if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || 
 }
 
 $plateforme = $_GET['plate'];
-if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($user)['plates'])) {
-    $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
-    header('Location: index.php');
-    exit;
-}
+checkPlateforme($dataGest, $plateforme);
+
 $year = $_GET['year'];
 $month = $_GET['month'];
 $version = $_GET['version'];

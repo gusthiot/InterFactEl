@@ -8,11 +8,12 @@ require_once("../assets/Paramedit.php");
 require_once("../assets/Paramtext.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Message.php");
-require_once("../session.php");
 require_once("../assets/Sap.php");
+require_once("../session.php");
 
+checkGest($dataGest);
 if(isset($_POST['plate']) && isset($_POST['type'])) {
-    
+    checkPlateforme($dataGest, $_POST["plate"]);
     $plateforme = $_POST['plate'];
     $lockp = new Lock();
     $lockedTxt = $lockp->load("../", "process");

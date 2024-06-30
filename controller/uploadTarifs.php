@@ -1,6 +1,5 @@
 <?php
 require_once("../commons/Zip.php");
-require_once("../config.php");
 require_once("../assets/Label.php");
 require_once("../commons/Params.php");
 require_once("../commons/State.php");
@@ -9,7 +8,9 @@ require_once("../assets/Lock.php");
 require_once("../assets/Parametres.php");
 require_once("../assets/Message.php");
 
+checkGest($dataGest);
 if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
+    checkPlateforme($dataGest, $_POST["plate"]);
     $plateforme = $_POST['plate'];
     $fileName = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];

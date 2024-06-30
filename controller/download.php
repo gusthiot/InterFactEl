@@ -5,7 +5,6 @@ require_once("../assets/Parametres.php");
 require_once("../assets/Paramedit.php");
 require_once("../assets/Paramtext.php");
 require_once("../assets/Lock.php");
-require_once("../config.php");
 require_once("../session.php");
 
 if(isset($_GET['type'])) {
@@ -13,9 +12,14 @@ if(isset($_GET['type'])) {
     $tmpFile = TEMP.$type.'_'.time().'.zip';
    
     if($type==="config") {
+        if(!$superviseur->isSuperviseur($user)) {
+            header('Location: ../index.php');
+            exit;
+        }
         readZip($type, $tmpFile, CONFIG);
     }
-    elseif($type==="prefa") {     
+    elseif($type==="prefa") {  
+        checkGest($dataGest);   
         $locku = new Lock();
         $fileName = $locku->loadByName("../".$sciper.".lock");
         if(!empty($fileName)) {   
@@ -32,6 +36,8 @@ if(isset($_GET['type'])) {
     }
     else {
         if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
+            checkGest($dataGest);
+            checkPlateforme($dataGest, $_GET['plate']);
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
             if($type==="tarifs") {  
                 $fileName = $dirMonth."/".Parametres::NAME;

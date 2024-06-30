@@ -5,22 +5,15 @@ require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");
 
-if(!$dataGest) {
-    header('Location: index.php');
-    exit;
-}
+checkGest($dataGest);
 if(!isset($_GET["plateforme"])) {
     $_SESSION['alert-danger'] = "Manque un numéro de plateforme !";
     header('Location: index.php');
     exit;
 }
 $plateforme = $_GET['plateforme'];
+checkPlateforme($dataGest, $plateforme);
 
-if(!array_key_exists($plateforme, $gestionnaire->getGestionnaire($user)['plates'])) {
-    $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
-    header('Location: index.php');
-    exit;
-}
 $dir = DATA.$plateforme;
 $first = true;
 $current = false;

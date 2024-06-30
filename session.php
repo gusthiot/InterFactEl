@@ -25,3 +25,20 @@ if($dataGest) {
 else {
     $_SESSION['alert-info'] = "Vous n'avez aucun droit de gestion";
 }
+
+function checkGest($dataGest)
+{
+    if(!$dataGest) {
+        header('Location: index.php');
+        exit;
+    }
+}
+
+function checkPlateforme($dataGest, $plateforme)
+{
+    if(!array_key_exists($plateforme, $dataGest['plates'])) {
+        $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
+        header('Location: index.php');
+        exit;
+    }
+}

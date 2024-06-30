@@ -4,7 +4,9 @@ require_once("../assets/Sap.php");
 require_once("../assets/Lock.php");
 require_once("../session.php");
 
+checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"]) && isset($_POST["type"])){
+    checkPlateforme($dataGest, $_POST["plate"]);
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $sap = new Sap();
     $html = "";

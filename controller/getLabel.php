@@ -3,9 +3,10 @@
 require_once("../assets/Label.php");
 require_once("../session.php");
 
+checkGest($dataGest);
 $txt = "";
-
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"])) {
+    checkPlateforme($dataGest, $_POST["plate"]);
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month'];
     if(isset($_POST["version"]) && isset($_POST["run"])) {
         $dir .= "/".$_POST['version']."/".$_POST['run'];

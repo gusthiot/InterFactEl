@@ -4,12 +4,15 @@ require_once("../assets/Lock.php");
 require_once("../assets/Logfile.php");
 require_once("../assets/Sap.php");
 require_once("../assets/Info.php");
-require_once("../session.php");
 require_once("../commons/Params.php");
 require_once("../commons/State.php");
+require_once("../session.php");
 
+checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])){
+    
     $plateforme = $_POST["plate"];
+    checkPlateforme($dataGest, $plateforme);
     $year = $_POST["year"];
     $month = $_POST["month"];
     $run = $_POST["run"];

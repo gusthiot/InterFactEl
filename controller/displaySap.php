@@ -3,7 +3,9 @@
 require_once("../session.php");
 require_once("../assets/Sap.php");
 
+checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
+    checkPlateforme($dataGest, $_POST["plate"]);
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $sap = new Sap();
     $html = '<div class="over"><table class="table factures"><thead><tr>';

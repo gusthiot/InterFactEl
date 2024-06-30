@@ -4,9 +4,10 @@ require_once("../assets/Logfile.php");
 require_once("../assets/Label.php");
 require_once("../session.php");
 
+checkGest($dataGest);
 $txt = "";
-
 if(isset($_POST['plate'])) {
+    checkPlateforme($dataGest, $_POST["plate"]);
     $logfile = new Logfile();
     $label = new Label();
     $plate = DATA.$_POST['plate'];
