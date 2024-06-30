@@ -102,8 +102,8 @@ class TequilaClient {
         }
 
         // fetchAttributes needs valid auth_check param and a valid session creation.
-        if (!empty($_COOKIE[self::COOKIE_NAME]) && isset($_GET["auth_check"])) {
-            $attributes = $this->fetchAttributes($_COOKIE[self::COOKIE_NAME], $_GET["auth_check"], $allowedRequestHosts);
+        if (!empty($_COOKIE[COOKIE_NAME]) && isset($_GET["auth_check"])) {
+            $attributes = $this->fetchAttributes($_COOKIE[COOKIE_NAME], $_GET["auth_check"], $allowedRequestHosts);
 
             if (
                 !empty($attributes) &&
@@ -111,14 +111,14 @@ class TequilaClient {
                 isset($attributes['key'])
             ) {
                 // Only create a valid session and keep the key if the mandatory attributes are present.
-                $this->key = $_COOKIE[self::COOKIE_NAME];
+                $this->key = $_COOKIE[COOKIE_NAME];
                 $this->createSession($attributes);
                 return;
             }
         }
 
         $this->key = $this->createRequest($wantedAttributes, $filters, $authorised, $authstrength);
-        setcookie(self::COOKIE_NAME,
+        setcookie(COOKIE_NAME,
             $this->key,
             self::COOKIE_LIFE,
             "",
@@ -140,11 +140,11 @@ class TequilaClient {
         $this->log(__FUNCTION__ . "(...)");
 
         // Delete cookie by setting expiration time in the past with root path
-        setcookie(self::COOKIE_NAME, "", time() - 3600);
+        setcookie(COOKIE_NAME, "", time() - 3600);
 
-        unset($_SESSION[self::SESSION_KEY]);
-        unset($_SESSION[self::SESSION_USER]);
-        unset($_SESSION[self::SESSION_CREATION]);
+        unset($_SESSION[SESSION_KEY]);
+        unset($_SESSION[SESSION_USER]);
+        unset($_SESSION[SESSION_CREATION]);
 
         $this->contactServer("logout");
 
@@ -337,17 +337,17 @@ class TequilaClient {
 
         // check if the session hasn't expired.
         if (
-            !array_key_exists(self::SESSION_CREATION, $_SESSION) or
-            (time() - $_SESSION[self::SESSION_CREATION]) > $this->timeout
+            !array_key_exists(SESSION_CREATION, $_SESSION) or
+            (time() - $_SESSION[SESSION_CREATION]) > $this->timeout
         ) {
             return false;
         }
 
-        if (!array_key_exists(self::SESSION_KEY, $_SESSION)) {
+        if (!array_key_exists(SESSION_KEY, $_SESSION)) {
             return false;
         }
 
-        $this->key = $_SESSION[self::SESSION_KEY];
+        $this->key = $_SESSION[SESSION_KEY];
 
         return true;
     }
@@ -358,16 +358,16 @@ class TequilaClient {
      * @param $attributes - the user attributes returned by the server
      */
     private function createSession(array $attributes) {
-        $_SESSION[self::SESSION_CREATION] = time();
+        $_SESSION[SESSION_CREATION] = time();
 
         foreach ($attributes as $key => $val) {
             $this->attributes[$key] = $val;
         }
         if (array_key_exists("key", $attributes)) {
-            $_SESSION[self::SESSION_KEY] = $attributes["key"];
+            $_SESSION[SESSION_KEY] = $attributes["key"];
         }
         if (array_key_exists("user", $attributes)) {
-            $_SESSION[self::SESSION_USER] = $attributes["user"];
+            $_SESSION[SESSION_USER] = $attributes["user"];
         }
     }
 
