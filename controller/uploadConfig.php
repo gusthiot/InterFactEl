@@ -1,4 +1,5 @@
 <?php
+require_once("../includes/Config.php");
 require_once("../includes/Zip.php");
 require_once("../session.php");
 
@@ -9,7 +10,7 @@ if($superviseur->isSuperviseur($user)) {
         if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
             $tmpFile = TEMP.time().'_'.$fileName;
             if(copy($source, $tmpFile)) {
-                $msg = Zip::unzip($tmpFile, CONFIG);
+                $msg = Config::upload($tmpFile, CONFIG);
                 unlink($tmpFile);
                 if(empty($msg)) {
                     $_SESSION['alert-success'] = "Fichiers correctement mis à jour !";

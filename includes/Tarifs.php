@@ -5,7 +5,7 @@ require_once("../assets/Parametres.php");
 require_once("State.php");
 require_once("Zip.php");
 
-class Params
+class Tarifs
 {
     const FILES = ["articlesap.csv", "categorie.csv", "categprix.csv", "classeclient.csv", "classeprestation.csv", "coeffprestation.csv", 
         "groupe.csv", "overhead.csv", "paramfact.csv", "paramtext.csv", "partenaire.csv", "plateforme.csv", "logo.pdf", "grille.pdf"];

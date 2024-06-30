@@ -1,6 +1,6 @@
 <?php
 require_once("../includes/Zip.php");
-require_once("../includes/Params.php");
+require_once("../includes/Tarifs.php");
 require_once("../assets/Parametres.php");
 require_once("../assets/Paramedit.php");
 require_once("../assets/Paramtext.php");
@@ -85,7 +85,7 @@ if(isset($_GET['type'])) {
                         }
                     }
                     elseif($type==="alltarifs") {
-                        $res =Params::exportLast($tmpFile, $dirRun);
+                        $res =Tarifs::exportLast($tmpFile, $dirRun);
                         if(empty($res)) {
                             header('Content-disposition: attachment; filename="'.Parametres::NAME.'"');
                             header('Content-type: application/zip');

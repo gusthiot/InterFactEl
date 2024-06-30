@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/Zip.php");
 require_once("../assets/Label.php");
-require_once("../includes/Params.php");
+require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
 require_once("../session.php");
 require_once("../assets/Lock.php");
@@ -25,7 +25,7 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
             if (!file_exists($dirTarifs."/".Parametres::NAME)) {
                 $tmpFile = TEMP.time().'_'.$fileName;
                 if(copy($source, $tmpFile)) {
-                    $msg = Params::importNew($dirTarifs, $tmpFile);
+                    $msg = Tarifs::importNew($dirTarifs, $tmpFile);
                     if(empty($msg)) {
                         $_SESSION['alert-success'] = "Zip correctement sauvegardé !";
                     }
@@ -51,7 +51,7 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
             $dirTarifs = DATA.$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/";
             $tmpFile = TEMP.time().'_'.$fileName;
             if(copy($source, $tmpFile)) {
-                $msg = Params::correct($dirTarifs, $tmpFile);
+                $msg = Tarifs::correct($dirTarifs, $tmpFile);
                 if(empty($msg)) {
                     $_SESSION['alert-success'] = "Zip correctement sauvegardé !";
                 }

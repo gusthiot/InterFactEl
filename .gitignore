@@ -5,4 +5,5 @@ tmp
 config.php
 config.dev.php
 config.prod.php
+config.test.php
 reveal.js
