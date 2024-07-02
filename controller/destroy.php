@@ -1,5 +1,5 @@
 <?php
-require_once("../session.php");
+require_once("../session.inc.php");
 
 checkGest($dataGest);
 if(isset($_GET["plate"])) {

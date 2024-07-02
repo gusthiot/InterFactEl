@@ -1,7 +1,7 @@
 <?php
 
 require_once("../includes/Tarifs.php");
-require_once("../session.php");
+require_once("../session.inc.php");
 
 checkGest($dataGest);
 if(isset($_GET["plate"]) && isset($_GET["year"]) && isset($_GET["month"])) {

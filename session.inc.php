@@ -1,6 +1,6 @@
 <?php
 
-require_once("config.php");
+require_once("config.inc.php");
 require_once("assets/Superviseur.php");
 require_once("assets/Gestionnaire.php");
 require_once("includes/Tequila.php");

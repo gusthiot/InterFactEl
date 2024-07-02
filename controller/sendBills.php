@@ -3,7 +3,7 @@
 require_once("../assets/Sap.php");
 require_once("../assets/Info.php");
 require_once("../assets/Facture.php");
-require_once("../session.php");
+require_once("../session.inc.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Logfile.php");
 require_once("../includes/Tarifs.php");

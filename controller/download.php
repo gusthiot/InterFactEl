@@ -5,7 +5,7 @@ require_once("../assets/Parametres.php");
 require_once("../assets/Paramedit.php");
 require_once("../assets/Paramtext.php");
 require_once("../assets/Lock.php");
-require_once("../session.php");
+require_once("../session.inc.php");
 
 if(isset($_GET['type'])) {
     $type = $_GET['type'];

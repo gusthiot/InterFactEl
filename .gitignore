@@ -2,7 +2,7 @@ CONFIG
 data
 PyFactEl
 tmp
-config.php
+config.inc.php
 config.dev.php
 config.prod.php
 config.test.php
