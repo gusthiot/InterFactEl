@@ -1,5 +1,5 @@
 <?php
-require_once("session.inc.php");
+require_once("session.php");
 require_once("includes/State.php");
 require_once("assets/Parametres.php");
 require_once("assets/Lock.php");

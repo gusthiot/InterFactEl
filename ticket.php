@@ -1,5 +1,5 @@
 <?php
-require_once("session.inc.php");
+require_once("session.php");
 require_once("assets/Ticket.php");
 
 checkGest($dataGest);
