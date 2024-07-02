@@ -1,5 +1,5 @@
 <?php
-require_once("session.php");
+require_once("session.inc.php");
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");

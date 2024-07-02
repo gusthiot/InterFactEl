@@ -1,7 +1,7 @@
 <?php
 
 require_once("../assets/Label.php");
-require_once("../session.php");
+require_once("../session.inc.php");
 
 checkGest($dataGest);
 $txt = "";

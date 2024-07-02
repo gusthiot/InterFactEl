@@ -3,7 +3,7 @@ require_once("../includes/Zip.php");
 require_once("../assets/Label.php");
 require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
-require_once("../session.php");
+require_once("../session.inc.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Parametres.php");
 require_once("../assets/Message.php");
