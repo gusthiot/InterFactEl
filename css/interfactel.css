@@ -164,6 +164,17 @@ input[type="file"] {
   overflow-x: auto;
 }
 
+.title {
+  padding: 10px;
+  margin: 10px;
+}
+
+.test {
+  color: white;
+  background-color: var(--noir);
+}
+
+
 /** head **/
 
 #logo {

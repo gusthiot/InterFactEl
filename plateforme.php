@@ -67,7 +67,9 @@ include("includes/lock.php");
                     <p><a href="index.php">Accueil</a> > Facturation <?= $name ?></p>
                 </div>
             </div>	
-            <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
+            <div class="title <?php if(TEST_MODE) echo "test";?>">
+                <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
+            </div>	
             
             <form action="controller/uploadPrepa.php" method="post" id="form-fact" enctype="multipart/form-data" >
                 <div class="text-center">

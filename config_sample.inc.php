@@ -13,3 +13,4 @@ define( 'SESSION_KEY', 'key' );
 define( 'SESSION_USER', 'user' );
 define( 'SESSION_CREATION', 'creation' );
 define( 'DEV_MODE', false );
+define( 'TEST_MODE', false );
