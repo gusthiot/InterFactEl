@@ -2,8 +2,8 @@ CONFIG
 data
 PyFactEl
 tmp
-config.inc.php
-config.dev.php
-config.prod.php
-config.test.php
+config.inc
+config.dev.inc
+config.prod.inc
+config.test.inc
 reveal.js

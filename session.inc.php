@@ -1,6 +1,6 @@
 <?php
 
-require_once("config.inc.php");
+require_once("config.inc");
 require_once("assets/Superviseur.php");
 require_once("assets/Gestionnaire.php");
 require_once("includes/Tequila.php");
@@ -9,13 +9,18 @@ ini_set('display_errors', DISPLAY_ERRORS);
 error_reporting(ERROR_REPORTING);
 
 session_start();
-$oClient = new TequilaClient('https://tequila.epfl.ch', 86400, "InterFactEl", "", TequilaClient::LANGUAGE_FRENCH);
+$oClient = new TequilaClient(TEQUILA_URL, TEQUILA_TIMEOUT, APP_NAME, APP_URL, TEQUILA_LANGUAGE);
 if(DEV_MODE) {
-    $user = "gusthiot";
+    $user = DEV_MODE;
 }
 else {
-    $oClient->authenticate(['uniqueid'], "", 'group=cmi-fact');
-    $user = $_SESSION['Tequila-Session-User'];
+    $oClient->authenticate(TEQUILA_REQUEST, TEQUILA_ALLOWS, TEQUILA_REQUIRED);
+    if(TEST_MODE) {
+        $user = $_SESSION['Tequila-Session-User-Test'];
+    }
+    else {
+        $user = $_SESSION['Tequila-Session-User'];
+    }
 }
 //$oClient->logout();
 
