@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/Config.php");
 require_once("../includes/Zip.php");
-require_once("../session.inc.php");
+require_once("../session.inc");
 
 if($superviseur->isSuperviseur($user)) {
     if($_FILES['zip_file']) {

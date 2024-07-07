@@ -6,7 +6,7 @@ require_once("../assets/Sap.php");
 require_once("../assets/Info.php");
 require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
-require_once("../session.inc.php");
+require_once("../session.inc");
 
 checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])){

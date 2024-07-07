@@ -3,7 +3,7 @@
 require_once("../assets/Client.php");
 require_once("../assets/Journal.php");
 require_once("../assets/Modif.php");
-require_once("../session.inc.php");
+require_once("../session.inc");
 
 checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {

@@ -1,7 +1,7 @@
 <?php
 
 require_once("../assets/Label.php");
-require_once("../session.inc.php");
+require_once("../session.inc");
 
 checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["txt"])) {

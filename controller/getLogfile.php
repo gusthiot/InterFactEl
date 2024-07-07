@@ -2,7 +2,7 @@
 
 require_once("../assets/Logfile.php");
 require_once("../assets/Label.php");
-require_once("../session.inc.php");
+require_once("../session.inc");
 
 checkGest($dataGest);
 $txt = "";

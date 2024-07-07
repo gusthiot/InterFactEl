@@ -1,6 +1,6 @@
 <?php
 
-require_once("../session.inc.php");
+require_once("../session.inc");
 require_once("../assets/Sap.php");
 
 checkGest($dataGest);
