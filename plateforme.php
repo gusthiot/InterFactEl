@@ -19,7 +19,7 @@ $first = true;
 $current = false;
 $state = new State();
 if(file_exists($dir)) { 
-    $state->lastState($dir, new Lock());
+    $state->lastState($dir);
     $state->currentState($dir);
     $first = false;
     $current = true;
@@ -115,14 +115,14 @@ include("includes/lock.php");
 
                 <?php include("includes/message.php");
 
-                if(!empty($lockedTxt)) {
+                if(!empty($lockProcess)) {
                     $other = "";
                     if($lockedPlate != $plateforme) {
                         $other = " pour une autre plateforme";
                     }
-                    echo'<div class="text-center" >'.$lockedProcess.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
+                    echo'<div class="text-center" >'.$lockedProcessus.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
                 }
-                if(!empty($lockedUser)) {
+                if(!empty($lockUser)) {
                     echo'<div class="text-center">'.$dlTxt.'</div>';
                 }
                 ?>
@@ -160,20 +160,17 @@ include("includes/lock.php");
                                     <?php }
                                     echo '</td><td>';
                                     foreach(State::scanDesc($dir."/".$year."/".$month."/".$version) as $run) {
-                                        if($run != $lockedRun || $lockedProcess != "Une préfacturation") {
+                                        $dirRun = $dir."/".$year."/".$month."/".$version."/".$run;
+                                        if($run != $lockedRun || $lockedProcessus != "Une préfacturation") {
                                             $value = 'year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
-                                            $label = new Label();
-                                            $labtxt = $label->load($dir."/".$year."/".$month."/".$version."/".$run);
-                                            if(empty($labtxt)) {
-                                                $labtxt = $run;
+                                            $label = Label::load($dirRun);
+                                            if(empty($label)) {
+                                                $label = $run;
                                             }
-                                            $sap = new Sap();
-                                            $sap->load($dir."/".$year."/".$month."/".$version."/".$run);
-                                            $status = $sap->status();
-                                            $lock = new Lock();
-                                            $loctxt = $lock->load($dir."/".$year."/".$month."/".$version."/".$run, "run");
-                                            echo ' <button type="button" value="'.$value.'" class="open-run btn '.Sap::color($status, $loctxt).'"> '.$labtxt;
-                                            if ($loctxt) { ?>
+                                            $sap = new Sap($dirRun);
+                                            $lockRun = Lock::load($dirRun, "run");
+                                            echo ' <button type="button" value="'.$value.'" class="open-run btn '.Sap::color($sap->status(), $lockRun).'"> '.$label;
+                                            if ($lockRun) { ?>
                                                 <svg class="icon" aria-hidden="true">
                                                     <use xlink:href="#lock"></use>
                                                 </svg>

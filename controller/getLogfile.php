@@ -8,10 +8,8 @@ checkGest($dataGest);
 $txt = "";
 if(isset($_POST['plate'])) {
     checkPlateforme($dataGest, $_POST["plate"]);
-    $logfile = new Logfile();
-    $label = new Label();
     $plate = DATA.$_POST['plate'];
-    $lines = explode(PHP_EOL, $logfile->load($plate));
+    $lines = explode(PHP_EOL, Logfile::load($plate));
     $txt = "<div id='log'>";
     foreach($lines as $line) {
         $parts = explode("|", $line);
@@ -20,8 +18,8 @@ if(isset($_POST['plate'])) {
             if(trim($parts[4]) == "Renvoi dans SAP") {
                 $parts[4] = "<span class='red'>".$parts[4]."</span>";
             }
-            if(($lab = $label->load($dir)) != "") {
-                $parts[3] = " ".$lab." ";
+            if(($label = Label::load($dir)) != "") {
+                $parts[3] = " ".$label." ";
             }
             $txt .= implode("|", $parts)."<br />";
         }

@@ -2,26 +2,24 @@
 
 $disabled = "";
 $dlTxt = "";
-$locku = new Lock();
-$lockedUser = $locku->loadByName($sciper.".lock");
-if(!empty($lockedUser)) {
+$lockUser = Lock::loadByName($sciper.".lock");
+if(!empty($lockUser)) {
     $disabled = "disabled";
     $dlTxt = '<a href="#" id="download-prefa">Vous avez une préfacturation à télécharger avant de pouvoir en faire une nouvelle.</a>';
 }
 
-$lockp = new Lock();
-$lockedTxt = $lockp->load("./", "process");
+$lockProcess = Lock::load("./", "process");
 $lockedPlate = "";
 $lockedRun = "";
-$lockedProcess = "";
-if(!empty($lockedTxt)) {
+$lockedProcessus = "";
+if(!empty($lockProcess)) {
     $disabled = "disabled";
-    $lockedTab = explode(" ", $lockedTxt);
+    $lockedTab = explode(" ", $lockProcess);
     if($lockedTab[0] == "prefa") {
-        $lockedProcess = "Une préfacturation";
+        $lockedProcessus = "Une préfacturation";
     }
     else {
-        $lockedProcess = "Un envoi SAP";
+        $lockedProcessus = "Un envoi SAP";
     }
     $lockedPlate = $lockedTab[1];
     $lockedRun = $lockedTab[2];

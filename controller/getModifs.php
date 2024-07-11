@@ -1,7 +1,5 @@
 <?php
 
-require_once("../assets/Client.php");
-require_once("../assets/Journal.php");
 require_once("../assets/Modif.php");
 require_once("../session.inc");
 
@@ -12,14 +10,9 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $name = $gestionnaire->getGestionnaire($user)['plates'][$_POST['plate']];
     $suf = "_".$name."_".$_POST['year']."_".$_POST['month']."_".$_POST['version'];
     $html = "";
-    $modif = new Modif($dir."/Modif-factures".$suf.".csv");
-    $html .= table($modif->getModifs(), "get-modif", "Factures-modifs", "modifs", [7, 8]);
-
-    $journal = new Journal($dir."/Journal-corrections".$suf.".csv");
-    $html .= table($journal->getModifs(), "get-journal", "Journal-modifs", "journal", []);
-
-    $client = new Client($dir."/Clients-modifs".$suf.".csv");
-    $html .= table($client->getModifs(), "get-client", "Client-modifs", "client", []);
+    $html .= table(Modif::load($dir."/Modif-factures".$suf.".csv"), "get-modif", "Factures-modifs", "modifs", [7, 8]);
+    $html .= table(Modif::load($dir."/Journal-corrections".$suf.".csv"), "get-journal", "Journal-modifs", "journal", []);
+    $html .= table(Modif::load($dir."/Clients-modifs".$suf.".csv"), "get-client", "Client-modifs", "client", []);
 
     if($html == "") {
         $html = "<p>Aucune modification</p>";

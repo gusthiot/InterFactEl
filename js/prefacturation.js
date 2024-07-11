@@ -63,7 +63,7 @@ $('#all').on('click', function () {
 } );
 
 $('#send').on('click', function () {
-    $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "sendBills"}), function (data) {
+    $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "send-bills"}), function (data) {
         $('#prefa-content').html(data);
     });
 } );
@@ -126,7 +126,7 @@ $('#finalize').on('click', function () {
 
 $('#resend').on('click', function () {
     if (confirm($(this).data('msg')) == true) {
-        $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "resendBills"}), function (data) {
+        $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "resend-bills"}), function (data) {
             $('#prefa-content').html(data);
         });
         

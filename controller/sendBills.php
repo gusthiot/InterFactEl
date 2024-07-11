@@ -19,9 +19,8 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $run = $_POST["run"];
     $type = $_POST['type'];
     $version = $_POST["version"];
-    $lockp = new Lock();
-    $lockedTxt = $lockp->load("../", "process");
-    if(!empty($lockedTxt)) {
+    $lockProcess = Lock::load("../", "process");
+    if(!empty($lockProcess)) {
         $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';;
         header('Location: ../prefacturation.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
         exit;
@@ -33,38 +32,32 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
 
     $warn = "";
     $error = "";
-    $logfile = new Logfile();
     $messages = new Message();
-    $sap = new Sap();
+    $sap = new Sap($dir);
     $state = new State();
-    $sap->load($dir);
     $oldStatus = $sap->status();
     $oldState = $sap->state();
     $oks = 0;
     $kos = 0;
 
-    $lockp = new Lock();
-    $lockp->save("../", 'process', "send ".$plateforme." ".$run);
+    Lock::save("../", 'process', "send ".$plateforme." ".$run);
     try {
         foreach($bills as $bill) {
-            $facture = new Facture($dir."/Factures_JSON/facture_".$bill.".json");
-            $resArray = send($facture->getFacture());
+            $resArray = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"));
             if($resArray[0] && !$resArray[1]) {
                 $res = json_decode($resArray[0]);
                 if(property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
-                    $info = new Info();
-                    $infos = $info->load($dir);
+                    $infos = Info::load($dir);
                     if(!empty($infos)) {
                         if(empty($infos["Sent"][2])) {
                             $infos["Sent"][2] = date('Y-m-d H:i:s');
                             $infos["Sent"][3] = $user;
-                            $info->save($dir, $infos);
+                            Info::save($dir, $infos);
                         }
                         if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/lockm.csv")) {
-                            $lock = new Lock();
-                            $lock->save($dirPrevMonth, 'month', "");
+                            Lock::save($dirPrevMonth, 'month', "");
                         }
-                        $sap_cont = $sap->load($dir);
+                        $sap_cont = $sap->getBills();
                         if(!empty($res->E_RESULT->item->IS_ERROR)) {
                             if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
                                 $sap_cont[$bill][3] = "ERROR";
@@ -100,9 +93,8 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     }
     unlink("../".Lock::FILES['process']);
 
-    if($sap->status() == 4) {    
-        $locklast = new Lock();
-        $state->lastState(DATA.$plateforme, $locklast);
+    if($sap->status() == 4) {
+        $state->lastState(DATA.$plateforme);
         if(empty($state->getLast())) {
             $dirTarifs = DATA.$plateforme."/".$year."/".$month."/";
             $msg = Tarifs::saveFirst($dir, $dirTarifs);
@@ -111,23 +103,21 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
             }  
         }
 
-        $lock = new Lock();
-        $lock->save($dir, 'run', $lock::STATES['finalized']);
+        Lock::save($dir, 'run', Lock::STATES['finalized']);
         $sep = strrpos($dir, "/");
-        $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
-
+        Lock::save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
 
         $infos["Closed"][2] = date('Y-m-d H:i:s');
         $infos["Closed"][3] = $user;
-        $info->save($dir, $infos);
+        Info::save($dir, $infos);
     }
 
-    $sap->load($dir);
+    $sap = new Sap($dir);
     $status = $sap->status();
     $state = $sap->state();
     $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
     $txt .= $oldState." | ".count($bills)." | ".$state;
-    $logfile->write(DATA.$plateforme."/", $txt);
+    Logfile::write(DATA.$plateforme."/", $txt);
     if(!empty($warn)) {
         $_SESSION['alert-warning'] = $warn;
     }

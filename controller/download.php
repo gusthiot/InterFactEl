@@ -1,9 +1,7 @@
 <?php
 require_once("../includes/Zip.php");
 require_once("../includes/Tarifs.php");
-require_once("../assets/Parametres.php");
-require_once("../assets/Paramedit.php");
-require_once("../assets/Paramtext.php");
+require_once("../assets/ParamZip.php");
 require_once("../assets/Lock.php");
 require_once("../session.inc");
 
@@ -19,9 +17,8 @@ if(isset($_GET['type'])) {
         readZip($type, $tmpFile, CONFIG);
     }
     elseif($type==="prefa") {  
-        checkGest($dataGest);   
-        $locku = new Lock();
-        $fileName = $locku->loadByName("../".$sciper.".lock");
+        checkGest($dataGest);
+        $fileName = Lock::loadByName("../".$sciper.".lock");
         if(!empty($fileName)) {   
             header('Content-disposition: attachment; filename="'.basename($fileName).'"');
             header('Content-type: application/zip');
@@ -40,8 +37,8 @@ if(isset($_GET['type'])) {
             checkPlateforme($dataGest, $_GET['plate']);
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
             if($type==="tarifs") {  
-                $fileName = $dirMonth."/".Parametres::NAME;
-                header('Content-disposition: attachment; filename="'.Parametres::NAME.'"');
+                $fileName = $dirMonth."/".ParamZip::NAME;
+                header('Content-disposition: attachment; filename="'.ParamZip::NAME.'"');
                 header('Content-type: application/zip');
                 readfile($fileName);
             }
@@ -87,7 +84,7 @@ if(isset($_GET['type'])) {
                     elseif($type==="alltarifs") {
                         $res =Tarifs::exportLast($tmpFile, $dirRun);
                         if(empty($res)) {
-                            header('Content-disposition: attachment; filename="'.Parametres::NAME.'"');
+                            header('Content-disposition: attachment; filename="'.ParamZip::NAME.'"');
                             header('Content-type: application/zip');
                             readfile($tmpFile);
                             ignore_user_abort(true);

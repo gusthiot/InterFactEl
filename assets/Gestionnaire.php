@@ -2,17 +2,31 @@
 
 require_once("Csv.php");
 
+/**
+ * Gestionnaire class represents a csv file with users having rights to manage the billing
+ */
 class Gestionnaire extends Csv 
 {
 
+    /**
+     * The csv file name
+     */
     const NAME = "gestionnaire.csv";
 
+    /**
+     * Array containing user, as key, and its rights in an array, as value
+     *
+     * @var array
+     */
     private array $gestionnaires;
 
+    /**
+     * Class constructor
+     */
     function __construct() 
     {
-        $this->gestionnaires = ['sciper'=>'000000', 'plates'=>[], 'complet'=>[]];
-        $lines = $this->extract(CONFIG.self::NAME);
+        $this->gestionnaires = [];
+        $lines = self::extract(CONFIG.self::NAME);
         foreach($lines as $line) {
             $tab = explode(";", $line);
 
@@ -25,11 +39,15 @@ class Gestionnaire extends Csv
             if($tab[4] == "COMPLET") {
                 $this->gestionnaires[$tab[0]]['complet'][$tab[2]] = $tab[3];
             }
-
-
         }
     }
     
+    /**
+     * Gets the rights for a determined user
+     *
+     * @param string $login user by its login surname
+     * @return array
+     */
     function getGestionnaire(string $login): array
     {
         if (array_key_exists($login, $this->gestionnaires)) {
@@ -39,4 +57,3 @@ class Gestionnaire extends Csv
     }
 
 }
-?>

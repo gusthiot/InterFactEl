@@ -1,7 +1,7 @@
 <?php
 
 require_once("../assets/Label.php");
-require_once("../assets/Parametres.php");
+require_once("../assets/ParamZip.php");
 require_once("State.php");
 require_once("Zip.php");
 
@@ -15,8 +15,7 @@ class Tarifs
         $in = $dir."/IN/";
         $msg = self::createZip($dirTarifs, $in);
         if(empty($msg)) {
-            $label = new Label();
-            if(!$label->save($dirTarifs, "New")) {
+            if(!Label::save($dirTarifs, "New")) {
                 return "Problème avec le label";
             }
             return "";
@@ -26,7 +25,7 @@ class Tarifs
 
     static function suppress(string $dirTarifs): void
     {
-        unlink($dirTarifs."/".Parametres::NAME);
+        unlink($dirTarifs."/".ParamZip::NAME);
         unlink($dir."/".Label::NAME);
     }
 
@@ -34,7 +33,7 @@ class Tarifs
     {
         $tmpDir = TEMP.'tarifs_'.time().'/';
         if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
-            $msg = Zip::unzip($dirTarifs."/".Parametres::NAME, $tmpDir);
+            $msg = Zip::unzip($dirTarifs."/".ParamZip::NAME, $tmpDir);
             if(empty($msg)) {
                 $msg = Zip::unzip($file, $tmpDir);
                 if(empty($msg)) {
@@ -56,8 +55,7 @@ class Tarifs
                 if(empty($msg)) {
                     $msg = self::createZip($dirTarifs, $tmpDir);
                     if(empty($msg)) {
-                        $label = new Label();
-                        if(!$label->save($dirTarifs, "New")) {
+                        if(!Label::save($dirTarifs, "New")) {
                             $msg = "Problème avec le label";
                         }
                     }
@@ -93,14 +91,21 @@ class Tarifs
     static function createZip(string $dest, string $from): string
     {
         $zip = new ZipArchive;
-        if ($zip->open($dest."/".Parametres::NAME, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+        $empty = true;
+        if ($zip->open($dest."/".ParamZip::NAME, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
             foreach(self::FILES as $file) {
                 if(file_exists($from.$file)) {
                     $zip->addFile($from.$file, $file);
+                    $empty = false;
                 }
             }
             if($zip->close()) {
-                return "";
+                if($empty) {
+                    return "auncun fichier éligible dans ce zip !";
+                }
+                else {
+                    return "";
+                }
             }
             else {
                 return "close error";

@@ -1,7 +1,7 @@
 <?php
 require_once("session.inc");
 require_once("includes/State.php");
-require_once("assets/Parametres.php");
+require_once("assets/ParamZip.php");
 require_once("assets/Lock.php");
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
@@ -22,7 +22,7 @@ $available = false;
 $state = new State();
 if(file_exists($dir)) { 
     $available = true;
-    $state->lastState($dir, new Lock());
+    $state->lastState($dir);
     if(empty($state->getLast())) {
         $available = false;
     }
@@ -74,11 +74,10 @@ if(file_exists($dir)) {
                     <?php
                     foreach(State::scanDesc($dir) as $year) {
                         foreach(State::scanDesc($dir."/".$year) as $month) {
-                            if (file_exists($dir."/".$year."/".$month."/".Parametres::NAME)) {
-                                $label = new Label();
-                                $labtxt = $label->load($dir."/".$year."/".$month);
-                                if(empty($labtxt)) {
-                                    $labtxt = "No label ?";
+                            if (file_exists($dir."/".$year."/".$month."/".ParamZip::NAME)) {
+                                $label = Label::load($dir."/".$year."/".$month);
+                                if(empty($label)) {
+                                    $label = "No label ?";
                                 }
                                 $moment = 0;
 
@@ -93,10 +92,8 @@ if(file_exists($dir)) {
                                 $lastVersion = 0;
                                 foreach(State::scanDesc($dir."/".$year."/".$month) as $version) {
                                     foreach(State::scanDesc($dir."/".$year."/".$month."/".$version) as $run) {                                        
-                                        $sap = new Sap();
-                                        $sap->load($dir."/".$year."/".$month."/".$version."/".$run);
-                                        $status = $sap->status();
-                                        if($status > 1) {
+                                        $sap = new Sap($dir."/".$year."/".$month."/".$version."/".$run);
+                                        if($sap->status() > 1) {
                                             $lastRun = $run;
                                             $lastVersion = $version;
                                             break;
@@ -116,7 +113,7 @@ if(file_exists($dir)) {
                                 <?php } ?>
                                 </td>
                                 <td>
-                                    <button id="<?= $id ?>" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-<?= $id ?>" aria-expanded="false" aria-controls="collapse-<?= $id ?>"><?= $labtxt?></button>
+                                    <button id="<?= $id ?>" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-<?= $id ?>" aria-expanded="false" aria-controls="collapse-<?= $id ?>"><?= $label?></button>
                                     <div class="collapse collapse-item collapse-item-desktop" id="collapse-<?= $id ?>">
                                         <button type="button" id="etiquette-<?= $id ?>" class="btn but-line etiquette">Etiquette</button>
                                         <button type="button" id="export-<?= $id ?>" class="btn but-line export">Exporter</button>                            

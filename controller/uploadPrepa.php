@@ -1,11 +1,9 @@
 <?php
 require_once("../includes/Zip.php");
-require_once("../assets/Parametres.php");
+require_once("../assets/ParamZip.php");
 require_once("../includes/State.php");
-require_once("../assets/Result.php");
 require_once("../assets/Logfile.php");
-require_once("../assets/Paramedit.php");
-require_once("../assets/Paramtext.php");
+require_once("../assets/ParamRun.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Message.php");
 require_once("../assets/Sap.php");
@@ -15,9 +13,8 @@ checkGest($dataGest);
 if(isset($_POST['plate']) && isset($_POST['type'])) {
     checkPlateforme($dataGest, $_POST["plate"]);
     $plateforme = $_POST['plate'];
-    $lockp = new Lock();
-    $lockedTxt = $lockp->load("../", "process");
-    if(!empty($lockedTxt)) {
+    $lockProcess = Lock::load("../", "process");
+    if(!empty($lockProcess)) {
         $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';;
         header('Location: ../plateforme.php?plateforme='.$plateforme);
         exit;
@@ -38,30 +35,24 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                     unlink($tmpFile);
                     if(empty($msg)) {                    
                         if($type == "FIRST" || $type == "SIMU") {
-                            $results = new Result();
-                            $params = new Paramedit();
-                            if($params->load($tmpDir."paramedit.csv") && $results->load($tmpDir."result.csv")) {
-                                if($plateforme !== $params->getParam('Platform')) {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
-                                }
-                                elseif($plateforme !== $results->getResult('Platform')) {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
-                                }
-                                elseif($type === "SIMU" && $params->getParam('Type') !== "SIMU") {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.7');
-                                }
-                                elseif(!State::isNextOrSame($results->getResult('Month'), $results->getResult('Year'), $params->getParam('Month'), $params->getParam('Year'))) {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8');
-                                }
+                            $result = new ParamRun($tmpDir, 'result');
+                            $paramedit = new ParamRun($tmpDir, 'edit');
+                            if($plateforme !== $paramedit->getParam('Platform')) {
+                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
                             }
-                            else {
-                                $msg = "Fichier(s) paramedit.csv et/ou result.csv vide(s)";
+                            elseif($plateforme !== $result->getParam('Platform')) {
+                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
+                            }
+                            elseif($type === "SIMU" && $paramedit->getParam('Type') !== "SIMU") {
+                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.7');
+                            }
+                            elseif(!State::isNextOrSame($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
+                                $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8');
                             }
                         }
                         else {
-                            $lockv = new Lock();
                             $state = new State();
-                            $state->lastState(DATA.$plateforme, $lockv);
+                            $state->lastState(DATA.$plateforme);
                             $dirOut = DATA.$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun()."/OUT/";
                                 
                             foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
@@ -71,14 +62,11 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                                 }
                             }
 
-                            $tmpPe = $tmpDir.'paramedit.csv';
                             $wm = "";
                             $tyfact = "SAP";
                             if($type == "PROFORMA") {
-                                $paramtext = new Paramtext();
-                                if($paramtext->load($dirOut."paramtext.csv")) {
-                                    $wm = $paramtext->getParam('filigr-prof');
-                                }
+                                $paramtext = new ParamRun($dirOut, 'text');
+                                $wm = $paramtext->getParam('filigr-prof');
                                 $tyfact = "PROFORMA";
                             }
                             if($type == "REDO") {
@@ -90,11 +78,10 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                                 $month = $state->getNextMonth();
                             }
                             $array = [["Platform", $plateforme], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
-                            $params = new Paramedit();
-                            $params->write($tmpPe, $array);
-                            $params->load($tmpPe);
+                            $paramedit::write($tmpDir."/".ParamRun::NAMES['edit'], $array);
+                            $paramedit = new ParamRun($tmpDir, 'edit');
 
-                            $paramFile = DATA.$plateforme."/".$year."/".$month."/".Parametres::NAME;
+                            $paramFile = DATA.$plateforme."/".$year."/".$month."/".ParamZip::NAME;
                             if(file_exists($paramFile)) {
                                 $msg = Zip::unzip($paramFile, $tmpDir);
                             }
@@ -102,10 +89,9 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                         if(empty($msg)) {
                             $pathPlate = DATA.$plateforme;
                             $unique = time();
-                            $lockp = new Lock();
-                            $lockp->save("../", 'process', "prefa ".$plateforme." ".$unique);
+                            Lock::save("../", 'process', "prefa ".$plateforme." ".$unique);
                             try {
-                                runPrefa($tmpDir, $pathPlate, $params, $sciper, $plateforme, $unique, $messages);
+                                runPrefa($tmpDir, $pathPlate, $paramedit, $sciper, $plateforme, $unique, $messages, $user);
                             }
                             catch(Exception $e) {
                                 $msg = $e->getMessage(); 
@@ -151,34 +137,30 @@ else {
     header('Location: ../index.php');
 }
 
-function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messages) {
-    $month = $params->getParam('Month');
-    $year = $params->getParam('Year');
-    $type = $params->getParam('Type');
+function runPrefa($tmpDir, $path, $paramedit, $sciper, $plateforme, $unique, $messages, $user) {
+    $month = $paramedit->getParam('Month');
+    $year = $paramedit->getParam('Year');
+    $type = $paramedit->getParam('Type');
     $dev = "";
     if(DEV_MODE) {
         $dev = " -n";
     }
     $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -d '.DATA.' -u'.$unique.' -s '.$sciper.' -l '.$user;
-    $result = shell_exec($cmd);
+    $res = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
-    if(substr($result, 0, 2) === "OK") {
-        $tab = explode(" ", $result);
+    if(substr($res, 0, 2) === "OK") {
+        $tab = explode(" ", $res);
         $version = $tab[1];
         $dir = DATA.$plateforme."/".$year."/".$mstr."/".$version."/".$unique;
         if($type === "SAP") {
-            $logfile = new Logfile();
-            $sap = new Sap();
-            $sap->load($dir);
-            $status = $sap->status();
-            $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$status;
-            $logfile->write(DATA.$plateforme, $txt);
+            $sap = new Sap($dir);
+            $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$sap->status();
+            Logfile::write(DATA.$plateforme, $txt);
             $_SESSION['alert-success'] = $messages->getMessage('msg1');
         }
         else {
-            $lock = new Lock();
             $name = $sciper."_".$type.'.zip';
-            $lock->saveByName("../".$sciper.".lock", TEMP.$name);
+            Lock::saveByName("../".$sciper.".lock", TEMP.$name);
             Zip::setZipDir(TEMP.$name, $dir."/", Lock::FILES['run']);
             delPrefa($path, $year, $mstr, $unique);
             $_SESSION['alert-success'] = $messages->getMessage('msg2');
@@ -186,7 +168,7 @@ function runPrefa($tmpDir, $path, $params, $sciper, $plateforme, $unique, $messa
     }
     else {
         delPrefa($path, $year, $mstr, $unique);
-        $_SESSION['alert-danger'] = $messages->getMessage('msg4')."<br/>".nl2br($result);
+        $_SESSION['alert-danger'] = $messages->getMessage('msg4')."<br/>".nl2br($res);
     }
 }
 

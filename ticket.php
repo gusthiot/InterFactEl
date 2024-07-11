@@ -20,8 +20,7 @@ $run = $_GET['run'];
 $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
 $s = [];
 
-$ticket = new Ticket($dir."/ticket.json");
-$clients = json_decode($ticket->getTicket(), true);
+$clients = json_decode(Ticket::load($dir), true);
 ksort($clients);
 
 ?>

@@ -165,7 +165,7 @@ class State
         }
     }
 
-    function lastState(string $pathPlate, Lock $lock): void         
+    function lastState(string $pathPlate): void         
     {
         foreach(self::scanDesc($pathPlate) as $year) {
             foreach(self::scanDesc($pathPlate."/".$year) as $month) {
@@ -174,7 +174,7 @@ class State
                         $this->last_y = $year;
                         $this->last_m = $month;
                         $this->last_v = $version;
-                        $this->last_r = $lock->load($pathPlate."/".$year."/".$month."/".$version, "version");
+                        $this->last_r = Lock::load($pathPlate."/".$year."/".$month."/".$version, "version");
                         $this->last = "(".$month." ".$year.", ".$version.")";
                         return;
                     }

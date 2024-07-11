@@ -8,28 +8,26 @@ checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"]) && isset($_POST["type"])){
     checkPlateforme($dataGest, $_POST["plate"]);
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
-    $sap = new Sap();
+    $sap = new Sap($dir);
     $html = "";
     $choices = [];
     $i = 0;
-    $bills = $sap->load($dir);
     $lines = [];
-    foreach($bills as $bill) {
+    foreach($sap->getBills() as $bill) {
         $lines[$bill[0]][$bill[1]] = $bill;
     }
     ksort($lines);
     foreach($lines as $labo) {
         ksort($labo);
         foreach($labo as $line) {
-            if($_POST["type"] == "sendBills") {
+            if($_POST["type"] == "send-bills") {
                 if($line[3] === "READY" || $line[3] === "ERROR") {
                     $choices[] = choice($i, $line);
                 }
             }
             else {
-                $lock = new Lock();
-                $loctxt = $lock->load($dir, "run");
-                if( $line[3] === "SENT" || ($loctxt && $line[3] === "READY") ) {
+                $lockRun = Lock::load($dir, "run");
+                if( $line[3] === "SENT" || ($lockRun && $line[3] === "READY") ) {
                     $choices[] = choice($i, $line);
                 }
             }

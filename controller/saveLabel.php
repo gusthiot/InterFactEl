@@ -12,9 +12,8 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     else {
         $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month'];
     }
-    $label = new Label();
     if(!empty($_POST["txt"])) {
-        if($label->save($dir, $_POST["txt"])) {
+        if(Label::save($dir, $_POST["txt"])) {
             $_SESSION['alert-success'] = "Label sauvegardé";
         }
         else {
@@ -22,7 +21,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         }
     }
     else {
-        if($label->remove($dir)) {
+        if(Label::remove($dir)) {
             $_SESSION['alert-success'] = "Label supprimé";
         }
         else {

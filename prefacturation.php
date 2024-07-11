@@ -22,18 +22,14 @@ $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
 $name = $gestionnaire->getGestionnaire($user)['plates'][$plateforme];
 
 $messages = new Message();
-$label = new Label();
-$labtxt = $label->load($dir);
-if(empty($labtxt)) {
-    $labtxt = $run;
+$label = Label::load($dir);
+if(empty($label)) {
+    $label = $run;
 }
-$sap = new Sap();
-$sap->load($dir);
+$sap = new Sap($dir);
 $status = $sap->status();
-$lock = new Lock();
-$loctxt = $lock->load($dir, "run");
-$lockv = new Lock();
-$locvtxt = $lockv->load(DATA.$plateforme."/".$year."/".$month."/".$version, "version");
+$lockRun = Lock::load($dir, "run");
+$lockVersion = Lock::load(DATA.$plateforme."/".$year."/".$month."/".$version, "version");
 
 include("includes/lock.php");
 
@@ -48,9 +44,9 @@ include("includes/lock.php");
 
     <body>
         <div class="container-fluid">	
-            <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > <a href="plateforme.php?plateforme=<?= $plateforme ?>">Facturation <?= $name ?></a> > Prefacturation <?= $labtxt ?></p></div></div>
+            <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > <a href="plateforme.php?plateforme=<?= $plateforme ?>">Facturation <?= $name ?></a> > Prefacturation <?= $label ?></p></div></div>
             <div class="title <?php if(TEST_MODE) echo "test";?>">
-                <h1 class="text-center p-1 pt-md-5"><?= $labtxt ?></h1>
+                <h1 class="text-center p-1 pt-md-5"><?= $label ?></h1>
             </div>
             <input type="hidden" id="plate" value="<?= $plateforme ?>" />
             <input type="hidden" id="year" value="<?= $year ?>" />
@@ -65,23 +61,23 @@ include("includes/lock.php");
                 <button type="button" id="open-ticket" class="btn but-line">Contrôler le ticket</button>
                 <button type="button" id="open-changes" class="btn but-line">Afficher les modifications</button>
                 <?php 
-                if(($status < 4) && !$loctxt) { ?>
+                if(($status < 4) && !$lockRun) { ?>
                     <button type="button" id="invalidate" class="btn but-line">Invalider</button>
                 <?php } 
-                if(in_array($status, [0, 4, 5, 6, 7]) && $locvtxt && ($locvtxt == $run)) { ?>
+                if(in_array($status, [0, 4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run)) { ?>
                     <button type="button" id="bilans" class="btn but-line">Exporter Bilans & Stats</button>
                     <button type="button" id="annexes" class="btn but-line">Exporter Annexes csv</button>
                 <?php } 
                 ?>
                 <button type="button" id="all" class="btn but-line">Exporter Tout</button>
                 <?php 
-                if(in_array($status, [1, 2, 3, 5, 6, 7]) && !$loctxt) {
+                if(in_array($status, [1, 2, 3, 5, 6, 7]) && !$lockRun) {
                     echo '<button type="button" id="send" '.$disabled.' class="btn but-line-green lockable">Envoi SAP</button>';
                 }
-                if(in_array($status, [0, 5, 6, 7]) && !$loctxt) {
+                if(in_array($status, [0, 5, 6, 7]) && !$lockRun) {
                     echo '<button type="button" id="finalize" '.$disabled.' class="btn but-line-blue lockable">Finaliser SAP</button>';
                 }
-                    if((in_array($status, [4, 5, 6, 7]) && !$loctxt) || (in_array($status, [4, 5, 6, 7]) && $locvtxt && ($locvtxt == $run))) {
+                    if((in_array($status, [4, 5, 6, 7]) && !$lockRun) || (in_array($status, [4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run))) {
                 echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg5').'" '.$disabled.' class="btn but-line-red lockable">Renvoi SAP</button>';
                 }
                 ?>
@@ -89,14 +85,14 @@ include("includes/lock.php");
 
             <?php include("includes/message.php");
 
-                if(!empty($lockedTxt)) {
+                if(!empty($lockProcess)) {
                     $other = "";
                     if($lockedPlate != $plateforme) {
                         $other = " pour une autre plateforme";
                     }
-                    echo'<div class="text-center" >'.$lockedProcess.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
+                    echo'<div class="text-center" >'.$lockedProcessus.' est en cours'.$other.'. Veuillez patientez et rafraîchir la page...</div>';
                 }
-                if(!empty($lockedUser)) {
+                if(!empty($lockUser)) {
                     echo'<div class="text-center">'.$dlTxt.'</div>';
                 }
                 ?>

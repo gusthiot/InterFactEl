@@ -1,25 +1,25 @@
 <?php
 
-
+/**
+ * Facture class represents a json file with one bill for one client
+ */
 class Facture 
 {
 
-
-    private string $facture;
-
-    function __construct(string $name) 
+    /**
+     * Extracts the json file content in an encoded string
+     *
+     * @param string $name the json file name
+     * @return string
+     */
+    static function load(string $name): string
     {
-        $this->facture = "";
+        $facture = "";
         if ((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
-            $this->facture = fread($open, filesize($name));    
+            $facture = fread($open, filesize($name));    
             fclose($open);
         }
-    }
-
-    function getFacture(): string 
-    {
-        return $this->facture;
+        return $facture;
     }
 
 }
-?>

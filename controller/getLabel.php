@@ -11,8 +11,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"])) {
     if(isset($_POST["version"]) && isset($_POST["run"])) {
         $dir .= "/".$_POST['version']."/".$_POST['run'];
     }
-    $label = new Label();
-    $txt = $label->load($dir);
+    $label = Label::load($dir);
 }
 
-echo '<div id="label-line"><textarea name="label" id="label-area">'.$txt.'</textarea><button type="button" id="save-label" class="btn but-line">Save</button></div>';
+echo '<div id="label-line"><textarea name="label" id="label-area">'.$label.'</textarea><button type="button" id="save-label" class="btn but-line">Save</button></div>';

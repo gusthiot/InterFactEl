@@ -16,24 +16,20 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $version = $_POST["version"];
 
     $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
-    $lock = new Lock();
-    $lock->save($dir, 'run', $lock::STATES['invalidate']);
-    $info = new Info();
-    $content = $info->load($dir);
-    if(!empty($content)) {
-        $content["Closed"][2] = date('Y-m-d H:i:s');
-        $content["Closed"][3] = $user;
-        $info->save($dir, $content);
+    Lock::save($dir, 'run', Lock::STATES['invalidate']);
+    $infos = Info::load($dir);
+    if(!empty($infos)) {
+        $infos["Closed"][2] = date('Y-m-d H:i:s');
+        $infos["Closed"][3] = $user;
+        Info::save($dir, $infos);
     }
     else {
         $_SESSION['alert-warning'] = "info vide ? ";
     }
-    $sap = new Sap();
-    $sap->load($dir);
+    $sap = new Sap($dir);
     $status = $sap->status();
     $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Invalidation | ".$status." | ".$status;
-    $logfile = new Logfile();
-    $logfile->write(DATA.$plateforme, $txt);
+    Logfile::write(DATA.$plateforme, $txt);
     $_SESSION['alert-success'] = "invalidé";
 }
 else {

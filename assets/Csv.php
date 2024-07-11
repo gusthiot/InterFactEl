@@ -1,8 +1,18 @@
 <?php
+
+/**
+ * Csv class is a base class to extract and write csv files
+ */
 class Csv 
 {
 
-    function extract(string $file): array 
+    /**
+     * Extracts a csv file as an array of lines in UTF-8
+     *
+     * @param string $file the csv file name
+     * @return array
+     */
+    static function extract(string $file): array 
     {
         $result = [];
         if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
@@ -20,7 +30,14 @@ class Csv
         return $result;
     }
 
-    function write(string $file, array $array): void 
+    /**
+     * Writes lines as array in a csv file
+     *
+     * @param string $file the csv file name
+     * @param array $array array of lines, each line as an array of fields
+     * @return void
+     */
+    static function write(string $file, array $array): void 
     {
         if (($open = fopen($file, "w")) !== false) {
             foreach($array as $row) {
@@ -37,4 +54,3 @@ class Csv
     }
     
 }
-?>

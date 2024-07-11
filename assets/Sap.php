@@ -2,16 +2,39 @@
 
 require_once("Csv.php");
 
+/**
+ * Sap class represents a csv file with the bills list
+ */
 class Sap extends Csv 
 {
+    /**
+     * The csv files names
+     */
     const NAME = "sap.csv";
+
+    /**
+     * Array containing the bills as arrays
+     *
+     * @var array
+     */
     private array $bills;
+
+    /**
+     * First line of the table containing the columns titles
+     *
+     * @var array
+     */
     private array $title;
 
-    function load(string $dir): array 
+    /**
+     * Class constructor
+     *
+     * @param string $dir directory where to find the csv file
+     */
+    function __construct(string $dir) 
     {
         $this->bills = [];
-        $lines = $this->extract($dir."/".self::NAME);
+        $lines = self::extract($dir."/".self::NAME);
         $first = true;
         foreach($lines as $line) {
             $tab = explode(";", $line);
@@ -23,14 +46,33 @@ class Sap extends Csv
                 $this->bills[$tab[1]] = $tab; 
             }
         }
-        return $this->bills;
     }
 
+    /**
+     * Getter for $title array variable
+     *
+     * @return array
+     */
     function getTitle(): array
     {
         return $this->title;
     }
 
+    /**
+     * Getter for $bills array variable
+     *
+     * @return array
+     */
+    function getBills(): array
+    {
+        return $this->bills;
+    }
+
+    /**
+     * Calculates the plateform status from its bills
+     *
+     * @return integer
+     */
     function status(): int
     {
         $status = ['READY'=>0, 'ERROR'=>0, 'SENT'=>0];
@@ -40,6 +82,11 @@ class Sap extends Csv
         return $status['READY'] + 2*$status['ERROR'] + 4*$status['SENT'];
     }
     
+    /**
+     * Returns a string with number of SENT/ERROR/READY bills
+     *
+     * @return string
+     */
     function state(): string
     {
         $state = ['READY'=>0, 'ERROR'=>0, 'SENT'=>0];
@@ -49,6 +96,13 @@ class Sap extends Csv
         return "SENT = ".$state['SENT'].", ERROR = ".$state['ERROR'].", READY = ".$state['READY'];
     }
 
+    /**
+     * Saves an array content to the csv file determined by its location (remove old content)
+     *
+     * @param string $dir directory where to save the csv file
+     * @param array $content content to be saved
+     * @return void
+     */
     function save(string $dir, array $content): void 
     {
         $this->bills = $content;
@@ -56,9 +110,16 @@ class Sap extends Csv
         foreach($this->bills as $line) {
             $data[] = $line;
         }
-        $this->write($dir."/".self::NAME, $data);
+        self::write($dir."/".self::NAME, $data);
     }
 
+    /**
+     * Determines button color class depending on the billing status and on the locked run status
+     *
+     * @param integer $status billing status
+     * @param string $lock locked run status
+     * @return string
+     */
     static function color(int $status, string $lock): string 
     {
         switch($status) {
@@ -81,6 +142,6 @@ class Sap extends Csv
             default:
                 return "";
         }
-    } 
+    }
+
 }
-?>

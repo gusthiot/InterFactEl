@@ -7,15 +7,14 @@ checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
     checkPlateforme($dataGest, $_POST["plate"]);
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
-    $sap = new Sap();
+    $sap = new Sap($dir);
     $html = '<div class="over"><table class="table factures"><thead><tr>';
-    $bills = $sap->load($dir);
     $lines = [];
     foreach($sap->getTitle() as $title) {
         $html .= '<th>'.str_replace('"', '', $title).'</th>';
     }
     $html .= '</tr></thead><tbody>';
-    foreach($bills as $bill) {
+    foreach($sap->getBills() as $bill) {
         $lines[$bill[0]][$bill[1]] = $bill;
     }
     ksort($lines);

@@ -2,24 +2,26 @@
 
 require_once("Csv.php");
 
+/**
+ * Modif class represents a csv file with last version actions
+ */
 class Modif extends Csv 
 {
 
-    private array $modifs;
-
-    function __construct($csv) 
+    /**
+     * Extracts the csv file content as an array and return it
+     *
+     * @param string $csv name of the csv file
+     * @return array
+     */
+    static function load(string $csv): array 
     {
-        $this->modifs = [];
-        $lines = $this->extract($csv);
+        $modifs = [];
+        $lines = self::extract($csv);
         foreach($lines as $line) {
-            $this->modifs[] = explode(";", $line);
+            $modifs[] = explode(";", $line);
         }
+        return $modifs;
     }
     
-    function getModifs(): array 
-    {
-        return $this->modifs;
-    }
-
 }
-?>

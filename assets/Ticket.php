@@ -1,25 +1,31 @@
 <?php
 
-
+/**
+ * Ticket class represents a json file with all billing data
+ */
 class Ticket 
 {
 
+    /**
+     * The json file name
+     */
+    const NAME = "ticket.json";
 
-    private string $ticket;
-
-    function __construct(string $name) 
+    /**
+     * Extracts the json file content in an encoded string
+     *
+     * @param string $dir directory where to find the json file
+     * @return string
+     */
+    static function load(string $dir): string
     {
-        $this->ticket = "";
+        $ticket = "";
+        $name = $dir."/".self::NAME;
         if ((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
-            $this->ticket = fread($open, filesize($name));    
+            $ticket = fread($open, filesize($name));    
             fclose($open);
         }
-    }
-
-    function getTicket(): string 
-    {
-        return $this->ticket;
+        return $ticket;
     }
 
 }
-?>

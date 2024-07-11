@@ -20,9 +20,8 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
 
     $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
 
-    $locklast = new Lock();
     $state = new State();
-    $state->lastState(DATA.$plateforme, $locklast);
+    $state->lastState(DATA.$plateforme);
     if(empty($state->getLast())) {
         $dirTarifs = DATA.$plateforme."/".$year."/".$month;
         $msg = Tarifs::saveFirst($dir, $dirTarifs);
@@ -31,27 +30,23 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         }
     }
 
-    $lock = new Lock();
-    $lock->save($dir, 'run', $lock::STATES['finalized']);
+    Lock::save($dir, 'run', Lock::STATES['finalized']);
     $sep = strrpos($dir, "/");
-    $lock->save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
+    Lock::save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
 
-    $info = new Info();
-    $content = $info->load($dir);
-    if(!empty($content)) {
-        $content["Closed"][2] = date('Y-m-d H:i:s');
-        $content["Closed"][3] = $user;
-        $info->save($dir, $content);
+    $infos = Info::load($dir);
+    if(!empty($infos)) {
+        $infos["Closed"][2] = date('Y-m-d H:i:s');
+        $infos["Closed"][3] = $user;
+        Info::save($dir, $infos);
     }
     else {
         $_SESSION['alert-warning'] = "info vide ? ";
     }
-    $sap = new Sap();
-    $sap->load($dir);
+    $sap = new Sap($dir);
     $status = $sap->status();
     $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;
-    $logfile = new Logfile();
-    $logfile->write(DATA.$plateforme, $txt);
+    Logfile::write(DATA.$plateforme, $txt);
     $_SESSION['alert-success'] = "finalisé";
 }
 else {

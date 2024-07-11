@@ -22,7 +22,7 @@ if($dataGest) {
                 <h6 class="text-center">Welcome <i><?= $user ?></i></h6>
             </div
             <?php include("includes/message.php"); 
-            if(!empty($lockedUser)) { ?>
+            if(!empty($lockUser)) { ?>
                 <div class="text-center"><?= $dlTxt ?></div>
             <?php }
             ?>
@@ -88,7 +88,7 @@ if($dataGest) {
                                         $available = false;
                                         if(file_exists(DATA.$plateforme)) { 
                                             $available = true;
-                                            $state->lastState(DATA.$plateforme, new Lock());
+                                            $state->lastState(DATA.$plateforme);
                                             if(empty($state->getLast())) {
                                                 $available = false;
                                             }

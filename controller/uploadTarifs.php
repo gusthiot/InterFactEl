@@ -1,11 +1,10 @@
 <?php
 require_once("../includes/Zip.php");
-require_once("../assets/Label.php");
 require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
 require_once("../session.inc");
 require_once("../assets/Lock.php");
-require_once("../assets/Parametres.php");
+require_once("../assets/ParamZip.php");
 require_once("../assets/Message.php");
 
 checkGest($dataGest);
@@ -14,15 +13,14 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
     $plateforme = $_POST['plate'];
     $fileName = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];
-    $locklast = new Lock();
     $messages = new Message();
     $state = new State();
-    $state->lastState(DATA.$plateforme, $locklast);
+    $state->lastState(DATA.$plateforme);
     if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
         if($_POST['type'] == "new" && isset($_POST['month-picker'])) {
             $date = explode(" ", $_POST['month-picker']);
             $dirTarifs = DATA.$plateforme."/".$date[1]."/".$date[0]."/";
-            if (!file_exists($dirTarifs."/".Parametres::NAME)) {
+            if (!file_exists($dirTarifs."/".ParamZip::NAME)) {
                 $tmpFile = TEMP.time().'_'.$fileName;
                 if(copy($source, $tmpFile)) {
                     $msg = Tarifs::importNew($dirTarifs, $tmpFile);
