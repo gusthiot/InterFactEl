@@ -3,6 +3,9 @@
 require_once("../assets/Label.php");
 require_once("../session.inc");
 
+/**
+ * Called to save a new label, or delete it
+ */
 checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["txt"])) {
     checkPlateforme($dataGest, $_POST["plate"]);

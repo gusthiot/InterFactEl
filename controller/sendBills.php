@@ -10,6 +10,9 @@ require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
 require_once("../assets/Message.php");
 
+/**
+ * Called to send bills to SAP, and manage answers
+ */
 checkGest($dataGest);
 if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
     checkPlateforme($dataGest, $_POST["plate"]);
@@ -146,6 +149,12 @@ else {
     header('Location: ../index.php');
 }
 
+/**
+ * Sends a bill to SAP
+ *
+ * @param string $data bill data
+ * @return array SAP answer, or error
+ */
 function send(string $data): array
 {
     $curl = curl_init();

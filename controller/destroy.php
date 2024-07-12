@@ -1,6 +1,10 @@
 <?php
+
 require_once("../session.inc");
 
+/**
+ * Called to destroy all the data of a given plateform
+ */
 checkGest($dataGest);
 if(isset($_GET["plate"])) {
     checkPlateforme($dataGest, $_GET["plate"]);

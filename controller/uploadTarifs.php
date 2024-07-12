@@ -76,6 +76,3 @@ else {
     $_SESSION['alert-danger'] = "post_data_missing";
     header('Location: ../index.php');
 }
-
-
-?>

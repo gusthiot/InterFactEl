@@ -3,6 +3,9 @@
 require_once("../assets/Modif.php");
 require_once("../session.inc");
 
+/**
+ * Called to display modifications files as tables
+ */
 checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
     checkPlateforme($dataGest, $_POST["plate"]);
@@ -20,6 +23,16 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     echo $html;
 }
 
+/**
+ * Creates table from data
+ *
+ * @param array $modifs data array
+ * @param string $id button id to download the data file
+ * @param string $title button title for download
+ * @param string $class table class
+ * @param array $prices columns with financial format
+ * @return string
+ */
 function table(array $modifs, string $id, string $title, string $class, array $prices): string
 {
     $html = "";
@@ -36,9 +49,11 @@ function table(array $modifs, string $id, string $title, string $class, array $p
             $html .= "<tr>";
             foreach($line as $col=>$cell) {
                 $color = "";
+                // display the differencies in yellow 
                 if(($class != "modifs") && ($key>0) && ($key%2 == 0) && ($col != 2) && ($cell != $prev[$col])) {
                     $color = ' class="yellow"';
                 }
+                // check for financial format, for month column, and for titles line  
                 in_array($col, $prices) ? $case = number_format(floatval($cell), 2, ".", "'") : 
                     (($col==1) ? $case = ((intval($cell) < 10) ? "0".$cell : $cell) : $case = $cell);
                 ($key==0) ? $html .= "<th>".$cell."</th>" : $html .= "<td".$color.">".$case."</td>";

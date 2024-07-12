@@ -5,18 +5,23 @@ require_once("../assets/ParamZip.php");
 require_once("../assets/Lock.php");
 require_once("../session.inc");
 
+/**
+ * Called to dowload whatever is available to be downloaded
+ */
 if(isset($_GET['type'])) {
     $type = $_GET['type'];
     $tmpFile = TEMP.$type.'_'.time().'.zip';
    
     if($type==="config") {
+        // config zip, only for supervisor
         if(!$superviseur->isSuperviseur($user)) {
             header('Location: ../index.php');
             exit;
         }
         readZip($type, $tmpFile, CONFIG);
     }
-    elseif($type==="prefa") {  
+    elseif($type==="prefa") {
+        // prefacturation, only for the user running it
         checkGest($dataGest);
         $fileName = Lock::loadByName("../".$sciper.".lock");
         if(!empty($fileName)) {   
@@ -36,7 +41,8 @@ if(isset($_GET['type'])) {
             checkGest($dataGest);
             checkPlateforme($dataGest, $_GET['plate']);
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
-            if($type==="tarifs") {  
+            if($type==="tarifs") { 
+                // tarifs uploaded for a given month 
                 $fileName = $dirMonth."/".ParamZip::NAME;
                 header('Content-disposition: attachment; filename="'.ParamZip::NAME.'"');
                 header('Content-type: application/zip');
@@ -46,18 +52,23 @@ if(isset($_GET['type'])) {
                 if(isset($_GET['version']) && isset($_GET['run'])) {
                     $dirRun = $dirMonth."/".$_GET['version']."/".$_GET['run'];
                     if($type==="bilans") {
+                        // bilans of a run
                         readZip($type, $tmpFile, $dirRun."/Bilans_Stats/");
                     }
                     elseif($type==="annexes") {
+                        // annexes of a run
                         readZip($type, $tmpFile, $dirRun."/Annexes_CSV/");
                     }
                     elseif($type==="all") {
+                        // all files of a run
                         readZip($type, $tmpFile, $dirRun."/");
                     }
                     elseif($type==="sap") {
+                        // bills list of a run
                         readCsv($dirRun."/sap.csv");
                     }
                     elseif($type==="modif") {
+                        // modification file (journal, client, modifications) of a run
                         if(isset($_GET['pre'])) {               
                             $name = $gestionnaire->getGestionnaire($user)['plates'][$_GET['plate']];
                             $filename = $_GET['pre']."_".$name."_".$_GET['year']."_".$_GET['month']."_".$_GET['version'];
@@ -65,6 +76,7 @@ if(isset($_GET['type'])) {
                         }
                     }
                     elseif($type==="ticketcsv") {
+                        // annexes csv of a run
                         if(isset($_GET['nom'])) { 
                             $fileName =  $dirRun."/Annexes_CSV/".$_GET['nom'];
                             header('Content-type: application/zip');
@@ -73,6 +85,7 @@ if(isset($_GET['type'])) {
                         }
                     }
                     elseif($type==="ticketpdf") {
+                        // annexes pdf of a run
                         if(isset($_GET['nom'])) { 
                             $fileName =  $dirRun."/Annexes_PDF/".$_GET['nom'];
                             header('Content-Type: application/octet-stream');
@@ -82,6 +95,7 @@ if(isset($_GET['type'])) {
                         }
                     }
                     elseif($type==="alltarifs") {
+                        // all tarifs files used for a month
                         $res =Tarifs::exportLast($tmpFile, $dirRun);
                         if(empty($res)) {
                             header('Content-disposition: attachment; filename="'.ParamZip::NAME.'"');
@@ -118,6 +132,12 @@ else {
     header('Location: ../index.php');
 }
 
+/**
+ * Provides a csv file to be downloaded
+ *
+ * @param string $fileName csv file name
+ * @return void
+ */
 function readCsv(string $fileName): void 
 {
     header('Content-Type: application/octet-stream');
@@ -126,9 +146,17 @@ function readCsv(string $fileName): void
     readfile($fileName);
 }
 
-function readZip(string $name, string $tmpFile, string $dest): void
+/**
+ * Provides a zip archive to be downloaded
+ *
+ * @param string $name zip archive name
+ * @param string $tmpFile temporary zip archive file, will be deleted after download
+ * @param string $dir directory that will be compressed
+ * @return void
+ */
+function readZip(string $name, string $tmpFile, string $dir): void
 {
-    $res = Zip::setZipDir($tmpFile, $dest, Lock::FILES['run']);
+    $res = Zip::setZipDir($tmpFile, $dir, Lock::FILES['run']);
     if(empty($res)) {
         header('Content-disposition: attachment; filename="'.$name.'.zip"');
         header('Content-type: application/zip');
@@ -143,4 +171,3 @@ function readZip(string $name, string $tmpFile, string $dest): void
     }
 }
 
-?>

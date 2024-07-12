@@ -6,6 +6,9 @@ require_once("../assets/Sap.php");
 require_once("../session.inc");
 require_once("../assets/Info.php");
 
+/**
+ * Called to manually invalidate a run
+ */
 checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
     checkPlateforme($dataGest, $_POST["plate"]);

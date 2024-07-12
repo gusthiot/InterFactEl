@@ -3,6 +3,9 @@
 require_once("../assets/Info.php");
 require_once("../session.inc");
 
+/**
+ * Called to display a table with the metadata of a run
+ */
 checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
     checkPlateforme($dataGest, $_POST["plate"]);

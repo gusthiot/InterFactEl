@@ -24,6 +24,3 @@ if(!empty($lockProcess)) {
     $lockedPlate = $lockedTab[1];
     $lockedRun = $lockedTab[2];
 }
-
-
-?>

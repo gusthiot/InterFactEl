@@ -3,6 +3,9 @@
 require_once("../includes/Tarifs.php");
 require_once("../session.inc");
 
+/**
+ * Called to suppress month tarifs
+ */
 checkGest($dataGest);
 if(isset($_GET["plate"]) && isset($_GET["year"]) && isset($_GET["month"])) {
     checkPlateforme($dataGest, $_GET["plate"]);

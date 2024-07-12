@@ -4,6 +4,9 @@ require_once("../assets/Logfile.php");
 require_once("../assets/Label.php");
 require_once("../session.inc");
 
+/**
+ * Called to display the actions history of a plateform
+ */
 checkGest($dataGest);
 $txt = "";
 if(isset($_POST['plate'])) {

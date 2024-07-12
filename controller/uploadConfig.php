@@ -3,6 +3,9 @@ require_once("../includes/Config.php");
 require_once("../includes/Zip.php");
 require_once("../session.inc");
 
+/**
+ * Called to upload new config files
+ */
 if($superviseur->isSuperviseur($user)) {
     if($_FILES['zip_file']) {
         $fileName = $_FILES["zip_file"]["name"];
@@ -33,7 +36,3 @@ if($superviseur->isSuperviseur($user)) {
     }
 }
 header('Location: ../index.php');
-
-
-
-?>

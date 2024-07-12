@@ -9,6 +9,9 @@ require_once("../assets/Message.php");
 require_once("../assets/Sap.php");
 require_once("../session.inc");
 
+/**
+ * Called while uploading a preparation zip to run a prefacturation
+ */
 checkGest($dataGest);
 if(isset($_POST['plate']) && isset($_POST['type'])) {
     checkPlateforme($dataGest, $_POST["plate"]);
@@ -35,6 +38,7 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                     unlink($tmpFile);
                     if(empty($msg)) {                    
                         if($type == "FIRST" || $type == "SIMU") {
+                            // if you need tu upload all data, we need ton check consistancy
                             $result = new ParamRun($tmpDir, 'result');
                             $paramedit = new ParamRun($tmpDir, 'edit');
                             if($plateforme !== $paramedit->getParam('Platform')) {
@@ -51,6 +55,7 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                             }
                         }
                         else {
+                            // with previous internal data, consitancy should be guaranteed
                             $state = new State();
                             $state->lastState(DATA.$plateforme);
                             $dirOut = DATA.$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun()."/OUT/";
@@ -87,6 +92,7 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                             }
                         }
                         if(empty($msg)) {
+                            // if files are ok, we can run
                             $pathPlate = DATA.$plateforme;
                             $unique = time();
                             Lock::save("../", 'process', "prefa ".$plateforme." ".$unique);
@@ -137,6 +143,19 @@ else {
     header('Location: ../index.php');
 }
 
+/**
+ * Runs Python prefacturation
+ *
+ * @param [type] $tmpDir directory were to temporary find the files needed for the prefacturation
+ * @param [type] $path path to plateform directory
+ * @param [type] $paramedit edition parameters data
+ * @param [type] $sciper user sciper
+ * @param [type] $plateforme plateform number
+ * @param [type] $unique run unique name
+ * @param [type] $messages config messages data
+ * @param [type] $user user login surname
+ * @return void
+ */
 function runPrefa($tmpDir, $path, $paramedit, $sciper, $plateforme, $unique, $messages, $user) {
     $month = $paramedit->getParam('Month');
     $year = $paramedit->getParam('Year');
@@ -172,6 +191,15 @@ function runPrefa($tmpDir, $path, $paramedit, $sciper, $plateforme, $unique, $me
     }
 }
 
+/**
+ * Deletes the result of a prefacturation
+ *
+ * @param [type] $path path to plateform directory
+ * @param [type] $year concerned year
+ * @param [type] $mstr concerned month, in string format
+ * @param [type] $unique concerned run
+ * @return void
+ */
 function delPrefa($path, $year, $mstr, $unique) {
     State::removeRun($path."/".$year."/".$mstr, $unique);
     if(file_exists($path)) {
@@ -181,8 +209,3 @@ function delPrefa($path, $year, $mstr, $unique) {
         }
     }
 }
-
-
-
-
-?>
