@@ -1,6 +1,7 @@
 <?php
-require_once("session.inc");
+
 require_once("assets/Ticket.php");
+require_once("session.inc");
 
 checkGest($dataGest);
 if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {

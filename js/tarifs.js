@@ -8,7 +8,7 @@ $('#month-picker').datepicker({
     changeMonth: true,
     changeYear: true, 
     showButtonPanel: true,
-    minDate: new Date(lastYear, lastMonth),
+    minDate: new Date(lastYear, lastMonth - 1),
     maxDate: '+5Y',
     onClose: function(e){
         var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
@@ -16,7 +16,7 @@ $('#month-picker').datepicker({
         $(this).datepicker("setDate",new Date(year,month));
     }
 })
-.datepicker("setDate",new Date(lastYear,lastMonth));
+.datepicker("setDate",new Date(lastYear,lastMonth - 1));
 
 $(document).on("change", "#zip-tarifs", function () {
     const file = $('#zip-tarifs').val();

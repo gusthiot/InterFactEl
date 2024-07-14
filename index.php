@@ -1,7 +1,8 @@
 <?php
-require_once("session.inc");
+
 require_once("assets/Lock.php");
 require_once("includes/State.php");
+require_once("session.inc");
 
 if($dataGest) {
     include("includes/lock.php");
@@ -29,6 +30,7 @@ if($dataGest) {
             <div id="index-canevas">
             <?php
                 if($superviseur->isSuperviseur($user)) {
+                    // Only supervisor can upload/download config files
                 ?>
                 
                 <div id="index supervision">
@@ -54,8 +56,8 @@ if($dataGest) {
             <?php
                 }
                 if($dataGest) {
-                    ?>  
-                    
+                    // Only manager can make facturation
+                    ?>             
                     <div id="index-gestion">                  
                         <h3 class="">Gestion</h3>
                         <div id="index-facturation">  
@@ -77,6 +79,7 @@ if($dataGest) {
                         </div>
                         <?php
                         if(!empty($dataGest['complet'])) {
+                            // Only complete manager can modify parameters and make simulation
                             ?>      
                             <div id="index-tarifs">                
                                 <h5 class="">Nouveaux tarifs</h5>

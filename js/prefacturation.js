@@ -1,14 +1,21 @@
 const getDir = "plate="+$('#plate').val()+"&year="+$('#year').val()+"&month="+$('#month').val()+"&version="+$('#version').val()+"&run="+$('#run').val();
 const postDir = {plate: $('#plate').val(), year: $('#year').val(), month: $('#month').val(), version: $('#version').val(), run: $('#run').val()};
 
+$('#download-prefa').on('click', function () {
+    window.location.href = "controller/download.php?type=prefa";
+} );
+
 $('#open-label').on('click', function () {
     $.post("controller/getLabel.php", postDir, function (data) {
         $('#prefa-content').html(data);
     });
 } );
 
-$('#download-prefa').on('click', function () {
-    window.location.href = "controller/download.php?type=prefa";
+$(document).on("click", "#save-label", function() {
+    const txt = $('#label-area').val();
+    $.post("controller/saveLabel.php", Object.assign({}, postDir, {txt: txt}), function () {
+        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
+    });
 } );
 
 $('#open-info').on('click', function () {  
@@ -23,6 +30,10 @@ $('#open-bills').on('click', function () {
     });
 } );
 
+$(document).on("click", "#get-sap", function() {
+    window.location.href = "controller/download.php?type=sap&"+getDir;
+} );
+
 $('#open-ticket').on('click', function () {
     window.open("ticket.php?"+getDir);
 } );
@@ -33,15 +44,16 @@ $('#open-changes').on('click', function () {
     });
 } );
 
-$(document).on("click", "#get-sap", function() {
-    window.location.href = "controller/download.php?type=sap&"+getDir;
+$(document).on("click", "#get-modif", function() {
+    window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Modif-factures";
 } );
 
-$(document).on("click", "#save-label", function() {
-    const txt = $('#label-area').val();
-    $.post("controller/saveLabel.php", Object.assign({}, postDir, {txt: txt}), function () {
-        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
-    });
+$(document).on("click", "#get-journal", function() {
+    window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Journal-corrections";
+} );
+
+$(document).on("click", "#get-client", function() {
+    window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Clients-modifs";
 } );
 
 $('#invalidate').on('click', function () {
@@ -68,16 +80,19 @@ $('#send').on('click', function () {
     });
 } );
 
-$(document).on("click", "#get-modif", function() {
-    window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Modif-factures";
+$('#finalize').on('click', function () {
+    $.post("controller/finalize.php", postDir, function () {
+        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
+    });
 } );
 
-$(document).on("click", "#get-journal", function() {
-    window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Journal-corrections";
-} );
-
-$(document).on("click", "#get-client", function() {
-    window.location.href = "controller/download.php?type=modif&"+getDir+"&pre=Clients-modifs";
+$('#resend').on('click', function () {
+    if (confirm($(this).data('msg')) == true) {
+        $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "resend-bills"}), function (data) {
+            $('#prefa-content').html(data);
+        });
+        
+    } 
 } );
 
 $(document).on("click", "#send-bills", function() {
@@ -117,18 +132,3 @@ $(document).on("click", "#all-bills", function() {
         all = true;
     }
 });
-
-$('#finalize').on('click', function () {
-    $.post("controller/finalize.php", postDir, function () {
-        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
-    });
-} );
-
-$('#resend').on('click', function () {
-    if (confirm($(this).data('msg')) == true) {
-        $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "resend-bills"}), function (data) {
-            $('#prefa-content').html(data);
-        });
-        
-    } 
-} );

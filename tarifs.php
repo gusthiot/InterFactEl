@@ -1,10 +1,11 @@
 <?php
-require_once("session.inc");
-require_once("includes/State.php");
+
 require_once("assets/ParamZip.php");
 require_once("assets/Lock.php");
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
+require_once("includes/State.php");
+require_once("session.inc");
 
 checkGest($dataGest);
 if(!isset($_GET["plateforme"])) {
@@ -67,8 +68,8 @@ if(file_exists($dir)) {
             <?php
             if($available) {
             ?>
-                <input type="hidden" id="last-month" value="<?= State::getPreviousMonth($state->getLastYear(), $state->getLastMonth()) ?>" />
-                <input type="hidden" id="last-year" value="<?= State::getPreviousYear($state->getLastYear(), $state->getLastMonth()) ?>" />
+                <input type="hidden" id="last-month" value="<?= $state->getLastMonth() ?>" />
+                <input type="hidden" id="last-year" value="<?= $state->getLastYear() ?>" />
                 <table id="tarifs" class="table table-boxed">
                     <?php
                     foreach(State::scanDesc($dir) as $year) {

@@ -3,8 +3,8 @@
 require_once("../assets/Lock.php");
 require_once("../assets/Logfile.php");
 require_once("../assets/Sap.php");
-require_once("../session.inc");
 require_once("../assets/Info.php");
+require_once("../session.inc");
 
 /**
  * Called to manually invalidate a run

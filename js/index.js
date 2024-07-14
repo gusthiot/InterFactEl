@@ -1,10 +1,10 @@
 
-$('#download-config').on('click', function () {
-    window.location.href = "controller/download.php?type=config";
-} );
-
 $('#download-prefa').on('click', function () {
     window.location.href = "controller/download.php?type=prefa";
+} );
+
+$('#download-config').on('click', function () {
+    window.location.href = "controller/download.php?type=config";
 } );
 
 $('#zip-config').on('change', function () {

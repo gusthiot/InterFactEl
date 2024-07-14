@@ -1,9 +1,10 @@
 <?php
-require_once("session.inc");
-require_once("includes/State.php");
+
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");
+require_once("includes/State.php");
+require_once("session.inc");
 
 checkGest($dataGest);
 if(!isset($_GET["plateforme"])) {
@@ -14,6 +15,7 @@ if(!isset($_GET["plateforme"])) {
 $plateforme = $_GET['plateforme'];
 checkPlateforme($dataGest, $plateforme);
 
+// Check if first facturation, if one is running, which one is the last one
 $dir = DATA.$plateforme;
 $first = true;
 $current = State::currentState($dir);
@@ -33,7 +35,15 @@ if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($user)['complet'
     $complet = true;
 }
 
-function uploader(string $title, string $id, string $disabled)
+/**
+ * Customized button to upload prepa
+ *
+ * @param string $title button title
+ * @param string $id upload input id
+ * @param string $disabled if button is disabled, when a process is running
+ * @return string 
+ */
+function uploader(string $title, string $id, string $disabled): string
 {
     $html = '<input id="'.$id.'" type="file" name="'.$id.'" '.$disabled.' class="zip-file lockable" accept=".zip">';
     $html .= '<label class="btn but-line" for="'.$id.'">';
@@ -90,15 +100,15 @@ include("includes/lock.php");
                         </div>
                         <div class="col-sm">
                             <?php
-                                if(!$first) { 
+                                if($first) {
+                                    if($complet) {
+                                        echo uploader("Préparer 1ère facturation", "FIRST", $disabled);
+                                    } 
+                                }
+                                else {
                                     if(empty($current)) {
                                         echo uploader("Refaire factures : ".$state->getLastMonth()."/".$state->getLastYear(), "REDO", $disabled);
                                         echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $disabled);
-                                    }
-                                }
-                                else {
-                                    if($complet) {
-                                        echo uploader("Préparer 1ère facturation", "FIRST", $disabled);
                                     }
                                 } 
                             ?>
@@ -131,6 +141,7 @@ include("includes/lock.php");
             ?>
                 <table class="table table-boxed">
                     <?php
+                    // Listing of all year/month/version/run for th plateform
                     foreach(State::scanDesc($dir) as $year) {
                         foreach(State::scanDesc($dir."/".$year) as $month) {
                             $versions = State::scanDesc($dir."/".$year."/".$month);

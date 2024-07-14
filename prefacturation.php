@@ -1,9 +1,10 @@
 <?php
-require_once("session.inc");
+
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");
 require_once("assets/Message.php");
+require_once("session.inc");
 
 checkGest($dataGest);
 if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {

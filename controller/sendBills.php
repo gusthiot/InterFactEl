@@ -3,12 +3,12 @@
 require_once("../assets/Sap.php");
 require_once("../assets/Info.php");
 require_once("../assets/Facture.php");
-require_once("../session.inc");
 require_once("../assets/Lock.php");
 require_once("../assets/Logfile.php");
+require_once("../assets/Message.php");
 require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
-require_once("../assets/Message.php");
+require_once("../session.inc");
 
 /**
  * Called to send bills to SAP, and manage answers
