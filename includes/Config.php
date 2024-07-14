@@ -3,10 +3,23 @@
 require_once("Zip.php");
 require_once("State.php");
 
+/**
+ * Config Class represents the config directory and its content
+ */
 class Config
 {
+    /**
+     * The names of the csv needed and accepted files
+     */
     const FILES = ["gestionnaire.csv", "message.csv", "superviseur.csv"];
 
+    /**
+     * Checks and saves uploaded files
+     *
+     * @param string $file zip archive file name
+     * @param string $dirConfig path to the config directory
+     * @return string error or empty string
+     */
     static function upload(string $file, string $dirConfig): string
     {
         $tmpDir = TEMP.'config_'.time().'/';
@@ -25,6 +38,5 @@ class Config
         }
         return error_get_last();
     }
-
 
 }

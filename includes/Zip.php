@@ -1,8 +1,20 @@
 <?php
 
+/**
+ * Zip class kind of extends ZipArchive capacities with some useful functions
+ */
 class Zip 
 {
 
+    /**
+     * Creates a specfic and complex zip archive to be downladed
+     *
+     * @param string $tmpFile temporary created zip file, deleted after download
+     * @param string $dirname directory containing what needs to be compressed
+     * @param string $lockFileName lock file name we don't want to compress
+     * @param string $morefile file name we want to add which is not in $dirname
+     * @return string empty, or error
+     */
     static function setZipDir(string $tmpFile, string $dirname, string $lockFileName, string $morefile=""): string 
     {
         $zip = new ZipArchive;
@@ -22,6 +34,15 @@ class Zip
         }
     }
 
+    /**
+     * Scans and adds recursively the files from subdirectories, and keeps directories structure
+     *
+     * @param ZipArchive $zip object representing the archive we are creating
+     * @param string $dirname directory containing what needs to be compressed
+     * @param string $treename keep the level we are processing
+     * @param string $lockFileName lock file name we don't want to compress
+     * @return void
+     */
     static function tree(ZipArchive $zip, string $dirname, string $treename, string $lockFileName): void
     {
         $dir = opendir($dirname);
@@ -42,6 +63,13 @@ class Zip
         closedir($dir);
     }
 
+    /**
+     * Checks uploaded zip archive and unzip it
+     *
+     * @param string $file uploaded archive
+     * @param string $dest directory where to save archive content
+     * @return string empty, or error
+     */
     static function unzip(string $file, string $dest): string 
     {
         $zip = new ZipArchive;
@@ -67,6 +95,12 @@ class Zip
         }
     }
 
+    /**
+     * Checks if an uploaded archive has an authorized type
+     *
+     * @param string $type archive type
+     * @return boolean
+     */
     static function isAccepted(string $type): bool 
     {
         $acceptedTypes = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed'];

@@ -56,8 +56,7 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                         }
                         else {
                             // with previous internal data, consitancy should be guaranteed
-                            $state = new State();
-                            $state->lastState(DATA.$plateforme);
+                            $state = new State(DATA.$plateforme);
                             $dirOut = DATA.$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun()."/OUT/";
                                 
                             foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
@@ -146,17 +145,18 @@ else {
 /**
  * Runs Python prefacturation
  *
- * @param [type] $tmpDir directory were to temporary find the files needed for the prefacturation
- * @param [type] $path path to plateform directory
- * @param [type] $paramedit edition parameters data
- * @param [type] $sciper user sciper
- * @param [type] $plateforme plateform number
- * @param [type] $unique run unique name
- * @param [type] $messages config messages data
- * @param [type] $user user login surname
+ * @param string $tmpDir directory were to temporary find the files needed for the prefacturation
+ * @param string $path path to plateform directory
+ * @param Paramrun $paramedit edition parameters data
+ * @param string $sciper user sciper
+ * @param string $plateforme plateform number
+ * @param string $unique run unique name
+ * @param Message $messages config messages data
+ * @param string $user user login surname
  * @return void
  */
-function runPrefa($tmpDir, $path, $paramedit, $sciper, $plateforme, $unique, $messages, $user) {
+function runPrefa(string $tmpDir, string $path, Paramrun $paramedit, string $sciper, string $plateforme, string $unique, Message $messages, string $user): void 
+{
     $month = $paramedit->getParam('Month');
     $year = $paramedit->getParam('Year');
     $type = $paramedit->getParam('Type');
@@ -194,13 +194,14 @@ function runPrefa($tmpDir, $path, $paramedit, $sciper, $plateforme, $unique, $me
 /**
  * Deletes the result of a prefacturation
  *
- * @param [type] $path path to plateform directory
- * @param [type] $year concerned year
- * @param [type] $mstr concerned month, in string format
- * @param [type] $unique concerned run
+ * @param string $path path to plateform directory
+ * @param string $year concerned year
+ * @param string $mstr concerned month, in string format
+ * @param string $unique concerned run
  * @return void
  */
-function delPrefa($path, $year, $mstr, $unique) {
+function delPrefa(string $path, string $year, string $mstr, string $unique): void
+{
     State::removeRun($path."/".$year."/".$mstr, $unique);
     if(file_exists($path)) {
         if(file_exists($path."/".$year)) {

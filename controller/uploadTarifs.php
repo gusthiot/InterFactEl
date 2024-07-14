@@ -14,8 +14,7 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
     $fileName = $_FILES["zip_file"]["name"];
     $source = $_FILES["zip_file"]["tmp_name"];
     $messages = new Message();
-    $state = new State();
-    $state->lastState(DATA.$plateforme);
+    $state = new State(DATA.$plateforme);
     if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
         if($_POST['type'] == "new" && isset($_POST['month-picker'])) {
             $date = explode(" ", $_POST['month-picker']);
@@ -37,7 +36,7 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
                 }
             }
             else{
-                if(State::isSame($state->getLastMonth(), $state->getLastYear(), $date[0], $date[1])) {
+                if($state->isSame($date[0], $date[1])) {
                     $_SESSION['alert-danger'] = $messages->getMessage('msg8');
                 }
                 else {

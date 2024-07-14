@@ -16,15 +16,11 @@ checkPlateforme($dataGest, $plateforme);
 
 $dir = DATA.$plateforme;
 $first = true;
-$current = false;
-$state = new State();
-if(file_exists($dir)) { 
-    $state->lastState($dir);
-    $state->currentState($dir);
+$current = State::currentState($dir);
+$state = new State($dir);
+if(file_exists($dir)) {
     $first = false;
-    $current = true;
-    if(empty($state->getCurrent())) {
-        $current = false;
+    if(empty($current)) {
         if(empty($state->getLast())) {
             $first = true;
         }
@@ -73,7 +69,7 @@ include("includes/lock.php");
             
             <form action="controller/uploadPrepa.php" method="post" id="form-fact" enctype="multipart/form-data" >
                 <div class="text-center">
-                    <p>Facturation en cours : <?php echo (!empty($state->getCurrent())) ? $state->getCurrent() : "aucune";  ?></p>
+                    <p>Facturation en cours : <?php echo (!empty($current)) ? $current : "aucune";  ?></p>
                     <p>Dernière facturation : <?php echo (!empty($state->getLast())) ? $state->getLast() : "aucune";  ?></p> 
                     <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
                     <input type="hidden" name="type" id="type" value="SAP">   
@@ -83,7 +79,7 @@ include("includes/lock.php");
                                 if(!$first) { ?>
                                     <div><button type="button" id="open-historique" class="btn but-line">Ouvrir l'historique</button></div>
                                     <?php 
-                                    if(!$current) { 
+                                    if(empty($current)) { 
                                         echo uploader("Facturation Pro Forma", "PROFORMA", $disabled);
                                     }             
                                     if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") { ?>
@@ -95,7 +91,7 @@ include("includes/lock.php");
                         <div class="col-sm">
                             <?php
                                 if(!$first) { 
-                                    if(!$current) {
+                                    if(empty($current)) {
                                         echo uploader("Refaire factures : ".$state->getLastMonth()."/".$state->getLastYear(), "REDO", $disabled);
                                         echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $disabled);
                                     }

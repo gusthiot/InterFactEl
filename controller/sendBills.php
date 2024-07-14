@@ -37,9 +37,8 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $error = "";
     $messages = new Message();
     $sap = new Sap($dir);
-    $state = new State();
     $oldStatus = $sap->status();
-    $oldState = $sap->state();
+    $oldSapState = $sap->state();
     $oks = 0;
     $kos = 0;
 
@@ -97,7 +96,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     unlink("../".Lock::FILES['process']);
 
     if($sap->status() == 4) {
-        $state->lastState(DATA.$plateforme);
+        $state = new State(DATA.$plateforme);
         if(empty($state->getLast())) {
             $dirTarifs = DATA.$plateforme."/".$year."/".$month."/";
             $msg = Tarifs::saveFirst($dir, $dirTarifs);
@@ -117,9 +116,9 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
 
     $sap = new Sap($dir);
     $status = $sap->status();
-    $state = $sap->state();
+    $sapState = $sap->state();
     $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
-    $txt .= $oldState." | ".count($bills)." | ".$state;
+    $txt .= $oldSapState." | ".count($bills)." | ".$sapState;
     Logfile::write(DATA.$plateforme."/", $txt);
     if(!empty($warn)) {
         $_SESSION['alert-warning'] = $warn;

@@ -23,8 +23,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
 
     $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
 
-    $state = new State();
-    $state->lastState(DATA.$plateforme);
+    $state = new State(DATA.$plateforme);
     if(empty($state->getLast())) {
         $dirTarifs = DATA.$plateforme."/".$year."/".$month;
         $msg = Tarifs::saveFirst($dir, $dirTarifs);

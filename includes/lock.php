@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * checks if a process is running, and if it's the case, displays a message, and disables access to processing
+ */
 $disabled = "";
 $dlTxt = "";
 $lockUser = Lock::loadByName($sciper.".lock");

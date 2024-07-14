@@ -19,10 +19,9 @@ checkPlateforme($dataGest, $plateforme);
 $name = $gestionnaire->getGestionnaire($user)['plates'][$plateforme];
 $dir = DATA.$plateforme;
 $available = false;
-$state = new State();
+$state = new State($dir);
 if(file_exists($dir)) { 
     $available = true;
-    $state->lastState($dir);
     if(empty($state->getLast())) {
         $available = false;
     }
@@ -81,10 +80,10 @@ if(file_exists($dir)) {
                                 }
                                 $moment = 0;
 
-                                if(State::isSame($state->getLastMonth(), $state->getLastYear(), $month, $year)) {
+                                if($state->isSame($month, $year)) {
                                     $moment = 1;
                                 }
-                                elseif(State::isLater($state->getLastMonth(), $state->getLastYear(), $month, $year)) {
+                                elseif($state->isLater($month, $year)) {
                                     $moment = 2;
                                 }
 
