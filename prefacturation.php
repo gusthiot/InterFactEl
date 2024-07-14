@@ -45,7 +45,15 @@ include("includes/lock.php");
 
     <body>
         <div class="container-fluid">	
-            <div id="head"><div id="div-logo"><a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a></div><div id="div-path"><p><a href="index.php">Accueil</a> > <a href="plateforme.php?plateforme=<?= $plateforme ?>">Facturation <?= $name ?></a> > Prefacturation <?= $label ?></p></div></div>
+            <div id="head">
+                <div id="div-logo">
+                    <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
+                </div>
+                <div id="div-path">
+                    <p><a href="index.php">Accueil</a> > <a href="plateforme.php?plateforme=<?= $plateforme ?>">Facturation <?= $name ?></a> > Prefacturation <?= $label ?></p>
+                    <p><a href="logout.php">Logout</a></p>
+                </div>
+            </div>
             <div class="title <?php if(TEST_MODE) echo "test";?>">
                 <h1 class="text-center p-1 pt-md-5"><?= $label ?></h1>
             </div>

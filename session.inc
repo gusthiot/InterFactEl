@@ -28,7 +28,6 @@ else {
         $user = $_SESSION['Tequila-Session-User'];
     }
 }
-//$oClient->logout();
 
 /**
  * Managing user rights

@@ -195,8 +195,9 @@ input[type="file"] {
 #div-path {
   margin: 0;
   font-size: 1rem;
-  vertical-align: middle;
+  display: flex;
   font-weight: bold;
+  justify-content: space-between;
 }
 
 #div-path a {

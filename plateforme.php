@@ -71,6 +71,7 @@ include("includes/lock.php");
                 </div>
                 <div id="div-path">
                     <p><a href="index.php">Accueil</a> > Facturation <?= $name ?></p>
+                    <p><a href="logout.php">Logout</a></p>
                 </div>
             </div>	
             <div class="title <?php if(TEST_MODE) echo "test";?>">
