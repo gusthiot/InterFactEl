@@ -43,7 +43,7 @@ ksort($clients);
         <input type="hidden" id="version" value="<?= $version ?>" />
         <input type="hidden" id="run" value="<?= $run ?>" />
         <div id="combo">
-            <select name="client" onchange="changeClient(this)">
+            <select name="client" id="selector">
             <?php
             $i = 0;
             foreach(array_keys($clients) as $title) {
@@ -92,7 +92,7 @@ ksort($clients);
                             <table id="annexes">
                                 <tr>
                                     <td>
-                                        <a href="#" class="csv" target="new"><?=$client['nom_zip']?></a>
+                                        <div class="csv" target="new"><?=$client['nom_zip']?></div>
                                     </td>
                                 </tr>
                             </table>
@@ -104,6 +104,10 @@ ksort($clients);
                     foreach($client['factures'] as $facture) {
                     ?>
                     <section>
+                        <?=$client['code']?> <br />
+                        <?=$client['abrev']?> <br />
+                        <?=$client['nom2']?> <br />
+                        <?=$client['nom3']?> <br />
                         <?=$facture['ref']?> <br /><br />
                         <table id="tableau">
                             <tr>
@@ -134,7 +138,7 @@ ksort($clients);
                         <table id="annexes">
                             <tr>
                                 <td>
-                                    <a href="#" class="pdf" target="new"><?=$facture['nom_pdf']?></a>
+                                    <div class="pdf" target="new"><?=$facture['nom_pdf']?></div>
                                 </td>
                             </tr>
                         </table>
@@ -152,14 +156,5 @@ ksort($clients);
         include("includes/footer.php");?> 
         <script src="reveal.js/dist/reveal.js"></script>
         <script src="js/ticket.js"></script>
-        <script>
-            Reveal.initialize();
-        </script>
-        <script>
-            function changeClient(sel) {
-                Reveal.slide(sel.value, 0);
-            }
-        </script>
-  
 	</body>
 </html>

@@ -39,3 +39,11 @@
 .reveal .slides > section > section.present {
   top: 10px !important;
 }
+.csv, .pdf {
+  color: #2a76dd;
+}
+
+.csv:hover, .pdf:hover  {
+  font-weight: bold;
+  cursor: pointer;
+}
