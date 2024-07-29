@@ -83,7 +83,7 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                                 $month = $state->getNextMonth();
                             }
                             $array = [["Platform", $plateforme], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
-                            $paramedit->write($tmpDir."/".ParamRun::NAMES['edit'], $array);
+                            ParamRun::write($tmpDir."/".ParamRun::NAMES['edit'], $array);
                             $paramedit = new ParamRun($tmpDir, 'edit');
 
                             $paramFile = DATA.$plateforme."/".$year."/".$month."/".ParamZip::NAME;
