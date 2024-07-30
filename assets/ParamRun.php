@@ -52,7 +52,12 @@ class ParamRun extends Csv
      */
     function getParam(string $key): string 
     {
-        return $this->params[$key];
+        if(array_key_exists($key, $this->params)) {
+            return $this->params[$key];
+        }
+        else {
+            return "";
+        }
     }
 
 }

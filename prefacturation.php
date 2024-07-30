@@ -70,9 +70,9 @@ include("includes/lock.php");
                 <button type="button" id="open-ticket" class="btn but-line">Contrôler le ticket</button>
                 <button type="button" id="open-changes" class="btn but-line">Afficher les modifications</button>
                 <?php 
-                if(($status < 4) && !$lockRun) { ?>
-                    <button type="button" id="invalidate" class="btn but-line">Invalider</button>
-                <?php } 
+                if(($status < 4) && !$lockRun) {
+                    echo '<button type="button" id="invalidate" '.$disabled.' class="btn but-line lockable">Invalider</button>';
+                } 
                 if(in_array($status, [0, 4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run)) { ?>
                     <button type="button" id="bilans" class="btn but-line">Exporter Bilans & Stats</button>
                     <button type="button" id="annexes" class="btn but-line">Exporter Annexes csv</button>

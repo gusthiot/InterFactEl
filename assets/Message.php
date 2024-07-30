@@ -41,7 +41,12 @@ class Message extends Csv
      */
     function getMessage(string $id): string 
     {
-        return $this->messages[$id];
+        if(array_key_exists($id, $this->messages)) {
+            return $this->messages[$id];
+        }
+        else {
+            return "";
+        }
     }
 
 }
