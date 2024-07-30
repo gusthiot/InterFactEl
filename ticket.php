@@ -104,11 +104,13 @@ ksort($clients);
                     foreach($client['factures'] as $facture) {
                     ?>
                     <section>
-                        <?=$client['code']?> <br />
-                        <?=$client['abrev']?> <br />
-                        <?=$client['nom2']?> <br />
-                        <?=$client['nom3']?> <br />
-                        <?=$facture['ref']?> <br /><br />
+                        <div id="entete">
+                            <?=$client['code']?> <br />
+                            <?=$client['abrev']?> <br />
+                            <?=$client['nom2']?> <br />
+                            <?=$client['nom3']?> <br />
+                            <?=$facture['ref']?> <br />
+                        </div><br />
                         <table id="tableau">
                             <tr>
                                 <td>N° Poste </td>
