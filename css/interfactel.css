@@ -330,6 +330,13 @@ input[type="file"] {
   margin: auto;
 }
 
+#over-log {
+  margin: 0 auto;
+  width: 90%;
+  display: block;
+  overflow-x: auto;
+}
+
 /** prefacturation **/
 
 #prefa-content {
