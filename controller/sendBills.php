@@ -84,6 +84,9 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                         $warn .= $bill.": info vide ? <br />";
                     }
                 }
+                else {
+                    $warn .= $bill.": contenu corrompu ? <br />";
+                }
             }
             else {
                 $kos++;
@@ -91,7 +94,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
         }
     }
     catch(Exception $e) {
-        $error .= $e->getMesage(); 
+        $error .= $e->getMessage(); 
     }
     unlink("../".Lock::FILES['process']);
 

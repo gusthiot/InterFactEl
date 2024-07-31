@@ -335,6 +335,7 @@ input[type="file"] {
   width: 90%;
   display: block;
   overflow-x: auto;
+  max-height: 700px;
 }
 
 /** prefacturation **/
