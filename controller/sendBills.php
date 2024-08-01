@@ -98,6 +98,11 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     }
     unlink("../".Lock::FILES['process']);
 
+    $remainings = count($bills) - ($oks + $kos);
+    if($remainings > 0) {
+        $warn .= $remainings." factures potentiellement non envoyées <br />";
+    }
+
     if($sap->status() == 4) {
         $state = new State(DATA.$plateforme);
         if(empty($state->getLast())) {

@@ -288,6 +288,10 @@ input[type="file"] {
 
 /** plateforme **/
 
+#display {
+  margin: 10px;
+}
+
 .loader {
   border: 16px solid var(--perle); 
   border-top: 16px solid var(--acier);
@@ -326,7 +330,7 @@ input[type="file"] {
 
 #log {
   text-align: left;
-  width: 1000px;
+  width: 1500px;
   margin: auto;
 }
 

@@ -117,6 +117,7 @@ function sending(type) {
 
 let all = false;
 $(document).on("click", "#all-bills", function() {
+    let num = 0;
     if(all) {
         $('#all-bills').text("Tout sélectionner");
         $.each($("input[name='bills']"), function(){
@@ -128,7 +129,31 @@ $(document).on("click", "#all-bills", function() {
         $('#all-bills').text("Tout désélectionner");
         $.each($("input[name='bills']"), function(){
             $(this).prop('checked', true);
+            num++;
         });
         all = true;
     }
+    displayNum(num);
 });
+
+$(document).on("click", ".check-bill", function() {
+    let num = 0;
+    $.each($("input[name='bills']:checked"), function(){
+        num++;
+    });
+    displayNum(num);
+});
+
+function displayNum(num) {
+    if(num > 0 ) {
+        if(num > 1) {
+            $('#selected-factures').text(num+" factures sélectionnées");
+        }
+        else {
+            $('#selected-factures').text("1 facture sélectionnée");
+        }
+    }
+    else {
+        $('#selected-factures').text("aucune facture sélectionnée");
+    }
+}
