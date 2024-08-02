@@ -135,7 +135,7 @@ if($dataGest) {
                                             <form action="controller/uploadPrepa.php" method="post" class="form-simu" enctype="multipart/form-data" >
                                                 <input type="hidden" name="plate" id="plate-simu" value="<?= $plateforme ?>" />
                                                 <input type="hidden" name="type" id="type" value="SIMU">   
-                                                <input id="SIMU" type="file" name="SIMU" '.$disabled.' class="zip_simu lockable" accept=".zip">
+                                                <input id="SIMU" type="file" name="SIMU" <?= $disabled ?> class="zip-simu lockable" accept=".zip">
                                             </form>
                                             <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
                                             <svg class="icon icon-tile" aria-hidden="true">

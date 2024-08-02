@@ -91,7 +91,7 @@ include("includes/lock.php");
                                     <div><button type="button" id="open-historique" class="btn but-line">Ouvrir l'historique</button></div>
                                     <?php 
                                     if(empty($current)) { 
-                                        echo uploader("Facturation Pro Forma", "PROFORMA", $disabled);
+                                        echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $disabled);
                                     }             
                                     if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") { ?>
                                         <div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button></div>
