@@ -75,15 +75,9 @@ class Zip
         $zip = new ZipArchive;
         $res = $zip->open($file);
         if ($res === true) {
-            for($i = 0; $i < $zip->count(); $i++) {
-                $fileName = $zip->getNameIndex($i);
-                $fileInfo = pathinfo($fileName);
-                if(array_key_exists('extension', $fileInfo)) {
-                    if(!copy("zip://".$file."#".$fileName, $dest.$fileInfo['basename'])) {
-                        $errors= error_get_last();
-                        return $errors['message'];
-                    }
-                }
+            if(!$zip->extractTo($dest)) {
+                $errors= error_get_last();
+                return $errors['message'];
             }
             if(!$zip->close()) {
                 return "error to close zip";
@@ -105,5 +99,26 @@ class Zip
     {
         $acceptedTypes = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed'];
         return in_array($type, $acceptedTypes);
+    }
+
+    /**
+     * Gives the message for each upload error
+     *
+     * @param integer $error upload error
+     * @return string
+     */
+    static function getErrorMessage(int $error): string
+    {
+        $phpFileUploadErrors = array(
+            0 => 'There is no error, the file uploaded with success',
+            1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+            2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+            3 => 'The uploaded file was only partially uploaded',
+            4 => 'No file was uploaded',
+            6 => 'Missing a temporary folder',
+            7 => 'Failed to write file to disk.',
+            8 => 'A PHP extension stopped the file upload.',
+        );
+        return $phpFileUploadErrors[$error];
     }
 }

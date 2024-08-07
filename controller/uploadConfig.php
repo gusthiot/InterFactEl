@@ -8,27 +8,32 @@ require_once("../session.inc");
  */
 if($superviseur->isSuperviseur($user)) {
     if($_FILES['zip_file']) {
-        $fileName = $_FILES["zip_file"]["name"];
-        $source = $_FILES["zip_file"]["tmp_name"];
-        if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
-            $tmpFile = TEMP.time().'_'.$fileName;
-            if(copy($source, $tmpFile)) {
-                $msg = Config::upload($tmpFile, CONFIG);
-                unlink($tmpFile);
-                if(empty($msg)) {
-                    $_SESSION['alert-success'] = "Fichiers correctement mis à jour !";
+        if($_FILES['zip_file']["error"] == 0) {
+            $fileName = $_FILES["zip_file"]["name"];
+            $source = $_FILES["zip_file"]["tmp_name"];
+            if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
+                $tmpFile = TEMP.time().'_'.$fileName;
+                if(copy($source, $tmpFile)) {
+                    $msg = Config::upload($tmpFile, CONFIG);
+                    unlink($tmpFile);
+                    if(empty($msg)) {
+                        $_SESSION['alert-success'] = "Fichiers correctement mis à jour !";
+                    }
+                    else {
+                        $_SESSION['alert-danger'] = $msg;
+                    }
+            
                 }
                 else {
-                    $_SESSION['alert-danger'] = $msg;
+                    $_SESSION['alert-danger'] = "copy error";
                 }
-        
             }
             else {
-                $_SESSION['alert-danger'] = "copy error";
+                $_SESSION['alert-danger'] = "zip not accepted";
             }
         }
         else {
-            $_SESSION['alert-danger'] = "zip not accepted";
+            $_SESSION['alert-danger'] = Zip::getErrorMessage($_FILES['zip_file']["error"]);
         }
     }
     else {

@@ -5,7 +5,7 @@
  */
 $disabled = "";
 $dlTxt = "";
-$lockUser = Lock::loadByName($sciper.".lock");
+$lockUser = Lock::loadByName($user.".lock");
 if(!empty($lockUser)) {
     $disabled = "disabled";
     $dlTxt = '<a href="#" id="download-prefa">Vous avez une préfacturation à télécharger avant de pouvoir en faire une nouvelle.</a>';

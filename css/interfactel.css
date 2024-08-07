@@ -227,6 +227,7 @@ input[type="file"] {
 
 #index-facturation {
   margin: 10px;
+  clear: both;
 }
 
 #index-tarifs {
@@ -235,6 +236,11 @@ input[type="file"] {
 }
 
 #index-simulation {
+  margin: 10px;
+  clear: both;
+}
+
+#index-tools {
   clear: both;
 }
 

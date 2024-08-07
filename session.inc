@@ -35,10 +35,7 @@ else {
 $superviseur = new Superviseur();
 $gestionnaire = new Gestionnaire();
 $dataGest = $gestionnaire->getGestionnaire($user);
-if($dataGest) {
-    $sciper = $gestionnaire->getGestionnaire($user)['sciper'];
-}
-else {
+if(!$dataGest) {
     $_SESSION['alert-info'] = "Vous n'avez aucun droit de gestion";
 }
 

@@ -29,7 +29,7 @@ if($dataGest) {
             <div class="title <?php if(TEST_MODE) echo "test";?>">
                 <h1 class="text-center p-1 pt-md-5">Interface de facturation</h1>
                 <h6 class="text-center">Welcome <i><?= $user ?></i></h6>
-            </div
+            </div>
             <?php include("includes/message.php"); 
             if(!empty($lockUser)) { ?>
                 <div class="text-center"><?= $dlTxt ?></div>
@@ -41,7 +41,7 @@ if($dataGest) {
                     // Only supervisor can upload/download config files
                 ?>
                 
-                <div id="index supervision">
+                <div id="index-supervision">
                     <h3 class="">Supervision</h3>
                     <div class="tiles">
                         <div type="button" id="download-config" class="tile center-one">
@@ -123,6 +123,7 @@ if($dataGest) {
                                     }
                                 }
                                 ?>
+                                </div>  
                             </div>   
                             <div id="index-simulation">                
                                 <h5 class="">Simulation</h5>
@@ -145,15 +146,29 @@ if($dataGest) {
                                     <?php }
                                 }
                                 ?>
+                                </div>
                             </div>
                         <?php
                         }
                         ?>
-                        </div>
                     </div>
                     <?php
                 }
             ?>
+            <div id="index-tools">
+                    <h3 class="">Outils</h3>
+                    <div class="tiles">
+                        <label class="tile center-one">
+                            <form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >
+                                <input type="file" name="zip_file" id="zip-view" accept=".zip">
+                            </form>
+                            <p>Visionner Tickets</p>
+                            <svg class="icon feather icon-tile" aria-hidden="true">
+                                <use xlink:href="#eye"></use>
+                            </svg>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
         <?php include("includes/footer.php");?> 

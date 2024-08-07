@@ -7,7 +7,7 @@ require_once("../includes/Tarifs.php");
 require_once("../session.inc");
 
 /**
- * Called to dowload whatever is available to be downloaded
+ * Called to download whatever is available to be downloaded
  */
 if(isset($_GET['type'])) {
     $type = $_GET['type'];
@@ -24,17 +24,26 @@ if(isset($_GET['type'])) {
     elseif($type==="prefa") {
         // prefacturation, only for the user running it
         checkGest($dataGest);
-        $fileName = Lock::loadByName("../".$sciper.".lock");
+        $fileName = Lock::loadByName("../".$user.".lock");
         if(!empty($fileName)) {   
             header('Content-disposition: attachment; filename="'.basename($fileName).'"');
             header('Content-type: application/zip');
             readfile($fileName);
             unlink($fileName);
-            unlink("../".$sciper.".lock");
+            unlink("../".$user.".lock");
         }
         else {
             $_SESSION['alert-danger'] = "ce fichier n'est plus disponible";
             header('Location: ../index.php');
+        }
+    }
+    elseif($type==="ticketcsv" && isset($_GET['unique'])) {
+        // annexes csv of a run for view tool
+        if(isset($_GET['nom'])) { 
+            $fileName =  TEMP.$_GET['unique']."/Annexes_CSV/".$_GET['nom'];
+            header('Content-type: application/zip');
+            header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
+            readfile($fileName);
         }
     }
     else {

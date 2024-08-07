@@ -275,8 +275,7 @@ class State
         if(file_exists($path)) {
             foreach(self::scanDesc($path) as $version) {
                 $dir = $path."/".$version."/".$todel;
-                if (file_exists($dir) && is_dir($dir)) {
-                    exec(sprintf("rm -rf %s", escapeshellarg($dir)));
+                if(self::delDir($dir)) {
                     rmdir($path."/".$version);
                     break;
                 }
@@ -286,17 +285,18 @@ class State
     }
 
     /**
-     * Removes a directory and its content, not recursively
+     * Removes a directory and its content, recursively
      *
      * @param string $dir directory to remove
      * @return void
      */
-    static function delDir(string $dir): void 
+    static function delDir(string $dir): bool 
     {
-        foreach(array_diff(scandir($dir), ['.', '..']) as $file) {
-            unlink($dir."/".$file);
+        if (file_exists($dir) && is_dir($dir)) {
+            exec(sprintf("rm -rf %s", escapeshellarg($dir)));
+            return true;
         }
-        rmdir($dir);
+        return false;
     }
 
     /**

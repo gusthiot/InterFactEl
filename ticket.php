@@ -3,23 +3,33 @@
 require_once("assets/Ticket.php");
 require_once("session.inc");
 
-checkGest($dataGest);
-if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
-    $_SESSION['alert-danger'] = "Manque un paramètre !";
-    header('Location: index.php');
-    exit;
+if(isset($_GET["unique"])) {
+    $unique = $_GET["unique"];
+    $dir = TEMP.$unique;
+    if(!file_exists($dir)) {
+        $_SESSION['alert-danger'] = "Erreur d'identification de ticket !";
+        header('Location: index.php');
+        exit;
+    }
 }
+else { 
+    checkGest($dataGest);
+    if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
+        $_SESSION['alert-danger'] = "Manque un paramètre !";
+        header('Location: index.php');
+        exit;
+    }
 
-$plateforme = $_GET['plate'];
-checkPlateforme($dataGest, $plateforme);
+    $plateforme = $_GET['plate'];
+    checkPlateforme($dataGest, $plateforme);
 
-$year = $_GET['year'];
-$month = $_GET['month'];
-$version = $_GET['version'];
-$run = $_GET['run'];
+    $year = $_GET['year'];
+    $month = $_GET['month'];
+    $version = $_GET['version'];
+    $run = $_GET['run'];
 
-$dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
-$s = [];
+    $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
+}
 
 $clients = json_decode(Ticket::load($dir), true);
 ksort($clients);
@@ -37,11 +47,16 @@ ksort($clients);
     </head>
 
     <body>
-        <input type="hidden" id="plate" value="<?= $plateforme ?>" />
-        <input type="hidden" id="year" value="<?= $year ?>" />
-        <input type="hidden" id="month" value="<?= $month ?>" />
-        <input type="hidden" id="version" value="<?= $version ?>" />
-        <input type="hidden" id="run" value="<?= $run ?>" />
+        <?php if(isset($_GET["unique"])) { ?>
+            <input type="hidden" id="unique" value="<?= $unique ?>" />
+        <?php }
+        else { ?>
+            <input type="hidden" id="plate" value="<?= $plateforme ?>" />
+            <input type="hidden" id="year" value="<?= $year ?>" />
+            <input type="hidden" id="month" value="<?= $month ?>" />
+            <input type="hidden" id="version" value="<?= $version ?>" />
+            <input type="hidden" id="run" value="<?= $run ?>" />
+        <?php } ?>
         <div id="combo">
             <select name="client" id="selector">
             <?php

@@ -1,4 +1,13 @@
 
+function zipError() {
+    $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
+                            'Vous devez uploader une archive zip !'+
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                                '<span aria-hidden="true">&times;</span>'+
+                            '</button>'+
+                        '</div>');
+}
+
 $('#download-prefa').on('click', function () {
     window.location.href = "controller/download.php?type=prefa";
 } );
@@ -14,12 +23,6 @@ $('#zip-config').on('change', function () {
         $('#message').text('');
     }
     else {
-        $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-                                'Vous devez uploader une archive zip !'+
-                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-                                    '<span aria-hidden="true">&times;</span>'+
-                                '</button>'+
-                            '</div>');
     }
 } );
 
@@ -39,11 +42,17 @@ $(document).on("change", ".zip-simu", function () {
         $(".lockable").prop('disabled', true);
     }
     else {
-        $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-                                'Vous devez uploader une archive zip !'+
-                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-                                    '<span aria-hidden="true">&times;</span>'+
-                                '</button>'+
-                            '</div>');
+        zipError();
     }
 });
+
+$('#zip-view').on('change', function () {
+    const file = $(this).val();
+    if(file.indexOf('.zip') > -1) {
+        $('#form-view').submit();
+        $('#message').text('');
+    }
+    else {
+        zipError();
+    }
+} );
