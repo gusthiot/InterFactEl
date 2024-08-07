@@ -17,25 +17,31 @@ Reveal.on('slidechanged', (event) => {
 $( document ).ready(function() {
     let getDir = "";
     if($('#unique').val()) {
-        getDir = "&plate="+$('#plate').val()+"&year="+$('#year').val()+"&month="+$('#month').val()+"&version="+$('#version').val()+"&run="+$('#run').val();        
-    }
-    else {
         getDir = "&unique="+$('#unique').val();
     }
+    else {
+        getDir = "&plate="+$('#plate').val()+"&year="+$('#year').val()+"&month="+$('#month').val()+"&version="+$('#version').val()+"&run="+$('#run').val();        
+    }
+    let click = false;
     $('.pdf').on('click', function () {
+        click = true;
         window.location.href = "controller/download.php?type=ticketpdf&nom="+$(this).text()+getDir;
     } );
 
     $('.csv').on('click', function () {
+        click = true;
         window.location.href = "controller/download.php?type=ticketcsv&nom="+$(this).text()+getDir;
     } );
 
     function deleteDir() {
-        if($('#unique').val()) {
+        if($('#unique').val() && !click) {
             window.location.href = "controller/deleteTicket.php?unique="+$('#unique').val(); // firefox
             $.post("controller/deleteTicket.php", {unique: $('#unique').val()}, function () { // chromium
                 window.location.href = "index.php";
             });
+        }
+        else {
+            click = false;
         }
     }
 
