@@ -37,15 +37,6 @@ if(isset($_GET['type'])) {
             header('Location: ../index.php');
         }
     }
-    elseif($type==="ticketcsv" && isset($_GET['unique'])) {
-        // annexes csv of a run for view tool
-        if(isset($_GET['nom'])) { 
-            $fileName =  TEMP.$_GET['unique']."/Annexes_CSV/".$_GET['nom'];
-            header('Content-type: application/zip');
-            header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
-            readfile($fileName);
-        }
-    }
     else {
         if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
             checkGest($dataGest);
@@ -128,6 +119,27 @@ if(isset($_GET['type'])) {
                 else {
                     $_SESSION['alert-danger'] = "erreur download";
                     header('Location: ../index.php');
+                }
+            }
+        }
+        elseif(isset($_GET['unique'])) {
+            if($type==="ticketcsv") {
+                // annexes csv of a run
+                if(isset($_GET['nom'])) { 
+                    $fileName =  TEMP.$_GET['unique']."/Annexes_CSV/".$_GET['nom'];
+                    header('Content-type: application/zip');
+                    header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
+                    readfile($fileName);
+                }
+            }
+            elseif($type==="ticketpdf") {
+                // annexes pdf of a run
+                if(isset($_GET['nom'])) { 
+                    $fileName =  TEMP.$_GET['unique']."/Annexes_PDF/".$_GET['nom'];
+                    header('Content-Type: application/octet-stream');
+                    header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
+                    header('Content-Length: ' . filesize($fileName));
+                    readfile($fileName);
                 }
             }
         }

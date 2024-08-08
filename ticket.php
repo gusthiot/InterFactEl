@@ -107,7 +107,7 @@ ksort($clients);
                             <table id="annexes">
                                 <tr>
                                     <td>
-                                        <div class="csv" target="new"><?=$client['nom_zip']?></div>
+                                        <div class="csv"><?=$client['nom_zip']?></div>
                                     </td>
                                 </tr>
                             </table>
@@ -155,7 +155,7 @@ ksort($clients);
                         <table id="annexes">
                             <tr>
                                 <td>
-                                    <div class="pdf" target="new"><?=$facture['nom_pdf']?></div>
+                                    <div class="pdf"><?=$facture['nom_pdf']?></div>
                                 </td>
                             </tr>
                         </table>
