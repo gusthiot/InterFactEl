@@ -41,67 +41,84 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $oldSapState = $sap->state();
     $oks = 0;
     $kos = 0;
+    $histo = "";
 
     Lock::save("../", 'process', "send ".$plateforme." ".$run);
     try {
-        foreach($bills as $bill) {
-            $resArray = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"));
-            if($resArray[0] && !$resArray[1]) {
-                $res = json_decode($resArray[0]);
-                if(property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
-                    $infos = Info::load($dir);
-                    if(!empty($infos)) {
-                        if(empty($infos["Sent"][2])) {
-                            $infos["Sent"][2] = date('Y-m-d H:i:s');
-                            $infos["Sent"][3] = $user;
-                            Info::save($dir, $infos);
-                        }
-                        if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/lockm.csv")) {
-                            Lock::save($dirPrevMonth, 'month', "");
-                        }
-                        $sap_cont = $sap->getBills();
-                        if(!empty($res->E_RESULT->item->IS_ERROR)) {
-                            if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
-                                $sap_cont[$bill][3] = "ERROR";
-                                $sap_cont[$bill][4] = "-";
-                                $sap_cont[$bill][5] = $res->E_RESULT->item->LOG->item->MESSAGE;
-                                $txt = $bill." | ERROR | ".$res->E_RESULT->item->LOG->item->MESSAGE;
-                                $kos++;
+        $do = true;
+        $num = 0;
+        while($do) {
+            $do = false;
+            $redo = [];
+            $sap_cont = $sap->getBills();
+            foreach($bills as $bill) {
+                $resArray = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"));
+                if($resArray[0]) {
+                    $res = json_decode($resArray[0]);
+                    if($res && property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
+                        $infos = Info::load($dir);
+                        if(!empty($infos)) {
+                            if(empty($infos["Sent"][2])) {
+                                $infos["Sent"][2] = date('Y-m-d H:i:s');
+                                $infos["Sent"][3] = $user;
+                                Info::save($dir, $infos);
+                            }
+                            if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/lockm.csv")) {
+                                Lock::save($dirPrevMonth, 'month', "");
+                            }
+                            if(!empty($res->E_RESULT->item->IS_ERROR)) {
+                                if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
+                                    $sap_cont[$bill][3] = "ERROR";
+                                    $sap_cont[$bill][4] = "-";
+                                    $sap_cont[$bill][5] = $res->E_RESULT->item->LOG->item->MESSAGE;
+                                    $kos++;
+                                }
+                            }
+                            else {
+                                if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
+                                    $sap_cont[$bill][3] = "SENT";
+                                    $sap_cont[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
+                                    $sap_cont[$bill][5] = "";
+                                    $oks++;
+                                }
                             }
                         }
                         else {
-                            if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
-                                $sap_cont[$bill][3] = "SENT";
-                                $sap_cont[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
-                                $sap_cont[$bill][5] = "";
-                                $txt = $bill." | SENT | ".$res->E_RESULT->item->DOC_NUMBER;
-                                $oks++;
-                            }
+                            $warn .= $bill.": info vide ? <br />";
+                            $kos++;
                         }
-                        $sap->save($dir, $sap_cont);
                     }
                     else {
-                        $warn .= $bill.": info vide ? <br />";
+                        $warn .= $bill.": contenu corrompu ? <br />";
+                        $kos++;
                     }
                 }
                 else {
-                    $warn .= $bill.": contenu corrompu ? <br />";
+                    $redo[] = $bill;
                 }
             }
-            else {
-                $kos++;
+            if(count($redo)>0) {
+                if($num < 3) {
+                    $bills = $redo;
+                    $do = true;
+                    $num++;
+                }
+                else {
+                    foreach($redo as $rd) {
+                        $sap_cont[$rd][4] = "-";
+                        $sap_cont[$rd][5] = "Problème de connexion au serveur SAP";
+                    }
+                    $error .= count($redo)." factures potentiellement non envoyées. Problème de connexion au serveur SAP. <br />";
+                    $histo .= count($redo)." factures potentiellement non envoyées. Problème de connexion au serveur SAP.".PHP_EOL;
+                }
             }
+            $sap->save($dir, $sap_cont);
         }
     }
     catch(Exception $e) {
         $error .= $e->getMessage(); 
     }
     unlink("../".Lock::FILES['process']);
-
-    $remainings = count($bills) - ($oks + $kos);
-    if($remainings > 0) {
-        $warn .= $remainings." factures potentiellement non envoyées <br />";
-    }
 
     if($sap->status() == 4) {
         $state = new State(DATA.$plateforme);
@@ -127,6 +144,9 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $sapState = $sap->state();
     $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
     $txt .= $oldSapState." | ".count($bills)." | ".$sapState;
+    if($histo != "") {
+        $txt .= PHP_EOL.$histo;
+    }
     Logfile::write(DATA.$plateforme."/", $txt);
     if(!empty($warn)) {
         $_SESSION['alert-warning'] = $warn;

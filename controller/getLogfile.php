@@ -27,6 +27,9 @@ if(isset($_POST['plate'])) {
             $txt .= implode("|", $parts)."<br />";
         }
         else {
+            if(str_contains("Problème de connexion", $line)) {
+                $line = "<span class='red'>".$line."</span>";
+            }
             $txt .= "&nbsp;&nbsp;&nbsp;&nbsp;".$line."<br />";
         }
     }
