@@ -9,6 +9,11 @@ class Gestionnaire extends Csv
 {
 
     /**
+     * The available rights and their bit position
+     */
+    const RIGHTS = ["reporting"=>0, "facturation"=>1, "tarifs"=>2];
+
+    /**
      * The csv file name
      */
     const NAME = "gestionnaire.csv";
@@ -31,15 +36,30 @@ class Gestionnaire extends Csv
             $tab = explode(";", $line);
 
             if(!array_key_exists($tab[0], $this->gestionnaires)) {
-                $this->gestionnaires[$tab[0]]['complet'] = [];
-                $this->gestionnaires[$tab[0]]['plates'] = [];
+                foreach(self::RIGHTS as $name=>$pos) {
+                    $this->gestionnaires[$tab[0]][$name] = [];
+                }
             }
-            $this->gestionnaires[$tab[0]]['plates'][$tab[1]] = $tab[2];
-            if($tab[3] == "COMPLET") {
-                $this->gestionnaires[$tab[0]]['complet'][$tab[1]] = $tab[2];
+
+            foreach(self::RIGHTS as $name=>$pos) {
+                if(self::hasRight($tab[3], $pos)) {
+                    $this->gestionnaires[$tab[0]][$name][$tab[1]] = $tab[2];
+                }
             }
         }
     }
+
+    /**
+     * Checks if mixed right contains specific bit right
+     *
+     * @param integer $right mixed rigth
+     * @param integer $pos specific bit right
+     * @return boolean
+     */
+    static function hasRight(int $right, int $pos) : bool
+    {
+        return $right & (1 << $pos);
+    } 
     
     /**
      * Gets the rights for a determined user

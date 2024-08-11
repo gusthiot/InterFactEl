@@ -7,9 +7,8 @@ require_once("../session.inc");
 /**
  * Called to display a table with a checklist for the bills, to select it to send it to SAP
  */
-checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"]) && isset($_POST["type"])){
-    checkPlateforme($dataGest, $_POST["plate"]);
+    checkPlateforme($dataGest, "facturation", $_POST["plate"]);
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $sap = new Sap($dir);
     $html = "";

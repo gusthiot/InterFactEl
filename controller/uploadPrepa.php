@@ -13,18 +13,35 @@ require_once("../session.inc");
 /**
  * Called while uploading a preparation zip to run a prefacturation
  */
-checkGest($dataGest);
-if(isset($_POST['plate']) && isset($_POST['type'])) {
-    checkPlateforme($dataGest, $_POST["plate"]);
-    $plateforme = $_POST['plate'];
+if(isset($_POST['type'])) {
+    $type = $_POST['type'];
+    if($type == "SIMU") {
+
+    }
+    else {
+        if(!isset($_POST['plate'])) {
+            $_SESSION['alert-danger'] = 'plateforme manquante';
+            header('Location: ../index.php');
+            exit;
+        }
+        checkPlateforme($dataGest, "facturation", $_POST["plate"]);
+        $plateforme = $_POST['plate'];
+
+    }
+
     $lockProcess = Lock::load("../", "process");
     if(!empty($lockProcess)) {
-        $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';;
-        header('Location: ../plateforme.php?plateforme='.$plateforme);
-        exit;
+        $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';
+        if($type == "SIMU") {
+            header('Location: ../index.php');
+            exit;
+        }
+        else {
+            header('Location: ../facturation.php?plateforme='.$plateforme);
+            exit;
+        }
     }
  
-    $type = $_POST['type'];
     $messages = new Message();
     if(isset($_FILES[$type])) {
         if($_FILES[$type]["error"] == 0) {
@@ -39,25 +56,36 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
                         $msg = Zip::unzip($tmpFile, $tmpDir);
                         unlink($tmpFile);
                         if(empty($msg)) {                    
-                            if($type == "FIRST" || $type == "SIMU") {
+                            if($type == "FIRST") {
                                 // if you need tu upload all data, we need ton check consistancy
                                 $result = new ParamRun($tmpDir, 'result');
                                 $paramedit = new ParamRun($tmpDir, 'edit');
                                 if($plateforme !== $paramedit->getParam('Platform')) {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
-                                }
-                                elseif($plateforme !== $result->getParam('Platform')) {
                                     $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
                                 }
-                                elseif($type === "SIMU" && $paramedit->getParam('Type') !== "SIMU") {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.7');
+                                elseif($plateforme !== $result->getParam('Platform')) {
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
                                 }
                                 elseif(!State::isNextOrSame($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.8');
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
                                 }
                             }
+                            elseif($type == "SIMU") {
+                                $result = new ParamRun($tmpDir, 'result');
+                                $paramedit = new ParamRun($tmpDir, 'edit');
+                                if($paramedit->getParam('Type') !== "SIMU") {
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
+                                }
+                                elseif($paramedit->getParam('Platform') !== $result->getParam('Platform')) {
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
+                                }
+                                elseif(!State::isNextOrSame($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
+                                }
+                                $plateforme = $paramedit->getParam('Platform');
+                            }
                             else {
-                                // with previous internal data, consitancy should be guaranteed
+                                // with previous internal data, consistancy should be guaranteed
                                 $state = new State(DATA.$plateforme);
                                 $dirOut = DATA.$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun()."/OUT/";
                                     
@@ -139,7 +167,7 @@ if(isset($_POST['plate']) && isset($_POST['type'])) {
         header('Location: ../index.php');
     }
     else {
-        header('Location: ../plateforme.php?plateforme='.$plateforme);
+        header('Location: ../facturation.php?plateforme='.$plateforme);
     }
         
 }
@@ -169,49 +197,36 @@ function runPrefa(string $tmpDir, string $path, Paramrun $paramedit, string $pla
     if(DEV_MODE) {
         $dev = " -n";
     }
-    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -d '.DATA.' -u'.$unique.' -l '.$user;
+    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -s -d '.TEMP.' -u'.$unique.' -l '.$user;
     $res = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($res, 0, 2) === "OK") {
         $tab = explode(" ", $res);
         $version = $tab[1];
-        $dir = DATA.$plateforme."/".$year."/".$mstr."/".$version."/".$unique;
         if($type === "SAP") {
-            $sap = new Sap($dir);
-            $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$sap->status();
-            Logfile::write(DATA.$plateforme, $txt);
-            $_SESSION['alert-success'] = $messages->getMessage('msg1');
+            $dir = DATA.$plateforme."/".$year."/".$mstr."/".$version;
+            if (file_exists($dir) || mkdir($dir, 0755, true)) {
+                rename(TEMP.$unique, $dir."/".$unique);
+                $sap = new Sap($dir."/".$unique);
+                $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$sap->status();
+                Logfile::write(DATA.$plateforme, $txt);
+                $_SESSION['alert-success'] = $messages->getMessage('msg1');
+            }
+            else {
+                State::delDir(TEMP.$unique);
+                $_SESSION['alert-danger'] = "Problème pour créer le dossier !";
+            }
         }
         else {
             $name = $user."_".$type.'.zip';
             Lock::saveByName("../".$user.".lock", TEMP.$name);
-            Zip::setZipDir(TEMP.$name, $dir."/", Lock::FILES['run']);
-            delPrefa($path, $year, $mstr, $unique);
+            Zip::setZipDir(TEMP.$name, TEMP.$unique."/", Lock::FILES['run']);
+            State::delDir(TEMP.$unique);
             $_SESSION['alert-success'] = $messages->getMessage('msg2');
         }
     }
     else {
-        delPrefa($path, $year, $mstr, $unique);
+        State::delDir(TEMP.$unique);
         $_SESSION['alert-danger'] = $messages->getMessage('msg4')."<br/>".nl2br($res);
-    }
-}
-
-/**
- * Deletes the result of a prefacturation
- *
- * @param string $path path to plateform directory
- * @param string $year concerned year
- * @param string $mstr concerned month, in string format
- * @param string $unique concerned run
- * @return void
- */
-function delPrefa(string $path, string $year, string $mstr, string $unique): void
-{
-    State::removeRun($path."/".$year."/".$mstr, $unique);
-    if(file_exists($path)) {
-        if(file_exists($path."/".$year)) {
-            rmdir($path."/".$year);
-            rmdir($path);
-        }
     }
 }

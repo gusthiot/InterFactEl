@@ -13,7 +13,6 @@ if(isset($_GET["unique"])) {
     }
 }
 else { 
-    checkGest($dataGest);
     if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
         $_SESSION['alert-danger'] = "Manque un paramètre !";
         header('Location: index.php');
@@ -21,7 +20,7 @@ else {
     }
 
     $plateforme = $_GET['plate'];
-    checkPlateforme($dataGest, $plateforme);
+    checkPlateforme($dataGest, "facturation", $plateforme);
 
     $year = $_GET['year'];
     $month = $_GET['month'];

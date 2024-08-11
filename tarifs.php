@@ -7,7 +7,6 @@ require_once("assets/Sap.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
-checkGest($dataGest);
 if(!isset($_GET["plateforme"])) {
     $_SESSION['alert-danger'] = "Manque un numéro de plateforme !";
     header('Location: index.php');
@@ -15,9 +14,9 @@ if(!isset($_GET["plateforme"])) {
 }
 
 $plateforme = $_GET['plateforme'];
-checkPlateforme($dataGest, $plateforme);
+checkPlateforme($dataGest, "tarifs", $plateforme);
 
-$name = $gestionnaire->getGestionnaire($user)['plates'][$plateforme];
+$name = $dataGest['tarifs'][$plateforme];
 $dir = DATA.$plateforme;
 $available = false;
 $state = new State($dir);
@@ -26,6 +25,11 @@ if(file_exists($dir)) {
     if(empty($state->getLast())) {
         $available = false;
     }
+}
+if(!$available) {
+    $_SESSION['alert-danger'] = "Les tarifs de cette plateforme ne peuvent pas être modifiés !";
+    header('Location: index.php');
+    exit;
 }
 
 ?>
@@ -52,30 +56,21 @@ if(file_exists($dir)) {
                 <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
             </div>
             <div class="text-center" id="buttons">
-                <?php
-                if($available) { 
-                    ?>
-                    <form action="controller/uploadTarifs.php" method="post" id="form-tarifs" enctype="multipart/form-data" >
-                        <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
-                        <input type="hidden" name="type" value="new" />
-                        <input name="month-picker" id="month-picker" class="date-picker"/>
-                        <div>
-                            <label class="btn but-line">
-                                <input type="file" id="zip-tarifs" name="zip_file" class="zip-file" accept=".zip">
-                                Importer de nouveaux tarifs applicables dès ce mois
-                            </label>
-                        </div>
-                    </form>
-                    <?php
-                }
-                ?>
+                <form action="controller/uploadTarifs.php" method="post" id="form-tarifs" enctype="multipart/form-data" >
+                    <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
+                    <input type="hidden" name="type" value="new" />
+                    <input name="month-picker" id="month-picker" class="date-picker"/>
+                    <div>
+                        <label class="btn but-line">
+                            <input type="file" id="zip-tarifs" name="zip_file" class="zip-file" accept=".zip">
+                            Importer de nouveaux tarifs applicables dès ce mois
+                        </label>
+                    </div>
+                </form>
             </div>
 
             <?php include("includes/message.php"); ?>
             <div class="text-center" id="tarifs-content">
-            <?php
-            if($available) {
-            ?>
                 <input type="hidden" id="last-month" value="<?= $state->getLastMonth() ?>" />
                 <input type="hidden" id="last-year" value="<?= $state->getLastYear() ?>" />
                 <table id="tarifs" class="table table-boxed">
@@ -145,9 +140,7 @@ if(file_exists($dir)) {
                             <?php }
                         }
                     }
-                ?></table><?php
-            }
-            ?>
+                ?></table>
             </div>
         </div>
         <?php include("includes/footer.php");?> 

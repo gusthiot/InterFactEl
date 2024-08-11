@@ -13,9 +13,8 @@ require_once("../session.inc");
 /**
  * Called to send bills to SAP, and manage answers
  */
-checkGest($dataGest);
 if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
-    checkPlateforme($dataGest, $_POST["plate"]);
+    checkPlateforme($dataGest, "facturation", $_POST["plate"]);
     $plateforme = $_POST["plate"];
     $year = $_POST["year"];
     $month = $_POST["month"];
@@ -25,7 +24,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $lockProcess = Lock::load("../", "process");
     if(!empty($lockProcess)) {
         $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';;
-        header('Location: ../prefacturation.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
+        header('Location: ../run.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
         exit;
     }
     $bills = $_POST["bills"];
@@ -89,8 +88,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                         }
                     }
                     else {
-                        $warn .= $bill.": contenu corrompu ? <br />";
-                        $kos++;
+                        $redo[] = $bill;
                     }
                 }
                 else {

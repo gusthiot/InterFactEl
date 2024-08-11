@@ -6,9 +6,8 @@ require_once("../session.inc");
 /**
  * Called to suppress month tarifs
  */
-checkGest($dataGest);
 if(isset($_GET["plate"]) && isset($_GET["year"]) && isset($_GET["month"])) {
-    checkPlateforme($dataGest, $_GET["plate"]);
+    checkPlateforme($dataGest, "tarifs", $_GET["plate"]);
     $dirTarifs = DATA.$_GET["plate"]."/".$_GET["year"]."/".$_GET["month"]."/";
     Tarifs::suppress($dirTarifs);
     $_SESSION['alert-success'] = "tarifs correctement effacées";

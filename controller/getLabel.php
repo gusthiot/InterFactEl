@@ -6,10 +6,9 @@ require_once("../session.inc");
 /**
  * Called to display a textarea to add/modify a label, with the current label if exists
  */
-checkGest($dataGest);
-$txt = "";
-if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"])) {
-    checkPlateforme($dataGest, $_POST["plate"]);
+$label = "";
+if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["right"])) {
+    checkPlateforme($dataGest, $_POST["right"], $_POST["plate"]);
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month'];
     if(isset($_POST["version"]) && isset($_POST["run"])) {
         $dir .= "/".$_POST['version']."/".$_POST['run'];

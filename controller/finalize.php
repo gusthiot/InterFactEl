@@ -11,11 +11,9 @@ require_once("../session.inc");
 /**
  * Called to manually finalize a run
  */
-checkGest($dataGest);
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])){
-    
     $plateforme = $_POST["plate"];
-    checkPlateforme($dataGest, $plateforme);
+    checkPlateforme($dataGest, "facturation", $plateforme);
     $year = $_POST["year"];
     $month = $_POST["month"];
     $run = $_POST["run"];

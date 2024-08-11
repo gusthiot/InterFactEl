@@ -6,15 +6,15 @@ $('#download-prefa').on('click', function () {
 } );
 
 $('#open-label').on('click', function () {
-    $.post("controller/getLabel.php", postDir, function (data) {
+    $.post("controller/getLabel.php", Object.assign({}, postDir, {right: "facturation"}), function (data) {
         $('#prefa-content').html(data);
     });
 } );
 
 $(document).on("click", "#save-label", function() {
     const txt = $('#label-area').val();
-    $.post("controller/saveLabel.php", Object.assign({}, postDir, {txt: txt}), function () {
-        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
+    $.post("controller/saveLabel.php", Object.assign({}, postDir, {txt: txt, right: "facturation"}), function () {
+        window.location.href = "facturation.php?plateforme="+$('#plate').val();
     });
 } );
 
@@ -58,7 +58,7 @@ $(document).on("click", "#get-client", function() {
 
 $('#invalidate').on('click', function () {
     $.post("controller/invalidate.php", postDir, function () {
-        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
+        window.location.href = "facturation.php?plateforme="+$('#plate').val();
     });
 } );
 
@@ -82,7 +82,7 @@ $('#send').on('click', function () {
 
 $('#finalize').on('click', function () {
     $.post("controller/finalize.php", postDir, function () {
-        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
+        window.location.href = "facturation.php?plateforme="+$('#plate').val();
     });
 } );
 
@@ -111,7 +111,7 @@ function sending(type) {
     $(".lockable").prop('disabled', true);
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
     $.post("controller/sendBills.php", Object.assign({}, postDir, {bills: bills, type: type}), function () {
-        window.location.href = "plateforme.php?plateforme="+$('#plate').val();
+        window.location.href = "facturation.php?plateforme="+$('#plate').val();
     });
 }
 

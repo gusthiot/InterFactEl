@@ -29,6 +29,7 @@ else {
     }
 }
 
+
 /**
  * Managing user rights
  */
@@ -43,11 +44,13 @@ if(!$dataGest) {
  * Checks if user has managing rights
  *
  * @param array $dataGest user managing rights 
+ * @param string $type type of right 
  * @return void
  */
-function checkGest(array $dataGest): void
+function checkGest(array $dataGest, string $type): void
 {
-    if(!$dataGest) {
+    if(!$dataGest[$type]) {
+        $_SESSION['alert-danger'] = "Vous n'avez aucun droit de ".$type." !";
         header('Location: index.php');
         exit;
     }
@@ -57,12 +60,14 @@ function checkGest(array $dataGest): void
  * Checks if user has managing rights for a given plateform
  *
  * @param array $dataGest user managing rights
+ * @param string $type type of right 
  * @param string $plateforme plateform number
  * @return void
  */
-function checkPlateforme(array $dataGest, string $plateforme): void
+function checkPlateforme(array $dataGest, string $type, string $plateforme): void
 {
-    if(!array_key_exists($plateforme, $dataGest['plates'])) {
+    checkGest($dataGest, $type);
+    if(!array_key_exists($plateforme, $dataGest[$type])) {
         $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
         header('Location: index.php');
         exit;

@@ -64,90 +64,89 @@ if($dataGest) {
             <?php
                 }
                 if($dataGest) {
-                    // Only manager can make facturation
                     ?>             
                     <div id="index-gestion">                  
                         <h3 class="">Gestion</h3>
-                        <div id="index-facturation">  
-                            <h5 class="">Facturation</h5>
-                            <div class="tiles">
-                            <?php
-                            foreach($dataGest['plates'] as $plateforme => $name) {
-                            ?>
-                                <div class="facturation tile center-two">
-                                    <input type="hidden" id="plate-fact" value="<?= $plateforme ?>" />
-                                    <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>  
-                                    <svg class="icon feather icon-tile" aria-hidden="true">
-                                        <use xlink:href="#dollar-sign"></use>
-                                    </svg>
-                                </div>
-                            <?php }
-                            ?>
-                            </div>
-                        </div>
                         <?php
-                        if(!empty($dataGest['complet'])) {
-                            // Only complete manager can modify parameters and make simulation
-                            ?>      
-                            <div id="index-tarifs">                
-                                <h5 class="">Nouveaux tarifs</h5>
+                        if(!empty($dataGest['facturation'])) {
+                            ?>   
+                            <div id="index-facturation">  
+                                <h5 class="">Facturation</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach($dataGest['complet'] as $plateforme => $name) {
-                                    if(array_key_exists($plateforme, $dataGest['complet'])) {
-                                        $available = false;
-                                        if(file_exists(DATA.$plateforme)) { 
-                                            $available = true;
-                                            $state = new State(DATA.$plateforme);
-                                            if(empty($state->getLast())) {
-                                                $available = false;
-                                            }
+                                foreach($dataGest['facturation'] as $plateforme => $name) {
+                                ?>
+                                    <div class="facturation tile center-two">
+                                        <input type="hidden" id="plate-fact" value="<?= $plateforme ?>" />
+                                        <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>  
+                                        <svg class="icon feather icon-tile" aria-hidden="true">
+                                            <use xlink:href="#dollar-sign"></use>
+                                        </svg>
+                                    </div>
+                                <?php }
+                                ?>
+                                </div>
+                            </div>
+                        <?php
+                        }
+                        if(!empty($dataGest['tarifs'])) {
+                            ?>      
+                            <div id="index-tarifs">                
+                                <h5 class="">Tarifs</h5>
+                                <div class="tiles">
+                                <?php
+                                foreach($dataGest['tarifs'] as $plateforme => $name) {
+                                    $available = false;
+                                    if(file_exists(DATA.$plateforme)) { 
+                                        $available = true;
+                                        $state = new State(DATA.$plateforme);
+                                        if(empty($state->getLast())) {
+                                            $available = false;
                                         }
-                                        if($available) {   
-                                        ?>
-                                            <div class="tarifs tile center-two">
-                                                <input type="hidden" id="plate-tarifs" value="<?= $plateforme ?>" />
-                                                <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
-                                                <svg class="icon feather icon-tile" aria-hidden="true">
-                                                    <use xlink:href="#settings"></use>
-                                                </svg>
-                                            </div>
-                                        <?php }
-                                        else {  
-                                        ?>
-                                            <div class="center-two desactived-tile">
-                                                <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
-                                                <i class="bi bi-gear"></i>
-                                            </div>
-                                        <?php }
+                                    }
+                                    if($available) {   
+                                    ?>
+                                        <div class="tarifs tile center-two">
+                                            <input type="hidden" id="plate-tarifs" value="<?= $plateforme ?>" />
+                                            <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
+                                            <svg class="icon feather icon-tile" aria-hidden="true">
+                                                <use xlink:href="#settings"></use>
+                                            </svg>
+                                        </div>
+                                    <?php }
+                                    else {  
+                                    ?>
+                                        <div class="center-two desactived-tile">
+                                            <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
+                                            <i class="bi bi-gear"></i>
+                                        </div>
+                                    <?php 
                                     }
                                 }
                                 ?>
                                 </div>  
                             </div>   
-                            <div id="index-simulation">                
-                                <h5 class="">Simulation</h5>
+                        <?php
+                        }
+                        if(!empty($dataGest['reporting'])) {
+                            ?>      
+                            <div id="index-reporting">  
+                                <h5 class="">Reporting</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach($dataGest['complet'] as $plateforme => $name) {
-                                    if(array_key_exists($plateforme, $dataGest['complet'])) {
-                                    ?>
-                                        <label class="simulation tile center-two">
-                                            <form action="controller/uploadPrepa.php" method="post" class="form-simu" enctype="multipart/form-data" >
-                                                <input type="hidden" name="plate" id="plate-simu" value="<?= $plateforme ?>" />
-                                                <input type="hidden" name="type" id="type" value="SIMU">   
-                                                <input id="SIMU" type="file" name="SIMU" <?= $disabled ?> class="zip-simu lockable" accept=".zip">
-                                            </form>
-                                            <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
-                                            <svg class="icon icon-tile" aria-hidden="true">
-                                                <use xlink:href="#activity"></use>
-                                            </svg>
-                                        </label>
-                                    <?php }
-                                }
+                                foreach($dataGest['reporting'] as $plateforme => $name) {
+                                ?>
+                                    <div class="reporting tile center-two">
+                                        <input type="hidden" id="plate-report" value="<?= $plateforme ?>" />
+                                        <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>  
+                                        <svg class="icon feather icon-tile" aria-hidden="true">
+                                            <use xlink:href="#book"></use>
+                                        </svg>
+                                    </div>
+                                <?php }
                                 ?>
                                 </div>
-                            </div>
+                            </div> 
                         <?php
                         }
                         ?>
@@ -156,18 +155,27 @@ if($dataGest) {
                 }
             ?>
             <div id="index-tools">
-                    <h3 class="">Outils</h3>
-                    <div class="tiles">
-                        <label class="tile center-one">
-                            <form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >
-                                <input type="file" name="zip_file" id="zip-view" accept=".zip">
-                            </form>
-                            <p>Visionner Tickets</p>
-                            <svg class="icon feather icon-tile" aria-hidden="true">
-                                <use xlink:href="#eye"></use>
-                            </svg>
-                        </label>
-                    </div>
+                <h3 class="">Outils</h3>
+                <div class="tiles">
+                    <label class="tile center-one">
+                        <form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >
+                            <input type="file" name="zip_file" id="zip-view" accept=".zip">
+                        </form>
+                        <p>Visionner Tickets</p>
+                        <svg class="icon feather icon-tile" aria-hidden="true">
+                            <use xlink:href="#eye"></use>
+                        </svg>
+                    </label>
+                    <label class="simulation tile center-one">
+                        <form action="controller/uploadPrepa.php" method="post" class="form-simu" enctype="multipart/form-data" >
+                            <input type="hidden" name="type" id="type" value="SIMU">   
+                            <input id="SIMU" type="file" name="SIMU" <?= $disabled ?> class="zip-simu lockable" accept=".zip">
+                        </form>
+                        <p>Simulation</p>
+                        <svg class="icon icon-tile" aria-hidden="true">
+                            <use xlink:href="#activity"></use>
+                        </svg>
+                    </label>
                 </div>
             </div>
         </div>

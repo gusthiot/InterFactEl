@@ -7,10 +7,9 @@ require_once("../session.inc");
 /**
  * Called to display the actions history of a plateform
  */
-checkGest($dataGest);
 $txt = "";
 if(isset($_POST['plate'])) {
-    checkPlateforme($dataGest, $_POST["plate"]);
+    checkPlateforme($dataGest, "facturation", $_POST["plate"]);
     $plate = DATA.$_POST['plate'];
     $lines = explode(PHP_EOL, Logfile::load($plate));
     $txt = "<div id='over-log'><div id='log'>";

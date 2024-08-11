@@ -23,7 +23,6 @@ if(isset($_GET['type'])) {
     }
     elseif($type==="prefa") {
         // prefacturation, only for the user running it
-        checkGest($dataGest);
         $fileName = Lock::loadByName("../".$user.".lock");
         if(!empty($fileName)) {   
             header('Content-disposition: attachment; filename="'.basename($fileName).'"');
@@ -39,17 +38,17 @@ if(isset($_GET['type'])) {
     }
     else {
         if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
-            checkGest($dataGest);
-            checkPlateforme($dataGest, $_GET['plate']);
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
             if($type==="tarifs") { 
                 // tarifs uploaded for a given month 
+                checkPlateforme($dataGest, "tarifs", $_GET['plate']);
                 $fileName = $dirMonth."/".ParamZip::NAME;
                 header('Content-disposition: attachment; filename="'.ParamZip::NAME.'"');
                 header('Content-type: application/zip');
                 readfile($fileName);
             }
             else {
+                checkPlateforme($dataGest, "facturation", $_GET['plate']);
                 if(isset($_GET['version']) && isset($_GET['run'])) {
                     $dirRun = $dirMonth."/".$_GET['version']."/".$_GET['run'];
                     if($type==="bilans") {
@@ -71,7 +70,7 @@ if(isset($_GET['type'])) {
                     elseif($type==="modif") {
                         // modification file (journal, client, modifications) of a run
                         if(isset($_GET['pre'])) {               
-                            $name = $gestionnaire->getGestionnaire($user)['plates'][$_GET['plate']];
+                            $name = $dataGest['facturation'][$_GET['plate']];
                             $filename = $_GET['pre']."_".$name."_".$_GET['year']."_".$_GET['month']."_".$_GET['version'];
                             readCsv($dirRun."/".$filename.".csv");
                         }

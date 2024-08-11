@@ -6,21 +6,20 @@ require_once("assets/Lock.php");
 require_once("assets/Message.php");
 require_once("session.inc");
 
-checkGest($dataGest);
 if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
     $_SESSION['alert-danger'] = "Manque un paramètre !";
     header('Location: index.php');
     exit;
 }
 $plateforme = $_GET['plateforme'];
-checkPlateforme($dataGest, $plateforme);
+checkPlateforme($dataGest, "facturation", $plateforme);
 
 $year = $_GET['year'];
 $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
 $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
-$name = $gestionnaire->getGestionnaire($user)['plates'][$plateforme];
+$name = $dataGest['facturation'][$plateforme];
 
 $messages = new Message();
 $label = Label::load($dir);
@@ -50,7 +49,7 @@ include("includes/lock.php");
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
                 </div>
                 <div id="div-path">
-                    <p><a href="index.php">Accueil</a> > <a href="plateforme.php?plateforme=<?= $plateforme ?>">Facturation <?= $name ?></a> > Prefacturation <?= $label ?></p>
+                    <p><a href="index.php">Accueil</a> > <a href="facturation.php?plateforme=<?= $plateforme ?>">Facturation <?= $name ?></a> > Prefacturation <?= $label ?></p>
                     <p><a href="logout.php">Logout</a></p>
                 </div>
             </div>
@@ -110,6 +109,6 @@ include("includes/lock.php");
 
         </div>
         <?php include("includes/footer.php");?> 
-        <script src="js/prefacturation.js"></script>
+        <script src="js/run.js"></script>
 	</body>
 </html>

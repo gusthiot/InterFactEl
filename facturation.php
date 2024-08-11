@@ -6,14 +6,13 @@ require_once("assets/Lock.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
-checkGest($dataGest);
 if(!isset($_GET["plateforme"])) {
     $_SESSION['alert-danger'] = "Manque un numéro de plateforme !";
     header('Location: index.php');
     exit;
 }
 $plateforme = $_GET['plateforme'];
-checkPlateforme($dataGest, $plateforme);
+checkPlateforme($dataGest, "facturation", $plateforme);
 
 // Check if first facturation, if one is running, which one is the last one
 $dir = DATA.$plateforme;
@@ -28,12 +27,7 @@ if(file_exists($dir)) {
         }
     }
 }
-$name = $gestionnaire->getGestionnaire($user)['plates'][$plateforme];
-
-$complet = false;
-if(array_key_exists($plateforme, $gestionnaire->getGestionnaire($user)['complet'])) {
-    $complet = true;
-}
+$name = $dataGest['facturation'][$plateforme];
 
 /**
  * Customized button to upload prepa
@@ -102,7 +96,7 @@ include("includes/lock.php");
                         <div class="col-sm">
                             <?php
                                 if($first) {
-                                    if($complet) {
+                                    if($dataGest['tarifs'] && array_key_exists($plateforme, $dataGest['tarifs'])) {
                                         echo uploader("Préparer 1ère facturation", "FIRST", $disabled);
                                     } 
                                 }
@@ -203,7 +197,7 @@ include("includes/lock.php");
             </div>
         </div>
         <?php include("includes/footer.php");?> 
-        <script src="js/plateforme.js"></script>
+        <script src="js/facturation.js"></script>
   
 	</body>
 </html>

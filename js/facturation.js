@@ -20,7 +20,7 @@ $('#download-prefa').on('click', function () {
 } );
 
 $('.open-run').on('click', function () {
-    window.location.href = "prefacturation.php?plateforme="+$('#plate').val()+"&"+$(this).val();
+    window.location.href = "run.php?plateforme="+$('#plate').val()+"&"+$(this).val();
 } );
 
 $('#destroy').on('click', function () {

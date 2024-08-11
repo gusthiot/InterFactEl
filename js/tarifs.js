@@ -69,7 +69,7 @@ $(document).on("click", ".suppress", function() {
 
 $(document).on("click", ".etiquette", function() {
     const tab = $(this).attr('id').split("-");
-    $.post("controller/getLabel.php", {plate: plateforme, year: tab[1], month: tab[2]}, function (data) {
+    $.post("controller/getLabel.php", {plate: plateforme, right: "tarifs", year: tab[1], month: tab[2]}, function (data) {
         $('#label-'+tab[1]+'-'+tab[2]).html(data);
     });
 } );
@@ -77,7 +77,7 @@ $(document).on("click", ".etiquette", function() {
 $(document).on("click", "#save-label", function() {
     const tab = $(this).parent().parent().attr('id').split("-");
     const txt = $('#label-area').val();
-    $.post("controller/saveLabel.php", {txt: txt, plate: plateforme, year: tab[1], month: tab[2]}, function () {
+    $.post("controller/saveLabel.php", {txt: txt, right: "tarifs", plate: plateforme, year: tab[1], month: tab[2]}, function () {
         window.location.href = "tarifs.php?plateforme="+plateforme;
     });
 } );

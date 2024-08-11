@@ -27,11 +27,15 @@ $('#zip-config').on('change', function () {
 } );
 
 $('.facturation').on('click', function () {
-    window.location.href = "plateforme.php?plateforme="+$(this).find('#plate-fact').val();
+    window.location.href = "facturation.php?plateforme="+$(this).find('#plate-fact').val();
 } );
 
 $('.tarifs').on('click', function () {
     window.location.href = "tarifs.php?plateforme="+$(this).find('#plate-tarifs').val();
+} );
+
+$('.reporting').on('click', function () {
+    window.location.href = "reporting.php?plateforme="+$(this).find('#plate-report').val();
 } );
 
 $(document).on("change", ".zip-simu", function () {
