@@ -193,11 +193,16 @@ function runPrefa(string $tmpDir, string $path, Paramrun $paramedit, string $pla
     $month = $paramedit->getParam('Month');
     $year = $paramedit->getParam('Year');
     $type = $paramedit->getParam('Type');
-    $dev = "";
+    $more = "";
     if(DEV_MODE) {
-        $dev = " -n";
+        $more = " -n";
     }
-    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -s -d '.TEMP.' -u'.$unique.' -l '.$user;
+    else {
+        if(!TEST_MODE) {
+            $more = " -r";
+        }
+    }
+    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.$more.' -g -s -d '.TEMP.' -u'.$unique.' -l '.$user;
     $res = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($res, 0, 2) === "OK") {
