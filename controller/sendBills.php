@@ -50,7 +50,9 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
             $do = false;
             $redo = [];
             $sap_cont = $sap->getBills();
+            $archive = [];
             foreach($bills as $bill) {
+                $archive[$bill] = [$sap_cont[$bill][0], $sap_cont[$bill][1], $sap_cont[$bill][2]];
                 $resArray = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"));
                 if($resArray[0]) {
                     $res = json_decode($resArray[0]);
@@ -67,18 +69,33 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                             }
                             if(!empty($res->E_RESULT->item->IS_ERROR)) {
                                 if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
-                                    $sap_cont[$bill][3] = "ERROR";
-                                    $sap_cont[$bill][4] = "-";
-                                    $sap_cont[$bill][5] = $res->E_RESULT->item->LOG->item->MESSAGE;
-                                    $kos++;
+                                    if($type == "Envoi dans SAP") { 
+                                        $sap_cont[$bill][3] = "ERROR";
+                                        $sap_cont[$bill][4] = "-";
+                                        $sap_cont[$bill][5] = $res->E_RESULT->item->LOG->item->MESSAGE;
+                                    }
+                                    $archive[$bill][3] = "ERROR";
+                                    $archive[$bill][4] = "-";
+                                    $archive[$bill][5] = $res->E_RESULT->item->LOG->item->MESSAGE;
                                 }
+                                else {
+                                    $warn .= $bill.": no error message ? <br />";
+                                }
+                                $kos++;
                             }
                             else {
                                 if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
                                     $sap_cont[$bill][3] = "SENT";
                                     $sap_cont[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
                                     $sap_cont[$bill][5] = "";
+                                    $archive[$bill][3] = "SENT";
+                                    $archive[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
+                                    $archive[$bill][5] = "";
                                     $oks++;
+                                }
+                                else {
+                                    $warn .= $bill.": no doc_number ? <br />";
+                                    $kos++;
                                 }
                             }
                         }
@@ -103,14 +120,24 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                 }
                 else {
                     foreach($redo as $rd) {
-                        $sap_cont[$rd][4] = "-";
-                        $sap_cont[$rd][5] = "Problème de connexion au serveur SAP";
+                        if($type == "Envoi dans SAP") { 
+                            $sap_cont[$rd][4] = "-";
+                            $sap_cont[$rd][5] = "Problème de connexion au serveur SAP";
+                            $archive[$rd][3] = "READY";
+                        }
+                        else {
+                            $archive[$rd][3] = "ERROR";
+                        }
+                        $archive[$rd][4] = "-";
+                        $archive[$rd][5] = "Problème de connexion au serveur SAP";
+
                     }
                     $error .= count($redo)." factures potentiellement non envoyées. Problème de connexion au serveur SAP. <br />";
                     $histo .= count($redo)." factures potentiellement non envoyées. Problème de connexion au serveur SAP.".PHP_EOL;
                 }
             }
             $sap->save($dir, $sap_cont);
+            $sap->generateArchive($dir, $user, $archive);
         }
     }
     catch(Exception $e) {

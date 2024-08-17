@@ -114,6 +114,24 @@ class Sap extends Csv
     }
 
     /**
+     * Generates file containing result of bills sent to sap on a given shot
+     *
+     * @param string $dir directory where to save the csv file
+     * @param string $user connected user
+     * @param array $content lines of result to be saved
+     * @return void
+     */
+    function generateArchive(string $dir, string $user, array $content): void 
+    {
+        $data = [$this->title];
+        foreach($content as $line) {
+            $data[] = $line;
+        }
+        $time = date("Y")."-".date("m")."-".date("d")."_".date("H")."-".date("i")."-".date("s");
+        self::write($dir."/sap_".$user."_".$time.".csv", $data);
+    }
+
+    /**
      * Determines button color class depending on the billing status and on the locked run status
      *
      * @param integer $status billing status
