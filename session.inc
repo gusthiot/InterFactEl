@@ -21,12 +21,7 @@ if(DEV_MODE) {
 }
 else {
     $oClient->authenticate(TEQUILA_REQUEST, TEQUILA_ALLOWS, TEQUILA_REQUIRED);
-    if(TEST_MODE) {
-        $user = $_SESSION['Tequila-Session-User-Test'];
-    }
-    else {
-        $user = $_SESSION['Tequila-Session-User'];
-    }
+    $user = $_SESSION[SESSION_USER];
 }
 
 
