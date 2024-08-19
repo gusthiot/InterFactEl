@@ -214,13 +214,16 @@ function send(string $data, string $dir): array
     foreach($decoded["attachment"] as $i=>$attachment) {
         $filename = $decoded["attachment"][$i]["filename"];
         if($filename == "grille.pdf") {
-            $decoded["attachment"][$i]["filename"] = $dir."/OUT/".$filename;
-            if(TEST_MODE) $_SESSION['alert-info'] .= $decoded["attachment"][$i]["filename"]."<br />";
+            $cfile = new CURLFile($dir."/OUT/".$filename, 'application/pdf', $filename);
+            //$decoded["attachment"][$i]["filename"] = $dir."/OUT/".$filename;
+            //if(TEST_MODE) $_SESSION['alert-info'] .= $decoded["attachment"][$i]["filename"]."<br />";
         }
         else {
-            $decoded["attachment"][$i]["filename"] = $dir."/Annexes_PDF/".$filename;
-            if(TEST_MODE) $_SESSION['alert-info'] .= $decoded["attachment"][$i]["filename"]."<br />";
+            $cfile = new CURLFile($dir."/Annexes_PDF/".$filename, 'application/pdf', $filename);
+            //$decoded["attachment"][$i]["filename"] = $dir."/Annexes_PDF/".$filename;
+            //if(TEST_MODE) $_SESSION['alert-info'] .= $decoded["attachment"][$i]["filename"]."<br />";
         }
+        $decoded["attachment"][$i]["filename"] = $cfile;
 
     }
     $encoded = json_encode($decoded);
