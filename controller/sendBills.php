@@ -205,6 +205,7 @@ else {
  * Sends a bill to SAP
  *
  * @param string $data bill data
+ * @param string $dir directory where to find attachments
  * @return array SAP answer, or error
  */
 function send(string $data, string $dir): array
@@ -214,10 +215,13 @@ function send(string $data, string $dir): array
         $filename = $decoded["attachment"][$i]["filename"];
         if($filename == "grille.pdf") {
             $decoded["attachment"][$i]["filename"] = $dir."/OUT/".$filename;
+            if(TEST_MODE) $_SESSION['alert-info'] .= $decoded["attachment"][$i]["filename"];
         }
         else {
             $decoded["attachment"][$i]["filename"] = $dir."/Annexes_PDF/".$filename;
+            if(TEST_MODE) $_SESSION['alert-info'] .= $decoded["attachment"][$i]["filename"];
         }
+
     }
     $encoded = json_encode($decoded);
     $curl = curl_init();
