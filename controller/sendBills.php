@@ -215,11 +215,11 @@ function send(string $data, string $dir): array
         $filename = $decoded["attachment"][$i]["filename"];
         if($filename == "grille.pdf") {
             $decoded["attachment"][$i]["filename"] = $dir."/OUT/".$filename;
-            if(TEST_MODE) $_SESSION['alert-info'] .= $decoded["attachment"][$i]["filename"];
+            if(TEST_MODE) $_SESSION['alert-info'] .= $decoded["attachment"][$i]["filename"]."<br />";
         }
         else {
             $decoded["attachment"][$i]["filename"] = $dir."/Annexes_PDF/".$filename;
-            if(TEST_MODE) $_SESSION['alert-info'] .= $decoded["attachment"][$i]["filename"];
+            if(TEST_MODE) $_SESSION['alert-info'] .= $decoded["attachment"][$i]["filename"]."<br />";
         }
 
     }
