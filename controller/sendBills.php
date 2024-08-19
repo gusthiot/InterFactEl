@@ -53,7 +53,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
             $archive = [];
             foreach($bills as $bill) {
                 $archive[$bill] = [$sap_cont[$bill][0], $sap_cont[$bill][1], $sap_cont[$bill][2]];
-                $resArray = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"));
+                $resArray = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"), $dir);
                 if($resArray[0]) {
                     $res = json_decode($resArray[0]);
                     if($res && property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
@@ -207,11 +207,22 @@ else {
  * @param string $data bill data
  * @return array SAP answer, or error
  */
-function send(string $data): array
+function send(string $data, string $dir): array
 {
+    $decoded = json_decode($data, true);
+    foreach($decoded["attachment"] as $i=>$attachment) {
+        $filename = $decoded["attachment"][$i]["filename"];
+        if($filename == "grille.pdf") {
+            $decoded["attachment"][$i]["filename"] = $dir."/OUT/".$filename;
+        }
+        else {
+            $decoded["attachment"][$i]["filename"] = $dir."/Annexes_PDF/".$filename;
+        }
+    }
+    $encoded = json_encode($decoded);
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_POST, 1);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $encoded);
 
     curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_setopt($curl, CURLOPT_USERPWD, SAP_USER.":".SAP_PWD);
