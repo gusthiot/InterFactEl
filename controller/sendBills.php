@@ -42,6 +42,18 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $kos = 0;
     $histo = "";
 
+    if(TEST_MODE) {
+        if($superviseur->isSuperviseur($user) && isset($_POST['mode']) && $_POST['mode']=="true") {
+            $mode = "REAL";
+        }
+        else {
+            $mode = "SIMU";
+        }
+    }
+    else {
+        $mode = "REAL";
+    }
+
     Lock::save("../", 'process', "send ".$plateforme." ".$run);
     try {
         $do = true;
@@ -53,7 +65,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
             $archive = [];
             foreach($bills as $bill) {
                 $archive[$bill] = [$sap_cont[$bill][0], $sap_cont[$bill][1], $sap_cont[$bill][2]];
-                $resArray = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"), $dir);
+                $resArray = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"), $dir, $mode);
                 if($resArray[0]) {
                     $res = json_decode($resArray[0]);
                     if($res && property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
@@ -206,11 +218,14 @@ else {
  *
  * @param string $data bill data
  * @param string $dir directory where to find attachments
+ * @param string $mode SIMU/REAL, if SAP generates bills or not
  * @return array SAP answer, or error
  */
-function send(string $data, string $dir): array
+function send(string $data, string $dir, string $mode): array
 {
     $decoded = json_decode($data, true);
+    $decoded["execmode"] = $mode;
+    $_SESSION['alert-info'] .= "send in mode ".$mode."<br />";
     foreach($decoded["attachment"] as $i=>$attachment) {
         $filename = $decoded["attachment"][$i]["filename"];
         if($filename == "grille.pdf") {

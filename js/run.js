@@ -30,6 +30,12 @@ $('#open-bills').on('click', function () {
     });
 } );
 
+$('#open-report').on('click', function () {
+    $.post("controller/displayReport.php", postDir, function (data) {
+        $('#prefa-content').html(data);
+    });
+} );
+
 $(document).on("click", "#get-sap", function() {
     window.location.href = "controller/download.php?type=sap&"+getDir;
 } );
@@ -110,7 +116,7 @@ function sending(type) {
     });
     $(".lockable").prop('disabled', true);
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
-    $.post("controller/sendBills.php", Object.assign({}, postDir, {bills: bills, type: type}), function () {
+    $.post("controller/sendBills.php", Object.assign({}, postDir, {bills: bills, type: type, mode: $('#mode-switch').prop('checked')}), function () {
         window.location.href = "facturation.php?plateforme="+$('#plate').val();
     });
 }
