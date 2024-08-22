@@ -88,6 +88,11 @@ include("includes/lock.php");
                     if((in_array($status, [4, 5, 6, 7]) && !$lockRun) || (in_array($status, [4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run))) {
                 echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg5').'" '.$disabled.' class="btn but-line-red lockable">Renvoi SAP</button>';
                 }
+                if($status > 1) {
+                ?>
+                    <button type="button" id="open-report" class="btn but-line">Rapports d'envoi SAP</button>
+                <?php
+                }
                 ?>
             </div>
 

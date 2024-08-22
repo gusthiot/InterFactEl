@@ -30,11 +30,15 @@ class Sap extends Csv
      * Class constructor
      *
      * @param string $dir directory where to find the csv file
+     * @param string $name file name for reports
      */
-    function __construct(string $dir) 
+    function __construct(string $dir, string $name="") 
     {
         $this->bills = [];
-        $lines = self::extract($dir."/".self::NAME);
+        if(empty($name)) {
+            $name = self::NAME;
+        }
+        $lines = self::extract($dir."/".$name);
         $first = true;
         foreach($lines as $line) {
             $tab = explode(";", $line);
@@ -129,6 +133,40 @@ class Sap extends Csv
         }
         $time = date("Y")."-".date("m")."-".date("d")."_".date("H")."-".date("i")."-".date("s");
         self::write($dir."/sap_".$user."_".$time.".csv", $data);
+    }
+
+    /**
+     * Displays bills from sap file
+     *
+     * @param string $parameters parameters for download, get-sap or get-report, and data-name for report
+     * @return void
+     */
+    function displayTable($parameters='id="get-sap"')
+    {
+        $html = '<div class="over"><table class="table factures"><thead><tr>';
+        $lines = [];
+        foreach($this->getTitle() as $title) {
+            $html .= '<th>'.str_replace('"', '', $title).'</th>';
+        }
+        $html .= '</tr></thead><tbody>';
+        foreach($this->getBills() as $bill) {
+            $lines[$bill[0]][$bill[1]] = $bill;
+        }
+        ksort($lines);
+        foreach($lines as $labo) {
+            ksort($labo);
+            foreach($labo as $line) {
+                $html .= '<tr>';
+                foreach($line as $key=>$cell) {
+                    // only column 2 with financial format
+                    ($key==2)?$html .= '<td>'.number_format(floatval($cell), 2, ".", "'").'</td>':$html .= '<td>'.$cell.'</td>';
+                }
+                $html .= '</tr>';
+            }
+        }
+        $html .= '</table></tbody></div>';
+        $html .= '<button type="button" '.$parameters.' class="btn but-line">Download File</button>';
+        return $html;
     }
 
     /**

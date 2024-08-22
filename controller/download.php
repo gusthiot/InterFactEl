@@ -74,24 +74,9 @@ if(isset($_GET['type'])) {
                             $filename = $_GET['pre']."_".$name."_".$_GET['year']."_".$_GET['month']."_".$_GET['version'];
                             readCsv($dirRun."/".$filename.".csv");
                         }
-                    }
-                    elseif($type==="ticketcsv") {
-                        // annexes csv of a run
-                        if(isset($_GET['nom'])) { 
-                            $fileName =  $dirRun."/Annexes_CSV/".$_GET['nom'];
-                            header('Content-type: application/zip');
-                            header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
-                            readfile($fileName);
-                        }
-                    }
-                    elseif($type==="ticketpdf") {
-                        // annexes pdf of a run
-                        if(isset($_GET['nom'])) { 
-                            $fileName =  $dirRun."/Annexes_PDF/".$_GET['nom'];
-                            header('Content-Type: application/octet-stream');
-                            header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
-                            header('Content-Length: ' . filesize($fileName));
-                            readfile($fileName);
+                        else {
+                            $_SESSION['alert-danger'] = "erreur download";
+                            header('Location: ../index.php');
                         }
                     }
                     elseif($type==="alltarifs") {
@@ -111,8 +96,35 @@ if(isset($_GET['type'])) {
                         }
                     }
                     else {
-                        $_SESSION['alert-danger'] = "erreur download";
-                        header('Location: ../index.php');
+                        if(isset($_GET['nom'])) { 
+                            if($type==="report") {
+                                // bills list of a send
+                                readCsv($dirRun."/".$_GET['nom']);
+                            }
+                            elseif($type==="ticketcsv") {
+                                // annexes csv of a run
+                                $fileName =  $dirRun."/Annexes_CSV/".$_GET['nom'];
+                                header('Content-type: application/zip');
+                                header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
+                                readfile($fileName);
+                            }
+                            elseif($type==="ticketpdf") {
+                                // annexes pdf of a run
+                                $fileName =  $dirRun."/Annexes_PDF/".$_GET['nom'];
+                                header('Content-Type: application/octet-stream');
+                                header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
+                                header('Content-Length: ' . filesize($fileName));
+                                readfile($fileName);
+                            }
+                            else{
+                                $_SESSION['alert-danger'] = "erreur download";
+                                header('Location: ../index.php');
+                            }
+                        }
+                        else{
+                            $_SESSION['alert-danger'] = "erreur download";
+                            header('Location: ../index.php');
+                        }
                     }
                 }
                 else {
@@ -122,24 +134,30 @@ if(isset($_GET['type'])) {
             }
         }
         elseif(isset($_GET['unique'])) {
-            if($type==="ticketcsv") {
-                // annexes csv of a run
-                if(isset($_GET['nom'])) { 
+            if(isset($_GET['nom'])) { 
+                if($type==="ticketcsv") {
+                    // annexes csv of a run
                     $fileName =  TEMP.$_GET['unique']."/Annexes_CSV/".$_GET['nom'];
                     header('Content-type: application/zip');
                     header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
                     readfile($fileName);
                 }
-            }
-            elseif($type==="ticketpdf") {
-                // annexes pdf of a run
-                if(isset($_GET['nom'])) { 
+                elseif($type==="ticketpdf") {
+                    // annexes pdf of a run
                     $fileName =  TEMP.$_GET['unique']."/Annexes_PDF/".$_GET['nom'];
                     header('Content-Type: application/octet-stream');
                     header('Content-Disposition: attachment; filename="'.$_GET['nom'].'"');
                     header('Content-Length: ' . filesize($fileName));
                     readfile($fileName);
                 }
+                else {
+                    $_SESSION['alert-danger'] = "erreur download";
+                    header('Location: ../index.php');
+                }
+            }
+            else {
+                $_SESSION['alert-danger'] = "erreur download";
+                header('Location: ../index.php');
             }
         }
         else {

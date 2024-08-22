@@ -335,6 +335,11 @@ input[type="file"] {
   display: none;
 }
 
+#report {
+  margin: 0 auto;
+  width: 90%;
+}
+
 #log {
   text-align: left;
   width: 1500px;

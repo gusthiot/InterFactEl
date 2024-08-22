@@ -40,6 +40,10 @@ $(document).on("click", "#get-sap", function() {
     window.location.href = "controller/download.php?type=sap&"+getDir;
 } );
 
+$(document).on("click", "#get-report", function() {
+    window.location.href = "controller/download.php?type=report&nom="+$(this).data("name")+"&"+getDir;
+} );
+
 $('#open-ticket').on('click', function () {
     window.open("ticket.php?"+getDir);
 } );

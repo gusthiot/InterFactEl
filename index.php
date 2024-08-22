@@ -116,9 +116,10 @@ if($dataGest) {
                                     <?php }
                                     else {  
                                     ?>
-                                        <div class="center-two desactived-tile">
+                                        <div class="desactived-tile center-two">
                                             <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
-                                            <i class="bi bi-gear"></i>
+                                            <svg class="icon feather icon-tile" aria-hidden="true">
+                                            </svg>
                                         </div>
                                     <?php 
                                     }
