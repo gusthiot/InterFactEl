@@ -75,10 +75,12 @@ if(!$available) {
                 <input type="hidden" id="last-year" value="<?= $state->getLastYear() ?>" />
                 <table id="tarifs" class="table table-boxed">
                     <?php
-                    foreach(State::scanDesc($dir) as $year) {
-                        foreach(State::scanDesc($dir."/".$year) as $month) {
-                            if (file_exists($dir."/".$year."/".$month."/".ParamZip::NAME)) {
-                                $label = Label::load($dir."/".$year."/".$month);
+                    foreach(array_reverse(glob($dir."/*", GLOB_ONLYDIR)) as $dirYear) {
+                        $year = basename($dirYear);
+                        foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+                            $month = basename($dirMonth);
+                            if (file_exists($dirMonth."/".ParamZip::NAME)) {
+                                $label = Label::load($dirMonth);
                                 if(empty($label)) {
                                     $label = "No label ?";
                                 }
@@ -93,12 +95,12 @@ if(!$available) {
 
                                 $lastRun = 0;
                                 $lastVersion = 0;
-                                foreach(State::scanDesc($dir."/".$year."/".$month) as $version) {
-                                    foreach(State::scanDesc($dir."/".$year."/".$month."/".$version) as $run) {                                        
-                                        $sap = new Sap($dir."/".$year."/".$month."/".$version."/".$run);
+                                foreach(array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR)) as $dirVersion) {
+                                    foreach(array_reverse(glob($dirVersion."/*", GLOB_ONLYDIR)) as $dirRun) {
+                                        $sap = new Sap($dirRun);
                                         if($sap->status() > 1) {
-                                            $lastRun = $run;
-                                            $lastVersion = $version;
+                                            $lastRun = basename($dirRun);
+                                            $lastVersion = basename($dirVersion);
                                             break;
                                         }
                                     }
@@ -109,7 +111,7 @@ if(!$available) {
                                 $id = $year."-".$month;
                                 echo '<tr>';
                                 echo '<td>'.$month.' '.$year;
-                                if (file_exists($dir."/".$year."/".$month."/lockm.csv")) { ?>
+                                if (file_exists($dirMonth."/lockm.csv")) { ?>
                                     <svg class="icon" aria-hidden="true">
                                         <use xlink:href="#lock"></use>
                                     </svg>

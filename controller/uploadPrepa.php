@@ -51,7 +51,7 @@ if(isset($_POST['type'])) {
             if(Zip::isAccepted($zip["type"])) {
                 $tmpFile = TEMP.time().'_'.$fileName;
                 if(copy($source, $tmpFile)) {
-                    $tmpDir = TEMP.'test_'.time().'/';
+                    $tmpDir = TEMP.'prepa_'.time().'/';
                     if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
                         $msg = Zip::unzip($tmpFile, $tmpDir);
                         unlink($tmpFile);

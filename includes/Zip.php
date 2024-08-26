@@ -11,16 +11,16 @@ class Zip
      *
      * @param string $tmpFile temporary created zip file, deleted after download
      * @param string $dirname directory containing what needs to be compressed
-     * @param string $lockFileName lock file name we don't want to compress
-     * @param string $morefile file name we want to add which is not in $dirname
+     * @param string $lessfile file name we don't want to compress
+     * @param string $morefile file url we want to add which is not in $dirname
      * @return string empty, or error
      */
-    static function setZipDir(string $tmpFile, string $dirname, string $lockFileName, string $morefile=""): string 
+    static function setZipDir(string $tmpFile, string $dirname, string $lessfile="", string $morefile=""): string 
     {
         $zip = new ZipArchive;
         $res = $zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
         if ($res === true) {
-            self::tree($zip, $dirname, "", $lockFileName);
+            self::tree($zip, $dirname, "", $lessfile);
             if(!empty($morefile)) {
                 $zip->addFile($morefile, basename($morefile));
             }
@@ -40,14 +40,18 @@ class Zip
      * @param ZipArchive $zip object representing the archive we are creating
      * @param string $dirname directory containing what needs to be compressed
      * @param string $treename keep the level we are processing
-     * @param string $lockFileName lock file name we don't want to compress
+     * @param string $lessfile file name we don't want to compress
      * @return void
      */
-    static function tree(ZipArchive $zip, string $dirname, string $treename, string $lockFileName): void
+    static function tree(ZipArchive $zip, string $dirname, string $treename, string $lessfile=""): void
     {
         $dir = opendir($dirname);
         while($file = readdir($dir)) {
-            if(in_array($file, ['.', '..', $lockFileName])) {
+            $avoid = ['.', '..'];
+            if(!empty($lessfile)) {
+                $avoid[] = $lessfile;
+            }
+            if(in_array($file, $avoid)) {
                 continue;
             }
             $path = $dirname.'/'.$file;
@@ -57,7 +61,7 @@ class Zip
             }
             if(is_dir($path)) {
                 $zip->addEmptyDir($file);
-                self::tree($zip, $path, $treepath, $lockFileName);
+                self::tree($zip, $path, $treepath, $lessfile);
             }
         }
         closedir($dir);

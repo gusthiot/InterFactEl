@@ -132,37 +132,41 @@ include("includes/lock.php");
 
             <div class="text-center" id="plate-content">
             <?php
-            if(file_exists($dir)) {   
+            if(file_exists($dir)) {  
             ?>
                 <table class="table table-boxed">
                     <?php
+
                     // Listing of all year/month/version/run for th plateform
-                    foreach(State::scanDesc($dir) as $year) {
-                        foreach(State::scanDesc($dir."/".$year) as $month) {
-                            $versions = State::scanDesc($dir."/".$year."/".$month);
-                            if(count($versions) > 0) {
+                    foreach(array_reverse(glob($dir."/*", GLOB_ONLYDIR)) as $dirYear) {
+                        $year = basename($dirYear);
+                        foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+                            $month = basename($dirMonth);
+                            $dirVersions = array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR));
+                            if(count($dirVersions) > 0) {
                                 echo '<tr>';
-                                echo '<td rowspan="'.count($versions).'">'.$month.' '.$year;
-                                if (file_exists($dir."/".$year."/".$month."/lockm.csv")) { ?>
+                                echo '<td rowspan="'.count($dirVersions).'">'.$month.' '.$year;
+                                if (file_exists($dirMonth."/lockm.csv")) { ?>
                                     <svg class="icon" aria-hidden="true">
                                         <use xlink:href="#lock"></use>
                                     </svg>
                                 <?php }
                                 echo '</td>';
                                 $line = 0;
-                                foreach($versions as $version) {
+                                foreach($dirVersions as $dirVersion) {
+                                    $version = basename($dirVersion);
                                     if($line > 0){
                                         echo '<tr>';
                                     }
                                     echo '<td>'.$version;
-                                    if (file_exists($dir."/".$year."/".$month."/".$version."/lockv.csv")) { ?>
+                                    if (file_exists($dirVersion."/lockv.csv")) { ?>
                                         <svg class="icon" aria-hidden="true">
                                             <use xlink:href="#lock"></use>
                                         </svg>
                                     <?php }
                                     echo '</td><td>';
-                                    foreach(State::scanDesc($dir."/".$year."/".$month."/".$version) as $run) {
-                                        $dirRun = $dir."/".$year."/".$month."/".$version."/".$run;
+                                    foreach(array_reverse(glob($dirVersion."/*", GLOB_ONLYDIR)) as $dirRun) {
+                                        $run = basename($dirRun);
                                         if($run != $lockedRun || $lockedProcessus != "Une préfacturation") {
                                             $value = 'year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
                                             $label = Label::load($dirRun);

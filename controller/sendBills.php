@@ -226,18 +226,20 @@ function send(string $data, string $dir, string $mode): array
     $decoded = json_decode($data, true);
     $decoded["execmode"] = $mode;
     $_SESSION['alert-info'] .= "send in mode ".$mode."<br />";
-    foreach($decoded["attachment"] as $i=>$attachment) {
-        $filename = $decoded["attachment"][$i]["filename"];
-        if($filename == "grille.pdf") {
-            $data = file_get_contents($dir."/OUT/".$filename);
+    if(!DEV_MODE) {
+        foreach($decoded["attachment"] as $i=>$attachment) {
+            $filename = $decoded["attachment"][$i]["filename"];
+            if($filename == "grille.pdf") {
+                $data = file_get_contents($dir."/OUT/".$filename);
+            }
+            else {
+                $data = file_get_contents($dir."/Annexes_PDF/".$filename);
+            }
+            $data64 = base64_encode($data);
+            $decoded["attachment"][$i]["filecontent"] = $data64;
         }
-        else {
-            $data = file_get_contents($dir."/Annexes_PDF/".$filename);
-        }
-        $data64 = base64_encode($data);
-        $decoded["attachment"][$i]["filecontent"] = $data64;
-
     }
+
     $encoded = json_encode($decoded);
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_POST, 1);

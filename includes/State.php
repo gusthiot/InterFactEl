@@ -64,14 +64,17 @@ class State
         $this->last_v = "";
         $this->last_r = "";
         if(file_exists($pathPlate)) {
-            foreach(self::scanDesc($pathPlate) as $year) {
-                foreach(self::scanDesc($pathPlate."/".$year) as $month) {
-                    foreach(self::scanDesc($pathPlate."/".$year."/".$month) as $version) {
-                        if (file_exists($pathPlate."/".$year."/".$month."/".$version."/lockv.csv")) {
+            foreach(array_reverse(glob($pathPlate."/*", GLOB_ONLYDIR)) as $dirYear) {
+                $year = basename($dirYear);
+                foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+                    $month = basename($dirMonth);
+                    foreach(array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR)) as $dirVersion) {
+                        $version = basename($dirVersion);
+                        if (file_exists($dirVersion."/lockv.csv")) {
                             $this->last_y = $year;
                             $this->last_m = $month;
                             $this->last_v = $version;
-                            $this->last_r = Lock::load($pathPlate."/".$year."/".$month."/".$version, "version");
+                            $this->last_r = Lock::load($dirVersion, "version");
                             $this->last = "(".$month." ".$year.", ".$version.")";
                             return;
                         }
@@ -90,11 +93,14 @@ class State
     static function currentState(string $pathPlate): string         
     {
         if(file_exists($pathPlate)) {
-            foreach(self::scanDesc($pathPlate) as $year) {
-                foreach(self::scanDesc($pathPlate."/".$year) as $month) {
-                    foreach(self::scanDesc($pathPlate."/".$year."/".$month) as $version) {
-                        foreach(self::scanDesc($pathPlate."/".$year."/".$month."/".$version) as $run) {
-                            if (!file_exists($pathPlate."/".$year."/".$month."/".$version."/".$run."/lock.csv")) {
+            foreach(array_reverse(glob($pathPlate."/*", GLOB_ONLYDIR)) as $dirYear) {
+                $year = basename($dirYear);
+                foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+                    $month = basename($dirMonth);
+                    foreach(array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR)) as $dirVersion) {
+                        $version = basename($dirVersion);
+                        foreach(array_reverse(glob($dirVersion."/*", GLOB_ONLYDIR)) as $dirRun) {
+                            if (!file_exists($dirRun."/lock.csv")) {
                                 return "(".$month." ".$year.", ".$version.")";
                             }
                         }
@@ -264,27 +270,6 @@ class State
     }
 
     /**
-     * Removes a run directory
-     *
-     * @param string $path path to month directory
-     * @param string $todel run name
-     * @return void
-     */
-    static function removeRun(string $path, string $todel): void
-    {
-        if(file_exists($path)) {
-            foreach(self::scanDesc($path) as $version) {
-                $dir = $path."/".$version."/".$todel;
-                if(self::delDir($dir)) {
-                    rmdir($path."/".$version);
-                    break;
-                }
-            }
-            rmdir($path);
-        }
-    }
-
-    /**
      * Removes a directory and its content, recursively
      *
      * @param string $dir directory to remove
@@ -297,24 +282,6 @@ class State
             return true;
         }
         return false;
-    }
-
-    /**
-     * Lists the content of a directory, descending, not recursively
-     *
-     * @param string $dir dorectory to list
-     * @return array
-     */
-    static function scanDesc(string $dir): array 
-    {
-        $files = array_diff(scandir($dir, SCANDIR_SORT_DESCENDING), ['.', '..']);
-        $res = [];
-        foreach($files as $file) {
-            if(is_dir($dir."/".$file)) {
-                $res[] = $file;
-            }
-        }
-        return $res;
     }
 
     /**

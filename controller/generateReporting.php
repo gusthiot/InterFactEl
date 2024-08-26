@@ -1,0 +1,102 @@
+<?php
+
+require_once("../assets/Lock.php");
+require_once("../assets/Info.php");
+require_once("../assets/Csv.php");
+require_once("../assets/Message.php");
+require_once("../includes/Zip.php");
+require_once("../includes/State.php");
+require_once("../session.inc");
+
+/**
+ * Called to get reporting, as a zip file from concatenate bilans & stats csv
+ */
+if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
+    $plateforme = $_GET["plate"];
+    checkPlateforme($dataGest, "reporting", $plateforme);
+    $abrev = $dataGest['reporting'][$plateforme];
+    $date = $_GET["from"];
+    $factel = "";
+    while(true) {
+        $month = substr($date, 4, 2);
+        $year = substr($date, 0, 4);
+        $dir = DATA.$plateforme."/".$year."/".$month;
+        $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
+        $run = Lock::load($dirVersion, "version");
+
+        $infos = Info::load($dirVersion."/".$run);
+        if(empty($factel)) {
+            $factel = $infos["FactEl"][2];
+        }
+        elseif($infos["FactEl"][2] != $factel) {
+            $_SESSION['alert-danger'] = "Sélectionner la période pour une même version logicielle";
+            header('Location: ../reporting.php?plateforme='.$plateforme);
+            exit;
+        }
+
+        if($date == $_GET["to"]) {
+            break;
+        }
+        $date++;
+    }
+
+    $noms = ["Bilan-annulé", "Bilan-conso-propre", "Bilan-factures", "Bilan-subsides", "Bilan-usage", "Stat-client", "Stat-machine", "Stat-nbre-user", "Transaction1", "Transaction2", "Transaction3"];
+    $info = "";
+    $suf_fin = "_".$abrev."_".substr($date, 0, 4)."_".substr($date, 4, 2)."_".substr($_GET["to"], 0, 4)."_".substr($_GET["to"], 4, 2).".csv";    
+    $tmpDir = TEMP.'reporting_'.time().'/';
+
+    foreach($noms as $nom) {
+        $content = [];
+        $date = $_GET["from"];
+        while(true) {
+            $month = substr($date, 4, 2);
+            $year = substr($date, 0, 4);
+            $dir = DATA.$plateforme."/".$year."/".$month;
+            $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
+            $run = Lock::load($dirVersion, "version");
+
+            $suf = "_".$abrev."_".$year."_".$month."_".basename($dirVersion).".csv";
+            
+            $path = $dirVersion."/".$run."/Bilans_Stats/".$nom.$suf;
+            $csv = Csv::extract($path);
+            if(!empty($csv)) {
+                if(empty($content)) {
+                    $content[] = explode(";", $csv[0]);
+                }
+                for($i=1;$i<count($csv);$i++) {
+                    $content[] = explode(";", $csv[$i]);
+                }
+            }
+            else {
+                $info .= $path." empty ? <br />";
+            }
+
+
+            if($date == $_GET["to"]) {
+                break;
+            }
+            $date++;
+        }
+
+        if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
+            Csv::write($tmpDir.$nom.$suf_fin, $content);
+        }
+    }
+
+    $zip = $user.'_reporting.zip';
+    Lock::saveByName("../".$user.".lock", TEMP.$zip);
+    Zip::setZipDir(TEMP.$zip, $tmpDir);
+    State::delDir($tmpDir);
+
+    if(!empty($info)) {
+        $_SESSION['alert-info'] = $info;
+
+    }
+    $messages = new Message();
+    $_SESSION['alert-success'] = $messages->getMessage('msg2');
+    header('Location: ../reporting.php?plateforme='.$plateforme);
+} 
+else {
+    $_SESSION['alert-danger'] = "post_data_missing";
+    header('Location: ../index.php');
+}

@@ -14,7 +14,7 @@ elseif(isset($_GET["unique"])) {
 else {
     $_SESSION['alert-danger'] = "data_missing";
 }
-    header('Location: ../index.php');
+header('Location: ../index.php');
 
 function delete($unique) {
     State::delDir(TEMP.$unique.'/');
