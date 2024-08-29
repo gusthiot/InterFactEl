@@ -46,9 +46,10 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
     $tmpDir = TEMP.'reporting_'.time().'/';
 
     foreach($noms as $nom) {
-        $content = [];
         $date = $_GET["from"];
+        $first = true;
         while(true) {
+            $content = [];
             $month = substr($date, 4, 2);
             $year = substr($date, 0, 4);
             $dir = DATA.$plateforme."/".$year."/".$month;
@@ -60,8 +61,9 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
             $path = $dirVersion."/".$run."/Bilans_Stats/".$nom.$suf;
             $csv = Csv::extract($path);
             if(!empty($csv)) {
-                if(empty($content)) {
+                if($first) {
                     $content[] = explode(";", $csv[0]);
+                    $first = false;
                 }
                 for($i=1;$i<count($csv);$i++) {
                     $content[] = explode(";", $csv[$i]);
@@ -72,15 +74,16 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
             }
 
 
+            if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
+                Csv::append($tmpDir.$nom.$suf_fin, $content);
+            }
+
             if($date == $_GET["to"]) {
                 break;
             }
             $date++;
         }
 
-        if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
-            Csv::write($tmpDir.$nom.$suf_fin, $content);
-        }
     }
 
     $zip = $user.'_reporting.zip';
