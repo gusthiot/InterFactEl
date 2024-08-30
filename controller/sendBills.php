@@ -49,6 +49,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
         else {
             $mode = "SIMU";
         }
+        $_SESSION['alert-info'] .= "sending in mode ".$mode."<br />";
     }
     else {
         $mode = "REAL";
@@ -225,7 +226,6 @@ function send(string $data, string $dir, string $mode): array
 {
     $decoded = json_decode($data, true);
     $decoded["execmode"] = $mode;
-    $_SESSION['alert-info'] .= "send in mode ".$mode."<br />";
     if(!DEV_MODE) {
         foreach($decoded["attachment"] as $i=>$attachment) {
             $filename = $decoded["attachment"][$i]["filename"];
