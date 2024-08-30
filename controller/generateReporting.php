@@ -21,23 +21,15 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
         $month = substr($date, 4, 2);
         $year = substr($date, 0, 4);
         $dir = DATA.$plateforme."/".$year."/".$month;
-        $tab = glob($dir."/*", GLOB_ONLYDIR);
-        if(count($tab)>0) {
-            $dirVersion = array_reverse($tab)[0];
-            $run = Lock::load($dirVersion, "version");
+        $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
+        $run = Lock::load($dirVersion, "version");
 
-            $infos = Info::load($dirVersion."/".$run);
-            if(empty($factel)) {
-                $factel = $infos["FactEl"][2];
-            }
-            elseif($infos["FactEl"][2] != $factel) {
-                $_SESSION['alert-danger'] = "Sélectionner la période pour une même version logicielle";
-                header('Location: ../reporting.php?plateforme='.$plateforme);
-                exit;
-            }
+        $infos = Info::load($dirVersion."/".$run);
+        if(empty($factel)) {
+            $factel = $infos["FactEl"][2];
         }
-        else {
-            $_SESSION['alert-danger'] = "Le dossier ".$dir." semble vide";
+        elseif($infos["FactEl"][2] != $factel) {
+            $_SESSION['alert-danger'] = "Sélectionner la période pour une même version logicielle";
             header('Location: ../reporting.php?plateforme='.$plateforme);
             exit;
         }
@@ -56,7 +48,7 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
 
     $noms = ["Bilan-annulé", "Bilan-conso-propre", "Bilan-factures", "Bilan-subsides", "Bilan-usage", "Stat-client", "Stat-machine", "Stat-nbre-user", "Transaction1", "Transaction2", "Transaction3"];
     $info = "";
-    $suf_fin = "_".$abrev."_".substr($date, 0, 4)."_".substr($date, 4, 2)."_".substr($_GET["to"], 0, 4)."_".substr($_GET["to"], 4, 2).".csv";    
+    $suf_fin = "_".$abrev."_".substr($_GET["from"], 0, 4)."_".substr($_GET["from"], 4, 2)."_".substr($_GET["to"], 0, 4)."_".substr($_GET["to"], 4, 2).".csv";    
     $tmpDir = TEMP.'reporting_'.time().'/';
 
     foreach($noms as $nom) {
@@ -95,7 +87,7 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
             if($date == $_GET["to"]) {
                 break;
             }
-            
+
             if($month == "12") {
                 $date += 89;
             }
