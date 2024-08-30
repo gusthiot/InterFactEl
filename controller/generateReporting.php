@@ -46,7 +46,6 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
             break;
         }
 
-        $_SESSION['alert-danger'] .= $date." ";
         if($month == "12") {
             $date += 89;
         }
@@ -96,7 +95,13 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
             if($date == $_GET["to"]) {
                 break;
             }
-            $date++;
+            
+            if($month == "12") {
+                $date += 89;
+            }
+            else {
+                $date++;
+            }
         }
 
     }
