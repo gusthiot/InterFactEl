@@ -21,15 +21,23 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
         $month = substr($date, 4, 2);
         $year = substr($date, 0, 4);
         $dir = DATA.$plateforme."/".$year."/".$month;
-        $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
-        $run = Lock::load($dirVersion, "version");
+        $tab = glob($dir."/*", GLOB_ONLYDIR);
+        if(count($tab)>0) {
+            $dirVersion = array_reverse($tab)[0];
+            $run = Lock::load($dirVersion, "version");
 
-        $infos = Info::load($dirVersion."/".$run);
-        if(empty($factel)) {
-            $factel = $infos["FactEl"][2];
+            $infos = Info::load($dirVersion."/".$run);
+            if(empty($factel)) {
+                $factel = $infos["FactEl"][2];
+            }
+            elseif($infos["FactEl"][2] != $factel) {
+                $_SESSION['alert-danger'] = "Sélectionner la période pour une même version logicielle";
+                header('Location: ../reporting.php?plateforme='.$plateforme);
+                exit;
+            }
         }
-        elseif($infos["FactEl"][2] != $factel) {
-            $_SESSION['alert-danger'] = "Sélectionner la période pour une même version logicielle";
+        else {
+            $_SESSION['alert-danger'] = "Le dossier ".$dir." semble vide";
             header('Location: ../reporting.php?plateforme='.$plateforme);
             exit;
         }
