@@ -45,7 +45,14 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
         if($date == $_GET["to"]) {
             break;
         }
-        $date++;
+
+        $_SESSION['alert-danger'] .= $date." ";
+        if($month == "12") {
+            $date += 89;
+        }
+        else {
+            $date++;
+        }
     }
 
     $noms = ["Bilan-annulé", "Bilan-conso-propre", "Bilan-factures", "Bilan-subsides", "Bilan-usage", "Stat-client", "Stat-machine", "Stat-nbre-user", "Transaction1", "Transaction2", "Transaction3"];
