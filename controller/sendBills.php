@@ -49,7 +49,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
         else {
             $mode = "SIMU";
         }
-        $_SESSION['alert-info'] .= "sending in mode ".$mode."<br />";
+        $_SESSION['alert-info'] .= "Envoi en mode ".$mode."<br />";
     }
     else {
         $mode = "REAL";
