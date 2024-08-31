@@ -1,8 +1,8 @@
 const getDir = "plate="+$('#plate').val()+"&year="+$('#year').val()+"&month="+$('#month').val()+"&version="+$('#version').val()+"&run="+$('#run').val();
 const postDir = {plate: $('#plate').val(), year: $('#year').val(), month: $('#month').val(), version: $('#version').val(), run: $('#run').val()};
 
-$('#download-prefa').on('click', function () {
-    window.location.href = "controller/download.php?type=prefa";
+$('#download-generated').on('click', function () {
+    window.location.href = "controller/download.php?type=generated";
 } );
 
 $('#open-label').on('click', function () {

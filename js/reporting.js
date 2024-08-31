@@ -35,7 +35,7 @@ $(document).on("click", "#generate", function() {
     window.location.href = "controller/generateReporting.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val();
 } );
 
-$('#download-prefa').on('click', function () {
-    window.location.href = "controller/download.php?type=prefa";
+$('#download-generated').on('click', function () {
+    window.location.href = "controller/download.php?type=generated";
 } );
 

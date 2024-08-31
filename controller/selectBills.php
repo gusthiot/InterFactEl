@@ -41,7 +41,11 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         $html .= '<br /><span id="selected-factures">aucune facture sélectionnée</span> sur '.count($choices).'
                 <div><button type="button" id="all-bills" class="btn but-line lockable">Tout sélectionner</button><button type="button" id="'.$_POST["type"].'" class="btn but-line lockable">Envoyer</button></div>';
         if(TEST_MODE && $superviseur->isSuperviseur($user)) {
-            $html .= '<div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="mode-switch"><label class="custom-control-label" for="mode-switch">REAL</label></div>';
+            $html .= '<div class="dates"><label class="switch">
+                        <input class="switch-input" type="checkbox" id="mode-switch" />
+                        <span class="switch-label" data-on="REAL" data-off="SIMU"></span> 
+                        <span class="switch-handle"></span> 
+                    </label><div>';
         }
         $html .= '<div id="over-bills"><table class="table" id="bills">';
     

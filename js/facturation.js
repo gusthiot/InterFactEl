@@ -15,8 +15,8 @@ $('#close-historique').on('click', function () {
     $('#display').html("");
 } );
 
-$('#download-prefa').on('click', function () {
-    window.location.href = "controller/download.php?type=prefa";
+$('#download-generated').on('click', function () {
+    window.location.href = "controller/download.php?type=generated";
 } );
 
 $('.open-run').on('click', function () {

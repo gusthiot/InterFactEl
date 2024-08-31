@@ -21,7 +21,7 @@ if(isset($_GET['type'])) {
         }
         readZip($type, $tmpFile, CONFIG);
     }
-    elseif($type==="prefa") {
+    elseif($type==="generated") {
         // prefacturation, only for the user running it
         $fileName = Lock::loadByName("../".$user.".lock");
         if(!empty($fileName)) {   

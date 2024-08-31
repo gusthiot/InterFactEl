@@ -8,8 +8,8 @@ function zipError() {
                         '</div>');
 }
 
-$('#download-prefa').on('click', function () {
-    window.location.href = "controller/download.php?type=prefa";
+$('#download-generated').on('click', function () {
+    window.location.href = "controller/download.php?type=generated";
 } );
 
 $('#download-config').on('click', function () {

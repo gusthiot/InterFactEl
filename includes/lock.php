@@ -8,7 +8,7 @@ $dlTxt = "";
 $lockUser = Lock::loadByName($user.".lock");
 if(!empty($lockUser)) {
     $disabled = "disabled";
-    $dlTxt = '<a href="#" id="download-prefa">Vous avez une préfacturation à télécharger avant de pouvoir en faire une nouvelle.</a>';
+    $dlTxt = '<a href="#" id="download-generated">Vous avez un dossier à télécharger avant de pouvoir faire d’autres actions.</a>';
 }
 
 $lockProcess = Lock::load("./", "process");
