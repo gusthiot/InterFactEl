@@ -46,7 +46,7 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
         }
     }
 
-    $noms = ["Bilan-annulé", "Bilan-conso-propre", "Bilan-factures", "Bilan-subsides", "Bilan-usage", "Stat-client", "Stat-machine", "Stat-nbre-user", "Transaction1", "Transaction2", "Transaction3"];
+    $noms = ["Bilan-annulé", "Bilan-conso-propre", "Bilan-factures", "Bilan-subsides", "Bilan-usage", "Stat-client", "Stat-machine", "Stat-nbre-user", "Stat-user", "Transaction1", "Transaction2", "Transaction3"];
     $info = "";
     $suf_fin = "_".$abrev."_".substr($_GET["from"], 0, 4)."_".substr($_GET["from"], 4, 2)."_".substr($_GET["to"], 0, 4)."_".substr($_GET["to"], 4, 2).".csv";    
     $tmpDir = TEMP.'reporting_'.time().'/';
