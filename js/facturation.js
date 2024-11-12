@@ -27,6 +27,49 @@ $('#destroy').on('click', function () {
     window.location.href = "controller/destroy.php?plate="+$('#plate').val();
 } );
 
+$('#period').on('click', function () {
+    let first = '<label for="from">De</label><select id="from" class="custom-select lockable"><option disabled selected></option>';
+    const choices = $(this).data('choices');
+    Object.keys(choices).forEach(function(key) {
+        first += '<option value="'+key+'">'+choices[key][1]+' '+choices[key][0]+'</option>';
+    });
+    $('#first').html(first + '</select>');
+} );
+
+$(document).on("change", "#from", function () {
+    const from = $(this).find(":selected").val();
+    const to = $('#last').find(":selected").val();
+    let blank = true;
+    let start = '<label for="to">A</label><select id="to" class="custom-select lockable">';
+    let next = "";
+    $(this.children).each(function()
+    {
+        if(parseInt($(this).val()) >= parseInt(from)) {
+            next += '<option value="'+$(this).val()+'"';
+            if(to) console.log(to, $(this).val());
+            if(to && (to == $(this).val())) {
+                blank = false;
+                next += ' selected ';
+            }
+            next += '>'+$(this).text()+'</option>';
+        }
+    });
+    if(blank) {
+        start += '<option disabled selected></option>';
+        $('#generate').html('');
+    }
+    const last = start + next + '</select>'; 
+    $('#last').html(last);
+} );
+
+$(document).on("change", "#to", function() {
+    $('#reinit').html('<button type="button" class="btn but-line lockable">Lancer</button>');
+} );
+
+$(document).on("click", "#reinit", function() {
+    window.location.href = "controller/loadPeriod.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val();
+} );
+
 $(document).on("change", ".zip-file", function () {
     const id = $(this).attr('id');
     $('#type').val(id);

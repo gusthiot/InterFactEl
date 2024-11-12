@@ -87,10 +87,36 @@ include("includes/lock.php");
                                     if(empty($current)) { 
                                         echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $disabled);
                                     }             
-                                    if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") { ?>
-                                        <div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button></div>
+                                    if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") {  
+                                        ?>
+                                        <div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button>
+                                        </div>  
                                     <?php } 
-                                } 
+                                }     
+                                if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") {       
+                                    $choices = [];
+                                    if($first) {
+                                        $title = "Charger une période";
+                                    }
+                                    else {
+                                        $title = "Réinitialiser et charger une période";
+                                    }
+                                    $prod = str_replace("data", "../prod/data", DATA.$plateforme);
+                                    foreach(array_reverse(glob($prod."/*", GLOB_ONLYDIR))  as $dirYear) {
+                                        $year = basename($dirYear);
+                                        foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+                                            $month = basename($dirMonth);
+                                            $choices[$year.$month] = [$year, $month];
+                                        }
+                                    }?>
+                                    <div><button type="button" id="period" '.$disabled.' data-choices="<?php echo htmlentities(json_encode($choices),ENT_QUOTES); ?>" class="btn but-red lockable"><?= $title ?></button>
+                                    </div>
+                                    <div id="first"></div>
+                                    <div id="last">
+                                    </div>
+                                    <div id="reinit">
+                                    </div>
+                                <?php } 
                             ?>
                         </div>
                         <div class="col-sm">

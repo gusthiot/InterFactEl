@@ -8,8 +8,13 @@ require_once("../session.inc");
 if(TEST_MODE) {
     if(isset($_GET["plate"])) {
         checkPlateforme($dataGest, "facturation", $_GET["plate"]);
-        exec(sprintf("rm -rf %s", escapeshellarg(DATA.$_GET["plate"])));
-        $_SESSION['alert-success'] = "données de plateforme correctement effacées";
+        if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") { 
+            exec(sprintf("rm -rf %s", escapeshellarg(DATA.$_GET["plate"])));
+            $_SESSION['alert-success'] = "données de plateforme correctement effacées";
+        }
+        else {
+            $_SESSION['alert-danger'] = "wrong place, wrong user";
+        }
         header('Location: ../facturation.php?plateforme='.$_GET["plate"]);
     }
     else {
