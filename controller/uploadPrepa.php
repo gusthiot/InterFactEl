@@ -64,7 +64,7 @@ if(isset($_POST['type'])) {
                         if(empty($msg)) {
                             if($type == "ARCHIVE") {
                                 State::recurseCopy($tmpDir, DATA.$plateforme);
-                                $_SESSION['alert-success'] = "en travaux";
+                                $_SESSION['alert-success'] = "Archive correctement chargée";
                             }
                             else { 
                                 $messages = new Message();                 
