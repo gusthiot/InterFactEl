@@ -27,7 +27,7 @@ if($dataGest) {
                 </div>
             </div>	
             <div class="title <?php if(TEST_MODE) echo "test";?>">
-                <h1 class="text-center p-1 pt-md-5">Interface de facturation</h1>
+                <h1 class="text-center p-1">Interface de facturation</h1>
                 <h6 class="text-center">Welcome <i><?= $user ?></i></h6>
             </div>
             <?php include("includes/message.php"); 

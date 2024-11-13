@@ -327,4 +327,27 @@ class State
         }
     }
 
+    /**
+     * Copies a directory recursively
+     *
+     * @param string $src source directory
+     * @param string $dst destination directory (should not exist yet)
+     * @return void
+     */
+    static function recurseCopy(string $src, string $dst): void
+    {
+        $dir = opendir($src);
+        if (file_exists($dst) || mkdir($dst, 0755, true)) {
+            while(false !== ( $file = readdir($dir)) ) {
+                if (( $file != '.' ) && ( $file != '..' )) {
+                    if ( is_dir($src . '/' . $file) ) {
+                        self::recurseCopy($src . '/' . $file, $dst . '/' . $file);
+                    } else {
+                        copy($src . '/' . $file,$dst . '/' . $file);
+                    }
+                }
+            }
+        }
+        closedir($dir);
+    }
 }

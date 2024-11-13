@@ -31,6 +31,8 @@ $status = $sap->status();
 $lockRun = Lock::load($dir, "run");
 $lockVersion = Lock::load(DATA.$plateforme."/".$year."/".$month."/".$version, "version");
 
+$archive = file_exists(DATA.$plateforme."/".$year."/".$month."/archive.csv");
+
 include("includes/lock.php");
 
 ?>
@@ -54,7 +56,7 @@ include("includes/lock.php");
                 </div>
             </div>
             <div class="title <?php if(TEST_MODE) echo "test";?>">
-                <h1 class="text-center p-1 pt-md-5"><?= $label ?></h1>
+                <h1 class="text-center p-1"><?= $label ?></h1>
             </div>
             <input type="hidden" id="plate" value="<?= $plateforme ?>" />
             <input type="hidden" id="year" value="<?= $year ?>" />
@@ -65,30 +67,36 @@ include("includes/lock.php");
             <div id="actions" class="text-center">
                 <button type="button" id="open-label" class="btn but-line">Etiqueter</button>
                 <button type="button" id="open-info" class="btn but-line">Afficher les infos</button>
-                <button type="button" id="open-bills" class="btn but-line">Afficher la liste des factures</button>
-                <button type="button" id="open-ticket" class="btn but-line">Contrôler le ticket</button>
-                <button type="button" id="open-changes" class="btn but-line">Afficher les modifications</button>
                 <?php 
-                if(($status < 4) && !$lockRun) {
-                    echo '<button type="button" id="invalidate" '.$disabled.' class="btn but-line lockable">Invalider</button>';
-                } 
+                if(!$archive) { 
+                ?>
+                    <button type="button" id="open-bills" class="btn but-line">Afficher la liste des factures</button>
+                    <button type="button" id="open-ticket" class="btn but-line">Contrôler le ticket</button>
+                    <button type="button" id="open-changes" class="btn but-line">Afficher les modifications</button>
+                <?php 
+                    if(($status < 4) && !$lockRun) {
+                        echo '<button type="button" id="invalidate" '.$disabled.' class="btn but-line lockable">Invalider</button>';
+                    } 
+                }
                 if(in_array($status, [0, 4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run)) { ?>
                     <button type="button" id="bilans" class="btn but-line">Exporter Bilans & Stats</button>
-                    <button type="button" id="annexes" class="btn but-line">Exporter Annexes csv</button>
-                <?php } 
+                    <?php if(!$archive) { ?> 
+                        <button type="button" id="annexes" class="btn but-line">Exporter Annexes csv</button>
+                <?php }
+                } 
                 ?>
                 <button type="button" id="all" class="btn but-line">Exporter Tout</button>
                 <?php 
-                if(in_array($status, [1, 2, 3, 5, 6, 7]) && !$lockRun) {
+                if(!$archive && in_array($status, [1, 2, 3, 5, 6, 7]) && !$lockRun) {
                     echo '<button type="button" id="send" '.$disabled.' class="btn but-line-green lockable">Envoi SAP</button>';
                 }
-                if(in_array($status, [0, 5, 6, 7]) && !$lockRun) {
+                if(!$archive && in_array($status, [0, 5, 6, 7]) && !$lockRun) {
                     echo '<button type="button" id="finalize" '.$disabled.' class="btn but-line-blue lockable">Finaliser SAP</button>';
                 }
-                    if((in_array($status, [4, 5, 6, 7]) && !$lockRun) || (in_array($status, [4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run))) {
+                    if(!$archive && (in_array($status, [4, 5, 6, 7]) && !$lockRun) || (in_array($status, [4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run))) {
                 echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg5').'" '.$disabled.' class="btn but-line-red lockable">Renvoi SAP</button>';
                 }
-                if($status > 1) {
+                if(!$archive && $status > 1) {
                 ?>
                     <button type="button" id="open-report" class="btn but-line">Rapports d'envoi SAP</button>
                 <?php

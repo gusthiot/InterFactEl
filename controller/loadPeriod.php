@@ -1,5 +1,6 @@
 <?php
 
+require_once("../includes/State.php");
 require_once("../session.inc");
 
 /**
@@ -16,7 +17,7 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
             $year = substr($date, 0, 4);
             $prod = str_replace("data", "../prod/data", DATA.$plateforme)."/".$year."/".$month;
             $dir = DATA.$plateforme."/".$year."/".$month;
-            recurseCopy($prod, $dir);
+            State::recurseCopy($prod, $dir);
 
             if($date == $_GET["to"]) {
                 break;
@@ -29,12 +30,12 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
                 $date++;
             }
         }
+        $_SESSION['alert-success'] = "Période correctement chargée";
     }
     else {
         $_SESSION['alert-danger'] = "wrong place, wrong user";
     }
 
-    $_SESSION['alert-success'] = "Période correctement chargée";
     header('Location: ../facturation.php?plateforme='.$plateforme);
 } 
 else {
@@ -42,25 +43,3 @@ else {
     header('Location: ../index.php');
 }
 
-/**
- * Copies a directory recursively
- *
- * @param string $src source directory
- * @param string $dst destination directory (should not exist yet)
- * @return void
- */
-function recurseCopy(string $src, string $dst): void
-{
-    $dir = opendir($src);
-    mkdir($dst, 0755, true);
-    while(false !== ( $file = readdir($dir)) ) {
-        if (( $file != '.' ) && ( $file != '..' )) {
-            if ( is_dir($src . '/' . $file) ) {
-                recurseCopy($src . '/' . $file, $dst . '/' . $file);
-            } else {
-                copy($src . '/' . $file,$dst . '/' . $file);
-            }
-        }
-    }
-    closedir($dir);
-}

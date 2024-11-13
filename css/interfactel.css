@@ -26,6 +26,14 @@
   --noir: #212121;
 }
 
+table {
+  margin-bottom: 20px;
+}
+
+h1 {
+  margin: 1rem !important;
+}
+
 .lockable[disabled]+label {
   cursor: not-allowed;
   pointer-events:none;
@@ -182,8 +190,8 @@ input[type="file"] {
 }
 
 #head {
-  margin: 20px;
-  line-height: 50px;
+  margin: 20px 10px 0px 10px;
+  line-height: 40px;
 }
 
 #div-logo {

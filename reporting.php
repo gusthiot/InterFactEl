@@ -39,7 +39,7 @@ if($dataGest) {
                 </div>
             </div>	
             <div class="title <?php if(TEST_MODE) echo "test";?>">
-                <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
+                <h1 class="text-center p-1"><?= $name ?></h1>
             </div>
             <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />        
             <?php include("includes/message.php");

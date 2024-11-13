@@ -53,7 +53,7 @@ if(!$available) {
                 </div>
             </div>	
             <div class="title <?php if(TEST_MODE) echo "test";?>">
-                <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
+                <h1 class="text-center p-1"><?= $name ?></h1>
             </div>
             <div class="text-center" id="buttons">
                 <form action="controller/uploadTarifs.php" method="post" id="form-tarifs" enctype="multipart/form-data" >

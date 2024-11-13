@@ -76,8 +76,10 @@ $(document).on("change", ".zip-file", function () {
     const file = $(this).val();
     if(file.indexOf('.zip') > -1) {
         $('#form-fact').submit();
-        $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
-        $(".lockable").prop('disabled', true);
+        if(id != "ARCHIVE") {
+            $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
+            $(".lockable").prop('disabled', true);
+        }
     }
     else {
         $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+

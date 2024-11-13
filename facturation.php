@@ -69,7 +69,7 @@ include("includes/lock.php");
                 </div>
             </div>	
             <div class="title <?php if(TEST_MODE) echo "test";?>">
-                <h1 class="text-center p-1 pt-md-5"><?= $name ?></h1>
+                <h1 class="text-center p-1"><?= $name ?></h1>
             </div>	
             
             <form action="controller/uploadPrepa.php" method="post" id="form-fact" enctype="multipart/form-data" >
@@ -93,7 +93,8 @@ include("includes/lock.php");
                                         </div>  
                                     <?php } 
                                 }     
-                                if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") {       
+                                if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") {   
+                                    echo uploader("Charger des archives", "ARCHIVE", $disabled);    
                                     $choices = [];
                                     if($first) {
                                         $title = "Charger une période";
@@ -171,7 +172,13 @@ include("includes/lock.php");
                             $dirVersions = array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR));
                             if(count($dirVersions) > 0) {
                                 echo '<tr>';
-                                echo '<td rowspan="'.count($dirVersions).'">'.$month.' '.$year;
+                                echo '<td rowspan="'.count($dirVersions).'">';
+                                if (file_exists($dirMonth."/archive.csv")) { ?>
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#star"></use>
+                                    </svg>
+                                <?php }
+                                echo $month.' '.$year;
                                 if (file_exists($dirMonth."/lockm.csv")) { ?>
                                     <svg class="icon" aria-hidden="true">
                                         <use xlink:href="#lock"></use>
