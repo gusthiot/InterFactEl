@@ -13,7 +13,7 @@ require_once("../session.inc");
 /**
  * Called to send bills to SAP, and manage answers
  */
-if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
+if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"]) && isset($_POST["mode"])) {
     checkPlateforme($dataGest, "facturation", $_POST["plate"]);
     $plateforme = $_POST["plate"];
     $year = $_POST["year"];
@@ -21,13 +21,32 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $run = $_POST["run"];
     $type = $_POST['type'];
     $version = $_POST["version"];
+    $mode = $_POST["mode"];
     $lockProcess = Lock::load("../", "process");
     if(!empty($lockProcess)) {
-        $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';;
+        $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...';
         header('Location: ../run.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
         exit;
     }
     $bills = $_POST["bills"];
+
+    if(TEST_MODE && (!$superviseur->isSuperviseur($user) || DEV_MODE) && ($mode == "REAL" || $mode == "PRES")) {
+        $_SESSION['alert-danger'] = 'Seule la simulation est disponible';
+        header('Location: ../run.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
+        exit;
+
+    }
+    if(!TEST_MODE && $mode == "SIMU") {
+        $_SESSION['alert-danger'] = 'Pas de simulation en production';
+        header('Location: ../run.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
+        exit;
+    }
+    if(!in_array($mode, ["REAL", "PRES", "SIMU"])) {
+        $_SESSION['alert-danger'] = "C'est quoi ce mode...";
+        header('Location: ../run.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
+        exit;
+    }
+
 
     $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
     $dirPrevMonth = DATA.$plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
@@ -42,18 +61,6 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $kos = 0;
     $histo = "";
 
-    if(TEST_MODE) {
-        if($superviseur->isSuperviseur($user) && isset($_POST['mode']) && $_POST['mode']=="true") {
-            $mode = "REAL";
-        }
-        else {
-            $mode = "SIMU";
-        }
-        $_SESSION['alert-info'] .= "Envoi en mode ".$mode."<br />";
-    }
-    else {
-        $mode = "REAL";
-    }
 
     Lock::save("../", 'process', "send ".$plateforme." ".$run);
     try {
@@ -82,7 +89,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                             }
                             if(!empty($res->E_RESULT->item->IS_ERROR)) {
                                 if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
-                                    if($type == "Envoi dans SAP") { 
+                                    if($type == "send-bills") { 
                                         $sap_cont[$bill][3] = "ERROR";
                                         $sap_cont[$bill][4] = "-";
                                         $sap_cont[$bill][5] = $res->E_RESULT->item->LOG->item->MESSAGE;
@@ -98,12 +105,21 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                             }
                             else {
                                 if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
+                                    if($mode == "REAL") {
+                                        $sent = "Envoyé en facturation";
+                                    }
+                                    elseif($mode == "PRES") {
+                                        $sent = "Envoyé en prè-saisie";
+                                    }
+                                    else {
+                                        $sent = "Envoyé en simulation";
+                                    }
                                     $sap_cont[$bill][3] = "SENT";
                                     $sap_cont[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
-                                    $sap_cont[$bill][5] = "";
+                                    $sap_cont[$bill][5] = $sent;
                                     $archive[$bill][3] = "SENT";
                                     $archive[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
-                                    $archive[$bill][5] = "";
+                                    $archive[$bill][5] = $sent;
                                     $oks++;
                                 }
                                 else {
@@ -133,7 +149,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                 }
                 else {
                     foreach($redo as $rd) {
-                        if($type == "Envoi dans SAP") { 
+                        if($type == "send-bills") { 
                             $sap_cont[$rd][4] = "-";
                             $sap_cont[$rd][5] = "Problème de connexion au serveur SAP";
                             $archive[$rd][3] = "READY";
@@ -180,7 +196,13 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $sap = new Sap($dir);
     $status = $sap->status();
     $sapState = $sap->state();
-    $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$type." | ".$oldStatus." | ".$status.PHP_EOL;
+    if($type = "send-bills") {
+        $title = "Envoi dans SAP";
+    }
+    else {
+        $title = "Renvoi dans SAP";
+    }
+    $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$title." | ".$oldStatus." | ".$status.PHP_EOL;
     $txt .= $oldSapState." | ".count($bills)." | ".$sapState;
     if($histo != "") {
         $txt .= PHP_EOL.$histo;
@@ -219,7 +241,7 @@ else {
  *
  * @param string $data bill data
  * @param string $dir directory where to find attachments
- * @param string $mode SIMU/REAL, if SAP generates bills or not
+ * @param string $mode REAL/PRES/SIMU, if SAP generates bills or not
  * @return array SAP answer, or error
  */
 function send(string $data, string $dir, string $mode): array

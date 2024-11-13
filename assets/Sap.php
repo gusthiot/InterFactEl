@@ -159,7 +159,7 @@ class Sap extends Csv
                 $html .= '<tr>';
                 foreach($line as $key=>$cell) {
                     // only column 2 with financial format
-                    ($key==2)?$html .= '<td>'.number_format(floatval($cell), 2, ".", "'").'</td>':$html .= '<td>'.$cell.'</td>';
+                    ($key==2)?$html .= '<td>'.number_format(floatval($cell), 2, ".", "'").'</td>':$html .= '<td>'.str_replace('"', '', $cell).'</td>';
                 }
                 $html .= '</tr>';
             }

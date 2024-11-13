@@ -105,15 +105,19 @@ $('#resend').on('click', function () {
     } 
 } );
 
-$(document).on("click", "#send-bills", function() {
-    sending("Envoi dans SAP");
+$(document).on("click", "#pres", function() {
+    sending("PRES");
 } );
 
-$(document).on("click", "#resend-bills", function() {
-    sending("Renvoi dans SAP");
+$(document).on("click", "#real", function() {
+    sending("REAL");
 } );
 
-function sending(type) {
+$(document).on("click", "#simu", function() {
+    sending("SIMU");
+} );
+
+function sending(mode) {
     let bills = [];
     $.each($("input[name='bills']:checked"), function(){
         bills.push($(this).val());
@@ -121,7 +125,7 @@ function sending(type) {
     if(bills.length > 0) {
         $(".lockable").prop('disabled', true);
         $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
-        $.post("controller/sendBills.php", Object.assign({}, postDir, {bills: bills, type: type, mode: $('#mode-switch').prop('checked')}), function () {
+        $.post("controller/sendBills.php", Object.assign({}, postDir, {bills: bills, type: $("input[name='sending']").val(), mode: mode}), function () {
             window.location.href = "facturation.php?plateforme="+$('#plate').val();
         });
     }

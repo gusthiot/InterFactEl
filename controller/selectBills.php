@@ -39,15 +39,18 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     }
     if(count($choices)>0) {
         $html .= '<br /><span id="selected-factures">aucune facture sélectionnée</span> sur '.count($choices).'
-                <div><button type="button" id="all-bills" class="btn but-line lockable">Tout sélectionner</button><button type="button" id="'.$_POST["type"].'" class="btn but-line lockable">Envoyer</button></div>';
-        if(TEST_MODE && $superviseur->isSuperviseur($user)) {
-            $html .= '<div class="dates"><label class="switch">
-                        <input class="switch-input" type="checkbox" id="mode-switch" />
-                        <span class="switch-label" data-on="REAL" data-off="SIMU"></span> 
-                        <span class="switch-handle"></span> 
-                    </label><div>';
+                <div><button type="button" id="all-bills" class="btn but-line lockable">Tout sélectionner</button><input type="hidden" name="sending" id="sending" value="'.$_POST["type"].'" /></div>
+                <div>';
+        if(!TEST_MODE || ($superviseur->isSuperviseur($user) && !DEV_MODE)) {
+            $html .= '<button type="button" id="real" class="btn but-line-red lockable">Envoyer en facturation</button>';
+            $html .= '<button type="button" id="pres" class="btn but-line-green lockable">Envoyer en pré-saisie</button>';
+
         }
-        $html .= '<div id="over-bills"><table class="table" id="bills">';
+        if(TEST_MODE) {
+            $html .= '<button type="button" id="simu" class="btn but-line-blue lockable">Envoyer en simulation</button>';
+        }
+
+        $html .= '</div><div id="over-bills"><table class="table" id="bills">';
     
         foreach($choices as $choice) {
             $html .= $choice;
