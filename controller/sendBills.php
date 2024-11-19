@@ -109,7 +109,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                                         $sent = "Envoyé en facturation";
                                     }
                                     elseif($mode == "PRES") {
-                                        $sent = "Envoyé en prè-saisie";
+                                        $sent = "Envoyé en pré-saisie";
                                     }
                                     else {
                                         $sent = "Envoyé en simulation";
