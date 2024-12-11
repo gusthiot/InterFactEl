@@ -106,6 +106,15 @@ ksort($clients);
                                 <table class="tableau">
                                     <tr>
                                         <td> N° facture </td>
+                                        <?php 
+                                            $first = array_key_first($client['factures']);
+                                            $cols = 1;
+                                            if(array_key_exists("projet", $client['factures'][$first])) { 
+                                                $cols = 3;
+                                        ?>
+                                            <td> N° compte - projet </td>
+                                            <td> Intitulé </td>
+                                        <?php } ?>
                                         <td> Net amount <br /> [CHF] </td>
                                     </tr>
                                 <?php
@@ -113,12 +122,16 @@ ksort($clients);
                                 ?>
                                     <tr>
                                         <td> <?=$id?> </td>
+                                        <?php if(array_key_exists("projet", $facture)) { ?>
+                                            <td> <?=$facture['projet']?> </td>
+                                            <td> <?=$facture['intitule']?> </td>
+                                        <?php } ?>
                                         <td id="toright"> <?=$facture['total']?> </td>
                                     </tr>
                                 <?php }
                                 ?>
                                     <tr>
-                                        <td id="toright">Total [CHF] : </td>
+                                        <td colspan="<?= $cols ?>" id="toright">Total [CHF] : </td>
                                         <td id="toright"><?=$client['total']?></td>
                                     </tr>
                                 </table> 
