@@ -2,15 +2,15 @@
   margin-left: 600px;
   text-align:left;
 }
-#tableau {
+.tableau {
   border-collapse: collapse;
   margin: 20px;
 }
-#tableau tr, #tableau td {
+.tableau tr, .tableau td {
   border: 1px solid black;
   vertical-align:middle;
 }
-#tableau td {
+.tableau td {
   padding: 3px;
 }
 #annexes tr, #annexes td {
@@ -46,4 +46,9 @@
 .csv:hover, .pdf:hover  {
   font-weight: bold;
   cursor: pointer;
+}
+
+.line {
+  display: inline-block;
+  margin: 20px;
 }

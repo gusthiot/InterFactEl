@@ -81,25 +81,48 @@ ksort($clients);
                         <?=$client['nom3']?> <br />
                         </div><br />
                         <div id="reference"><?=$client['ref']?></div>
-                            <table id="tableau">
-                                <tr>
-                                    <td> Description </td>
-                                    <td> Net amount <br /> [CHF] </td>
-                                </tr>
-                            <?php
-                            foreach($client['articles'] as $article) {
-                            ?>
-                                <tr>
-                                    <td> <?=$article['descr']?> <br /> <?=$article['texte']?> </td>
-                                    <td id="toright"> <?=$article['net']?> </td>
-                                </tr>
-                            <?php }
-                            ?>
-                                <tr>
-                                    <td id="toright">Total [CHF] : </td>
-                                    <td id="toright"><?=$client['total']?></td>
-                                </tr>
-                            </table> 
+                            <div class="line">
+                                <table class="tableau">
+                                    <tr>
+                                        <td> Description </td>
+                                        <td> Net amount <br /> [CHF] </td>
+                                    </tr>
+                                <?php
+                                foreach($client['articles'] as $article) {
+                                ?>
+                                    <tr>
+                                        <td> <?=$article['descr']?> <br /> <?=$article['texte']?> </td>
+                                        <td id="toright"> <?=$article['net']?> </td>
+                                    </tr>
+                                <?php }
+                                ?>
+                                    <tr>
+                                        <td id="toright">Total [CHF] : </td>
+                                        <td id="toright"><?=$client['total']?></td>
+                                    </tr>
+                                </table> 
+                            </div>                                
+                            <div class="line">
+                                <table class="tableau">
+                                    <tr>
+                                        <td> N° facture </td>
+                                        <td> Net amount <br /> [CHF] </td>
+                                    </tr>
+                                <?php
+                                foreach($client['factures'] as $id => $facture) {
+                                ?>
+                                    <tr>
+                                        <td> <?=$id?> </td>
+                                        <td id="toright"> <?=$facture['total']?> </td>
+                                    </tr>
+                                <?php }
+                                ?>
+                                    <tr>
+                                        <td id="toright">Total [CHF] : </td>
+                                        <td id="toright"><?=$client['total']?></td>
+                                    </tr>
+                                </table> 
+                            </div>
                             <?php
                             if(array_key_exists("nom_zip", $client)) {
                             ?>
@@ -125,7 +148,7 @@ ksort($clients);
                             <?=$client['nom3']?> <br />
                             <?=$facture['ref']?> <br />
                         </div><br />
-                        <table id="tableau">
+                        <table class="tableau">
                             <tr>
                                 <td>N° Poste </td>
                                 <td> Name </td>
