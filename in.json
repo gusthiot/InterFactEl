@@ -1,0 +1,417 @@
+{
+    "1": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "3": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "4": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "4.01": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "4.1": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "4.11": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "4.12": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "5": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "5.01": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "6": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "7": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-ref": 6,
+                "client-name2": 7,
+                "client-email": 8,
+                "client-deliv": 9
+            }
+        },
+        "clientclasse": {
+            "prefix": "clientclasse",
+            "columns": {
+                "client-code": 0,
+                "client-idclass": 1
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "8": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-name2": 5,
+                "client-name3": 6,
+                "client-ref": 7,
+                "client-email": 8,
+                "client-deliv": 9,
+                "client-idclass": 10
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "9": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 0,
+                "client-sap": 1,
+                "client-name": 2,
+                "client-name2": 3,
+                "client-name3": 4,
+                "client-ref": 5,
+                "client-email": 6,
+                "client-deliv": 7,
+                "client-idclass": 8
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "10": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 0,
+                "client-sap": 1,
+                "client-name": 2,
+                "client-name2": 3,
+                "client-name3": 4,
+                "client-ref": 5,
+                "client-email": 6,
+                "client-deliv": 7,
+                "client-idclass": 8
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    },
+    "11": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 0,
+                "client-sap": 1,
+                "client-name": 2,
+                "client-name2": 3,
+                "client-name3": 4,
+                "client-ref": 5,
+                "client-email": 6,
+                "client-deliv": 7,
+                "client-idclass": 8
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-idclass": 0,
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        }
+    }
+}

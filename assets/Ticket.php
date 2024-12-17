@@ -22,7 +22,7 @@ class Ticket
         $ticket = "";
         $name = $dir."/".self::NAME;
         if ((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
-            $ticket = fread($open, filesize($name));    
+            $ticket = fread($open, filesize($name));
             fclose($open);
         }
         return $ticket;

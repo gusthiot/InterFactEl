@@ -29,6 +29,7 @@ if($dataGest) {
 
     <body>
         <div class="container-fluid">	
+            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />        
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
@@ -47,40 +48,24 @@ if($dataGest) {
                 <div class="text-center"><?= $dlTxt ?></div>
             <?php }
             ?>
-            <div class="text-center">
-            <?php    
-            $choices = [];
-            foreach(array_reverse(glob($dir."/*", GLOB_ONLYDIR))  as $dirYear) {
-                $year = basename($dirYear);
-                foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
-                    $month = basename($dirMonth);
-                    if (file_exists($dirMonth."/lockm.csv")) {
-                        $choices[$year.$month] = [$year, $month];
-                    }
-                }
-            }
-            if(count($choices) > 0) {
-            ?>
-                <div id="dates">
-                    <div id="first">
-                        <label for="from">De</label>
-                        <select id="from" class="custom-select lockable" <?= $disabled ?> >
-                        <option disabled selected></option>
-                        <?php
-                        $i = 0;
-                        foreach($choices as $key=>$choice) {
-                            echo '<option value="'.$key.'">'.$choice[1]." ".$choice[0].'</option>';
-                        }
-                        ?>
-                        </select>
-                    </div>
-                    <div id="last">
-                    </div>
-                    <div id="generate">
-                    </div>
+            <div id="report-tiles">
+                <div type="button" id="concatenation" class="tile center-one">
+                    <p>Concaténer</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
                 </div>
-            <?php } ?>
+                <div type="button" id="montants" class="tile center-one">
+                    <p>Montants facturés</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
             </div>
+
+            <!--<div id="bilans"></div>-->
+            <div id="period"></div>
+            <div id="report-content"></div>
         </div>
         <?php include("includes/footer.php");?> 
         <script src="js/jquery-ui.min.js"></script>

@@ -34,11 +34,18 @@ class State
     private string $last_v;
 
     /**
-     * Last facturation done rune
+     * Last facturation done run
      *
      * @var string
      */
     private string $last_r;
+
+    /**
+     * Last facturation done complete path
+     *
+     * @var string
+     */
+    private string $last_path;
 
     /**
      * Class constructor
@@ -51,7 +58,7 @@ class State
     }
 
     /**
-     * Determines which was the last the facturation, for a plateform, if one exists
+     * Determines which was the last facturation, for a plateform, if one exists
      *
      * @param string $pathPlate path to plateform directory
      * @return void
@@ -76,6 +83,7 @@ class State
                             $this->last_v = $version;
                             $this->last_r = Lock::load($dirVersion, "version");
                             $this->last = "(".$month." ".$year.", ".$version.")";
+                            $this->last_path = $pathPlate."/".$year."/".$month."/".$version."/".$this->last_r;
                             return;
                         }
                     }
@@ -159,6 +167,16 @@ class State
     function getLastRun(): string
     {
         return $this->last_r;
+    }
+
+    /**
+     * Getter for $last_path string variable
+     *
+     * @return string
+     */
+    function getLastPath(): string
+    {
+        return $this->last_path;
     }
 
     /**

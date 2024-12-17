@@ -41,7 +41,7 @@ if($dataGest) {
                     // Only supervisor can upload/download config files
                 ?>
                 
-                <div id="index-supervision">
+                <div class="index-primary">
                     <h3 class="">Supervision</h3>
                     <div class="tiles">
                         <div type="button" id="download-config" class="tile center-one">
@@ -65,12 +65,12 @@ if($dataGest) {
                 }
                 if($dataGest) {
                     ?>             
-                    <div id="index-gestion">                  
+                    <div class="index-primary">                  
                         <h3 class="">Gestion</h3>
                         <?php
                         if(!empty($dataGest['facturation'])) {
                             ?>   
-                            <div id="index-facturation">  
+                            <div class="index-secondary">  
                                 <h5 class="">Facturation</h5>
                                 <div class="tiles">
                                 <?php
@@ -91,7 +91,7 @@ if($dataGest) {
                         }
                         if(!empty($dataGest['tarifs'])) {
                             ?>      
-                            <div id="index-tarifs">                
+                            <div class="index-secondary">                
                                 <h5 class="">Tarifs</h5>
                                 <div class="tiles">
                                 <?php
@@ -131,7 +131,7 @@ if($dataGest) {
                         }
                         if(!empty($dataGest['reporting'])) {
                             ?>      
-                            <div id="index-reporting">  
+                            <div class="index-secondary">  
                                 <h5 class="">Reporting</h5>
                                 <div class="tiles">
                                 <?php
@@ -155,7 +155,7 @@ if($dataGest) {
                     <?php
                 }
             ?>
-            <div id="index-tools">
+            <div class="index-primary">
                 <h3 class="">Outils</h3>
                 <div class="tiles">
                     <label class="tile center-one">

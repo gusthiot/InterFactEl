@@ -99,7 +99,7 @@ if(isset($_POST['type'])) {
                                 else {
                                     // with previous internal data, consistancy should be guaranteed
                                     $state = new State(DATA.$plateforme);
-                                    $dirOut = DATA.$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/".$state->getLastVersion()."/".$state->getLastRun()."/OUT/";
+                                    $dirOut = $state->getLastPath()."/OUT/";
                                         
                                     foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
                                         if(!copy($dirOut.$file, $tmpDir.$file)) {

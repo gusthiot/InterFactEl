@@ -9,7 +9,7 @@ require_once("../includes/State.php");
 require_once("../session.inc");
 
 /**
- * Called to get reporting, as a zip file from concatenate bilans & stats csv
+ * Called to get a zip file from concatenate bilans & stats csv
  */
 if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
     $plateforme = $_GET["plate"];

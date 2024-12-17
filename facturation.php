@@ -154,10 +154,10 @@ include("includes/lock.php");
                     echo'<div class="text-center">'.$dlTxt.'</div>';
                 }
                 ?>
-                <div class="text-center" id="display"></div>
+                <div id="display"></div>
             </form>
 
-            <div class="text-center" id="plate-content">
+            <div id="plate-content">
             <?php
             if(file_exists($dir)) {  
             ?>

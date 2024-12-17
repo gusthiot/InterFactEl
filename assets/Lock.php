@@ -31,7 +31,7 @@ class Lock
     {
         $lock = "";
         if(array_key_exists($type, self::FILES)) {
-            return self::loadByName($dir."/".self::FILES[$type]);
+            return trim(self::loadByName($dir."/".self::FILES[$type]));
 
         }
         return false;

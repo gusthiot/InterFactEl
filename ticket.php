@@ -39,7 +39,11 @@ ksort($clients);
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/header.php");?> 
+        <title>Ticket</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta content="I2G : Christophe Gusthiot" name="author" />
+        <link rel="icon" href="icons/favicon.ico" />
         <link rel="stylesheet" href="reveal.js/dist/reveal.css">
         <link rel="stylesheet" href="reveal.js/dist/theme/white.css">
         <link rel="stylesheet" href="css/ticket.css">
