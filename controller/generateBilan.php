@@ -101,17 +101,13 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) /*&& i
                 else {
                     $parAll['class'][$idclass] = ["total-fact"=>$montant, $monthly=>$montant];
                 }
-                if(array_key_exists($code, $parAll['client-class'])) {
-                    if(array_key_exists($idclass, $parAll['client-class'][$code])) {
-                        $parAll['client-class'][$code][$idclass]["total-fact"] += $montant;
-                        $parAll['client-class'][$code][$idclass][$monthly] = $montant;
-                    }
-                    else {
-                        $parAll['client-class'][$code][$idclass] = ["total-fact"=>$montant, $monthly=>$montant];
-                    }
+                $key = $code."-".$idclass;
+                if(array_key_exists($key, $parAll['client-class'])) {
+                    $parAll['client-class'][$key]["total-fact"] += $montant;
+                    $parAll['client-class'][$key][$monthly] = $montant;
                 } 
                 else {
-                    $parAll['client-class'][$code] = [$idclass=>["total-fact"=>$montant, $monthly=>$montant]];
+                    $parAll['client-class'][$key] = ["total-fact"=>$montant, $monthly=>$montant];
                 }
             }
         }
@@ -128,27 +124,32 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) /*&& i
         }
     }
 
-    //$clientsColumns = array_merge([$paramtext->getParam("client-name"), $paramtext->getParam("client-name2"), $paramtext->getParam("total-fact")], $monthlies);    
     $clientsColumns = [$paramtext->getParam("client-name"), $paramtext->getParam("client-name2"), $paramtext->getParam("total-fact")];
+    $clientsCsv = [array_merge([$paramtext->getParam("client-code"), $paramtext->getParam("client-sap")], $clientsColumns, $monthlies)];    
     $clientsData = [];
+    uasort($parAll['client'], 'sortTotal');
     foreach($parAll['client'] as $code=>$par) {
         $client = $clients[$code];
-        /*$columnsData = [$client["client-name"], str_replace('"', '', $client["client-name2"]), $par["total-fact"]];
-        oreach($monthlies as $monthly) {
+        $columnsData = [$client["client-name"], str_replace('"', '', $client["client-name2"]), $par["total-fact"]];
+        $columnsMonthly = [];
+        foreach($monthlies as $monthly) {
             if(array_key_exists($monthly, $par)) {
-                $columnsData[] = $par[$monthly];
+                $columnsMonthly[] = $par[$monthly];
             }
             else {
-                $columnsData[] = "";
+                $columnsMonthly[] = "";
             }
         }
-        $clientsData[] = $columnsData;*/
-        $clientsData[] = [$client["client-name"], str_replace('"', '', $client["client-name2"]), $par["total-fact"]];
+        $clientsData[] = $columnsData;
+        $clientsCsv[] = array_merge([$client["client-code"], $client["client-sap"]], $columnsData, $columnsMonthly);
     }
     $clientsHtml = generateTable($clientsColumns, $clientsData, "par-client", "show active");
+    Csv::write(TEMP."/par-client_".time().".csv", $clientsCsv);
+
    
     $classesColumns = [$paramtext->getParam("client-class"), $paramtext->getParam("client-labelclass"), $paramtext->getParam("total-fact")];
     $classesData = []; 
+    uasort($parAll['class'], 'sortTotal');
     foreach($parAll['class'] as $id=>$par) {
         $class = $classes[$id];
         $classesData[] = [$class["client-class"], $class["client-labelclass"], $par["total-fact"]];
@@ -157,12 +158,12 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) /*&& i
 
     $clientsClassesColumns = [$paramtext->getParam("client-name"), $paramtext->getParam("client-labelclass"), $paramtext->getParam("total-fact")];
     $clientsClassesData = []; 
-    foreach($parAll['client-class'] as $code=>$parClient) {
-        $client = $clients[$code];
-        foreach($parClient as $id=>$par) {
-            $class = $classes[$id];
-            $clientsClassesData[] = [$client["client-name"], $class["client-labelclass"], $par["total-fact"]];
-        }
+    uasort($parAll['client-class'], 'sortTotal');
+    foreach($parAll['client-class'] as $key=>$parKey) {
+        $tab = explode("-", $key);
+        $client = $clients[$tab[0]];
+        $class = $classes[$tab[1]];
+        $clientsClassesData[] = [$client["client-name"], $class["client-labelclass"], $parKey["total-fact"]];
     }
     $clientsClassesHtml = generateTable($clientsClassesColumns, $clientsClassesData, "par-client-class");
 
@@ -190,10 +191,14 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) /*&& i
 <?php
 }
 
+function sortTotal($a, $b) {
+    return floatval($b["total-fact"]) - floatval($a["total-fact"]);
+}
+
 function generateTable($columnsNames, $columnsArray, $id, $show="") {
     $html = "";
     $html .= '<div class="tab-pane fade '.$show.'" id="'.$id.'" role="tabpanel" aria-labelledby="'.$id.'-tab">
-                <div class="over"><table class="table"><thead><tr>';
+                <div class="over"><table class="table report-table" id="'.$id.'-table"><thead><tr>';
     foreach($columnsNames as $name) {
         $html .= "<th>".$name."</th>";
     }
@@ -201,7 +206,12 @@ function generateTable($columnsNames, $columnsArray, $id, $show="") {
     foreach($columnsArray as $columnsData) {
         $html .= "<tr>";
         foreach($columnsData as $data) {
-            $html .= "<td>".$data."</td>";
+            if(is_float($data)) {
+                $html .= "<td>".number_format(floatval($data), 2, ".", "'")."</td>";
+            }
+            else {
+                $html .= "<td>".$data."</td>";
+            }
         }
         $html .= "</tr>";
     }

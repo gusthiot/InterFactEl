@@ -63,7 +63,6 @@ if($dataGest) {
                 </div>
             </div>
 
-            <!--<div id="bilans"></div>-->
             <div id="period"></div>
             <div id="report-content"></div>
         </div>

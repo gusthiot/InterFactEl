@@ -1,11 +1,9 @@
 let report = "";
-//let bilan = "";
 
 $('#concatenation').on('click', function () {
     $('.tile').removeClass('selected-tile');
     $('#concatenation').addClass('selected-tile');
     report = "concatenation";
-//    $('#bilans').html("");
     $('#report-content').html("");
     $.post("controller/selectPeriod.php", {plate: $('#plate').val()}, function (data) {
         $('#period').html(data);
@@ -14,11 +12,6 @@ $('#concatenation').on('click', function () {
 
 $('#montants').on('click', function () {
 /*
-    $('#period').html("");
-    $.post("controller/selectBilan.php", function (data) {
-        $('#bilans').html(data);
-    });
-
     
     $.post("controller/generateJsonStructure.php", {plate: $('#plate').val()}, function (data) {
         $('#period').html("");
@@ -28,9 +21,6 @@ $('#montants').on('click', function () {
     
 } );
 
-$(document).on("click", ".bilan", function() {
-
-    bilan = $(this).attr('id');
 */    
     $('.tile').removeClass('selected-tile');
     $('#montants').addClass('selected-tile');
@@ -81,7 +71,6 @@ $(document).on("click", "#generate", function() {
         $.post("controller/generateBilan.php", {plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()/*, bilan: bilan*/}, function (data) {
             $('#period').html("");
             $('#message').html("");
-    //        $('#bilans').html("");
             $('#report-content').html(data);
         });
     }
@@ -99,4 +88,64 @@ $(document).on("click", "#generate", function() {
 $('#download-generated').on('click', function () {
     window.location.href = "controller/download.php?type=generated";
 } );
+
+
+$(document).on("click", ".report-table th", function() {
+    const column = $(this).parent().children().index($(this));
+    const table = $(this).closest('table').attr('id');
+    sortTable(table, column);
+});
+
+function sortTable(tabId, n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById(tabId);
+    switching = true;
+    dir = "asc";
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            if (dir == "asc") {
+                if(!isNaN(x.innerHTML.replace("'", "")) && !isNaN(y.innerHTML.replace("'", ""))) {
+                    if (Number.parseFloat(x.innerHTML.replace("'", "")) > Number.parseFloat(y.innerHTML.replace("'", ""))) {
+                    shouldSwitch = true;
+                    break;
+                    }
+                }
+                else {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                    }
+                }
+            } else if (dir == "desc") {
+                if(!isNaN(x.innerHTML.replace("'", "")) && !isNaN(y.innerHTML.replace("'", ""))) {
+                    if (Number.parseFloat(x.innerHTML.replace("'", "")) < Number.parseFloat(y.innerHTML.replace("'", ""))) {
+                    shouldSwitch = true;
+                    break;
+                    }
+                }
+                else {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                    }
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount ++;
+        } else {
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+  }
 
