@@ -19,6 +19,7 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) /*&& i
 
     $bilansStats = getJsonStructure("../bilans-stats.json");
     $in = getJsonStructure("../in.json");
+    $report = getJsonStructure("../report.json");
 
     $clientsNames = ["client-code", "client-sap", "client-name", "client-name2"];
     $clients = [];
@@ -28,6 +29,9 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) /*&& i
 
     $clientsClassesNames = ["client-code", "client-idclass"];
     $clientsClasses = [];
+
+    //$montantsNames = ["client-code", "client-class", "item-codeD", "total-fact"];
+    //$montants = [];
     
     $parAll = ['client'=>[], 'class'=>[], 'client-class'=>[]];
     $parClient = [];
@@ -57,12 +61,41 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) /*&& i
         }
         $monthly = $year."-".$month;
         $monthlies[] = $monthly;
-        $clients = getInCsv($dirRun, $in[$factel]['client'], $clientsNames, $clients);
-        $classes = getInCsv($dirRun, $in[$factel]['classeclient'], $classesNames, $classes);
+        $clients = getDirectoryCsv("/IN/",$dirRun, $in[$factel]['client'], $clientsNames, $clients);
+        $classes = getDirectoryCsv("/IN/",$dirRun, $in[$factel]['classeclient'], $classesNames, $classes);
         if($factel < 8) {
-            $clientsClasses = getInCsv($dirRun, $in[$factel]['clientclasse'], $clientsClassesNames, $clientsClasses);
+            $clientsClasses = getDirectoryCsv("/IN/",$dirRun, $in[$factel]['clientclasse'], $clientsClassesNames, $clientsClasses);
         }
 
+        $doMontants = false;
+        if(!file_exists($dirRun."/REPORT/".$report[$factel]['montants']['prefix'].".csv")) {
+            if(!file_exists($dirRun."/REPORT/")) {
+                mkdir($dirRun."/REPORT/");
+            }
+            $doMontants = true;
+            $montantsColumns = [$paramtext->getParam("client-code"), $paramtext->getParam("client-class"), $paramtext->getParam("item-codeD"), $paramtext->getParam("total-fact")];
+            $montantsArray = [$montantsColumns];
+        }
+
+        $crpArray = [];
+        if($factel == 6) {
+            if(file_exists($dirRun."/Bilans_Stats/".$bilansStats[$factel]['Bilancrp-f']['prefix'].$suffix.".csv")) {
+                $lines = Csv::extract($dirRun."/Bilans_Stats/".$bilansStats[$factel]['Bilancrp-f']['prefix'].$suffix.".csv");        
+                $columns = $bilansStats[$factel]['Bilancrp-f']['columns'];
+                $first = true;
+                foreach($lines as $line) {
+                    $tab = explode(";", $line);
+                    if($first) {
+                        $first = false;
+                    }
+                    else {
+                        $code = $tab[$columns['client-code']];
+                        $crpArray[$code] = ["dt" => $tab[$columns["total-fact"]], "dl" => $tab[$columns["total-fact-l"]], "dc" => $tab[$columns["total-fact-c"]], 
+                                            "dw" => $tab[$columns["total-fact-w"]], "dx" => $tab[$columns["total-fact-x"]] ];
+                    }
+                }
+            }
+        }
         $columns = $bilansStats[$factel]['Bilan-f']['columns'];
         $name = $bilansStats[$factel]['Bilan-f']['prefix'];
         $lines = Csv::extract($dirRun."/Bilans_Stats/".$name.$suffix.".csv");
@@ -109,7 +142,117 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) /*&& i
                 else {
                     $parAll['client-class'][$key] = ["total-fact"=>$montant, $monthly=>$montant];
                 }
+                if($doMontants) {
+                    if($factel == 1) {
+                        $clcl = $tab[$columns['client-class']];
+                        $montant = $tab[$columns["somme-t"]] + $tab[$columns["emolument-b"]] - $tab[$columns["emolument-r"]] - $tab[$columns["total-fact-l"]]
+                                - $tab[$columns["total-fact-c"]] - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]];
+                        if($montant > 0) {
+                            $montantsArray[] = [$code, $clcl, "M", $montant];
+                        }
+                        if($tab[$columns["total-fact-l"]] > 0) {
+                            $montantsArray[] = [$code, $clcl, "L", $tab[$columns["total-fact-l"]]];
+                        }
+                        if($tab[$columns["total-fact-c"]] > 0) {
+                            $montantsArray[] = [$code, $clcl, "C", $tab[$columns["total-fact-c"]]];
+                        }
+                        if($tab[$columns["total-fact-w"]] > 0) {
+                            $montantsArray[] = [$code, $clcl, "W", $tab[$columns["total-fact-w"]]];
+                        }
+                        if($tab[$columns["total-fact-x"]] > 0) {
+                            $montantsArray[] = [$code, $clcl, "X", $tab[$columns["total-fact-x"]]];
+                        }
+                    }
+                    elseif($factel >=3 && $factel <= 5) {
+                        $montant = $tab[$columns["total-fact"]] -$tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
+                                 - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]];
+                        if($montant > 0) {
+                            $montantsArray[] = [$code, $clcl, "M", $montant];
+                        }
+                        if($tab[$columns["total-fact-l"]] > 0) {
+                            $montantsArray[] = [$code, $clcl, "L", $tab[$columns["total-fact-l"]]];
+                        }
+                        if($tab[$columns["total-fact-c"]] > 0) {
+                            $montantsArray[] = [$code, $clcl, "C", $tab[$columns["total-fact-c"]]];
+                        }
+                        if($tab[$columns["total-fact-w"]] > 0) {
+                            $montantsArray[] = [$code, $clcl, "W", $tab[$columns["total-fact-w"]]];
+                        }
+                        if($tab[$columns["total-fact-x"]] > 0) {
+                            $montantsArray[] = [$code, $clcl, "X", $tab[$columns["total-fact-x"]]];
+                        }
+                    }
+                    elseif($factel == 6) {
+                        $montant = $tab[$columns["total-fact"]] - $tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
+                                 - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]];
+                        $dM = $dl = $dc = $dw = $dx = 0;
+                        if(!empty($crpArray) && array_key_exists($code, $crpArray)) {
+                            $dl = $crpArray[$code]["dl"];
+                            $dc = $crpArray[$code]["dc"];
+                            $dw = $crpArray[$code]["dw"];
+                            $dx = $crpArray[$code]["dx"];
+                            $dM = $crpArray[$code]["dt"]-$dl-$dc-$dw-$dx;
+                        }
+                        if(($montant-$dM) > 0) {
+                            $montantsArray[] = [$code, $clcl, "M", $montant-$dM];
+                        }
+                        if(($tab[$columns["total-fact-l"]]-$dl) > 0) {
+                            $montantsArray[] = [$code, $clcl, "L", $tab[$columns["total-fact-l"]]-$dl];
+                        }
+                        if(($tab[$columns["total-fact-c"]]-$dc) > 0) {
+                            $montantsArray[] = [$code, $clcl, "C", $tab[$columns["total-fact-c"]]-$dc];
+                        }
+                        if(($tab[$columns["total-fact-w"]]-$dw) > 0) {
+                            $montantsArray[] = [$code, $clcl, "W", $tab[$columns["total-fact-w"]]-$dw];
+                        }
+                        if(($tab[$columns["total-fact-x"]]-$dx) > 0) {
+                            $montantsArray[] = [$code, $clcl, "X", $tab[$columns["total-fact-x"]]-$dx];
+                        }
+                    }
+                    elseif($factel == 7 || $factel == 8) {
+                        if($tab[$columns["platf-code"]] == $plateforme) {
+                            $montantsArray[] = [$code, $clcl, $tab[$columns["item-codeD"]], $tab[$columns["total-fact"]]];
+                        }
+                    }
+                }
             }
+        }
+        if($doMontants && $factel >= 9) {
+            $lines = Csv::extract($dirRun."/Bilans_Stats/".$bilansStats[$factel]['T1']['prefix'].$suffix.".csv");        
+            $columns = $bilansStats[$factel]['T1']['columns'];
+            $t1Array = [];
+            $first = true;
+            foreach($lines as $line) {
+                $tab = explode(";", $line);
+                if($first) {
+                    $first = false;
+                }
+                else {
+                    $code = $tab[$columns['client-code']];
+                    $clcl = $tab[$columns['client-class']];
+                    $item = $tab[$columns['item-codeD']];
+                    if(!array_key_exists($code, $t1Array)) {
+                        $t1Array[$code] = [];
+                    }
+                    if(!array_key_exists($clcl, $t1Array[$code])) {
+                        $t1Array[$code][$clcl] = [];
+                    }
+                    if(!array_key_exists($item, $t1Array[$code][$clcl])) {
+                        $t1Array[$code][$clcl][$item] = 0;
+                    }
+                    $t1Array[$code][$clcl][$item] += intval($tab[$columns["total-fact"]]);
+                }
+            }
+            foreach($t1Array as $code=>$pc) {
+                foreach($pc as $clcl=>$pcl) {
+                    foreach($pcl as $item=>$tot) {
+                        $montantsArray[] = [$code, $clcl, $item, $tot];
+                    }
+                }
+            }
+        }
+        if($doMontants) {
+            Csv::write($dirRun."/REPORT/".$report[$factel]['montants']['prefix'].".csv", $montantsArray);
         }
 
         if($date == $_POST["from"]) {
@@ -228,10 +371,10 @@ function getJsonStructure($name) {
     return $structure;
 }
 
-function getInCsv($dirRun, $fileData, $names, $result) {
+function getDirectoryCsv($subDir, $dirRun, $fileData, $names, $result) {
     $columns = $fileData['columns'];
     $name = $fileData['prefix'];
-    $lines = Csv::extract($dirRun."/IN/".$name.".csv");
+    $lines = Csv::extract($dirRun.$subDir.$name.".csv");
     $first = true;
     foreach($lines as $line) {
         $tab = explode(";", $line);

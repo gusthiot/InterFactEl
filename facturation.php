@@ -110,7 +110,7 @@ include("includes/lock.php");
                                             $choices[$year.$month] = [$year, $month];
                                         }
                                     }?>
-                                    <div><button type="button" id="period" '.$disabled.' data-choices="<?php echo htmlentities(json_encode($choices),ENT_QUOTES); ?>" class="btn but-red lockable"><?= $title ?></button>
+                                    <div><button type="button" id="init-period" '.$disabled.' data-choices="<?php echo htmlentities(json_encode($choices),ENT_QUOTES); ?>" class="btn but-red lockable"><?= $title ?></button>
                                     </div>
                                     <div id="first"></div>
                                     <div id="last">

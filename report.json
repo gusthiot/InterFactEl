@@ -1,0 +1,167 @@
+{
+    "1": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "3": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "4": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "4.01": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "4.1": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "4.11": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "4.12": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "5": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "5.01": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "6": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "7": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "8": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "9": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "10": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    },
+    "11": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        }
+    }
+}

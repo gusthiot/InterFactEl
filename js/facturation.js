@@ -27,7 +27,7 @@ $('#destroy').on('click', function () {
     window.location.href = "controller/destroy.php?plate="+$('#plate').val();
 } );
 
-$('#period').on('click', function () {
+$('#init-period').on('click', function () {
     let first = '<label for="from">De</label><select id="from" class="custom-select lockable"><option disabled selected></option>';
     const choices = $(this).data('choices');
     Object.keys(choices).forEach(function(key) {
