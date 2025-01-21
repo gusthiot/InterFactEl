@@ -98,7 +98,7 @@ if(!$available) {
                                 foreach(array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR)) as $dirVersion) {
                                     foreach(array_reverse(glob($dirVersion."/*", GLOB_ONLYDIR)) as $dirRun) {
                                         $sap = new Sap($dirRun);
-                                        if($sap->status() > 1) {
+                                        if(file_exists($dirRun."/lock.csv") || $sap->status() > 1) {
                                             $lastRun = basename($dirRun);
                                             $lastVersion = basename($dirVersion);
                                             break;
