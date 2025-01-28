@@ -6,25 +6,29 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
+                "client-name2": 7
             }
         },
         "clientclasse": {
             "prefix": "clientclasse",
             "columns": {
                 "client-code": 0,
-                "client-idclass": 1
+                "client-class": 1
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -35,25 +39,29 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
+                "client-name2": 7
             }
         },
         "clientclasse": {
             "prefix": "clientclasse",
             "columns": {
                 "client-code": 0,
-                "client-idclass": 1
+                "client-class": 1
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -64,25 +72,29 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
+                "client-name2": 7
             }
         },
         "clientclasse": {
             "prefix": "clientclasse",
             "columns": {
                 "client-code": 0,
-                "client-idclass": 1
+                "client-class": 1
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -93,25 +105,29 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
+                "client-name2": 7
             }
         },
         "clientclasse": {
             "prefix": "clientclasse",
             "columns": {
                 "client-code": 0,
-                "client-idclass": 1
+                "client-class": 1
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -122,25 +138,29 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
+                "client-name2": 7
             }
         },
         "clientclasse": {
             "prefix": "clientclasse",
             "columns": {
                 "client-code": 0,
-                "client-idclass": 1
+                "client-class": 1
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -151,25 +171,29 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
+                "client-name2": 7
             }
         },
         "clientclasse": {
             "prefix": "clientclasse",
             "columns": {
                 "client-code": 0,
-                "client-idclass": 1
+                "client-class": 1
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -180,25 +204,29 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
+                "client-name2": 7
             }
         },
         "clientclasse": {
             "prefix": "clientclasse",
             "columns": {
                 "client-code": 0,
-                "client-idclass": 1
+                "client-class": 1
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -209,25 +237,29 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
+                "client-name2": 7
             }
         },
         "clientclasse": {
             "prefix": "clientclasse",
             "columns": {
                 "client-code": 0,
-                "client-idclass": 1
+                "client-class": 1
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -238,25 +270,29 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
+                "client-name2": 7
             }
         },
         "clientclasse": {
             "prefix": "clientclasse",
             "columns": {
                 "client-code": 0,
-                "client-idclass": 1
+                "client-class": 1
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -267,25 +303,29 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
+                "client-name2": 7
             }
         },
         "clientclasse": {
             "prefix": "clientclasse",
             "columns": {
                 "client-code": 0,
-                "client-idclass": 1
+                "client-class": 1
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -296,25 +336,22 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-ref": 6,
-                "client-name2": 7,
-                "client-email": 8,
-                "client-deliv": 9
-            }
-        },
-        "clientclasse": {
-            "prefix": "clientclasse",
-            "columns": {
-                "client-code": 0,
-                "client-idclass": 1
+                "client-name2": 7
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
-                "client-class": 1,
-                "client-labelclass": 2
+                "client-class": 0,
+                "client-labelclass": 1
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1,
+                "item-labelcode": 2
             }
         }
     },
@@ -325,20 +362,28 @@
                 "client-code": 2,
                 "client-sap": 3,
                 "client-name": 4,
-                "client-name2": 5,
-                "client-name3": 6,
-                "client-ref": 7,
-                "client-email": 8,
-                "client-deliv": 9,
-                "client-idclass": 10
+                "client-name2": 5
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
                 "client-class": 1,
                 "client-labelclass": 2
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 1,
+                "item-labelcode": 4
+            }
+        },
+        "ordersap": {
+            "prefix": "ordersap",
+            "columns": {
+                "item-codeD": 0,
+                "item-order": 1
             }
         }
     },
@@ -349,20 +394,22 @@
                 "client-code": 0,
                 "client-sap": 1,
                 "client-name": 2,
-                "client-name2": 3,
-                "client-name3": 4,
-                "client-ref": 5,
-                "client-email": 6,
-                "client-deliv": 7,
-                "client-idclass": 8
+                "client-name2": 3
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
                 "client-class": 1,
                 "client-labelclass": 2
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 1,
+                "item-order": 5,
+                "item-labelcode": 6
             }
         }
     },
@@ -373,20 +420,22 @@
                 "client-code": 0,
                 "client-sap": 1,
                 "client-name": 2,
-                "client-name2": 3,
-                "client-name3": 4,
-                "client-ref": 5,
-                "client-email": 6,
-                "client-deliv": 7,
-                "client-idclass": 8
+                "client-name2": 3
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
                 "client-class": 1,
                 "client-labelclass": 2
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 1,
+                "item-order": 2,
+                "item-labelcode": 3
             }
         }
     },
@@ -397,20 +446,48 @@
                 "client-code": 0,
                 "client-sap": 1,
                 "client-name": 2,
-                "client-name2": 3,
-                "client-name3": 4,
-                "client-ref": 5,
-                "client-email": 6,
-                "client-deliv": 7,
-                "client-idclass": 8
+                "client-name2": 3
             }
         },
         "classeclient": {
             "prefix": "classeclient",
             "columns": {
-                "client-idclass": 0,
                 "client-class": 1,
                 "client-labelclass": 2
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 1,
+                "item-order": 2,
+                "item-labelcode": 3
+            }
+        }
+    },
+    "11.01": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 0,
+                "client-sap": 1,
+                "client-name": 2,
+                "client-name2": 3
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-codeD": 1,
+                "item-order": 2,
+                "item-labelcode": 3
             }
         }
     }

@@ -442,9 +442,29 @@ table.report-table th {
   text-align: center;
 }
 
+.report-table {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
+}
+
+.total {
+  margin: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
 #report-content {
   margin: auto;
   padding: 20px;
+  text-align: center;
+}
+
+.report-large {
+  width: 80%;
+  padding: 30px;
 }
 
 #dates {

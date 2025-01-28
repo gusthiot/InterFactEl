@@ -75,9 +75,11 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
                     $content[] = explode(";", $csv[$i]);
                 }
             }
+            /*
             else {
                 $info .= $path." empty ? <br />";
             }
+            */
 
 
             if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
@@ -98,7 +100,7 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
 
     }
 
-    $zip = $user.'_reporting.zip';
+    $zip = 'concatenation.zip';
     Lock::saveByName("../".$user.".lock", TEMP.$zip);
     Zip::setZipDir(TEMP.$zip, $tmpDir);
     State::delDir($tmpDir);

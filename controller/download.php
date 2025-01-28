@@ -36,6 +36,16 @@ if(isset($_GET['type'])) {
             header('Location: ../index.php');
         }
     }
+    elseif($type==="report") {
+        // reporting, temporary generated
+        if((isset($_GET['name'])) && isset($_GET['unique'])) {
+            readCsv(TEMP.$_GET["unique"]."/".$_GET['name'].".csv");
+        }
+        else {
+            $_SESSION['alert-danger'] = "erreur download";
+            header('Location: ../index.php');
+        }
+    }
     else {
         if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
@@ -179,10 +189,16 @@ else {
  */
 function readCsv(string $fileName): void 
 {
-    header('Content-Type: application/octet-stream');
-    header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
-    header('Content-Length: ' . filesize($fileName));
-    readfile($fileName);
+    if(file_exists($fileName)) {
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
+        header('Content-Length: ' . filesize($fileName));
+        readfile($fileName);
+    }
+    else {
+        $_SESSION['alert-danger'] = "fichier inexistant";
+        header('Location: ../index.php');
+    }
 }
 
 /**

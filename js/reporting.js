@@ -1,4 +1,5 @@
 let report = "";
+let toIndex = false;
 
 $('#concatenation').on('click', function () {
     $('.tile').removeClass('selected-tile');
@@ -64,14 +65,15 @@ $(document).on("change", "#to", function() {
 $(document).on("click", "#generate", function() {
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
     $(".lockable").prop('disabled', true);
-   if(report == "concatenation") {
+    if(report == "concatenation") {
         window.location.href = "controller/generateConcatenation.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val();
     }
     else if(report == "montants") {
-        $.post("controller/generateBilan.php", {plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()/*, bilan: bilan*/}, function (data) {
+        $.post("controller/generateBilan.php", {plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val(), unique: $('#unique').val()}, function (data) {
             $('#period').html("");
             $('#message').html("");
             $('#report-content').html(data);
+            $('#report-tiles').html('<button type="button" id="reinit" class="btn but-line">Réinitialiser</button>');
         });
     }
     else {    
@@ -85,6 +87,14 @@ $(document).on("click", "#generate", function() {
     }
 } );
 
+$(document).on("click", "#reinit", function() {
+    deleteDir();
+});
+
+$(document).on("click", ".reinit", function() {        
+    toIndex = true;
+});
+
 $('#download-generated').on('click', function () {
     window.location.href = "controller/download.php?type=generated";
 } );
@@ -94,6 +104,11 @@ $(document).on("click", ".report-table th", function() {
     const column = $(this).parent().children().index($(this));
     const table = $(this).closest('table').attr('id');
     sortTable(table, column);
+});
+
+$(document).on("click", ".get-report", function() {
+    const reportId = $(this).attr('id').replace("-dl", "");
+    window.location.href = "controller/download.php?type=report&unique="+$('#unique').val()+"&name="+reportId;
 });
 
 function sortTable(tabId, n) {
@@ -147,5 +162,22 @@ function sortTable(tabId, n) {
             }
         }
     }
-  }
+}
 
+function deleteDir() {
+    if(toIndex) {
+        window.location.href = "controller/deleteReport.php?unique="+$('#unique').val(); // firefox
+        $.post("controller/deleteReport.php", {unique: $('#unique').val()}, function () {
+            window.location.href = "index.php";
+        });
+    }
+    else {
+        window.location.href = "controller/deleteReport.php?unique="+$('#unique').val()+"&plate="+$('#plate').val(); // firefox
+        $.post("controller/deleteReport.php", {unique: $('#unique').val()}, function () {
+            window.location.href = "reporting.php?plateforme="+$('#plate').val();
+        });
+    }
+}
+
+$(window).on("unload", deleteDir); // firefox
+$(window).on('beforeunload', deleteDir); // chromium

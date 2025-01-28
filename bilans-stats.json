@@ -3,21 +3,24 @@
         "Bilan-f": {
             "prefix": "bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "total-fact-p": 23,
-                "total-fact-q": 24,
-                "total-fact-o": 25,
-                "total-fact-n": 26,
+                "somme-t": 15,
+                "emolument-b": 16,
+                "emolument-r": 18,
                 "total-fact-l": 27,
                 "total-fact-c": 28,
                 "total-fact-w": 29,
                 "total-fact-x": 30
+            }
+        },
+        "Bilan-s": {
+            "prefix": "bilan-subsides",
+            "columns": {
+                "client-code": 2,
+                "bonus-m": 8,
+                "subsides-a": 9,
+                "subsides-o": 10,
+                "subsides-c": 11
             }
         }
     },
@@ -25,23 +28,22 @@
         "Bilan-f": {
             "prefix": "bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "deduct-CHF": 18,
-                "total-fact-e": 19,
-                "total-fact-r": 20,
-                "total-fact-m": 21,
                 "total-fact-l": 22,
                 "total-fact-c": 23,
                 "total-fact-w": 24,
                 "total-fact-x": 25,
-                "total-fact": 26,
-                "bonus-h": 28
+                "total-fact": 26
+            }
+        },
+        "Bilan-s": {
+            "prefix": "bilan-subsides",
+            "columns": {
+                "client-code": 2,
+                "bonus-m": 8,
+                "subsides-a": 9,
+                "subsides-o": 10,
+                "subsides-c": 11
             }
         }
     },
@@ -49,23 +51,22 @@
         "Bilan-f": {
             "prefix": "bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "deduct-CHF": 15,
-                "total-fact-e": 16,
-                "total-fact-r": 17,
-                "total-fact-m": 18,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
                 "total-fact-x": 22,
-                "total-fact": 23,
-                "bonus-h": 24
+                "total-fact": 23
+            }
+        },
+        "Bilan-s": {
+            "prefix": "bilan-subsides",
+            "columns": {
+                "client-code": 2,
+                "bonus-m": 8,
+                "subsides-a": 9,
+                "subsides-o": 10,
+                "subsides-c": 11
             }
         }
     },
@@ -73,23 +74,22 @@
         "Bilan-f": {
             "prefix": "bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "deduct-CHF": 15,
-                "total-fact-e": 16,
-                "total-fact-r": 17,
-                "total-fact-m": 18,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
                 "total-fact-x": 22,
-                "total-fact": 23,
-                "bonus-h": 24
+                "total-fact": 23
+            }
+        },
+        "Bilan-s": {
+            "prefix": "bilan-subsides",
+            "columns": {
+                "client-code": 2,
+                "bonus-m": 8,
+                "subsides-a": 9,
+                "subsides-o": 10,
+                "subsides-c": 11
             }
         }
     },
@@ -97,23 +97,22 @@
         "Bilan-f": {
             "prefix": "bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "deduct-CHF": 15,
-                "total-fact-e": 16,
-                "total-fact-r": 17,
-                "total-fact-m": 18,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
                 "total-fact-x": 22,
-                "total-fact": 23,
-                "bonus-h": 24
+                "total-fact": 23
+            }
+        },
+        "Bilan-s": {
+            "prefix": "bilan-subsides",
+            "columns": {
+                "client-code": 2,
+                "bonus-m": 8,
+                "subsides-a": 9,
+                "subsides-o": 10,
+                "subsides-c": 11
             }
         }
     },
@@ -121,23 +120,22 @@
         "Bilan-f": {
             "prefix": "bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "deduct-CHF": 15,
-                "total-fact-e": 16,
-                "total-fact-r": 17,
-                "total-fact-m": 18,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
                 "total-fact-x": 22,
-                "total-fact": 23,
-                "bonus-h": 24
+                "total-fact": 23
+            }
+        },
+        "Bilan-s": {
+            "prefix": "bilan-subsides",
+            "columns": {
+                "client-code": 2,
+                "bonus-m": 8,
+                "subsides-a": 9,
+                "subsides-o": 10,
+                "subsides-c": 11
             }
         }
     },
@@ -145,23 +143,22 @@
         "Bilan-f": {
             "prefix": "bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "deduct-CHF": 15,
-                "total-fact-e": 16,
-                "total-fact-r": 17,
-                "total-fact-m": 18,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
                 "total-fact-x": 22,
-                "total-fact": 23,
-                "bonus-h": 24
+                "total-fact": 23
+            }
+        },
+        "Bilan-s": {
+            "prefix": "bilan-subsides",
+            "columns": {
+                "client-code": 2,
+                "bonus-m": 8,
+                "subsides-a": 9,
+                "subsides-o": 10,
+                "subsides-c": 11
             }
         }
     },
@@ -169,23 +166,22 @@
         "Bilan-f": {
             "prefix": "bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "deduct-CHF": 15,
-                "total-fact-e": 16,
-                "total-fact-r": 17,
-                "total-fact-m": 18,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
                 "total-fact-x": 22,
-                "total-fact": 23,
-                "bonus-h": 24
+                "total-fact": 23
+            }
+        },
+        "Bilan-s": {
+            "prefix": "bilan-subsides",
+            "columns": {
+                "client-code": 2,
+                "bonus-m": 8,
+                "subsides-a": 9,
+                "subsides-o": 10,
+                "subsides-c": 11
             }
         }
     },
@@ -193,23 +189,22 @@
         "Bilan-f": {
             "prefix": "bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "deduct-CHF": 15,
-                "total-fact-e": 16,
-                "total-fact-r": 17,
-                "total-fact-m": 18,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
                 "total-fact-x": 22,
-                "total-fact": 23,
-                "bonus-h": 24
+                "total-fact": 23
+            }
+        },
+        "Bilan-s": {
+            "prefix": "bilan-subsides",
+            "columns": {
+                "client-code": 2,
+                "bonus-m": 8,
+                "subsides-a": 9,
+                "subsides-o": 10,
+                "subsides-c": 11
             }
         }
     },
@@ -217,45 +212,32 @@
         "Bilan-f": {
             "prefix": "bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "deduct-CHF": 15,
-                "total-fact-e": 16,
-                "total-fact-r": 17,
-                "total-fact-m": 18,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
                 "total-fact-x": 22,
-                "total-fact": 23,
-                "bonus-h": 24
+                "total-fact": 23
             }
         },
         "Bilancrp-f": {
             "prefix": "CRP-bilan",
             "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
                 "client-code": 3,
-                "client-sap": 4,
-                "client-name": 5,
-                "client-class": 8,
-                "deduct-CHF": 15,
-                "total-fact-e": 16,
-                "total-fact-r": 17,
-                "total-fact-m": 18,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
                 "total-fact-x": 22,
-                "total-fact": 23,
-                "bonus-h": 24
+                "total-fact": 23
+            }
+        },
+        "Bilan-s": {
+            "prefix": "bilan-subsides",
+            "columns": {
+                "client-code": 2,
+                "bonus-m": 8,
+                "subsides-m": 9,
+                "subsides-c": 10
             }
         }
     },
@@ -280,36 +262,6 @@
             }
         },
         "Bilan-f": {
-            "prefix": "Bilan-plateforme-client",
-            "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
-                "platf-code": 3,
-                "platf-op": 4,
-                "platf-sap": 5,
-                "platf-name": 6,
-                "platf-cf": 7,
-                "platf-fund": 8,
-                "client-code": 9,
-                "client-sap": 10,
-                "client-name": 11,
-                "client-class": 12,
-                "client-labelclass": 13,
-                "item-codeD": 14,
-                "item-labelcode": 15,
-                "item-sap": 16,
-                "valuation-brut": 17,
-                "valuation-net": 18,
-                "deduct-CHF": 19,
-                "subsid-deduct": 20,
-                "total-fact": 21,
-                "discount-bonus": 22,
-                "subsid-bonus": 23,
-                "OP-code": 24
-            }
-        },
-        "Bilan-s": {
             "prefix": "Bilan-plateforme-client",
             "columns": {
                 "invoice-year": 0,
@@ -446,38 +398,6 @@
             }
         },
         "Bilan-f": {
-            "prefix": "Bilan-plateforme-client",
-            "columns": {
-                "invoice-year": 0,
-                "invoice-month": 1,
-                "invoice-ref": 2,
-                "platf-code": 3,
-                "platf-op": 4,
-                "platf-sap": 5,
-                "platf-name": 6,
-                "platf-cf": 7,
-                "platf-fund": 8,
-                "client-code": 9,
-                "client-sap": 10,
-                "client-name": 11,
-                "client-idclass": 12,
-                "client-class": 13,
-                "client-labelclass": 14,
-                "item-idsap": 15,
-                "item-codeD": 16,
-                "item-labelcode": 17,
-                "item-sap": 18,
-                "valuation-brut": 19,
-                "valuation-net": 20,
-                "deduct-CHF": 21,
-                "subsid-deduct": 22,
-                "total-fact": 23,
-                "discount-bonus": 24,
-                "subsid-bonus": 25,
-                "OP-code": 26
-            }
-        },
-        "Bilan-s": {
             "prefix": "Bilan-plateforme-client",
             "columns": {
                 "invoice-year": 0,
@@ -1315,6 +1235,328 @@
         }
     },
     "11": {
+        "Bilan-a": {
+            "prefix": "Bilan-annul\u00e9",
+            "columns": {
+                "invoice-year": 0,
+                "invoice-month": 1,
+                "client-code": 2,
+                "client-name": 3,
+                "valuation-net-cancel": 4,
+                "valuation-net-notbill": 5
+            }
+        },
+        "Bilan-c": {
+            "prefix": "Bilan-conso-propre",
+            "columns": {
+                "year": 0,
+                "month": 1,
+                "platf-code": 2,
+                "platf-name": 3,
+                "proj-id": 4,
+                "proj-nbr": 5,
+                "proj-name": 6,
+                "proj-expl": 7,
+                "item-id": 8,
+                "item-nbr": 9,
+                "item-name": 10,
+                "item-unit": 11,
+                "item-idclass": 12,
+                "item-codeD": 13,
+                "item-extra": 14,
+                "mach-extra": 15,
+                "conso-propre-march-expl": 16,
+                "conso-propre-extra-expl": 17,
+                "conso-propre-march-proj": 18,
+                "conso-propre-extra-proj": 19
+            }
+        },
+        "Bilan-f": {
+            "prefix": "Bilan-factures",
+            "columns": {
+                "invoice-year": 0,
+                "invoice-month": 1,
+                "version-last": 2,
+                "invoice-id": 3,
+                "invoice-ref": 4,
+                "platf-name": 5,
+                "client-code": 6,
+                "client-sap": 7,
+                "client-name": 8,
+                "client-idclass": 9,
+                "client-class": 10,
+                "client-labelclass": 11,
+                "total-fact": 12
+            }
+        },
+        "Bilan-s": {
+            "prefix": "Bilan-subsides",
+            "columns": {
+                "invoice-year": 0,
+                "invoice-month": 1,
+                "platf-code": 2,
+                "platf-name": 3,
+                "client-code": 4,
+                "client-sap": 5,
+                "client-name": 6,
+                "client-idclass": 7,
+                "client-class": 8,
+                "client-labelclass": 9,
+                "item-idclass": 10,
+                "item-codeD": 11,
+                "item-labelcode": 12,
+                "valuation-brut": 13,
+                "valuation-net": 14,
+                "deduct-CHF": 15,
+                "subsid-deduct": 16,
+                "total-fact": 17,
+                "discount-bonus": 18,
+                "subsid-bonus": 19
+            }
+        },
+        "Bilan-u": {
+            "prefix": "Bilan-usage",
+            "columns": {
+                "year": 0,
+                "month": 1,
+                "platf-code": 2,
+                "platf-name": 3,
+                "item-id": 4,
+                "item-nbr": 5,
+                "item-name": 6,
+                "item-unit": 7,
+                "transac-usage": 8,
+                "transac-runtime": 9,
+                "runtime-N": 10,
+                "runtime-avg": 11,
+                "runtime-stddev": 12
+            }
+        },
+        "Stat-c": {
+            "prefix": "Stat-client",
+            "columns": {
+                "year": 0,
+                "month": 1,
+                "client-code": 2,
+                "client-sap": 3,
+                "client-name": 4,
+                "client-idclass": 5,
+                "client-class": 6,
+                "client-labelclass": 7,
+                "stat-trans": 8,
+                "stat-run": 9,
+                "stat-nbuser-m": 10,
+                "stat-nbuser-3m": 11,
+                "stat-nbuser-6m": 12,
+                "stat-nbuser-12m": 13
+            }
+        },
+        "Stat-m": {
+            "prefix": "Stat-machine",
+            "columns": {
+                "year": 0,
+                "month": 1,
+                "mach-id": 2,
+                "mach-name": 3,
+                "item-id": 4,
+                "flow-type": 5,
+                "item-codeK": 6,
+                "item-textK": 7,
+                "item-nbr": 8,
+                "item-name": 9,
+                "item-unit": 10,
+                "transac-quantity": 11,
+                "transac-usage": 12,
+                "transac-runtime": 13,
+                "runtime-N": 14,
+                "runtime-avg": 15,
+                "runtime-stddev": 16
+            }
+        },
+        "Stat-n": {
+            "prefix": "Stat-nbre-user",
+            "columns": {
+                "year": 0,
+                "month": 1,
+                "day": 2,
+                "week-nbr": 3,
+                "stat-nbuser-d": 4,
+                "stat-nbuser-w": 5,
+                "stat-nbuser-m": 6,
+                "stat-nbuser-3m": 7,
+                "stat-nbuser-6m": 8,
+                "stat-nbuser-12m": 9
+            }
+        },
+        "Stat-u": {
+            "prefix": "Stat-user",
+            "columns": {
+                "year": 0,
+                "month": 1,
+                "user-id": 2,
+                "user-sciper": 3,
+                "user-name": 4,
+                "user-first": 5,
+                "client-code": 6,
+                "client-sap": 7,
+                "client-name": 8,
+                "client-idclass": 9,
+                "client-class": 10,
+                "client-labelclass": 11,
+                "stat-trans": 12,
+                "stat-run": 13
+            }
+        },
+        "T1": {
+            "prefix": "Transaction1",
+            "columns": {
+                "invoice-year": 0,
+                "invoice-month": 1,
+                "version-last": 2,
+                "invoice-id": 3,
+                "invoice-ref": 4,
+                "invoice-type": 5,
+                "platf-name": 6,
+                "client-code": 7,
+                "client-sap": 8,
+                "client-name": 9,
+                "client-idclass": 10,
+                "client-class": 11,
+                "client-labelclass": 12,
+                "proj-id": 13,
+                "proj-nbr": 14,
+                "proj-name": 15,
+                "item-idsap": 16,
+                "item-codeD": 17,
+                "item-order": 18,
+                "item-labelcode": 19,
+                "total-fact": 20
+            }
+        },
+        "T2": {
+            "prefix": "Transaction2",
+            "columns": {
+                "invoice-year": 0,
+                "invoice-month": 1,
+                "invoice-version": 2,
+                "invoice-id": 3,
+                "invoice-type": 4,
+                "platf-name": 5,
+                "client-code": 6,
+                "client-sap": 7,
+                "client-name": 8,
+                "client-idclass": 9,
+                "client-class": 10,
+                "client-labelclass": 11,
+                "proj-id": 12,
+                "proj-nbr": 13,
+                "proj-name": 14,
+                "user-id": 15,
+                "user-name-f": 16,
+                "date-start-y": 17,
+                "date-start-m": 18,
+                "date-end-y": 19,
+                "date-end-m": 20,
+                "item-idsap": 21,
+                "item-codeD": 22,
+                "item-order": 23,
+                "item-labelcode": 24,
+                "item-id": 25,
+                "item-nbr": 26,
+                "item-name": 27,
+                "transac-quantity": 28,
+                "item-unit": 29,
+                "valuation-price": 30,
+                "sum-deduct": 31,
+                "total-fact": 32
+            }
+        },
+        "T3": {
+            "prefix": "Transaction3",
+            "columns": {
+                "editing-year": 0,
+                "editing-month": 1,
+                "year": 2,
+                "month": 3,
+                "invoice-year": 4,
+                "invoice-month": 5,
+                "invoice-version": 6,
+                "invoice-project": 7,
+                "client-code": 8,
+                "client-sap": 9,
+                "client-name": 10,
+                "client-idclass": 11,
+                "client-class": 12,
+                "client-labelclass": 13,
+                "oper-id": 14,
+                "oper-name": 15,
+                "oper-note": 16,
+                "staff-note": 17,
+                "mach-id": 18,
+                "mach-name": 19,
+                "mach-extra": 20,
+                "user-id": 21,
+                "user-sciper": 22,
+                "user-name": 23,
+                "user-first": 24,
+                "proj-id": 25,
+                "proj-nbr": 26,
+                "proj-name": 27,
+                "proj-expl": 28,
+                "flow-type": 29,
+                "item-grp": 30,
+                "item-id": 31,
+                "item-codeK": 32,
+                "item-textK": 33,
+                "item-text2K": 34,
+                "item-nbr": 35,
+                "item-name": 36,
+                "item-unit": 37,
+                "item-idclass": 38,
+                "item-codeD": 39,
+                "item-flag-usage": 40,
+                "item-flag-conso": 41,
+                "item-eligible": 42,
+                "item-order": 43,
+                "item-labelcode": 44,
+                "item-extra": 45,
+                "platf-code": 46,
+                "platf-op": 47,
+                "platf-name": 48,
+                "transac-date": 49,
+                "transac-raw": 50,
+                "transac-valid": 51,
+                "transac-id-staff": 52,
+                "transac-staff": 53,
+                "transac-quantity": 54,
+                "transac-usage": 55,
+                "transac-runtime": 56,
+                "transac-runcae": 57,
+                "valuation-price": 58,
+                "valuation-brut": 59,
+                "discount-type": 60,
+                "discount-CHF": 61,
+                "valuation-net": 62,
+                "subsid-code": 63,
+                "subsid-name": 64,
+                "subsid-type": 65,
+                "subsid-start": 66,
+                "subsid-end": 67,
+                "subsid-ok": 68,
+                "subsid-pourcent": 69,
+                "subsid-maxproj": 70,
+                "subsid-maxmois": 71,
+                "subsid-reste": 72,
+                "subsid-CHF": 73,
+                "deduct-CHF": 74,
+                "subsid-deduct": 75,
+                "total-fact": 76,
+                "discount-bonus": 77,
+                "subsid-bonus": 78
+            }
+        }
+    },
+    "11.01": {
         "Bilan-a": {
             "prefix": "Bilan-annul\u00e9",
             "columns": {
