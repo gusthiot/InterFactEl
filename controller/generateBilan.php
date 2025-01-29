@@ -180,7 +180,7 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
                         if(!array_key_exists($item, $t1Array[$code][$clcl])) {
                             $t1Array[$code][$clcl][$item] = 0;
                         }
-                        $t1Array[$code][$clcl][$item] += intval($tab[$columns["total-fact"]]);
+                        $t1Array[$code][$clcl][$item] += floatval($tab[$columns["total-fact"]]);
                     }
                 }
                 foreach($t1Array as $code=>$pc) {
@@ -359,9 +359,9 @@ function generateTablesAndCsv($paramtext, $columns, $columnsCsv, $master, $month
         $show = "";
         $csv = [csvHeader($paramtext, $columnsCsv[$id], $monthList)];
         foreach($names as $name) {
-            $html .= "<th>".$paramtext->getParam($name)."</th>";
+            $html .= "<th class='sort-text'>".$paramtext->getParam($name)."</th>";
         }      
-        $html .= "<th class='right'>".$paramtext->getParam("total-fact")."</th></tr></thead><tbody>";
+        $html .= "<th class='right sort-number'>".$paramtext->getParam("total-fact")."</th></tr></thead><tbody>";
         foreach($master[$id] as $line) {
             $html .= "<tr>";
             foreach($names as $name) {

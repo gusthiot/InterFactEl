@@ -42,7 +42,6 @@ $(document).on("change", "#from", function() {
     {
         if(parseInt($(this).val()) >= parseInt(from)) {
             next += '<option value="'+$(this).val()+'"';
-            if(to) console.log(to, $(this).val());
             if(to && (to == $(this).val())) {
                 blank = false;
                 next += ' selected ';
@@ -100,10 +99,16 @@ $('#download-generated').on('click', function () {
 } );
 
 
-$(document).on("click", ".report-table th", function() {
+$(document).on("click", ".sort-text", function() {
     const column = $(this).parent().children().index($(this));
     const table = $(this).closest('table').attr('id');
-    sortTable(table, column);
+    sortTable(table, column, "text");
+});
+
+$(document).on("click", ".sort-number", function() {
+    const column = $(this).parent().children().index($(this));
+    const table = $(this).closest('table').attr('id');
+    sortTable(table, column, "number");
 });
 
 $(document).on("click", ".get-report", function() {
@@ -111,8 +116,8 @@ $(document).on("click", ".get-report", function() {
     window.location.href = "controller/download.php?type=report&unique="+$('#unique').val()+"&name="+reportId;
 });
 
-function sortTable(tabId, n) {
-    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+function sortTable(tabId, n, type) {
+    let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
     table = document.getElementById(tabId);
     switching = true;
     dir = "asc";
@@ -121,34 +126,15 @@ function sortTable(tabId, n) {
         rows = table.rows;
         for (i = 1; i < (rows.length - 1); i++) {
             shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[n];
-            y = rows[i + 1].getElementsByTagName("TD")[n];
-            if (dir == "asc") {
-                if(!isNaN(x.innerHTML.replace("'", "")) && !isNaN(y.innerHTML.replace("'", ""))) {
-                    if (Number.parseFloat(x.innerHTML.replace("'", "")) > Number.parseFloat(y.innerHTML.replace("'", ""))) {
-                    shouldSwitch = true;
-                    break;
-                    }
-                }
-                else {
-                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true;
-                    break;
-                    }
-                }
-            } else if (dir == "desc") {
-                if(!isNaN(x.innerHTML.replace("'", "")) && !isNaN(y.innerHTML.replace("'", ""))) {
-                    if (Number.parseFloat(x.innerHTML.replace("'", "")) < Number.parseFloat(y.innerHTML.replace("'", ""))) {
-                    shouldSwitch = true;
-                    break;
-                    }
-                }
-                else {
-                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true;
-                    break;
-                    }
-                }
+            x = rows[i].getElementsByTagName("TD")[n].innerHTML;
+            y = rows[i + 1].getElementsByTagName("TD")[n].innerHTML;
+            if(type == "number") {
+                shouldSwitch = switchNumber(x, y, dir);
+                if(shouldSwitch) break;
+            }
+            else {
+                shouldSwitch = switchText(x, y, dir);
+                if(shouldSwitch) break;
             }
         }
         if (shouldSwitch) {
@@ -162,6 +148,26 @@ function sortTable(tabId, n) {
             }
         }
     }
+}
+
+function switchText(x, y, dir) {
+    if (dir == "asc") {
+        return (x.toLowerCase() > y.toLowerCase());
+    } else if (dir == "desc") {
+        return (x.toLowerCase() < y.toLowerCase());
+    }
+    return false;
+}
+
+function switchNumber(x, y, dir) {
+    const xx = Number.parseFloat(x.replaceAll("'", ""));
+    const yy = Number.parseFloat(y.replaceAll("'", ""));
+    if (dir == "asc") {
+        return (xx > yy);
+    } else if (dir == "desc") {
+        return (xx < yy);
+    }
+    return false;
 }
 
 function deleteDir() {
