@@ -158,7 +158,7 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
             }
 
             if($factel >= 9) {
-                $lines = Csv::extract($dirRun."/Bilans_Stats/".$bilansStats[$factel]['T1']['prefix'].$suffix.".csv");        
+                $lines = Csv::extract($dirRun."/Bilans_Stats/".$bilansStats[$factel]['T1']['prefix'].$suffix.".csv");       
                 $columns = $bilansStats[$factel]['T1']['columns'];
                 $t1Array = [];
                 $first = true;
@@ -193,7 +193,7 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
             }
 
             $montantsColumns = [$paramtext->getParam("client-code"), $paramtext->getParam("client-class"), $paramtext->getParam("item-codeD"), $paramtext->getParam("total-fact")];
-            Csv::write($dirRun."/REPORT/".$report[$factel]['montants']['prefix'].".csv", [$montantsColumns] + $montantsArray);
+            Csv::write($dirRun."/REPORT/".$report[$factel]['montants']['prefix'].".csv", array_merge([$montantsColumns], $montantsArray));
         }
         else {
             $lines = Csv::extract($dirRun."/REPORT/".$report[$factel]['montants']['prefix'].".csv");
@@ -244,7 +244,7 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
     $columns = ["par-client" => ["client-name"], "par-class" => ["client-labelclass"], "par-article" => ["item-labelcode"], "par-client-class" => ["client-name", "client-labelclass"], 
                 "par-client-article" => ["client-name", "item-labelcode"], "par-article-class" => ["item-labelcode", "client-labelclass"]];
     $columnsCsv = ["par-client" => $d1, "par-class" => $d2, "par-article" => ["item-codeD", "item-labelcode"], "par-client-class" => $d1 + $d2,
-                   "par-client-article" => $d1 + ["item-codeD", "item-labelcode"], "par-article-class" => ["item-codeD", "item-labelcode"] + $d2];
+                   "par-client-article" => array_merge($d1, ["item-codeD", "item-labelcode"]), "par-article-class" => array_merge(["item-codeD", "item-labelcode"], $d2)];
 
     $csv = [csvHeader($paramtext, array_merge($d1, $d2, $d3), $monthList)];
     foreach($master["par-client-class-article"] as $line) {
