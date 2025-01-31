@@ -77,7 +77,7 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
                 if(!array_key_exists($code, $articles)) {
                     $data = $line;
                     $data["item-order"] = $ordersTemp[$code]["item-order"];
-                    $result[$code] = $data;
+                    $articles[$code] = $data;
                 }
             }
         }

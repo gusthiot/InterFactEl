@@ -72,7 +72,7 @@ $(document).on("click", "#generate", function() {
             $('#period').html("");
             $('#message').html("");
             $('#report-content').html(data);
-            $('#report-tiles').html('<button type="button" id="reinit" class="btn but-line">Réinitialiser</button>');
+            $('#report-tiles').html('<button type="button" id="reinit" class="btn but-line">Retour au menu principal</button>');
         });
     }
     else {    
@@ -100,15 +100,11 @@ $('#download-generated').on('click', function () {
 
 
 $(document).on("click", ".sort-text", function() {
-    const column = $(this).parent().children().index($(this));
-    const table = $(this).closest('table').attr('id');
-    sortTable(table, column, "text");
+    sortTable(this, "text");
 });
 
 $(document).on("click", ".sort-number", function() {
-    const column = $(this).parent().children().index($(this));
-    const table = $(this).closest('table').attr('id');
-    sortTable(table, column, "number");
+    sortTable(this, "number");
 });
 
 $(document).on("click", ".get-report", function() {
@@ -116,58 +112,58 @@ $(document).on("click", ".get-report", function() {
     window.location.href = "controller/download.php?type=report&unique="+$('#unique').val()+"&name="+reportId;
 });
 
-function sortTable(tabId, n, type) {
-    let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    table = document.getElementById(tabId);
-    switching = true;
-    dir = "asc";
-    while (switching) {
-        switching = false;
-        rows = table.rows;
-        for (i = 1; i < (rows.length - 1); i++) {
-            shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[n].innerHTML;
-            y = rows[i + 1].getElementsByTagName("TD")[n].innerHTML;
-            if(type == "number") {
-                shouldSwitch = switchNumber(x, y, dir);
-                if(shouldSwitch) break;
-            }
-            else {
-                shouldSwitch = switchText(x, y, dir);
-                if(shouldSwitch) break;
-            }
-        }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-            switchcount ++;
-        } else {
-            if (switchcount == 0 && dir == "asc") {
-                dir = "desc";
-                switching = true;
-            }
-        }
+function sortTable(th, type) {
+    const columnIndex = $(th).parent().children().index($(th));
+    const tabId = $(th).closest('table').attr('id');
+    const table = document.getElementById(tabId);
+    let dir = "asc";
+    if($(th).hasClass('asc')) {
+        $(th).removeClass('asc');
+        dir = "desc";
     }
+    else {
+        $(th).addClass('asc');
+    }
+    var rows = Array.prototype.slice.call(table.querySelectorAll("tbody > tr"));
+
+    if(dir == "asc") {
+        if(type == "number") {
+            rows.sort(function(rowA, rowB) {
+                return getNum(rowA,columnIndex) - getNum(rowB,columnIndex);
+            });
+        }
+        else {
+            rows.sort(function(rowA, rowB) {
+                return getTxt(rowA,columnIndex) < getTxt(rowB, columnIndex) ? -1 : 1;
+            });
+        }
+        dir = "desc";
+    }
+    else {
+        if(type == "number") {
+            rows.sort(function(rowA, rowB) {
+                return getNum(rowB,columnIndex) - getNum(rowA,columnIndex);
+            });
+        }
+        else {
+            rows.sort(function(rowA, rowB) {
+                return getTxt(rowB,columnIndex) < getTxt(rowA, columnIndex) ? -1 : 1;
+            });
+        }
+        dir = "asc";
+    }
+
+    rows.forEach(function(row) {
+        table.querySelector("tbody").appendChild(row);
+    });
 }
 
-function switchText(x, y, dir) {
-    if (dir == "asc") {
-        return (x.toLowerCase() > y.toLowerCase());
-    } else if (dir == "desc") {
-        return (x.toLowerCase() < y.toLowerCase());
-    }
-    return false;
+function getTxt(row, column) {
+    return row.cells[column].textContent.toLowerCase();
 }
 
-function switchNumber(x, y, dir) {
-    const xx = Number.parseFloat(x.replaceAll("'", ""));
-    const yy = Number.parseFloat(y.replaceAll("'", ""));
-    if (dir == "asc") {
-        return (xx > yy);
-    } else if (dir == "desc") {
-        return (xx < yy);
-    }
-    return false;
+function getNum(row, column) {
+    return Number.parseFloat(row.cells[column].textContent.replaceAll("'", ""));
 }
 
 function deleteDir() {
