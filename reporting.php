@@ -54,7 +54,7 @@ if($dataGest) {
                 $year = basename($dirYear);
                 foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
                     $month = basename($dirMonth);
-                    if (file_exists($dirMonth."/lockm.csv")) {
+                    if (file_exists($dirMonth."/".Lock::FILES['month'])) {
                         $choices[$year.$month] = [$year, $month];
                     }
                 }

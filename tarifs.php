@@ -98,7 +98,7 @@ if(!$available) {
                                 foreach(array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR)) as $dirVersion) {
                                     foreach(array_reverse(glob($dirVersion."/*", GLOB_ONLYDIR)) as $dirRun) {
                                         $sap = new Sap($dirRun);
-                                        if(file_exists($dirRun."/lock.csv") || $sap->status() > 1) {
+                                        if(file_exists($dirRun."/".Lock::FILES['run']) || $sap->status() > 1) {
                                             $lastRun = basename($dirRun);
                                             $lastVersion = basename($dirVersion);
                                             break;
@@ -111,7 +111,7 @@ if(!$available) {
                                 $id = $year."-".$month;
                                 echo '<tr>';
                                 echo '<td>'.$month.' '.$year;
-                                if (file_exists($dirMonth."/lockm.csv")) { ?>
+                                if (file_exists($dirMonth."/".Lock::FILES['month'])) { ?>
                                     <svg class="icon" aria-hidden="true">
                                         <use xlink:href="#lock"></use>
                                     </svg>
