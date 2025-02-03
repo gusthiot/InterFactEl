@@ -48,7 +48,7 @@ class Lock
         if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
             $lock = fread($open, filesize($file));    
             fclose($open);
-            return $lock;
+            return trim($lock);
         }
         return false;
     }
