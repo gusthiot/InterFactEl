@@ -29,6 +29,7 @@
             "prefix": "bilan",
             "columns": {
                 "client-code": 3,
+                "total-fact-r": 20,
                 "total-fact-l": 22,
                 "total-fact-c": 23,
                 "total-fact-w": 24,
@@ -52,6 +53,7 @@
             "prefix": "bilan",
             "columns": {
                 "client-code": 3,
+                "total-fact-r": 17,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
@@ -75,6 +77,7 @@
             "prefix": "bilan",
             "columns": {
                 "client-code": 3,
+                "total-fact-r": 17,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
@@ -98,6 +101,7 @@
             "prefix": "bilan",
             "columns": {
                 "client-code": 3,
+                "total-fact-r": 17,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
@@ -121,6 +125,7 @@
             "prefix": "bilan",
             "columns": {
                 "client-code": 3,
+                "total-fact-r": 17,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
@@ -144,6 +149,7 @@
             "prefix": "bilan",
             "columns": {
                 "client-code": 3,
+                "total-fact-r": 17,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
@@ -167,6 +173,7 @@
             "prefix": "bilan",
             "columns": {
                 "client-code": 3,
+                "total-fact-r": 17,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
@@ -190,6 +197,7 @@
             "prefix": "bilan",
             "columns": {
                 "client-code": 3,
+                "total-fact-r": 17,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
@@ -213,6 +221,7 @@
             "prefix": "bilan",
             "columns": {
                 "client-code": 3,
+                "total-fact-r": 17,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,
@@ -224,6 +233,7 @@
             "prefix": "CRP-bilan",
             "columns": {
                 "client-code": 3,
+                "total-fact-r": 17,
                 "total-fact-l": 19,
                 "total-fact-c": 20,
                 "total-fact-w": 21,

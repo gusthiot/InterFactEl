@@ -1,5 +1,6 @@
 <?php
 
+require_once("../assets/Lock.php");
 require_once("../session.inc");
 
 if(isset($_POST["plate"])) { 
@@ -12,7 +13,7 @@ if(isset($_POST["plate"])) {
         $year = basename($dirYear);
         foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
             $month = basename($dirMonth);
-            if (file_exists($dirMonth."/lockm.csv")) {
+            if (file_exists($dirMonth."/".Lock::FILES['month'])) {
                 $choices[$year.$month] = [$year, $month];
             }
         }

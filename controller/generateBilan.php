@@ -105,8 +105,8 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
                         }
                         else {
                             $code = $tab[$columns['client-code']];
-                            $dM = $tab[$columns["total-fact"]]-$tab[$columns["total-fact-l"]]-$tab[$columns["total-fact-c"]]-$tab[$columns["total-fact-w"]]-$tab[$columns["total-fact-x"]];
-                            $crpArray[$code] = ["dM" => $dM, "dMontants"=>[$tab[$columns["total-fact-l"]], $tab[$columns["total-fact-c"]], $tab[$columns["total-fact-w"]], $tab[$columns["total-fact-x"]]]];
+                            $dM = $tab[$columns["total-fact"]]-$tab[$columns["total-fact-l"]]-$tab[$columns["total-fact-c"]]-$tab[$columns["total-fact-w"]]-$tab[$columns["total-fact-x"]]-$tab[$columns["total-fact-r"]];
+                            $crpArray[$code] = ["dM" => $dM, "dMontants"=>[$tab[$columns["total-fact-l"]], $tab[$columns["total-fact-c"]], $tab[$columns["total-fact-w"]], $tab[$columns["total-fact-x"]], $tab[$columns["total-fact-r"]]]];
                         }
                     }
                 }
@@ -134,14 +134,14 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
                                 - $tab[$columns["total-fact-c"]] - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]];
                         $montantsArray = facts($montantsArray, $montant, $tab, $columns, $clcl);
                     }
-                    elseif($factel >=3 && $factel <= 5) {
+                    elseif($factel >=3 && $factel < 6) {
                         $montant = $tab[$columns["total-fact"]] -$tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
-                                 - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]];
+                                 - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
                         $montantsArray = facts($montantsArray, $montant, $tab, $columns, $clcl);
                     }
                     elseif($factel == 6) {
                         $montant = $tab[$columns["total-fact"]] - $tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
-                                 - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]];
+                                 - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
                         if(!empty($crpArray) && array_key_exists($code, $crpArray)) {
                             $montantsArray = facts($montantsArray, $montant, $tab, $columns, $clcl, $crpArray[$code]["dM"], $crpArray[$code]["dMontants"]);
                         } 
@@ -151,7 +151,11 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
                     }
                     elseif($factel == 7 || $factel == 8) {
                         if($tab[$columns["platf-code"]] == $plateforme) {
-                            $montantsArray[] = [$code, $tab[$columns['client-class']], $tab[$columns["item-codeD"]], $tab[$columns["total-fact"]]];
+                            $montantt = $tab[$columns["total-fact"]];
+                            if(($tab[$columns["item-codeD"]] == "R") && ($montant < 50)) {
+                                $montant = 0;
+                            }
+                            $montantsArray[] = [$code, $tab[$columns['client-class']], $tab[$columns["item-codeD"]], $montant];
                         }
                     }
                 }
@@ -278,17 +282,19 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
 <?php
 }
 
-function facts($montantsArray, $montant, $tab, $columns, $clcl, $dM=0, $dMontants=[0, 0, 0, 0]) 
+function facts($montantsArray, $montant, $tab, $columns, $clcl, $dM=0, $dMontants=[0, 0, 0, 0, 0]) 
 {
     $code = $tab[$columns['client-code']];
-    $facts = ["total-fact-l", "total-fact-c", "total-fact-w", "total-fact-x"];
-    $types = ["L", "C", "W", "X"];
+    $facts = ["total-fact-l", "total-fact-c", "total-fact-w", "total-fact-x", "total-fact-r"];
+    $types = ["L", "C", "W", "X", "R"];
     if(($montant - $dM) > 0) {
         $montantsArray[] = [$code, $clcl, "M", ($montant - $dM)];
     }
     foreach($facts as $pos=>$fact) {
-        if(($tab[$columns[$fact]] - $dMontants[$pos]) > 0) {
-            $montantsArray[] = [$code, $clcl, $types[$pos], ($tab[$columns[$fact]] - $dMontants[$pos])];
+        if(array_key_exists($columns[$fact], $tab)) {
+            if(($tab[$columns[$fact]] - $dMontants[$pos]) > 0) {
+                $montantsArray[] = [$code, $clcl, $types[$pos], ($tab[$columns[$fact]] - $dMontants[$pos])];
+            }
         }
     }
     return $montantsArray;
