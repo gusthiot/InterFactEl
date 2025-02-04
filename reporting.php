@@ -63,6 +63,12 @@ if($dataGest) {
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
+                <div type="button" id="rabais" class="tile center-one">
+                    <p>Rabais & Subsides</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
             </div>
 
             <div id="period"></div>
