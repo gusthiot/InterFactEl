@@ -56,36 +56,38 @@ function getDirectoryCsv($dir, $fileData, $result)
 
 function csvHeader($paramtext, $columns, $monthList, $totalKey) 
 {
-    $header = [];
+    $header = "";
+    $first = true;
     foreach($columns as $name) {
-            $header[] = $paramtext->getParam($name);
+            $first ? $first = false : $header .= ";";
+            $header .= $paramtext->getParam($name);
     }
-    $header[] = $paramtext->getParam($totalKey);
+    $header .= ";".$paramtext->getParam($totalKey);
     foreach($monthList as $monthly) {
-        $header[] = $monthly;
+        $header .= ";".$monthly;
     }
     return $header;
 }
 
 function csvLine($columns, $line, $monthList, $totalKey) 
 {
-    $data = [];
+    $data = "";
+    $first = true;
     foreach($columns as $name) {
-        $data[] = $line[$name];
+        $first ? $first = false : $data .= ";";
+        $data .= $line[$name];
     }
-    $data[] = $line[$totalKey];
+    $data .= ";".$line[$totalKey];
     foreach($monthList as $monthly) {
+        $data .= ";";
         if(array_key_exists($monthly, $line["mois"])) {
-            $data[] = $line["mois"][$monthly];
-        }
-        else {
-            $data[] = "";
+            $data .= $line["mois"][$monthly];
         }
     }
     return $data;
 }
 
-function generateTablesAndCsv($paramtext, $columns, $columnsCsv, $master, $monthList, $tmpDir, $totalKey) 
+function generateTablesAndCsv($paramtext, $columns, $columnsCsv, $master, $monthList, $totalKey) 
 {
     $html = "";
     $show = "show active";
@@ -94,7 +96,7 @@ function generateTablesAndCsv($paramtext, $columns, $columnsCsv, $master, $month
         $html .= '<div class="tab-pane fade '.$show.'" id="'.$id.'" role="tabpanel" aria-labelledby="'.$id.'-tab">
                     <div class="over report-large"><table class="table report-table" id="'.$id.'-table"><thead><tr>';
         $show = "";
-        $csv = [csvHeader($paramtext, $columnsCsv[$id], $monthList, $totalKey)];
+        $csv = csvHeader($paramtext, $columnsCsv[$id], $monthList, $totalKey);
         foreach($names as $name) {
             $html .= "<th class='sort-text'>".$paramtext->getParam($name)."</th>";
         }      
@@ -105,11 +107,10 @@ function generateTablesAndCsv($paramtext, $columns, $columnsCsv, $master, $month
                 $html .= "<td>".$line[$name]."</td>";
             }
             $html .= "<td class='right'>".number_format(floatval($line[$totalKey]), 2, ".", "'")."</td></tr>";
-            $csv[] = csvLine($columnsCsv[$id], $line, $monthList, $totalKey);
+            $csv .= "\n".csvLine($columnsCsv[$id], $line, $monthList, $totalKey);
         }
         $html .= "</tbody></table></div>";
-        $html .= '<button type="button" id="'.$id.'-dl" class="btn but-line get-report">Download Csv</button></div>';
-        Csv::write($tmpDir."/".$id.".csv", $csv);
+        $html .= '<a href="data:text/plain;base64,'.base64_encode($csv).'" download="'.$id.'.csv"><button type="button" id="'.$id.'-dl"  class="btn but-line">Download Csv</button></a></div>';
     }
     return $html;
 }

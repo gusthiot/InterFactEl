@@ -10,15 +10,10 @@ require_once("../session.inc");
 /**
  * 
  */
-if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && isset($_POST["unique"])) {
+if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"])) {
     $plateforme = $_POST["plate"];
-    $tmpDir =  TEMP.$_POST["unique"];
-    if(!mkdir($tmpDir, 0777, true)) {
-        $_SESSION['alert-danger'] = "Impossible d'écrire les rapports !";
-        header('Location: ../reporting.php?plateforme='.$_POST["plate"]);
-        exit;
-    }
     checkPlateforme($dataGest, "reporting", $plateforme);
+
     $dsub = ["deduct-CHF", "subsid-deduct", "discount-bonus", "subsid-bonus"];
     $master = ["reimbursed"=>[], "subsid"=>[], "rabais-subsid"=>[]];
 
@@ -120,16 +115,14 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
     $columns = ["reimbursed" => ["client-name"], "subsid" => ["client-name"]];
     $columnsCsv = ["reimbursed" => array_merge($d1, ["discount-bonus", "subsid-bonus"]), "subsid" => array_merge($d1, $dsub)];
 
-    $csv = [csvHeader($paramtext, array_merge($d1, $d2, $d3, $dsub), $monthList, "total-subsid")];
+    $csv = csvHeader($paramtext, array_merge($d1, $d2, $d3, $dsub), $monthList, "total-subsid");
     foreach($master["rabais-subsid"] as $line) {
-        $csv[] = csvLine(array_merge($d1, $d2, $d3, $dsub), $line, $monthList, "total-subsid");
+        $csv .= "\n".csvLine(array_merge($d1, $d2, $d3, $dsub), $line, $monthList, "total-subsid");
     }
-    Csv::write($tmpDir."/total.csv", $csv);
-
 ?>
 
 <div class="total">Total rabais et subsides sur la période <?php echo $period; ?> : <?php echo number_format(floatval($total), 2, ".", "'"); ?> CHF</div>
-<div class="total"><button type="button" id="total-dl" class="btn but-line get-report">Download Csv</button></div>
+<div class="total"><a href="data:text/plain;base64,<?php echo base64_encode($csv); ?>" download="total-subsides.csv"><button type="button" id="total-subsides" class="btn but-line">Download Csv</button></a></div>
 
 <ul class="nav nav-tabs" role="tablist">
 <?php
@@ -146,7 +139,7 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
 </ul>
 
 <div class="tab-content p-3">
-    <?php echo generateTablesAndCsv($paramtext, $columns, $columnsCsv, $master, $monthList, $tmpDir, "total-subsid"); ?>
+    <?php echo generateTablesAndCsv($paramtext, $columns, $columnsCsv, $master, $monthList, "total-subsid"); ?>
 </div>
 
 <?php

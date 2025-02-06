@@ -15,7 +15,6 @@ checkPlateforme($dataGest, "reporting", $plateforme);
 
 $name = $dataGest['reporting'][$plateforme];
 $dir = DATA.$plateforme;
-$unique = 'reports_'.time();
 
 if($dataGest) {
     include("includes/lock.php");
@@ -29,15 +28,14 @@ if($dataGest) {
     </head>
 
     <body>
-        <div class="container-fluid">	
-            <input type="hidden" id="unique" value="<?= $unique ?>" />
+        <div class="container-fluid">
             <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />        
             <div id="head">
                 <div id="div-logo">
-                    <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo" class="reinit"/></a>
+                    <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
                 </div>
                 <div id="div-path">
-                    <p class="reinit"><a href="index.php">Accueil</a> > Reporting <?= $name ?></p>
+                    <p><a href="index.php">Accueil</a> > Reporting <?= $name ?></p>
                     <p><a href="logout.php">Logout</a></p>
                 </div>
             </div>	

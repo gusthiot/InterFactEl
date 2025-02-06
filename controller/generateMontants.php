@@ -10,15 +10,10 @@ require_once("../session.inc");
 /**
  * 
  */
-if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && isset($_POST["unique"])) {
+if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"])) {
     $plateforme = $_POST["plate"];
-    $tmpDir =  TEMP.$_POST["unique"];
-    if(!mkdir($tmpDir, 0777, true)) {
-        $_SESSION['alert-danger'] = "Impossible d'écrire les rapports !";
-        header('Location: ../reporting.php?plateforme='.$_POST["plate"]);
-        exit;
-    }
     checkPlateforme($dataGest, "reporting", $plateforme);
+
     $master = ["par-client"=>[], "par-class"=>[], "par-article"=>[], "par-client-class"=>[], "par-client-article"=>[], "par-article-class"=>[], "par-client-class-article"=>[]];
 
     include("../includes/reportShared.php");
@@ -166,16 +161,14 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
     $columnsCsv = ["par-client" => $d1, "par-class" => $d2, "par-article" => ["item-codeD", "item-labelcode"], "par-client-class" => $d1 + $d2,
                    "par-client-article" => array_merge($d1, ["item-codeD", "item-labelcode"]), "par-article-class" => array_merge(["item-codeD", "item-labelcode"], $d2)];
 
-    $csv = [csvHeader($paramtext, array_merge($d1, $d2, $d3), $monthList, "total-fact")];
+    $csv = csvHeader($paramtext, array_merge($d1, $d2, $d3), $monthList, "total-fact");
     foreach($master["par-client-class-article"] as $line) {
-        $csv[] = csvLine(array_merge($d1, $d2, $d3), $line, $monthList, "total-fact");
+        $csv .= "\n".csvLine(array_merge($d1, $d2, $d3), $line, $monthList, "total-fact");
     }
-    Csv::write($tmpDir."/total.csv", $csv);
-
 ?>
 
 <div class="total">Total facturé sur la période <?php echo $period; ?> : <?php echo number_format(floatval($total), 2, ".", "'"); ?> CHF</div>
-<div class="total"><button type="button" id="total-dl" class="btn but-line get-report">Download Csv</button></div>
+<div class="total"><a href="data:text/plain;base64,<?php echo base64_encode($csv); ?>" download="total-montants.csv"><button type="button" id="total-montants" class="btn but-line">Download Csv</button></a></div>
 
 <ul class="nav nav-tabs" role="tablist">
 <?php
@@ -192,7 +185,7 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
 </ul>
 
 <div class="tab-content p-3">
-    <?php echo generateTablesAndCsv($paramtext, $columns, $columnsCsv, $master, $monthList, $tmpDir, "total-fact"); ?>
+    <?php echo generateTablesAndCsv($paramtext, $columns, $columnsCsv, $master, $monthList, "total-fact"); ?>
 </div>
 
 <?php
