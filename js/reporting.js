@@ -1,5 +1,4 @@
 let report = "";
-let toIndex = false;
 
 $('#concatenation').on('click', function () {
     $('.tile').removeClass('selected-tile');
@@ -67,19 +66,17 @@ $(document).on("click", "#generate", function() {
         window.location.href = "controller/generateConcatenation.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val();
     }
     else if(report == "montants") {
-        $.post("controller/generateMontants.php", {plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val(), unique: $('#unique').val()}, function (data) {
+        $.post("controller/generateMontants.php", {plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()}, function (data) {
             $('#period').html("");
             $('#message').html("");
             $('#report-content').html(data);
-            $('#report-tiles').html('<button type="button" id="reinit" class="btn but-line">Retour au menu principal</button>');
         });
     }
     else if(report == "rabais") {
-        $.post("controller/generateRabais.php", {plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val(), unique: $('#unique').val()}, function (data) {
+        $.post("controller/generateRabais.php", {plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()}, function (data) {
             $('#period').html("");
             $('#message').html("");
             $('#report-content').html(data);
-            $('#report-tiles').html('<button type="button" id="reinit" class="btn but-line">Retour au menu principal</button>');
         });
     }
     else {    
@@ -93,18 +90,9 @@ $(document).on("click", "#generate", function() {
     }
 } );
 
-$(document).on("click", "#reinit", function() {
-    deleteDir();
-});
-
-$(document).on("click", ".reinit", function() {        
-    toIndex = true;
-});
-
 $('#download-generated').on('click', function () {
     window.location.href = "controller/download.php?type=generated";
 } );
-
 
 $(document).on("click", ".sort-text", function() {
     sortTable(this, "text");
@@ -112,11 +100,6 @@ $(document).on("click", ".sort-text", function() {
 
 $(document).on("click", ".sort-number", function() {
     sortTable(this, "number");
-});
-
-$(document).on("click", ".get-report", function() {
-    const reportId = $(this).attr('id').replace("-dl", "");
-    window.location.href = "controller/download.php?type=report&unique="+$('#unique').val()+"&name="+reportId;
 });
 
 function sortTable(th, type) {
@@ -172,21 +155,3 @@ function getTxt(row, column) {
 function getNum(row, column) {
     return Number.parseFloat(row.cells[column].textContent.replaceAll("'", ""));
 }
-
-function deleteDir() {
-    if(toIndex) {
-        window.location.href = "controller/deleteReport.php?unique="+$('#unique').val(); // firefox
-        $.post("controller/deleteReport.php", {unique: $('#unique').val()}, function () {
-            window.location.href = "index.php";
-        });
-    }
-    else {
-        window.location.href = "controller/deleteReport.php?unique="+$('#unique').val()+"&plate="+$('#plate').val(); // firefox
-        $.post("controller/deleteReport.php", {unique: $('#unique').val()}, function () {
-            window.location.href = "reporting.php?plateforme="+$('#plate').val();
-        });
-    }
-}
-
-$(window).on("unload", deleteDir); // firefox
-$(window).on('beforeunload', deleteDir); // chromium

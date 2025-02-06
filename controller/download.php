@@ -36,16 +36,6 @@ if(isset($_GET['type'])) {
             header('Location: ../index.php');
         }
     }
-    elseif($type==="report") {
-        // reporting, temporary generated
-        if((isset($_GET['name'])) && isset($_GET['unique'])) {
-            readCsv(TEMP.$_GET["unique"]."/".$_GET['name'].".csv");
-        }
-        else {
-            $_SESSION['alert-danger'] = "erreur download";
-            header('Location: ../index.php');
-        }
-    }
     else {
         if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
