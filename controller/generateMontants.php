@@ -154,11 +154,13 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"])) {
         }
     }
 
+    sort($monthList);
+
     $onglets = ["par-client" => "Par Client", "par-class" => "Par Classe", "par-article" => "Par Article", "par-client-class" => "Par Client & Classe", 
                 "par-client-article" => "Par Client & Article", "par-article-class" => "Par Article & Classe"];
     $columns = ["par-client" => ["client-name"], "par-class" => ["client-labelclass"], "par-article" => ["item-labelcode"], "par-client-class" => ["client-name", "client-labelclass"], 
                 "par-client-article" => ["client-name", "item-labelcode"], "par-article-class" => ["item-labelcode", "client-labelclass"]];
-    $columnsCsv = ["par-client" => $d1, "par-class" => $d2, "par-article" => ["item-codeD", "item-labelcode"], "par-client-class" => $d1 + $d2,
+    $columnsCsv = ["par-client" => $d1, "par-class" => $d2, "par-article" => ["item-codeD", "item-labelcode"], "par-client-class" => array_merge($d1, $d2),
                    "par-client-article" => array_merge($d1, ["item-codeD", "item-labelcode"]), "par-article-class" => array_merge(["item-codeD", "item-labelcode"], $d2)];
 
     $csv = csvHeader($paramtext, array_merge($d1, $d2, $d3), $monthList, "total-fact");

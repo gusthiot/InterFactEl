@@ -111,6 +111,8 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"])) {
         }
     }
 
+    sort($monthList);
+    
     $onglets = ["reimbursed" => "A rembourser", "subsid" => "Rabais et subsides par client"];
     $columns = ["reimbursed" => ["client-name"], "subsid" => ["client-name"]];
     $columnsCsv = ["reimbursed" => array_merge($d1, ["discount-bonus", "subsid-bonus"]), "subsid" => array_merge($d1, $dsub)];
