@@ -78,7 +78,7 @@ include("includes/lock.php");
                         echo '<button type="button" id="invalidate" '.$disabled.' class="btn but-line lockable">Invalider</button>';
                     } 
                 }
-                if(in_array($status, [0, 4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run)) { ?>
+                if(in_array($status, [0, 1, 4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run)) { ?>
                     <button type="button" id="bilans" class="btn but-line">Exporter Bilans & Stats</button>
                     <?php if(!$archive) { ?> 
                         <button type="button" id="annexes" class="btn but-line">Exporter Annexes csv</button>
