@@ -90,7 +90,7 @@ include("includes/lock.php");
                 if(!$archive && in_array($status, [1, 2, 3, 5, 6, 7]) && !$lockRun) {
                     echo '<button type="button" id="send" '.$disabled.' class="btn but-line-green lockable">Envoi SAP</button>';
                 }
-                if(!$archive && in_array($status, [0, 5, 6, 7]) && !$lockRun) {
+                if(!$archive && in_array($status, [0, 1, 5, 6, 7]) && !$lockRun) {
                     echo '<button type="button" id="finalize" '.$disabled.' class="btn but-line-blue lockable">Finaliser SAP</button>';
                 }
                     if(!$archive && (in_array($status, [4, 5, 6, 7]) && !$lockRun) || (in_array($status, [4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run))) {
