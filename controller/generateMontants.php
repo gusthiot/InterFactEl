@@ -76,44 +76,48 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"])) {
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
                     $code = $tab[$columns['client-code']];
-                    if($factel < 7) {
-                        $clcl = $clientsClasses[$code]['client-class'];
-                    }
-                    else {
-                        $clcl = $tab[$columns['client-class']];
-                    }
-                    if($factel == 1) {
-                        $montant = $tab[$columns["somme-t"]] + $tab[$columns["emolument-b"]] - $tab[$columns["emolument-r"]] - $tab[$columns["total-fact-l"]]
-                                - $tab[$columns["total-fact-c"]] - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]];
-                        $montantsArray = facts($montantsArray, $montant, $tab, $columns, $clcl);
-                    }
-                    elseif($factel >=3 && $factel < 6) {
-                        $montant = $tab[$columns["total-fact"]] -$tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
-                                - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
-                        $montantsArray = facts($montantsArray, $montant, $tab, $columns, $clcl);
-                    }
-                    elseif($factel == 6) {
-                        $montant = $tab[$columns["total-fact"]] - $tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
-                                - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
-                        if(!empty($crpArray) && array_key_exists($code, $crpArray)) {
-                            $montantsArray = facts($montantsArray, $montant, $tab, $columns, $clcl, $crpArray[$code]["dM"], $crpArray[$code]["dMontants"]);
-                        } 
+                    if($code != $plateforme) {
+                        if($factel < 7) {
+                            $clcl = $clientsClasses[$code]['client-class'];
+                        }
                         else {
+                            $clcl = $tab[$columns['client-class']];
+                        }
+                        if($factel == 1) {
+                            $montant = $tab[$columns["somme-t"]] + $tab[$columns["emolument-b"]] - $tab[$columns["emolument-r"]] - $tab[$columns["total-fact-l"]]
+                                    - $tab[$columns["total-fact-c"]] - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]];
                             $montantsArray = facts($montantsArray, $montant, $tab, $columns, $clcl);
-                        }        
-                    }
-                    elseif($factel == 7 || $factel == 8) {
-                        if($tab[$columns["platf-code"]] == $plateforme) {
-                            $montant = $tab[$columns["total-fact"]];
-                            if(($tab[$columns["item-codeD"]] == "R") && ($montant < 50)) {
-                                $montant = 0;
+                        }
+                        elseif($factel >=3 && $factel < 6) {
+                            $montant = $tab[$columns["total-fact"]] -$tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
+                                    - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
+                            $montantsArray = facts($montantsArray, $montant, $tab, $columns, $clcl);
+                        }
+                        elseif($factel == 6) {
+                            $montant = $tab[$columns["total-fact"]] - $tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
+                                    - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
+                            if(!empty($crpArray) && array_key_exists($code, $crpArray)) {
+                                $montantsArray = facts($montantsArray, $montant, $tab, $columns, $clcl, $crpArray[$code]["dM"], $crpArray[$code]["dMontants"]);
+                            } 
+                            else {
+                                $montantsArray = facts($montantsArray, $montant, $tab, $columns, $clcl);
+                            }        
+                        }
+                        elseif($factel == 7 || $factel == 8) {
+                            if($tab[$columns["platf-code"]] == $plateforme) {
+                                $montant = $tab[$columns["total-fact"]];
+                                if(($tab[$columns["item-codeD"]] == "R") && ($montant < 50)) {
+                                    $montant = 0;
+                                }
+                                $montantsArray[] = [$code, $clcl, $tab[$columns["item-codeD"]], $montant];
                             }
-                            $montantsArray[] = [$code, $clcl, $tab[$columns["item-codeD"]], $montant];
                         }
                     }
                 }
             }
-
+            for($i=0;$i<count($montantsArray);$i++) {
+                $montantsArray[$i][3] = round((2*$montantsArray[$i][3]),1)/2;
+            }
             $montantsColumns = [$paramtext->getParam("client-code"), $paramtext->getParam("client-class"), $paramtext->getParam("item-codeD"), $paramtext->getParam("total-fact")];
             Csv::write($dirRun."/REPORT/".$report[$factel]['montants']['prefix'].".csv", array_merge([$montantsColumns], $montantsArray));
         }

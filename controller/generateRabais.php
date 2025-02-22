@@ -45,32 +45,40 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"])) {
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
                     $code = $tab[$columns['client-code']];
-                    if($factel < 7) {
-                        if($factel == 6) {
-                            $msm = $tab[$columns["subsides-m"]];
+                    if($code != $plateforme) {
+                        if($factel < 7) {
+                            if($factel == 6) {
+                                $msm = $tab[$columns["subsides-m"]];
+                            }
+                            else {
+                                $msm = $tab[$columns["subsides-ma"]] + $tab[$columns["subsides-mo"]];
+                            }
+                            $clcl = $clientsClasses[$code]['client-class'];
+                            $mbm = $tab[$columns["bonus-m"]];
+                            $msc = $tab[$columns["subsides-c"]];
+                            if($mbm > 0 || $msm > 0) {
+                                $rabaisArray[] = [$code, $clcl, "M", 0, 0, $mbm, $msm];
+                            }
+                            if($msc > 0) {
+                                $rabaisArray[] = [$code, $clcl, "C", 0, 0, 0, $msc];
+                            }
                         }
                         else {
-                            $msm = $tab[$columns["subsides-ma"]] + $tab[$columns["subsides-mo"]];
-                        }
-                        $clcl = $clientsClasses[$code]['client-class'];
-                        $mbm = $tab[$columns["bonus-m"]];
-                        $msc = $tab[$columns["subsides-c"]];
-                        if($mbm > 0 || $msm > 0) {
-                            $rabaisArray[] = [$code, $clcl, "M", 0, 0, $mbm, $msm];
-                        }
-                        if($msc > 0) {
-                            $rabaisArray[] = [$code, $clcl, "C", 0, 0, 0, $msc];
-                        }
-                    }
-                    else {
-                        if($code != $plateforme) {
-                            $rabaisArray[] = [$code, $tab[$columns['client-class']], $tab[$columns["item-codeD"]], $tab[$columns["deduct-CHF"]],
-                                                $tab[$columns["subsid-deduct"]], $tab[$columns["discount-bonus"]], $tab[$columns["subsid-bonus"]]];
+                            if($code != $plateforme) {
+                                $rabaisArray[] = [$code, $tab[$columns['client-class']], $tab[$columns["item-codeD"]], $tab[$columns["deduct-CHF"]],
+                                                    $tab[$columns["subsid-deduct"]], $tab[$columns["discount-bonus"]], $tab[$columns["subsid-bonus"]]];
+                            }
                         }
                     }
                 }
             }
 
+            for($i=0;$i<count($rabaisArray);$i++) {
+                $rabaisArray[$i][3] = round($rabaisArray[$i][3],2);
+                $rabaisArray[$i][4] = round($rabaisArray[$i][4],2);
+                $rabaisArray[$i][5] = round($rabaisArray[$i][5],2);
+                $rabaisArray[$i][6] = round($rabaisArray[$i][6],2);
+            }
             $rabaisColumns = [$paramtext->getParam("client-code"), $paramtext->getParam("client-class"), $paramtext->getParam("item-codeD"), 
                                 $paramtext->getParam("deduct-CHF"), $paramtext->getParam("subsid-deduct"), $paramtext->getParam("discount-bonus"), $paramtext->getParam("subsid-bonus")];
             Csv::write($dirRun."/REPORT/".$report[$factel]['rabaisbonus']['prefix'].".csv", array_merge([$rabaisColumns], $rabaisArray));
