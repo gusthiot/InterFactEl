@@ -102,12 +102,14 @@ function generateTablesAndCsv($paramtext, $columns, $columnsCsv, $master, $month
         }      
         $html .= "<th class='right sort-number'>".$paramtext->getParam($totalKey)."</th></tr></thead><tbody>";
         foreach($master[$id] as $line) {
-            $html .= "<tr>";
-            foreach($names as $name) {
-                $html .= "<td>".$line[$name]."</td>";
+            if(floatval($line[$totalKey]) > 0) {
+                $html .= "<tr>";
+                foreach($names as $name) {
+                    $html .= "<td>".$line[$name]."</td>";
+                }
+                $html .= "<td class='right'>".number_format(floatval($line[$totalKey]), 2, ".", "'")."</td></tr>";
+                $csv .= "\n".csvLine($columnsCsv[$id], $line, $monthList, $totalKey);
             }
-            $html .= "<td class='right'>".number_format(floatval($line[$totalKey]), 2, ".", "'")."</td></tr>";
-            $csv .= "\n".csvLine($columnsCsv[$id], $line, $monthList, $totalKey);
         }
         $html .= "</tbody></table></div>";
         $html .= '<a href="data:text/plain;base64,'.base64_encode($csv).'" download="'.$id.'.csv"><button type="button" id="'.$id.'-dl"  class="btn but-line">Download Csv</button></a></div>';

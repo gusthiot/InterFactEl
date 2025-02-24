@@ -51,7 +51,7 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"])) {
                                 $msm = $tab[$columns["subsides-m"]];
                             }
                             else {
-                                $msm = $tab[$columns["subsides-ma"]] + $tab[$columns["subsides-mo"]];
+                                $msm = $tab[$columns["subsides-a"]] + $tab[$columns["subsides-o"]];
                             }
                             $clcl = $clientsClasses[$code]['client-class'];
                             $mbm = $tab[$columns["bonus-m"]];
@@ -127,7 +127,9 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"])) {
 
     $csv = csvHeader($paramtext, array_merge($d1, $d2, $d3, $dsub), $monthList, "total-subsid");
     foreach($master["rabais-subsid"] as $line) {
-        $csv .= "\n".csvLine(array_merge($d1, $d2, $d3, $dsub), $line, $monthList, "total-subsid");
+        if(floatval($line["total-subsid"]) > 0) {
+            $csv .= "\n".csvLine(array_merge($d1, $d2, $d3, $dsub), $line, $monthList, "total-subsid");
+        }
     }
 ?>
 

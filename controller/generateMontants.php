@@ -169,7 +169,9 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"])) {
 
     $csv = csvHeader($paramtext, array_merge($d1, $d2, $d3), $monthList, "total-fact");
     foreach($master["par-client-class-article"] as $line) {
-        $csv .= "\n".csvLine(array_merge($d1, $d2, $d3), $line, $monthList, "total-fact");
+        if(floatval($line["total-fact"]) > 0) {
+            $csv .= "\n".csvLine(array_merge($d1, $d2, $d3), $line, $monthList, "total-fact");
+        }
     }
 ?>
 
