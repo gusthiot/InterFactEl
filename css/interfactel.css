@@ -271,7 +271,11 @@ input[type="file"] {
 }
 
 .center-two {
-  padding: 50px 0;
+  padding: 43px 0;
+}
+
+.center-three {
+  padding: 16px 0;
 }
 
 .tile:hover {

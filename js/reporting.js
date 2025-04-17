@@ -1,31 +1,11 @@
 let report = "";
 
-$('#concatenation').on('click', function () {
+$('.select-period').on('click', function () {
     $('.tile').removeClass('selected-tile');
-    $('#concatenation').addClass('selected-tile');
-    report = "concatenation";
+    $($(this).attr('id')).addClass('selected-tile');
+    report = $(this).attr('id');
     $('#report-content').html("");
-    $.post("controller/selectPeriod.php", {plate: $('#plate').val()}, function (data) {
-        $('#period').html(data);
-    });
-} );
-
-$('#montants').on('click', function () {  
-    $('.tile').removeClass('selected-tile');
-    $('#montants').addClass('selected-tile');
-    $('#report-content').html("");
-    report = "montants";
-    $.post("controller/selectPeriod.php", {plate: $('#plate').val()}, function (data) {
-        $('#period').html(data);
-    });
-} );
-
-$('#rabais').on('click', function () {  
-    $('.tile').removeClass('selected-tile');
-    $('#rabais').addClass('selected-tile');
-    $('#report-content').html("");
-    report = "rabais";
-    $.post("controller/selectPeriod.php", {plate: $('#plate').val()}, function (data) {
+    $.post("controller/selectPeriod.php", {plate: $('#plate').val(), type: report}, function (data) {
         $('#period').html(data);
     });
 } );
@@ -65,28 +45,12 @@ $(document).on("click", "#generate", function() {
     if(report == "concatenation") {
         window.location.href = "controller/generateConcatenation.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val();
     }
-    else if(report == "montants") {
-        $.post("controller/generateMontants.php", {plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()}, function (data) {
+    else {
+        $.post("controller/generateReports.php", {type: report, plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()}, function (data) {
             $('#period').html("");
             $('#message').html("");
             $('#report-content').html(data);
         });
-    }
-    else if(report == "rabais") {
-        $.post("controller/generateRabais.php", {plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()}, function (data) {
-            $('#period').html("");
-            $('#message').html("");
-            $('#report-content').html(data);
-        });
-    }
-    else {    
-        $(".lockable").prop('disabled', false);
-        $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-            'Pas de générateur correspondant'+
-            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-                '<span aria-hidden="true">&times;</span>'+
-            '</button>'+
-        '</div>');
     }
 } );
 

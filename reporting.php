@@ -49,20 +49,74 @@ if($dataGest) {
             <?php }
             ?>
             <div id="report-tiles">
-                <div type="button" id="concatenation" class="tile center-one">
+                <div type="button" id="concatenation" class="select-period tile center-one">
                     <p>Concaténer</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
-                <div type="button" id="montants" class="tile center-one">
+                <div type="button" id="montants" class="select-period tile center-one">
                     <p>Montants facturés</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
-                <div type="button" id="rabais" class="tile center-one">
+                <div type="button" id="rabais" class="select-period tile center-one">
                     <p>Rabais & Subsides</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
+                <div type="button" id="consomations" class="select-period tile center-three">
+                    <p>Montants <br/> Consommations <br/> plateforme</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
+                <div type="button" id="runs" class="select-period tile center-two">
+                    <p>Statistiques  <br/>  durées runs machines</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
+                <div type="button" id="usages" class="select-period tile center-two">
+                    <p>Statistiques <br/> d’utilisation machines</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
+                <div type="button" id="consommables" class="select-period tile center-two">
+                    <p>Statistiques <br/> Consommables</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
+                <div type="button" id="services" class="select-period tile center-two">
+                    <p>Statistiques <br/> Services</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
+                <div type="button" id="penalites" class="select-period tile center-two">
+                    <p>  Statistiques <br/> Pénalités</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
+                <div type="button" id="transactions" class="select-period tile center-two">
+                    <p>Statistiques <br/> Transactions</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
+                <div type="button" id="plateforme" class="select-period tile center-two">
+                    <p>Statistiques <br/> Plateforme</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
+                <div type="button" id="clients" class="select-period tile center-two">
+                    <p>Nombre clients <br/> et utilisateurs</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
