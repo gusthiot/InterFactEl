@@ -8,6 +8,8 @@ require_once("../includes/State.php");
 require_once("../includes/Report.php");
 require_once("../includes/ReportMontants.php");
 require_once("../includes/ReportRabais.php");
+require_once("../includes/ReportConsommations.php");
+require_once("../includes/ReportRuns.php");
 require_once("../session.inc");
 
 /**
@@ -23,10 +25,16 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
         case "rabais":
             $report = new ReportRabais($plateforme, $_POST["to"], $_POST["from"]);
             break;
+        case "consommations":
+            $report = new ReportConsommations($plateforme, $_POST["to"], $_POST["from"]);
+            break;
+        case "runs":
+            $report = new ReportRuns($plateforme, $_POST["to"], $_POST["from"]);
+            break;
         default:
             exit("Type de rapport non pris en compte !");
     }
 
-    $report->prepare($dataGest);
+    $report->loopOnMonths($dataGest);
     $report->display();
 }

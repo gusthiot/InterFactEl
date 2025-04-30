@@ -30,6 +30,76 @@
                 "item-order": 1,
                 "item-labelcode": 2
             }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3
+            }
+        },
+        "machgrp": {
+            "prefix": "machgrp",
+            "columns": {
+                "mach-id": 0,
+                "item-grp": 1
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "platf-code": 4
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-codeD": 3,
+                "item-unit": 4,
+                "mach-id": 5,
+                "platf-code": 6
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-name": 3,
+                "client-code": 5
+            }
+        },
+        "cptexpl": {
+            "prefix": "cptexpl",
+            "columns": {
+                "proj-id": 1,
+                "proj-expl": 2
+            }
         }
     },
     "3": {
@@ -62,6 +132,77 @@
                 "item-codeD": 0,
                 "item-order": 1,
                 "item-labelcode": 2
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3
+            }
+        },
+        "machgrp": {
+            "prefix": "machgrp",
+            "columns": {
+                "mach-id": 0,
+                "item-grp": 1
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "platf-code": 4
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-codeD": 3,
+                "item-unit": 4,
+                "mach-id": 5,
+                "platf-code": 6
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "client-code": 5
+            }
+        },
+        "cptexpl": {
+            "prefix": "cptexpl",
+            "columns": {
+                "proj-id": 1,
+                "proj-expl": 2
             }
         }
     },
@@ -96,6 +237,77 @@
                 "item-order": 1,
                 "item-labelcode": 2
             }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3
+            }
+        },
+        "machgrp": {
+            "prefix": "machgrp",
+            "columns": {
+                "mach-id": 0,
+                "item-grp": 1
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "platf-code": 4
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-codeD": 3,
+                "item-unit": 4,
+                "mach-id": 5,
+                "platf-code": 6
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "client-code": 6
+            }
+        },
+        "cptexpl": {
+            "prefix": "cptexpl",
+            "columns": {
+                "proj-id": 1,
+                "proj-expl": 2
+            }
         }
     },
     "4.01": {
@@ -128,6 +340,77 @@
                 "item-codeD": 0,
                 "item-order": 1,
                 "item-labelcode": 2
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3
+            }
+        },
+        "machgrp": {
+            "prefix": "machgrp",
+            "columns": {
+                "mach-id": 0,
+                "item-grp": 1
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "platf-code": 4
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-codeD": 3,
+                "item-unit": 4,
+                "mach-id": 5,
+                "platf-code": 6
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "client-code": 6
+            }
+        },
+        "cptexpl": {
+            "prefix": "cptexpl",
+            "columns": {
+                "proj-id": 1,
+                "proj-expl": 2
             }
         }
     },
@@ -162,6 +445,77 @@
                 "item-order": 1,
                 "item-labelcode": 2
             }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3
+            }
+        },
+        "machgrp": {
+            "prefix": "machgrp",
+            "columns": {
+                "mach-id": 0,
+                "item-grp": 1
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "platf-code": 4
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-codeD": 3,
+                "item-unit": 4,
+                "mach-id": 5,
+                "platf-code": 6
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "client-code": 6
+            }
+        },
+        "cptexpl": {
+            "prefix": "cptexpl",
+            "columns": {
+                "proj-id": 1,
+                "proj-expl": 2
+            }
         }
     },
     "4.11": {
@@ -194,6 +548,77 @@
                 "item-codeD": 0,
                 "item-order": 1,
                 "item-labelcode": 2
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3
+            }
+        },
+        "machgrp": {
+            "prefix": "machgrp",
+            "columns": {
+                "mach-id": 0,
+                "item-grp": 1
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "platf-code": 4
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-codeD": 3,
+                "item-unit": 4,
+                "mach-id": 5,
+                "platf-code": 6
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "client-code": 6
+            }
+        },
+        "cptexpl": {
+            "prefix": "cptexpl",
+            "columns": {
+                "proj-id": 1,
+                "proj-expl": 2
             }
         }
     },
@@ -228,6 +653,77 @@
                 "item-order": 1,
                 "item-labelcode": 2
             }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3
+            }
+        },
+        "machgrp": {
+            "prefix": "machgrp",
+            "columns": {
+                "mach-id": 0,
+                "item-grp": 1
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "platf-code": 4
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-codeD": 3,
+                "item-unit": 4,
+                "mach-id": 5,
+                "platf-code": 6
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "client-code": 6
+            }
+        },
+        "cptexpl": {
+            "prefix": "cptexpl",
+            "columns": {
+                "proj-id": 1,
+                "proj-expl": 2
+            }
         }
     },
     "5": {
@@ -260,6 +756,77 @@
                 "item-codeD": 0,
                 "item-order": 1,
                 "item-labelcode": 2
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3
+            }
+        },
+        "machgrp": {
+            "prefix": "machgrp",
+            "columns": {
+                "mach-id": 0,
+                "item-grp": 1
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "platf-code": 4
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-codeD": 3,
+                "item-unit": 4,
+                "mach-id": 5,
+                "platf-code": 6
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "client-code": 6
+            }
+        },
+        "cptexpl": {
+            "prefix": "cptexpl",
+            "columns": {
+                "proj-id": 1,
+                "proj-expl": 2
             }
         }
     },
@@ -294,6 +861,77 @@
                 "item-order": 1,
                 "item-labelcode": 2
             }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3
+            }
+        },
+        "machgrp": {
+            "prefix": "machgrp",
+            "columns": {
+                "mach-id": 0,
+                "item-grp": 1
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "platf-code": 4
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-codeD": 3,
+                "item-unit": 4,
+                "mach-id": 5,
+                "platf-code": 6
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "client-code": 6
+            }
+        },
+        "cptexpl": {
+            "prefix": "cptexpl",
+            "columns": {
+                "proj-id": 1,
+                "proj-expl": 2
+            }
         }
     },
     "6": {
@@ -327,6 +965,77 @@
                 "item-order": 1,
                 "item-labelcode": 2
             }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3
+            }
+        },
+        "machgrp": {
+            "prefix": "machgrp",
+            "columns": {
+                "mach-id": 0,
+                "item-grp": 1
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "platf-code": 4
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-codeD": 3,
+                "item-unit": 4,
+                "mach-id": 5,
+                "platf-code": 6
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "client-code": 6
+            }
+        },
+        "cptexpl": {
+            "prefix": "cptexpl",
+            "columns": {
+                "proj-id": 1,
+                "proj-expl": 2
+            }
         }
     },
     "7": {
@@ -353,6 +1062,66 @@
                 "item-order": 1,
                 "item-labelcode": 2
             }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3,
+                "item-grp": 4
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4,
+                "item-id-K5": 5,
+                "item-id-K6": 6
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 2,
+                "item-name": 3,
+                "item-unit": 4,
+                "platf-code": 5
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 2,
+                "item-nbr": 3,
+                "item-name": 4,
+                "item-codeD": 5,
+                "item-unit": 6,
+                "mach-id": 9
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "proj-expl": 5,
+                "client-code": 6
+            }
         }
     },
     "8": {
@@ -375,6 +1144,7 @@
         "articlesap": {
             "prefix": "articlesap",
             "columns": {
+                "item-idsap": 0,
                 "item-codeD": 1,
                 "item-labelcode": 4
             }
@@ -384,6 +1154,66 @@
             "columns": {
                 "item-codeD": 0,
                 "item-order": 1
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3,
+                "item-grp": 4
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4,
+                "item-id-K5": 5,
+                "item-id-K6": 6,
+                "item-id-K7": 7
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 2,
+                "item-nbr": 3,
+                "item-name": 4,
+                "item-idsap": 5,
+                "item-unit": 6,
+                "mach-id": 9
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 2,
+                "proj-nbr": 3,
+                "proj-name": 4,
+                "proj-expl": 5,
+                "client-code": 6
             }
         }
     },
@@ -407,9 +1237,70 @@
         "articlesap": {
             "prefix": "articlesap",
             "columns": {
+                "item-idsap": 0,
                 "item-codeD": 1,
                 "item-order": 5,
                 "item-labelcode": 6
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3,
+                "item-grp": 4
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4,
+                "item-id-K5": 5,
+                "item-id-K6": 6,
+                "item-id-K7": 7
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 2,
+                "item-nbr": 3,
+                "item-name": 4,
+                "item-idsap": 5,
+                "item-unit": 6,
+                "mach-id": 9
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 0,
+                "proj-nbr": 1,
+                "proj-name": 2,
+                "proj-expl": 3,
+                "client-code": 4
             }
         }
     },
@@ -433,9 +1324,77 @@
         "articlesap": {
             "prefix": "articlesap",
             "columns": {
+                "item-idsap": 0,
                 "item-codeD": 1,
                 "item-order": 2,
                 "item-labelcode": 3
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3,
+                "item-grp": 4
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4,
+                "item-id-K5": 5,
+                "item-id-K6": 6,
+                "item-id-K7": 7
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 2,
+                "item-nbr": 3,
+                "item-name": 4,
+                "item-idclass": 5,
+                "item-unit": 6,
+                "mach-id": 9
+            }
+        },
+        "classeprestation": {
+            "prefix": "classeprestation",
+            "columns": {
+                "item-idclass": 0,
+                "item-idsap": 1
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 0,
+                "proj-nbr": 1,
+                "proj-name": 2,
+                "proj-expl": 3,
+                "client-code": 4
             }
         }
     },
@@ -459,9 +1418,77 @@
         "articlesap": {
             "prefix": "articlesap",
             "columns": {
+                "item-idsap": 0,
                 "item-codeD": 1,
                 "item-order": 2,
                 "item-labelcode": 3
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3,
+                "item-grp": 4
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-cae": 1,
+                "item-id-K1": 2,
+                "item-id-K2": 3,
+                "item-id-K3": 4,
+                "item-id-K4": 5,
+                "item-id-K5": 6,
+                "item-id-K6": 7,
+                "item-id-K7": 8
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 2,
+                "item-nbr": 3,
+                "item-name": 4,
+                "item-idclass": 5,
+                "item-unit": 6
+            }
+        },
+        "classeprestation": {
+            "prefix": "classeprestation",
+            "columns": {
+                "item-idclass": 0,
+                "item-idsap": 1
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 0,
+                "proj-nbr": 1,
+                "proj-name": 2,
+                "proj-expl": 3,
+                "client-code": 4
             }
         }
     },
@@ -485,9 +1512,78 @@
         "articlesap": {
             "prefix": "articlesap",
             "columns": {
+                "item-idsap": 0,
                 "item-codeD": 1,
                 "item-order": 2,
                 "item-labelcode": 3
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3,
+                "user-email": 4
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3,
+                "item-grp": 4
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-cae": 1,
+                "item-id-K1": 2,
+                "item-id-K2": 3,
+                "item-id-K3": 4,
+                "item-id-K4": 5,
+                "item-id-K5": 6,
+                "item-id-K6": 7,
+                "item-id-K7": 8
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 2,
+                "item-nbr": 3,
+                "item-name": 4,
+                "item-idclass": 5,
+                "item-unit": 6
+            }
+        },
+        "classeprestation": {
+            "prefix": "classeprestation",
+            "columns": {
+                "item-idclass": 0,
+                "item-idsap": 1
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 0,
+                "proj-nbr": 1,
+                "proj-name": 2,
+                "proj-expl": 3,
+                "client-code": 4
             }
         }
     }

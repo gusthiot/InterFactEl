@@ -17,34 +17,29 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
     $abrev = $dataGest['reporting'][$plateforme];
     $date = $_GET["from"];
     $factel = "";
-    while(true) {
-        $month = substr($date, 4, 2);
-        $year = substr($date, 0, 4);
-        $dir = DATA.$plateforme."/".$year."/".$month;
-        $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
-        $run = Lock::load($dirVersion, "version");
 
-        $infos = Info::load($dirVersion."/".$run);
-        if(empty($factel)) {
-            $factel = $infos["FactEl"][2];
-        }
-        elseif($infos["FactEl"][2] != $factel) {
-            $_SESSION['alert-danger'] = "Sélectionner la période pour une même version logicielle";
-            header('Location: ../reporting.php?plateforme='.$plateforme);
-            exit;
-        }
+    $month = substr($_GET["from"], 4, 2);
+    $year = substr($_GET["from"], 0, 4);
+    $dir = DATA.$plateforme."/".$year."/".$month;
+    $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
+    $run = Lock::load($dirVersion, "version");
+    $infos = Info::load($dirVersion."/".$run);
+    $fact_from = $infos["FactEl"][2];
 
-        if($date == $_GET["to"]) {
-            break;
-        }
+    $month = substr($_GET["to"], 4, 2);
+    $year = substr($_GET["to"], 0, 4);
+    $dir = DATA.$plateforme."/".$year."/".$month;
+    $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
+    $run = Lock::load($dirVersion, "version");
+    $infos = Info::load($dirVersion."/".$run);
+    $fact_to = $infos["FactEl"][2];
 
-        if($month == "12") {
-            $date += 89;
-        }
-        else {
-            $date++;
-        }
+    if($fact_from != $fact_to) {
+        $_SESSION['alert-danger'] = "Sélectionner la période pour une même version logicielle";
+        header('Location: ../reporting.php?plateforme='.$plateforme);
+        exit;
     }
+
 
     $noms = ["Bilan-annulé", "Bilan-conso-propre", "Bilan-factures", "Bilan-subsides", "Bilan-usage", "Stat-client", "Stat-machine", "Stat-nbre-user", "Stat-user", "Transaction1", "Transaction2", "Transaction3"];
     $info = "";
@@ -75,12 +70,6 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
                     $content[] = explode(";", $csv[$i]);
                 }
             }
-            /*
-            else {
-                $info .= $path." empty ? <br />";
-            }
-            */
-
 
             if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
                 Csv::append($tmpDir.$nom.$suf_fin, $content);

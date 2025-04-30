@@ -4,8 +4,9 @@ $('.select-period').on('click', function () {
     $('.tile').removeClass('selected-tile');
     $($(this).attr('id')).addClass('selected-tile');
     report = $(this).attr('id');
+    const title = $('.title', this).text();
     $('#report-content').html("");
-    $.post("controller/selectPeriod.php", {plate: $('#plate').val(), type: report}, function (data) {
+    $.post("controller/selectPeriod.php", {plate: $('#plate').val(), type: report, title: title}, function (data) {
         $('#period').html(data);
     });
 } );

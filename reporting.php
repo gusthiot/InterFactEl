@@ -35,8 +35,8 @@ if($dataGest) {
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
                 </div>
                 <div id="div-path">
-                    <p><a href="index.php">Accueil</a> > Reporting <?= $name ?></p>
-                    <p><a href="logout.php">Logout</a></p>
+                    <p class="title"><a href="index.php">Accueil</a> > Reporting <?= $name ?></p>
+                    <p class="title"><a href="logout.php">Logout</a></p>
                 </div>
             </div>	
             <div class="title <?php if(TEST_MODE) echo "test";?>">
@@ -50,73 +50,73 @@ if($dataGest) {
             ?>
             <div id="report-tiles">
                 <div type="button" id="concatenation" class="select-period tile center-one">
-                    <p>Concaténer</p>
+                    <p class="title">Concaténer</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
                 <div type="button" id="montants" class="select-period tile center-one">
-                    <p>Montants facturés</p>
+                    <p class="title">Montants facturés</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
                 <div type="button" id="rabais" class="select-period tile center-one">
-                    <p>Rabais & Subsides</p>
+                    <p class="title">Rabais & Subsides</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
-                <div type="button" id="consomations" class="select-period tile center-three">
-                    <p>Montants <br/> Consommations <br/> plateforme</p>
+                <div type="button" id="consommations" class="select-period tile center-three">
+                    <p class="title">Montants <br/> Consommations <br/> plateforme</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
-                <div type="button" id="runs" class="select-period tile center-two">
-                    <p>Statistiques  <br/>  durées runs machines</p>
+                <div type="button" id="runs" class="select-period tile center-three">
+                    <p class="title">Statistiques  <br/>  durées runs machines</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
-                <div type="button" id="usages" class="select-period tile center-two">
-                    <p>Statistiques <br/> d’utilisation machines</p>
+                <div type="button" id="usages" class="select-period tile center-three">
+                    <p class="title">Statistiques <br/> d’utilisation machines</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
                 <div type="button" id="consommables" class="select-period tile center-two">
-                    <p>Statistiques <br/> Consommables</p>
+                    <p class="title">Statistiques <br/> Consommables</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
                 <div type="button" id="services" class="select-period tile center-two">
-                    <p>Statistiques <br/> Services</p>
+                    <p class="title">Statistiques <br/> Services</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
                 <div type="button" id="penalites" class="select-period tile center-two">
-                    <p>  Statistiques <br/> Pénalités</p>
+                    <p class="title">  Statistiques <br/> Pénalités</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
                 <div type="button" id="transactions" class="select-period tile center-two">
-                    <p>Statistiques <br/> Transactions</p>
+                    <p class="title">Statistiques <br/> Transactions</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
                 <div type="button" id="plateforme" class="select-period tile center-two">
-                    <p>Statistiques <br/> Plateforme</p>
+                    <p class="title">Statistiques <br/> Plateforme</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
                 <div type="button" id="clients" class="select-period tile center-two">
-                    <p>Nombre clients <br/> et utilisateurs</p>
+                    <p class="title">Nombre clients <br/> et utilisateurs</p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>

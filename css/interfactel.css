@@ -436,6 +436,11 @@ table.report-table th {
   cursor: pointer;
 }
 
+#date-title {
+  padding: 10px;
+  font-style: italic;
+}
+
 #bilans {
   margin: 10px;
   text-align: center;

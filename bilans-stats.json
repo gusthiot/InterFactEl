@@ -22,6 +22,31 @@
                 "subsides-o": 10,
                 "subsides-c": 11
             }
+        },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "proj-id": 2,
+                "client-code": 4,
+                "user-id": 6,
+                "oper-id": 18,
+                "mach-id": 11,
+                "transac-date": 13,
+                "Tmach-HP": 14,
+                "Tmach-HC": 15,
+                "Toper": 16,
+                "staff-note": 21
+            }
+        },
+        "lvr": {
+            "prefix": "lvr",
+            "columns": {
+                "client-code": 4,
+                "user-id": 6,
+                "item-id": 10,
+                "transac-usage": 14,
+                "transac-date": 20
+            }
         }
     },
     "3": {
@@ -45,6 +70,31 @@
                 "subsides-a": 9,
                 "subsides-o": 10,
                 "subsides-c": 11
+            }
+        },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "proj-id": 2,
+                "client-code": 5,
+                "user-id": 7,
+                "oper-id": 17,
+                "mach-id": 10,
+                "transac-date": 12,
+                "Tmach-HP": 13,
+                "Tmach-HC": 14,
+                "Toper": 15,
+                "staff-note": 20
+            }
+        },
+        "lvr": {
+            "prefix": "lvr",
+            "columns": {
+                "client-code": 5,
+                "user-id": 7,
+                "item-id": 10,
+                "transac-usage": 14,
+                "transac-date": 20
             }
         }
     },
@@ -70,6 +120,31 @@
                 "subsides-o": 10,
                 "subsides-c": 11
             }
+        },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "proj-id": 2,
+                "client-code": 6,
+                "user-id": 8,
+                "oper-id": 17,
+                "mach-id": 11,
+                "transac-date": 13,
+                "Tmach-HP": 14,
+                "Tmach-HC": 15,
+                "Toper": 16,
+                "staff-note": 20
+            }
+        },
+        "lvr": {
+            "prefix": "lvr",
+            "columns": {
+                "client-code": 6,
+                "user-id": 8,
+                "item-id": 11,
+                "transac-date": 14,
+                "transac-usage": 15
+            }
         }
     },
     "4.01": {
@@ -93,6 +168,31 @@
                 "subsides-a": 9,
                 "subsides-o": 10,
                 "subsides-c": 11
+            }
+        },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "proj-id": 2,
+                "client-code": 6,
+                "user-id": 8,
+                "oper-id": 19,
+                "mach-id": 11,
+                "transac-date": 13,
+                "Tmach-HP": 14,
+                "Tmach-HC": 15,
+                "Toper": 16,
+                "staff-note": 20
+            }
+        },
+        "lvr": {
+            "prefix": "lvr",
+            "columns": {
+                "client-code": 6,
+                "user-id": 8,
+                "item-id": 11,
+                "transac-date": 14,
+                "transac-usage": 15
             }
         }
     },
@@ -118,6 +218,31 @@
                 "subsides-o": 10,
                 "subsides-c": 11
             }
+        },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "proj-id": 2,
+                "client-code": 6,
+                "user-id": 8,
+                "oper-id": 19,
+                "mach-id": 11,
+                "transac-date": 15,
+                "Tmach-HP": 16,
+                "Tmach-HC": 17,
+                "Toper": 18,
+                "staff-note": 22
+            }
+        },
+        "lvr": {
+            "prefix": "lvr",
+            "columns": {
+                "client-code": 6,
+                "user-id": 8,
+                "item-id": 11,
+                "transac-date": 14,
+                "transac-usage": 15
+            }
         }
     },
     "4.11": {
@@ -141,6 +266,31 @@
                 "subsides-a": 9,
                 "subsides-o": 10,
                 "subsides-c": 11
+            }
+        },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "proj-id": 2,
+                "client-code": 6,
+                "user-id": 8,
+                "oper-id": 19,
+                "mach-id": 11,
+                "transac-date": 15,
+                "Tmach-HP": 16,
+                "Tmach-HC": 17,
+                "Toper": 18,
+                "staff-note": 22
+            }
+        },
+        "lvr": {
+            "prefix": "lvr",
+            "columns": {
+                "client-code": 6,
+                "user-id": 8,
+                "item-id": 11,
+                "transac-date": 14,
+                "transac-usage": 15
             }
         }
     },
@@ -166,6 +316,31 @@
                 "subsides-o": 10,
                 "subsides-c": 11
             }
+        },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "proj-id": 2,
+                "client-code": 6,
+                "user-id": 8,
+                "oper-id": 19,
+                "mach-id": 11,
+                "transac-date": 15,
+                "Tmach-HP": 16,
+                "Tmach-HC": 17,
+                "Toper": 18,
+                "staff-note": 22
+            }
+        },
+        "lvr": {
+            "prefix": "lvr",
+            "columns": {
+                "client-code": 6,
+                "user-id": 8,
+                "item-id": 11,
+                "transac-date": 14,
+                "transac-usage": 15
+            }
         }
     },
     "5": {
@@ -190,6 +365,31 @@
                 "subsides-o": 10,
                 "subsides-c": 11
             }
+        },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "proj-id": 2,
+                "client-code": 7,
+                "user-id": 9,
+                "oper-id": 20,
+                "mach-id": 12,
+                "transac-date": 16,
+                "Tmach-HP": 17,
+                "Tmach-HC": 18,
+                "Toper": 19,
+                "staff-note": 23
+            }
+        },
+        "lvr": {
+            "prefix": "lvr",
+            "columns": {
+                "client-code": 7,
+                "user-id": 9,
+                "item-id": 12,
+                "transac-date": 15,
+                "transac-usage": 16
+            }
         }
     },
     "5.01": {
@@ -213,6 +413,31 @@
                 "subsides-a": 9,
                 "subsides-o": 10,
                 "subsides-c": 11
+            }
+        },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "proj-id": 2,
+                "client-code": 7,
+                "user-id": 9,
+                "oper-id": 20,
+                "mach-id": 12,
+                "transac-date": 16,
+                "Tmach-HP": 17,
+                "Tmach-HC": 18,
+                "Toper": 19,
+                "staff-note": 23
+            }
+        },
+        "lvr": {
+            "prefix": "lvr",
+            "columns": {
+                "client-code": 7,
+                "user-id": 9,
+                "item-id": 12,
+                "transac-date": 15,
+                "transac-usage": 16
             }
         }
     },
@@ -248,6 +473,31 @@
                 "bonus-m": 8,
                 "subsides-m": 9,
                 "subsides-c": 10
+            }
+        },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "proj-id": 2,
+                "client-code": 7,
+                "user-id": 9,
+                "oper-id": 20,
+                "mach-id": 12,
+                "transac-date": 16,
+                "Tmach-HP": 17,
+                "Tmach-HC": 18,
+                "Toper": 19,
+                "staff-note": 23
+            }
+        },
+        "lvr": {
+            "prefix": "lvr",
+            "columns": {
+                "client-code": 7,
+                "user-id": 9,
+                "item-id": 12,
+                "transac-date": 15,
+                "transac-usage": 16
             }
         }
     },
@@ -315,6 +565,15 @@
                 "transac-usage": 8
             }
         },
+        "cae": {
+            "prefix": "cae",
+            "columns": {
+                "mach-id": 12,
+                "Tmach-HP": 17,
+                "Tmach-HC": 18,
+                "staff-note": 23
+            }
+        },
         "T3": {
             "prefix": "Transaction",
             "columns": {
@@ -342,7 +601,7 @@
                 "proj-expl": 21,
                 "proj-subs": 22,
                 "item-id": 23,
-                "item-type": 24,
+                "flow-type": 24,
                 "item-nbr": 25,
                 "item-name": 26,
                 "item-unit": 27,
