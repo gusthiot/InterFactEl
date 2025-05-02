@@ -465,6 +465,11 @@ table.report-table th {
   font-weight: bold;
 }
 
+.subtotal {
+  margin: 5px;
+  text-align: center;
+}
+
 #report-content {
   margin: auto;
   padding: 20px;

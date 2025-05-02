@@ -35,6 +35,6 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
             exit("Type de rapport non pris en compte !");
     }
 
-    $report->loopOnMonths($dataGest);
+    $report->loopOnMonths();
     $report->display();
 }

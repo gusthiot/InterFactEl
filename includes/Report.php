@@ -24,7 +24,6 @@ abstract class Report
     protected $from;
     protected $paramtext;
 
-    /** only prepare */
     protected $clients;
     protected $classes;
     protected $clientsClasses;
@@ -38,28 +37,19 @@ abstract class Report
     protected $report;
     protected $reportKey;
     protected $reportColumns;
-    protected $idKey;
 
     protected $month;
     protected $year;
-
     protected $dirRun;
     protected $factel;
     protected $monthly;
-    /** */
 
     protected $monthList;
     protected $total;
+    protected $totalCsv;
+    protected $totalCsvData;
+    protected $tabs;
 
-    protected $master;
-
-    /** only display */
-    protected $onglets;
-    protected $columns;
-    protected $columnsCsv;
-    protected $csv;
-
-    protected $totalKeys;
 
     function __construct($plateforme, $to, $from) 
     {
@@ -162,7 +152,7 @@ abstract class Report
         return [$names];
     }
 
-    function processReportFile($suffix)
+    function processReportFile()
     {
         $monthArray = [];
         $reportFile = $this->dirRun."/REPORT/".$this->report[$this->factel][$this->reportKey]['prefix'].".csv";
@@ -170,7 +160,7 @@ abstract class Report
             if(!file_exists($this->dirRun."/REPORT/")) {
                 mkdir($this->dirRun."/REPORT/");
             }
-            $monthArray = $this->generate($suffix);
+            $monthArray = $this->generate();
             Csv::write($reportFile, array_merge($this->getColumnsNames(), $monthArray));
 
         }
@@ -181,7 +171,7 @@ abstract class Report
             }
         }
 
-        $this->masterise($monthArray);
+        $this->mapping($monthArray);
     }
 
     function monthAverage($sum, $num)
@@ -232,7 +222,7 @@ abstract class Report
         return sqrt(1 / $numTot * $sum);
     }
 
-    function loopOnMonths($dataGest)
+    function loopOnMonths()
     {
         $date = $this->to;
         while(true) {       
@@ -248,16 +238,11 @@ abstract class Report
     
             $versionTab = explode("/", $dirVersion);
             $version = $versionTab[count($versionTab)-1];
-            if($this->factel > 8) {
-                $suffix = "_".$dataGest['reporting'][$this->plateforme]."_".$this->year."_".$this->month."_".$version;
-            }
-            else {
-                $suffix = "_".$this->year."_".$this->month;
-            }
+
             $this->monthly = $this->year."-".$this->month;
             $this->monthList[] = $this->monthly;
 
-            $this->prepare($suffix);
+            $this->prepare();
 
             if($date == $this->from) {
                 break;
@@ -316,16 +301,16 @@ abstract class Report
         }
     }
     
-    function csvHeader($columns, $withMonths = true) 
+    function csvHeader($dimensions, $operations, $withMonths = true) 
     {
         $header = "";
         $first = true;
-        foreach($columns as $name) {
+        foreach($dimensions as $dimension) {
                 $first ? $first = false : $header .= ";";
-                $header .= $this->paramtext->getParam($name);
+                $header .= $this->paramtext->getParam($dimension);
         }
-        foreach($this->totalKeys as $totalKey) {
-            $header .= ";".$this->paramtext->getParam($totalKey);
+        foreach($operations as $operation) {
+            $header .= ";".$this->paramtext->getParam($operation);
         }
         if($withMonths) {
             foreach($this->monthList as $monthly) {
@@ -335,16 +320,16 @@ abstract class Report
         return $header;
     }
     
-    function csvLine($columns, $line, $withMonths = true) 
+    function csvLine($dimensions, $operations, $line, $withMonths = true) 
     {
         $data = "";
         $first = true;
-        foreach($columns as $name) {
+        foreach($dimensions as $dimension) {
             $first ? $first = false : $data .= ";";
-            $data .= $line[$name];
+            $data .= $line[$dimension];
         }
-        foreach($this->totalKeys as $totalKey) {
-            $data .= ";".$line[$totalKey];
+        foreach($operations as $operation) {
+            $data .= ";".$line[$operation];
         }
         if($withMonths) {
             foreach($this->monthList as $monthly) {
@@ -357,72 +342,88 @@ abstract class Report
         return $data;
     }
 
-    function templateDisplay($mainTitle, $csvKey="", $withMonths=true, $sorts=[])
+    function createTotalCsv($notBeNull)
     {
-        $period = substr($this->from, 4, 2)."/".substr($this->from, 0, 4)." - ".substr($this->to, 4, 2)."/".substr($this->to, 0, 4);
-        $html = '<div class="total">'.$mainTitle.' '.$period.' : '.number_format(floatval($this->total), 2, ".", "'").' CHF</div>';
-        if(!empty($csvKey)) {
-            $html .= '<div class="total"><a href="data:text/plain;base64,'.base64_encode($this->csv).'" download="'.$csvKey.'.csv"><button type="button" id="'.$csvKey.'" class="btn but-line">Download Csv</button></a></div>';
+        $this->totalCsv = $this->csvHeader($this->totalCsvData["dimensions"], $this->totalCsvData["operations"]);
+        foreach($this->totalCsvData["results"] as $line) {
+            if(floatval($notBeNull) > 0) {
+                $this->totalCsv .= "\n".$this->csvLine($this->totalCsvData["dimensions"], $this->totalCsvData["operations"], $line);
+            }
         }
+    }
+
+    function period()
+    {
+        return substr($this->from, 4, 2)."/".substr($this->from, 0, 4)." - ".substr($this->to, 4, 2)."/".substr($this->to, 0, 4);
+    }
+
+    function totalCsvLink($csvKey)
+    {
+        return '<div class="total"><a href="data:text/plain;base64,'.base64_encode($this->totalCsv).'" download="'.$csvKey.'.csv"><button type="button" id="'.$csvKey.'" class="btn but-line">Download Csv</button></a></div>';
+    }
+
+    function templateDisplay($mainTitle, $withMonths=true, $sorts=[])
+    {
+        $period = $this->period();
+        $html = $mainTitle;
         $html .= '<ul class="nav nav-tabs" role="tablist">';
         $active = "active";
-        foreach($this->onglets as $id => $title) { 
+        foreach($this->tabs as $tab => $data) { 
             $html .= '<li class="nav-item">
-                        <a class="nav-link '.$active.'" id="'.$id.'-tab" data-toggle="tab" href="#'.$id.'" role="tab" aria-controls="'.$id.'" aria-selected="true">'.$title.'</a>
+                        <a class="nav-link '.$active.'" id="'.$tab.'-tab" data-toggle="tab" href="#'.$tab.'" role="tab" aria-controls="'.$tab.'" aria-selected="true">'.$data["title"].'</a>
                     </li>';
             $active = "";
         }
-        $sort = "";
-        if(!empty($sorts)) {
-            $sort = $sorts[$id];
-        }
-        else {
-            $sort = 'sortTotal';
-        }
         $html .= '</ul>
-                <div class="tab-content p-3">'.$this->generateTablesAndCsv($withMonths, $sort).'</div>';
+                <div class="tab-content p-3">'.$this->generateTablesAndCsv($withMonths, $sorts).'</div>';
         echo $html;
     }
     
-    function generateTablesAndCsv($withMonths=true, $sort) 
+    function generateTablesAndCsv($withMonths=true, $sorts) 
     {
         $html = "";
         $show = "show active";
-        foreach($this->columns as $id=>$names) {
-            uasort($this->master[$id], array($this, $sort));
-            $html .= '<div class="tab-pane fade '.$show.'" id="'.$id.'" role="tabpanel" aria-labelledby="'.$id.'-tab">
-                        <div class="over report-large"><table class="table report-table" id="'.$id.'-table"><thead><tr>';
+        foreach($this->tabs as $tab=>$data) {
+            if(!empty($sorts)) {
+                $sort = $sorts[$tab];
+            }
+            else {
+                $sort = 'sortTotal';
+            }
+            uasort($data["results"], array($this, $sort));
+            $html .= '<div class="tab-pane fade '.$show.'" id="'.$tab.'" role="tabpanel" aria-labelledby="'.$tab.'-tab">
+                        <div class="over report-large"><table class="table report-table" id="'.$tab.'-table"><thead><tr>';
             $show = "";
-            $csv = $this->csvHeader($this->columnsCsv[$id], $withMonths);
-            foreach($names as $name) {
+            $csv = $this->csvHeader($data["dimensions"], $data["operations"], $withMonths);
+            foreach($data["columns"] as $name) {
                 $html .= "<th class='sort-text'>".$this->paramtext->getParam($name)."</th>";
             }   
-            foreach($this->totalKeys as $totalKey) {   
-                $html .= "<th class='right sort-number'>".$this->paramtext->getParam($totalKey)."</th>";
+            foreach($data["operations"] as $operation) {   
+                $html .= "<th class='right sort-number'>".$this->paramtext->getParam($operation)."</th>";
             }
             $html .= "</tr></thead><tbody>";
-            foreach($this->master[$id] as $line) {
+            foreach($data["results"] as $line) {
                 $notNull = false;
-                foreach($this->totalKeys as $totalKey) {
-                    if(floatval($line[$totalKey]) > 0) {
+                foreach($data["operations"] as $operation) {
+                    if(floatval($line[$operation]) > 0) {
                         $notNull = true;
                         break;
                     }
                 }
                 if($notNull) {
                     $html .= "<tr>";
-                    foreach($names as $name) {
+                    foreach($data["columns"] as $name) {
                         $html .= "<td>".$line[$name]."</td>";
                     }
-                    foreach($this->totalKeys as $totalKey) {
-                        $html .= "<td class='right'>".number_format(floatval($line[$totalKey]), 2, ".", "'")."</td>";
+                    foreach($data["operations"] as $operation) {
+                        $html .= "<td class='right'>".number_format(floatval($line[$operation]), 2, ".", "'")."</td>";
                     }
                     $html .= "</tr>";
-                    $csv .= "\n".$this->csvLine($this->columnsCsv[$id], $line, $withMonths);
+                    $csv .= "\n".$this->csvLine($data["dimensions"], $data["operations"], $line, $withMonths);
                 }
             }
             $html .= "</tbody></table></div>";
-            $html .= '<a href="data:text/plain;base64,'.base64_encode($csv).'" download="'.$id.'.csv"><button type="button" id="'.$id.'-dl"  class="btn but-line">Download Csv</button></a></div>';
+            $html .= '<a href="data:text/plain;base64,'.base64_encode($csv).'" download="'.$tab.'.csv"><button type="button" id="'.$tab.'-dl"  class="btn but-line">Download Csv</button></a></div>';
         }
         return $html;
     }

@@ -2,29 +2,45 @@
 
 class ReportRuns extends Report
 {
+    private $totalM;
+    private $totalN;
 
     public function __construct($plateforme, $to, $from) 
     { 
         parent::__construct($plateforme, $to, $from);
+        $this->totalM = 0;
+        $this->totalN = 0;
         $this->reportKey = 'statmach';
-        $this->totalKeys = ["transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"];
         $this->reportColumns = ["mach-id", "transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"];
-        $this->master = ["par-machine"=>[], "par-categorie"=>[]];
-        $this->onglets = ["par-machine" => "Stats par Machine", "par-categorie" => "Stats par Catégorie"];
-        $this->columns = ["par-machine" => ["mach-name"], "par-categorie" => ["item-name"]];
-        $this->columnsCsv = ["par-machine" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM), "par-categorie" => array_merge($this::GROUPE_DIM, $this::CATEGORIE_DIM)];
+        $this->tabs = [
+            "par-machine" => [
+                "title" => "Stats par Machine",
+                "columns" => ["mach-name"],
+                "dimensions" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM),
+                "operations" => ["transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"],
+                "results" => []
+
+            ], 
+            "par-categorie"=>[
+                "title" => "Stats par Catégorie",
+                "columns" => ["item-name"],
+                "dimensions" => array_merge($this::GROUPE_DIM, $this::CATEGORIE_DIM),
+                "operations" => ["transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"],
+                "results" => []
+            ]
+        ];
     }
 
-    function prepare($suffix) 
+    function prepare() 
     {
         $this->prepareMachines();
         $this->prepareGroupes();
         $this->prepareCategories();
 
-        $this->processReportFile($suffix);
+        $this->processReportFile();
     }
 
-    function generate($suffix)
+    function generate()
     {
         $runsArray = [];
         if($this->factel < 8) {
@@ -87,47 +103,54 @@ class ReportRuns extends Report
         return $runsArray;
     }
 
-    function masterise($runsArray)
+    function mapping($runsArray)
     {
         foreach($runsArray as $line) {
             $machine = $this->machines[$line[0]];
             $groupe = $this->groupes[$machine["item-grp"]];
             $categorie = $this->categories[$groupe["item-id-K1"]];
-            $operations = ["transac-runtime"=>$line[1], "runtime-N"=>$line[2], "runtime-avg"=>$line[3], "runtime-stddev"=>$line[4]];
-            $keys = ["par-machine"=>$line[0], "par-categorie"=>$groupe["item-id-K1"]];
-            $extends = ["par-machine"=>[$machine, $groupe, $categorie], "par-categorie"=>[$groupe, $categorie]];
-            $dimensions = ["par-machine"=>[$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM], "par-categorie"=>[$this::GROUPE_DIM, $this::CATEGORIE_DIM]];
+            $values = [
+                "transac-runtime"=>$line[1], 
+                "runtime-N"=>$line[2], 
+                "runtime-avg"=>$line[3], 
+                "runtime-stddev"=>$line[4]
+            ];
+            $ids = [
+                "par-machine"=>$line[0], 
+                "par-categorie"=>$groupe["item-id-K1"]
+            ];
+            $extends = [
+                "par-machine"=>[$machine, $groupe, $categorie],
+                "par-categorie"=>[$groupe, $categorie]
+            ];
+            $dimensions = [
+                "par-machine"=>[$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM], 
+                "par-categorie"=>[$this::GROUPE_DIM, $this::CATEGORIE_DIM]
+            ];
 
-            foreach($keys as $id=>$key) {
-                $this->mapping($key, $id, $extends, $dimensions, $operations);
-            }
-        }
-    }
-
-    function mapping($key, $id, $extends, $dimensions, $operations) 
-    {
-        if(!array_key_exists($key, $this->master[$id])) {
-            $this->master[$id][$key] = [];            
-            foreach($dimensions[$id] as $pos=>$dimension) {
-                foreach($dimension as $d) {
-                    $this->master[$id][$key][$d] = $extends[$id][$pos][$d];
+            foreach($this->tabs as $tab=>$data) {
+                if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
+                    $this->tabs[$tab]["results"][$ids[$tab]] = [];            
+                    foreach($dimensions[$tab] as $pos=>$dimension) {
+                        foreach($dimension as $d) {
+                            $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
+                        }
+                    }
+                    foreach($this->tabs[$tab]["operations"] as $operation) {
+                        $this->tabs[$tab]["results"][$ids[$tab]][$operation] = [];
+                    }
+                }
+                foreach($values as $operation=>$value) {
+                    $this->tabs[$tab]["results"][$ids[$tab]][$operation][] = $value;
                 }
             }
-            foreach($operations as $op=>$val) {
-                $this->master[$id][$key][$op] = [];
-            }
         }
-        foreach($operations as $op=>$val) {
-            $this->master[$id][$key][$op][] = $val;
-        }
-        return $this->master;
     }
-
 
     function display() 
     {
-        foreach($this->master as $id=>$keys) {
-            foreach($keys as $key=>$cells) {
+        foreach($this->tabs as $tab=>$data) {
+            foreach($data["results"] as $key=>$cells) {
                 $avg = $this->periodAverage($cells["runtime-N"], $cells["runtime-avg"]);
                 $stddev = $this->periodStdDev($cells["runtime-N"], $cells["runtime-avg"], $cells["runtime-stddev"], $avg);
                 $sum = 0;
@@ -136,13 +159,19 @@ class ReportRuns extends Report
                     $sum += $cells["transac-runtime"][$i];
                     $numTot += $cells["runtime-N"][$i];
                 }
-                $this->master[$id][$key]["transac-runtime"] = $sum;
-                $this->master[$id][$key]["runtime-N"] = $numTot;
-                $this->master[$id][$key]["runtime-avg"] = $avg;
-                $this->master[$id][$key]["runtime-stddev"] = $stddev;
+                $this->tabs[$tab]["results"][$key]["transac-runtime"] = $sum;
+                $this->tabs[$tab]["results"][$key]["runtime-N"] = $numTot;
+                $this->tabs[$tab]["results"][$key]["runtime-avg"] = $avg;
+                $this->tabs[$tab]["results"][$key]["runtime-stddev"] = $stddev;
+                $this->totalM += $sum;
+                $this->totalN += $numTot;
             }
         }
-        echo $this->templateDisplay("Statistiques machines sur la période", "", false, ["par-machine" => 'sortMachine', "par-categorie" => 'sortCategorie']);
+
+        $title = '<div class="total">Statistiques machines sur la période</div>';
+        $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->totalM.'</div>';
+        $title .= '<div class="subtotal">Nombre de runs productifs (temps machine > 0) = '.$this->totalN.'</div>';
+        echo $this->templateDisplay($title, false, ["par-machine" => 'sortMachine', "par-categorie" => 'sortCategorie']);
     }
 
     static function sortMachine($a, $b) 

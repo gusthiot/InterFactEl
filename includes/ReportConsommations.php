@@ -8,16 +8,19 @@ class ReportConsommations extends Report
     { 
         parent::__construct($plateforme, $to, $from);
         $this->prestations = [];
-        //$this->reportKey = 'prestations';
-        $this->totalKeys = ["conso-propre-march-expl", "conso-propre-extra-expl", "conso-propre-march-proj", "conso-propre-extra-proj"];
-        $this->master = ["consos"=>[], "for-csv"=>[]];
-        $this->onglets = ["consos" => "Consommations propre"];
-        $this->columns = ["consos" => ["item-nbr", "item-name"]];
-        $this->columnsCsv = ["consos" => array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM)];
+        $this->tabs = [
+            "consos" => [
+                "title" => "Consommations propre",
+                "columns" => ["item-nbr", "item-name"],
+                "dimensions" => array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM),
+                "operations" => ["conso-propre-march-expl", "conso-propre-extra-expl", "conso-propre-march-proj", "conso-propre-extra-proj"],
+                "results" => []
+            ]
+        ];
 
     }
 
-    function prepare($suffix) {
+    function prepare() {
         $this->prepareMachines();
 
         $prestationsTemp = [];
@@ -60,23 +63,24 @@ class ReportConsommations extends Report
 
         $columns = $this->bilansStats[$this->factel]['Bilan-c']['columns'];
         $lines = Csv::extract($this->getFileNameInBS('Bilan-c'));
+
         for($i=1;$i<count($lines);$i++) {
             $tab = explode(";", $lines[$i]);
             $itemId = $tab[$columns['item-id']];
             $prestation = $this->prestations[$itemId];
 
-            if(!array_key_exists($itemId, $this->master["consos"])) {
-                $this->master["consos"][$itemId] = [];
-                foreach(array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM) as $d) {
-                    $this->master["consos"][$itemId][$d] = $prestation[$d];
+            if(!array_key_exists($itemId, $this->tabs["consos"]["results"])) {
+                $this->tabs["consos"]["results"][$itemId] = [];
+                foreach($this->tabs["consos"]["dimensions"] as $dimension) {
+                    $this->tabs["consos"]["results"][$itemId][$dimension] = $prestation[$dimension];
                 }
-                foreach($this->totalKeys as $mt) {
-                    $this->master["consos"][$itemId][$mt] = 0;
+                foreach($this->tabs["consos"]["operations"] as $operation) {
+                    $this->tabs["consos"]["results"][$itemId][$operation] = 0;
                 }
             }
-            foreach($this->totalKeys as $mt) {
-                $this->master["consos"][$itemId][$mt] += $tab[$columns[$mt]];
-                $this->total += $tab[$columns[$mt]];
+            foreach($this->tabs["consos"]["operations"] as $operation) {
+                $this->tabs["consos"]["results"][$itemId][$operation] += $tab[$columns[$operation]];
+                $this->total += $tab[$columns[$operation]];
             }
 
         }
@@ -89,7 +93,8 @@ class ReportConsommations extends Report
 
     function display()
     {
-        echo $this->templateDisplay("Total des consommations propres sur la période", "", false);
+        $title = '<div class="total">Total des consommations propres sur la période '.$this->period().' : '.number_format(floatval($this->total), 2, ".", "'").' CHF</div>';
+        echo $this->templateDisplay($title, false);
     }
 
 }

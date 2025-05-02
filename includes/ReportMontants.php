@@ -7,28 +7,73 @@ class ReportMontants extends Report
     { 
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'montants';
-        $this->totalKeys = ["total-fact"];
         $this->reportColumns = ["client-code", "client-class", "item-codeD", "total-fact"];
-        $this->master = ["par-client"=>[], "par-class"=>[], "par-article"=>[], "par-client-class"=>[], "par-client-article"=>[], "par-article-class"=>[], "for-csv"=>[]];
-        $this->onglets = ["par-client" => "Par Client", "par-class" => "Par Classe", "par-article" => "Par Article", "par-client-class" => "Par Client & Classe", 
-                            "par-client-article" => "Par Client & Article", "par-article-class" => "Par Article & Classe"];
-        $this->columns = ["par-client" => ["client-name"], "par-class" => ["client-labelclass"], "par-article" => ["item-labelcode"], "par-client-class" => ["client-name", "client-labelclass"], 
-                            "par-client-article" => ["client-name", "item-labelcode"], "par-article-class" => ["item-labelcode", "client-labelclass"]];
-        $this->columnsCsv = ["par-client" => $this::CLIENT_DIM, "par-class" => $this::CLASSE_DIM, "par-article" => ["item-codeD", "item-labelcode"], "par-client-class" => array_merge($this::CLIENT_DIM, $this::CLASSE_DIM),
-                                "par-client-article" => array_merge($this::CLIENT_DIM, ["item-codeD", "item-labelcode"]), "par-article-class" => array_merge(["item-codeD", "item-labelcode"], $this::CLASSE_DIM)];
+        $this->totalCsvData = [
+            "dimensions" => array_merge($this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM),
+            "operations" => ["total-fact"],
+            "results" => []
+        ];
+        $this->tabs = [
+            "par-client"=> [
+                "title" => "Par Client",
+                "columns" => ["client-name"],
+                "dimensions" => $this::CLIENT_DIM,
+                "operations" => ["total-fact"],
+                "results" => []
+            ], 
+            "par-classe" => [
+                "title" => "Par Classe",
+                "columns" => ["client-labelclass"],
+                "dimensions" => $this::CLASSE_DIM,
+                "operations" => ["total-fact"],
+                "results" => []
 
+            ], 
+            "par-article" =>[
+                "title" => "Par Article",
+                "columns" => ["item-labelcode"],
+                "dimensions" => ["item-codeD", "item-labelcode"],
+                "operations" => ["total-fact"],
+                "results" => []
+
+            ], 
+            "par-client-classe" => [
+                "title" => "Par Client & Classe",
+                "columns" => ["client-name", "client-labelclass"],
+                "dimensions" => array_merge($this::CLIENT_DIM, $this::CLASSE_DIM),
+                "operations" => ["total-fact"],
+                "results" => []
+                
+            ], 
+            "par-client-article" => [
+                "title" => "Par Client & Article",
+                "columns" => ["client-name", "item-labelcode"],
+                "dimensions" => array_merge($this::CLIENT_DIM, ["item-codeD", "item-labelcode"]),
+                "operations" => ["total-fact"],
+                "results" => []
+
+            ], 
+            "par-article-classe" => [
+                "title" => "Par Article & Classe",
+                "columns" => ["item-labelcode", "client-labelclass"],
+                "dimensions" => array_merge(["item-codeD", "item-labelcode"], $this::CLASSE_DIM),
+                "operations" => ["total-fact"],
+                "results" => []
+
+            ]
+        ];
     }
 
-    function prepare($suffix) {
+    function prepare() {
         $this->prepareClients();
         $this->prepareClasses();
         $this->prepareClientsClasses();
         $this->prepareArticles();
 
-        $this->processReportFile($suffix);
+        $this->processReportFile();
     }
 
-    function generate($suffix)
+    function generate()
     {
         $crpArray = [];
         if($this->factel == 6) {
@@ -125,42 +170,72 @@ class ReportMontants extends Report
         return $montantsArray;
     }
 
-    function masterise($montantsArray)
+    function mapping($montantsArray)
     {
         foreach($montantsArray as $line) {
             $this->total += $line[3];
             $client = $this->clients[$line[0]];
-            $class = $this->classes[$line[1]];
+            $classe = $this->classes[$line[1]];
             $article = $this->articles[$line[2]];
             $montant = $line[3];
-            $keys = ["par-client"=>$line[0], "par-class"=>$line[1], "par-article"=>$line[2], "par-client-class"=>$line[0]."-".$line[1], "par-client-article"=>$line[0]."-".$line[2],
-                     "par-article-class"=>$line[2]."-".$line[1], "for-csv"=>$line[0]."-".$line[1]."-".$line[2]];
-            $extends = ["par-client"=>[$client], "par-class"=>[$class], "par-article"=>[$article], "par-client-class"=>[$client, $class], "par-client-article"=>[$client, $article],
-                        "par-article-class"=>[$article, $class], "for-csv"=>[$client, $class, $article]];
-            $dimensions = ["par-client"=>[$this::CLIENT_DIM], "par-class"=>[$this::CLASSE_DIM], "par-article"=>[$this::ARTICLE_DIM], "par-client-class"=>[$this::CLIENT_DIM, $this::CLASSE_DIM], "par-client-article"=>[$this::CLIENT_DIM, $this::ARTICLE_DIM],
-                           "par-article-class"=>[$this::ARTICLE_DIM, $this::CLASSE_DIM], "for-csv"=>[$this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM]];
+            $ids = [
+                "par-client"=>$line[0],
+                "par-classe"=>$line[1],
+                "par-article"=>$line[2],
+                "par-client-classe"=>$line[0]."-".$line[1],
+                "par-client-article"=>$line[0]."-".$line[2],
+                "par-article-classe"=>$line[2]."-".$line[1],
+                "for-csv"=>$line[0]."-".$line[1]."-".$line[2]
+            ];
+            $extends = [
+                "par-client"=>[$client],
+                "par-classe"=>[$classe],
+                "par-article"=>[$article],
+                "par-client-classe"=>[$client, $classe],
+                "par-client-article"=>[$client, $article],
+                "par-article-classe"=>[$article, $classe], 
+                "for-csv"=>[$client, $classe, $article]
+            ];
+            $dimensions = [
+                "par-client"=>[$this::CLIENT_DIM],
+                "par-classe"=>[$this::CLASSE_DIM],
+                "par-article"=>[$this::ARTICLE_DIM],
+                "par-client-classe"=>[$this::CLIENT_DIM, $this::CLASSE_DIM],
+                "par-client-article"=>[$this::CLIENT_DIM, $this::ARTICLE_DIM],
+                "par-article-classe"=>[$this::ARTICLE_DIM, $this::CLASSE_DIM],
+                "for-csv"=>[$this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM]
+            ];
 
-            foreach($keys as $id=>$key) {
-                $this->mapping($key, $id, $extends, $dimensions, $montant);
+            foreach($this->tabs as $tab=>$data) {
+                if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
+                    $this->tabs[$tab]["results"][$ids[$tab]] = ["total-fact" => 0, "mois" => []];
+                    foreach($dimensions[$tab] as $pos=>$dimension) {
+                        foreach($dimension as $d) {
+                            $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
+                        }
+                    }
+                }
+                if(!array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
+                    $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
+                }
+                $this->tabs[$tab]["results"][$ids[$tab]]["total-fact"] += $montant;
+                $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $montant;
             }
-        }
-    }
-
-    function mapping($key, $id, $extends, $dimensions, $montant) 
-    {
-        if(!array_key_exists($key, $this->master[$id])) {
-            $this->master[$id][$key] = ["total-fact" => 0, "mois" => []];
-            foreach($dimensions[$id] as $pos=>$dimension) {
-                foreach($dimension as $d) {
-                    $this->master[$id][$key][$d] = $extends[$id][$pos][$d];
+            // csv
+            if(!array_key_exists($ids["for-csv"], $this->totalCsvData["results"])) {
+                $this->totalCsvData["results"][$ids["for-csv"]] = ["total-fact" => 0, "mois" => []];
+                foreach($dimensions["for-csv"] as $pos=>$dimension) {
+                    foreach($dimension as $d) {
+                        $this->totalCsvData["results"][$ids["for-csv"]][$d] = $extends["for-csv"][$pos][$d];
+                    }
                 }
             }
+            if(!array_key_exists($this->monthly, $this->totalCsvData["results"][$ids["for-csv"]]["mois"])) {
+                $this->totalCsvData["results"][$ids["for-csv"]]["mois"][$this->monthly] = 0;
+            }
+            $this->totalCsvData["results"][$ids["for-csv"]]["total-fact"] += $montant;
+            $this->totalCsvData["results"][$ids["for-csv"]]["mois"][$this->monthly] += $montant;
         }
-        if(!array_key_exists($this->monthly, $this->master[$id][$key]["mois"])) {
-            $this->master[$id][$key]["mois"][$this->monthly] = 0;
-        }
-        $this->master[$id][$key]["total-fact"] += $montant;
-        $this->master[$id][$key]["mois"][$this->monthly] += $montant;
     }
 
     function facts($montantsArray, $montant, $tab, $columns, $clcl, $dM=0, $dMontants=[0, 0, 0, 0, 0]) 
@@ -188,13 +263,10 @@ class ReportMontants extends Report
 
     function display()
     {
-        $this->csv = $this->csvHeader(array_merge($this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM));
-        foreach($this->master["for-csv"] as $line) {
-            if(floatval($line["total-fact"]) > 0) {
-                $this->csv .= "\n".$this->csvLine(array_merge($this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM), $line);
-            }
-        }
-        echo $this->templateDisplay("Total facturé sur la période", "total-montants");
+        $this->createTotalCsv("total-fact");
+        $title = '<div class="total">Total facturé sur la période '.$this->period().' : '.number_format(floatval($this->total), 2, ".", "'").' CHF</div>';
+        $title .= $this->totalCsvLink("total-montants");
+        echo $this->templateDisplay($title);
     }
 
 }

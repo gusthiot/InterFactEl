@@ -2,32 +2,45 @@
 
 class ReportRabais extends Report
 {
-    private $dsub;
 
     public function __construct($plateforme, $to, $from) 
     { 
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'rabaisbonus';
-        $this->totalKeys = ["total-subsid"];
         $this->reportColumns = ["client-code", "client-class", "item-codeD", "deduct-CHF", "subsid-deduct", "discount-bonus", "subsid-bonus"];
-        $this->dsub = ["deduct-CHF", "subsid-deduct", "discount-bonus", "subsid-bonus"];
-        $this->master = ["reimbursed"=>[], "subsid"=>[], "for-csv"=>[]];
-        $this->onglets = ["reimbursed" => "A rembourser", "subsid" => "Rabais et subsides par client"];
-        $this->columns = ["reimbursed" => ["client-name"], "subsid" => ["client-name"]];
-        $this->columnsCsv = ["reimbursed" => array_merge($this::CLIENT_DIM, ["discount-bonus", "subsid-bonus"]), "subsid" => array_merge($this::CLIENT_DIM, $this->dsub)];
-    
+        $this->totalCsvData = [
+            "dimensions" => array_merge($this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM),
+            "operations" => ["deduct-CHF", "subsid-deduct", "discount-bonus", "subsid-bonus", "total-subsid"],
+            "results" => []
+        ];
+        $this->tabs = [
+            "reimbursed" => [
+                "title" => "A rembourser",
+                "columns" => ["client-name"],
+                "dimensions" => $this::CLIENT_DIM,
+                "operations" => ["discount-bonus", "subsid-bonus", "total-subsid"],
+                "results" => []
+            ], 
+            "subsid" => [
+                "title" => "Rabais et subsides par client",
+                "columns" => ["client-name"],
+                "dimensions" => $this::CLIENT_DIM,
+                "operations" => ["deduct-CHF", "subsid-deduct", "discount-bonus", "subsid-bonus", "total-subsid"],
+                "results" => []
+            ]
+        ];
     }
 
-    function prepare($suffix) {
+    function prepare() {
         $this->prepareClients();
         $this->prepareClasses();
         $this->prepareClientsClasses();
         $this->prepareArticles();
 
-        $this->processReportFile($suffix);
+        $this->processReportFile();
     }
     
-    function generate($suffix)
+    function generate()
     {
         $rabaisArray = [];
         if($this->factel == 7 || $this->factel == 8) {
@@ -85,54 +98,91 @@ class ReportRabais extends Report
     }
 
 
-    function masterise($rabaisArray)
+    function mapping($rabaisArray)
     {
         foreach($rabaisArray as $line) {
             $this->total += $line[3]+$line[4]+$line[5]+$line[6];
             $client = $this->clients[$line[0]];
             $class = $this->classes[$line[1]];
             $article = $this->articles[$line[2]];
-            $montants = ["deduct-CHF"=>$line[3], "subsid-deduct"=>$line[4], "discount-bonus"=>$line[5], "subsid-bonus"=>$line[6]];
-            $keys = ["reimbursed"=>$line[0], "subsid"=>$line[0], "for-csv"=>$line[0]."-".$line[1]."-".$line[2]];
-            $extends = ["reimbursed"=>[$client], "subsid"=>[$client], "for-csv"=>[$client, $class, $article]];
-            $dimensions = ["reimbursed"=>[$this::CLIENT_DIM], "subsid"=>[$this::CLIENT_DIM], "for-csv"=>[$this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM]];
-            $sums = ["reimbursed"=>["discount-bonus", "subsid-bonus"], "subsid"=>$this->dsub, "for-csv"=>$this->dsub];
-
-            foreach($keys as $id=>$key) {
-                $this->master = $this->mapping($key, $id, $extends, $dimensions, $montants, $sums);
-            }
-        }   
-    }
-
-    function mapping($key, $id, $extends, $dimensions, $montants, $sums) 
-    {
-        if(!array_key_exists($key, $this->master[$id])) {
-            $this->master[$id][$key] = ["total-subsid" => 0, "mois" => []];            
-            foreach($dimensions[$id] as $pos=>$dimension) {
-                foreach($dimension as $d) {
-                    $this->master[$id][$key][$d] = $extends[$id][$pos][$d];
-                }
-            }
-            foreach($montants as $mt=>$val) {
-                if(in_array($mt, $sums[$id])) {
-                    $this->master[$id][$key][$mt] = 0;
-                }
-            }
-        }
+            $values = [
+                "deduct-CHF"=>$line[3],
+                "subsid-deduct"=>$line[4],
+                "discount-bonus"=>$line[5],
+                "subsid-bonus"=>$line[6]
+            ];
+            $ids = [
+                "reimbursed"=>$line[0],
+                "subsid"=>$line[0],
+                "for-csv"=>$line[0]."-".$line[1]."-".$line[2]
+            ];
+            $extends = [
+                "reimbursed"=>[$client],
+                "subsid"=>[$client],
+                "for-csv"=>[$client, $class, $article]
+            ];
+            $dimensions = [
+                "reimbursed"=>[$this::CLIENT_DIM],
+                "subsid"=>[$this::CLIENT_DIM],
+                "for-csv"=>[$this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM]
+            ];
             
-        if(!array_key_exists($this->monthly, $this->master[$id][$key]["mois"])) {
-            $this->master[$id][$key]["mois"][$this->monthly] = 0;
-        }
-        $total = 0;
-        foreach($montants as $mt=>$val) {
-            if(in_array($mt, $sums[$id])) {
-                $this->master[$id][$key][$mt] += $val;
-                $total += $val;
+            foreach($this->tabs as $tab=>$data) {
+                if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
+                    $this->tabs[$tab]["results"][$ids[$tab]] = ["total-subsid" => 0, "mois" => []];            
+                    foreach($dimensions[$tab] as $pos=>$dimension) {
+                        foreach($dimension as $d) {
+                            $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
+                        }
+                    }
+                    foreach($values as $operation=>$value) {
+                        if(in_array($operation, $this->tabs[$tab]["operations"])) {
+                            $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
+                        }
+                    }
+                }
+                    
+                if(!array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
+                    $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
+                }
+                $total = 0;
+                foreach($values as $operation=>$value) {
+                    if(in_array($operation, $this->tabs[$tab]["operations"])) {
+                        $this->tabs[$tab]["results"][$ids[$tab]][$operation] += $value;
+                        $total += $value;
+                    }
+                }
+                $this->tabs[$tab]["results"][$ids[$tab]]["total-subsid"] += $total;
+                $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $total;
             }
-        }
-        $this->master[$id][$key]["total-subsid"] += $total;
-        $this->master[$id][$key]["mois"][$this->monthly] += $total;
-        return $this->master;
+            // csv
+            if(!array_key_exists($ids["for-csv"], $this->totalCsvData["results"])) {
+                $this->totalCsvData["results"][$ids["for-csv"]] = ["total-subsid" => 0, "mois" => []];            
+                foreach($dimensions["for-csv"] as $pos=>$dimension) {
+                    foreach($dimension as $d) {
+                        $this->totalCsvData["results"][$ids["for-csv"]][$d] = $extends["for-csv"][$pos][$d];
+                    }
+                }
+                foreach($values as $operation=>$value) {
+                    if(in_array($operation, $this->totalCsvData["operations"])) {
+                        $this->totalCsvData["results"][$ids["for-csv"]][$operation] = 0;
+                    }
+                }
+            }
+                
+            if(!array_key_exists($this->monthly, $this->totalCsvData["results"][$ids["for-csv"]]["mois"])) {
+                $this->totalCsvData["results"][$ids["for-csv"]]["mois"][$this->monthly] = 0;
+            }
+            $total = 0;
+            foreach($values as $operation=>$value) {
+                if(in_array($operation, $this->totalCsvData["operations"])) {
+                    $this->totalCsvData["results"][$ids["for-csv"]][$operation] += $value;
+                    $total += $value;
+                }
+            }
+            $this->totalCsvData["results"][$ids["for-csv"]]["total-subsid"] += $total;
+            $this->totalCsvData["results"][$ids["for-csv"]]["mois"][$this->monthly] += $total;
+        }   
     }
 
     static function sortTotal($a, $b) 
@@ -142,13 +192,10 @@ class ReportRabais extends Report
 
     function display()
     {
-        $this->csv = $this->csvHeader(array_merge($this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM, $this->dsub));
-        foreach($this->master["for-csv"] as $line) {
-            if(floatval($line["total-subsid"]) > 0) {
-                $this->csv .= "\n".$this->csvLine(array_merge($this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM, $this->dsub), $line);
-            }
-        }
-        echo $this->templateDisplay("Total rabais et subsides sur la période", "total-subsides");
+        $this->createTotalCsv("total-subsid");
+        $title = '<div class="total">Total rabais et subsides sur la période '.$this->period().' : '.number_format(floatval($this->total), 2, ".", "'").' CHF</div>';
+        $title .= $this->totalCsvLink("total-subsides");
+        echo $this->templateDisplay($title);
     }
 
 }
