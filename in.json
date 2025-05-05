@@ -1471,7 +1471,8 @@
                 "item-nbr": 3,
                 "item-name": 4,
                 "item-idclass": 5,
-                "item-unit": 6
+                "item-unit": 6,
+                "mach-id": 9
             }
         },
         "classeprestation": {
@@ -1566,7 +1567,8 @@
                 "item-nbr": 3,
                 "item-name": 4,
                 "item-idclass": 5,
-                "item-unit": 6
+                "item-unit": 6,
+                "mach-id": 9
             }
         },
         "classeprestation": {
