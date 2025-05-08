@@ -79,11 +79,6 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                     if($res && property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
                         $infos = Info::load($dir);
                         if(!empty($infos)) {
-                            if(empty($infos["Sent"][2])) {
-                                $infos["Sent"][2] = date('Y-m-d H:i:s');
-                                $infos["Sent"][3] = $user;
-                                Info::save($dir, $infos);
-                            }
                             if(!empty($res->E_RESULT->item->IS_ERROR)) {
                                 if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
                                     if($type == "send-bills") { 
@@ -101,6 +96,11 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                                 $kos++;
                             }
                             else {
+                                if(empty($infos["Sent"][2])) {
+                                    $infos["Sent"][2] = date('Y-m-d H:i:s');
+                                    $infos["Sent"][3] = $user;
+                                    Info::save($dir, $infos);
+                                }
                                 if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
                                     Lock::save($dirPrevMonth, 'month', "");
                                 }
