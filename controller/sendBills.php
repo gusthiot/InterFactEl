@@ -84,9 +84,6 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                                 $infos["Sent"][3] = $user;
                                 Info::save($dir, $infos);
                             }
-                            if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/lockm.csv")) {
-                                Lock::save($dirPrevMonth, 'month', "");
-                            }
                             if(!empty($res->E_RESULT->item->IS_ERROR)) {
                                 if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
                                     if($type == "send-bills") { 
@@ -104,6 +101,9 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                                 $kos++;
                             }
                             else {
+                                if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
+                                    Lock::save($dirPrevMonth, 'month', "");
+                                }
                                 if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
                                     if($mode == "REAL") {
                                         $sent = "Envoyé en facturation";
