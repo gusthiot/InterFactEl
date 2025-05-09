@@ -86,11 +86,6 @@ class ReportConsommations extends Report
         }
     }
 
-    static function sortTotal($a, $b) 
-    {
-        return floatval($b["item-nbr"]) - floatval($a["item-nbr"]);
-    }
-
     function display()
     {
         $title = '<div class="total">Total des consommations propres sur la période '.$this->period().' : '.number_format(floatval($this->total), 2, ".", "'").' CHF</div>';

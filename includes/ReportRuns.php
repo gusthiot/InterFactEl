@@ -168,19 +168,9 @@ class ReportRuns extends Report
             }
         }
 
-        $title = '<div class="total">Statistiques machines sur la période</div>';
+        $title = '<div class="total">Statistiques machines : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->totalM.'</div>';
         $title .= '<div class="subtotal">Nombre de runs productifs (temps machine > 0) = '.$this->totalN.'</div>';
-        echo $this->templateDisplay($title, false, ["par-machine" => 'sortMachine', "par-categorie" => 'sortCategorie']);
-    }
-
-    static function sortMachine($a, $b) 
-    {
-        return strcmp($a["mach-name"], $b["mach-name"]);
-    }
-
-    static function sortCategorie($a, $b) 
-    {
-        return strcmp($a["item-name"], $b["item-name"]);
+        echo $this->templateDisplay($title, false);
     }
 }

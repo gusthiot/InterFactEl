@@ -10,6 +10,8 @@ abstract class Report
     const MACHINE_DIM = ["mach-id", "mach-name"];
     const GROUPE_DIM = ["item-grp"];
     const CATEGORIE_DIM = ["item-nbr", "item-name", "item-unit"];
+    const USER_DIM = ["user-sciper", "user-name", "user-first", "user-email"];
+    const CODEK_DIM = ["item-codeK", "item-textK"];
     const CLIENT_KEY = "client-code";
     const CLASSE_KEY = "client-class";
     const ARTICLE_KEY = "item-codeD";
@@ -18,6 +20,7 @@ abstract class Report
     const MACHINE_KEY = "mach-id";
     const GROUPE_KEY = "item-grp";
     const CATEGORIE_KEY = "item-id";
+    const USER_KEY = "user-id";
     
     protected $plateforme;
     protected $to;
@@ -31,6 +34,7 @@ abstract class Report
     protected $machines;
     protected $groupes;
     protected $categories;
+    protected $users;
 
     protected $bilansStats;
     protected $in;
@@ -66,6 +70,7 @@ abstract class Report
         $this->machines = [];
         $this->groupes = [];
         $this->categories = [];
+        $this->users = [];
 
         $this->monthList = [];
 
@@ -134,9 +139,41 @@ abstract class Report
         }
     }
 
+    function prepareUsers()
+    {
+        if($this->factel > 11) {
+            self::mergeInCsv('user', $this->users, self::USER_KEY);
+        }
+        else {
+            $usersTemp = [];
+            self::mergeInCsv('user', $usersTemp, self::USER_KEY);
+            foreach($usersTemp as $code=>$line) {
+                if(!array_key_exists($code, $this->users)) {
+                    $data = $line;
+                    $data["user-email"] = "";
+                    $this->users[$code] = $data;
+                }    
+            }
+
+        }
+    }
+
     function prepareGroupes()
     {
-        self::mergeInCsv('groupe', $this->groupes, self::GROUPE_KEY);
+        if($this->factel < 7) {
+            $groupesTemp = [];
+            self::mergeInCsv('groupe', $groupesTemp, self::GROUPE_KEY);
+            foreach($groupesTemp as $code=>$line) {
+                if(!array_key_exists($code, $this->groupes)) {
+                    $data = $line;
+                    $data["item-id-K7"] = 0;
+                    $this->groupes[$code] = $data;
+                }    
+            }
+        }
+        else {
+            self::mergeInCsv('groupe', $this->groupes, self::GROUPE_KEY);
+        }
     }
 
     function prepareCategories()
@@ -224,6 +261,7 @@ abstract class Report
 
     function loopOnMonths()
     {
+        $this->manquant = [];
         $date = $this->to;
         while(true) {       
             $this->month = substr($date, 4, 2);
@@ -362,7 +400,7 @@ abstract class Report
         return '<div class="total"><a href="data:text/plain;base64,'.base64_encode($this->totalCsv).'" download="'.$csvKey.'.csv"><button type="button" id="'.$csvKey.'" class="btn but-line">Download Csv</button></a></div>';
     }
 
-    function templateDisplay($mainTitle, $withMonths=true, $sorts=[])
+    function templateDisplay($mainTitle, $withMonths=true)
     {
         $period = $this->period();
         $html = $mainTitle;
@@ -375,22 +413,15 @@ abstract class Report
             $active = "";
         }
         $html .= '</ul>
-                <div class="tab-content p-3">'.$this->generateTablesAndCsv($withMonths, $sorts).'</div>';
+                <div class="tab-content p-3">'.$this->generateTablesAndCsv($withMonths).'</div>';
         echo $html;
     }
     
-    function generateTablesAndCsv($withMonths=true, $sorts) 
+    function generateTablesAndCsv($withMonths=true) 
     {
         $html = "";
         $show = "show active";
         foreach($this->tabs as $tab=>$data) {
-            if(!empty($sorts)) {
-                $sort = $sorts[$tab];
-            }
-            else {
-                $sort = 'sortTotal';
-            }
-            uasort($data["results"], array($this, $sort));
             $html .= '<div class="tab-pane fade '.$show.'" id="'.$tab.'" role="tabpanel" aria-labelledby="'.$tab.'-tab">
                         <div class="over report-large"><table class="table report-table" id="'.$tab.'-table"><thead><tr>';
             $show = "";

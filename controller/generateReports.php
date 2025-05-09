@@ -10,6 +10,7 @@ require_once("../includes/ReportMontants.php");
 require_once("../includes/ReportRabais.php");
 require_once("../includes/ReportConsommations.php");
 require_once("../includes/ReportRuns.php");
+require_once("../includes/ReportUsages.php");
 require_once("../session.inc");
 
 /**
@@ -30,6 +31,9 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
             break;
         case "runs":
             $report = new ReportRuns($plateforme, $_POST["to"], $_POST["from"]);
+            break;
+        case "usages":
+            $report = new ReportUsages($plateforme, $_POST["to"], $_POST["from"]);
             break;
         default:
             exit("Type de rapport non pris en compte !");

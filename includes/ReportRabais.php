@@ -103,7 +103,7 @@ class ReportRabais extends Report
         foreach($rabaisArray as $line) {
             $this->total += $line[3]+$line[4]+$line[5]+$line[6];
             $client = $this->clients[$line[0]];
-            $class = $this->classes[$line[1]];
+            $classe = $this->classes[$line[1]];
             $article = $this->articles[$line[2]];
             $values = [
                 "deduct-CHF"=>$line[3],
@@ -119,7 +119,7 @@ class ReportRabais extends Report
             $extends = [
                 "reimbursed"=>[$client],
                 "subsid"=>[$client],
-                "for-csv"=>[$client, $class, $article]
+                "for-csv"=>[$client, $classe, $article]
             ];
             $dimensions = [
                 "reimbursed"=>[$this::CLIENT_DIM],
@@ -155,7 +155,7 @@ class ReportRabais extends Report
                 $this->tabs[$tab]["results"][$ids[$tab]]["total-subsid"] += $total;
                 $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $total;
             }
-            // csv
+            // total csv
             if(!array_key_exists($ids["for-csv"], $this->totalCsvData["results"])) {
                 $this->totalCsvData["results"][$ids["for-csv"]] = ["total-subsid" => 0, "mois" => []];            
                 foreach($dimensions["for-csv"] as $pos=>$dimension) {
@@ -183,11 +183,6 @@ class ReportRabais extends Report
             $this->totalCsvData["results"][$ids["for-csv"]]["total-subsid"] += $total;
             $this->totalCsvData["results"][$ids["for-csv"]]["mois"][$this->monthly] += $total;
         }   
-    }
-
-    static function sortTotal($a, $b) 
-    {
-        return floatval($b["total-subsid"]) - floatval($a["total-subsid"]);
     }
 
     function display()

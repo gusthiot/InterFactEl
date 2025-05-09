@@ -221,7 +221,7 @@ class ReportMontants extends Report
                 $this->tabs[$tab]["results"][$ids[$tab]]["total-fact"] += $montant;
                 $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $montant;
             }
-            // csv
+            // total csv
             if(!array_key_exists($ids["for-csv"], $this->totalCsvData["results"])) {
                 $this->totalCsvData["results"][$ids["for-csv"]] = ["total-fact" => 0, "mois" => []];
                 foreach($dimensions["for-csv"] as $pos=>$dimension) {
@@ -254,11 +254,6 @@ class ReportMontants extends Report
             }
         }
         return $montantsArray;
-    }
-
-    static function sortTotal($a, $b) 
-    {
-        return floatval($b["total-fact"]) - floatval($a["total-fact"]);
     }
 
     function display()
