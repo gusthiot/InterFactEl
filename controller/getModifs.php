@@ -7,7 +7,7 @@ require_once("../session.inc");
  * Called to display modifications files as tables
  */
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
-    checkPlateforme($dataGest, "facturation", $_POST["plate"]);
+    checkPlateforme("facturation", $_POST["plate"]);
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $name = $dataGest['facturation'][$_POST['plate']];
     $suf = "_".$name."_".$_POST['year']."_".$_POST['month']."_".$_POST['version'];

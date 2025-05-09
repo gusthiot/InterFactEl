@@ -6,7 +6,7 @@ require_once("../session.inc");
 /**
  * Called to upload new config files
  */
-if($superviseur->isSuperviseur($user)) {
+if(IS_SUPER) {
     if($_FILES['zip_file']) {
         if($_FILES['zip_file']["error"] == 0) {
             $fileName = $_FILES["zip_file"]["name"];

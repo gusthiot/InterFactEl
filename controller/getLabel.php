@@ -8,7 +8,7 @@ require_once("../session.inc");
  */
 $label = "";
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["right"])) {
-    checkPlateforme($dataGest, $_POST["right"], $_POST["plate"]);
+    checkPlateforme($_POST["right"], $_POST["plate"]);
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month'];
     if(isset($_POST["version"]) && isset($_POST["run"])) {
         $dir .= "/".$_POST['version']."/".$_POST['run'];

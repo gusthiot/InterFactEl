@@ -11,14 +11,13 @@ if(!isset($_GET["plateforme"])) {
 }
 
 $plateforme = $_GET['plateforme'];
-checkPlateforme($dataGest, "reporting", $plateforme);
+checkPlateforme("reporting", $plateforme);
 
-$name = $dataGest['reporting'][$plateforme];
+$name = DATA_GEST['reporting'][$plateforme];
 $dir = DATA.$plateforme;
 
-if($dataGest) {
-    include("includes/lock.php");
-}
+include("includes/lock.php");
+
 ?>
 
 <!DOCTYPE html>

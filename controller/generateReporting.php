@@ -13,8 +13,8 @@ require_once("../session.inc");
  */
 if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
     $plateforme = $_GET["plate"];
-    checkPlateforme($dataGest, "reporting", $plateforme);
-    $abrev = $dataGest['reporting'][$plateforme];
+    checkPlateforme("reporting", $plateforme);
+    $abrev = DATA_GEST['reporting'][$plateforme];
     $date = $_GET["from"];
     $factel = "";
     while(true) {
@@ -99,7 +99,7 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
     }
 
     $zip = $user.'_reporting.zip';
-    Lock::saveByName("../".$user.".lock", TEMP.$zip);
+    Lock::saveByName("../".USER.".lock", TEMP.$zip);
     Zip::setZipDir(TEMP.$zip, $tmpDir);
     State::delDir($tmpDir);
 

@@ -14,9 +14,9 @@ if(!isset($_GET["plateforme"])) {
 }
 
 $plateforme = $_GET['plateforme'];
-checkPlateforme($dataGest, "tarifs", $plateforme);
+checkPlateforme("tarifs", $plateforme);
 
-$name = $dataGest['tarifs'][$plateforme];
+$name = DATA_GEST['tarifs'][$plateforme];
 $dir = DATA.$plateforme;
 $available = false;
 $state = new State($dir);

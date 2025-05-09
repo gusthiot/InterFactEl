@@ -14,7 +14,7 @@ require_once("../session.inc");
  * Called to send bills to SAP, and manage answers
  */
 if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"]) && isset($_POST["mode"])) {
-    checkPlateforme($dataGest, "facturation", $_POST["plate"]);
+    checkPlateforme("facturation", $_POST["plate"]);
     $plateforme = $_POST["plate"];
     $year = $_POST["year"];
     $month = $_POST["month"];
@@ -30,7 +30,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     }
     $bills = $_POST["bills"];
 
-    if(TEST_MODE && (!$superviseur->isSuperviseur($user) || DEV_MODE) && ($mode == "REAL" || $mode == "PRES")) {
+    if(TEST_MODE && (!IS_SUPER || DEV_MODE) && ($mode == "REAL" || $mode == "PRES")) {
         $_SESSION['alert-danger'] = 'Seule la simulation est disponible';
         header('Location: ../run.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
         exit;
@@ -98,7 +98,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                             else {
                                 if(empty($infos["Sent"][2])) {
                                     $infos["Sent"][2] = date('Y-m-d H:i:s');
-                                    $infos["Sent"][3] = $user;
+                                    $infos["Sent"][3] = USER;
                                     Info::save($dir, $infos);
                                 }
                                 if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
@@ -166,7 +166,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                 }
             }
             $sap->save($dir, $sap_cont);
-            $sap->generateArchive($dir, $user, $archive);
+            $sap->generateArchive($dir, USER, $archive);
         }
     }
     catch(Exception $e) {
@@ -189,7 +189,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
         Lock::save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
 
         $infos["Closed"][2] = date('Y-m-d H:i:s');
-        $infos["Closed"][3] = $user;
+        $infos["Closed"][3] = USER;
         Info::save($dir, $infos);
     }
 
@@ -202,7 +202,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     else {
         $title = "Renvoi dans SAP";
     }
-    $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$title." | ".$oldStatus." | ".$status.PHP_EOL;
+    $txt = date('Y-m-d H:i:s')." | ".USER." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | ".$title." | ".$oldStatus." | ".$status.PHP_EOL;
     $txt .= $oldSapState." | ".count($bills)." | ".$sapState;
     if($histo != "") {
         $txt .= PHP_EOL.$histo;

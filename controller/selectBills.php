@@ -8,7 +8,7 @@ require_once("../session.inc");
  * Called to display a table with a checklist for the bills, to select it to send it to SAP
  */
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"]) && isset($_POST["type"])){
-    checkPlateforme($dataGest, "facturation", $_POST["plate"]);
+    checkPlateforme("facturation", $_POST["plate"]);
     $dir = DATA.$_POST['plate']."/".$_POST['year']."/".$_POST['month']."/".$_POST['version']."/".$_POST['run'];
     $sap = new Sap($dir);
     $html = "";
@@ -41,7 +41,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         $html .= '<br /><span id="selected-factures">aucune facture sélectionnée</span> sur '.count($choices).'
                 <div><button type="button" id="all-bills" class="btn but-line lockable">Tout sélectionner</button><input type="hidden" name="sending" id="sending" value="'.$_POST["type"].'" /></div>
                 <div>';
-        if(!TEST_MODE || ($superviseur->isSuperviseur($user) && !DEV_MODE)) {
+        if(!TEST_MODE || (IS_SUPER && !DEV_MODE)) {
             $html .= '<button type="button" id="real" class="btn but-line-red lockable">Envoyer en facturation</button>';
             $html .= '<button type="button" id="pres" class="btn but-line-green lockable">Envoyer en pré-saisie</button>';
 

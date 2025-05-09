@@ -12,7 +12,7 @@ if(!isset($_GET["plateforme"])) {
     exit;
 }
 $plateforme = $_GET['plateforme'];
-checkPlateforme($dataGest, "facturation", $plateforme);
+checkPlateforme("facturation", $plateforme);
 
 // Check if first facturation, if one is running, which one is the last one
 $dir = DATA.$plateforme;
@@ -27,7 +27,7 @@ if(file_exists($dir)) {
         }
     }
 }
-$name = $dataGest['facturation'][$plateforme];
+$name = DATA_GEST['facturation'][$plateforme];
 
 /**
  * Customized button to upload prepa
@@ -87,13 +87,13 @@ include("includes/lock.php");
                                     if(empty($current)) { 
                                         echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $disabled);
                                     }             
-                                    if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") {  
+                                    if(IS_SUPER && TEST_MODE == "TEST") {  
                                         ?>
                                         <div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button>
                                         </div>  
                                     <?php } 
                                 }     
-                                if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") {   
+                                if(IS_SUPER && TEST_MODE == "TEST") {   
                                     echo uploader("Charger des archives", "ARCHIVE", $disabled);    
                                     $choices = [];
                                     if($first) {
@@ -123,7 +123,7 @@ include("includes/lock.php");
                         <div class="col-sm">
                             <?php
                                 if($first) {
-                                    if($dataGest['tarifs'] && array_key_exists($plateforme, $dataGest['tarifs'])) {
+                                    if(DATA_GEST['tarifs'] && array_key_exists($plateforme, DATA_GEST['tarifs'])) {
                                         echo uploader("Préparer 1ère facturation", "FIRST", $disabled);
                                     } 
                                 }

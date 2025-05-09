@@ -20,7 +20,7 @@ else {
     }
 
     $plateforme = $_GET['plate'];
-    checkPlateforme($dataGest, "facturation", $plateforme);
+    checkPlateforme("facturation", $plateforme);
 
     $year = $_GET['year'];
     $month = $_GET['month'];

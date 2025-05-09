@@ -15,7 +15,7 @@ if(isset($_GET['type'])) {
    
     if($type==="config") {
         // config zip, only for supervisor
-        if(!$superviseur->isSuperviseur($user)) {
+        if(!IS_SUPER) {
             header('Location: ../index.php');
             exit;
         }
@@ -23,13 +23,13 @@ if(isset($_GET['type'])) {
     }
     elseif($type==="generated") {
         // prefacturation, only for the user running it
-        $fileName = Lock::loadByName("../".$user.".lock");
+        $fileName = Lock::loadByName("../".USER.".lock");
         if(!empty($fileName)) {   
             header('Content-disposition: attachment; filename="'.basename($fileName).'"');
             header('Content-type: application/zip');
             readfile($fileName);
             unlink($fileName);
-            unlink("../".$user.".lock");
+            unlink("../".USER.".lock");
         }
         else {
             $_SESSION['alert-danger'] = "ce fichier n'est plus disponible";
@@ -41,14 +41,14 @@ if(isset($_GET['type'])) {
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
             if($type==="tarifs") { 
                 // tarifs uploaded for a given month 
-                checkPlateforme($dataGest, "tarifs", $_GET['plate']);
+                checkPlateforme("tarifs", $_GET['plate']);
                 $fileName = $dirMonth."/".ParamZip::NAME;
                 header('Content-disposition: attachment; filename="'.ParamZip::NAME.'"');
                 header('Content-type: application/zip');
                 readfile($fileName);
             }
             else {
-                checkPlateforme($dataGest, "facturation", $_GET['plate']);
+                checkPlateforme("facturation", $_GET['plate']);
                 if(isset($_GET['version']) && isset($_GET['run'])) {
                     $dirRun = $dirMonth."/".$_GET['version']."/".$_GET['run'];
                     if($type==="bilans") {
@@ -70,7 +70,7 @@ if(isset($_GET['type'])) {
                     elseif($type==="modif") {
                         // modification file (journal, client, modifications) of a run
                         if(isset($_GET['pre'])) {               
-                            $name = $dataGest['facturation'][$_GET['plate']];
+                            $name = DATA_GEST['facturation'][$_GET['plate']];
                             $filename = $_GET['pre']."_".$name."_".$_GET['year']."_".$_GET['month']."_".$_GET['version'];
                             readCsv($dirRun."/".$filename.".csv");
                         }

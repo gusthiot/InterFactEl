@@ -9,7 +9,7 @@ require_once("../session.inc");
  */
 $txt = "";
 if(isset($_POST['plate'])) {
-    checkPlateforme($dataGest, "facturation", $_POST["plate"]);
+    checkPlateforme("facturation", $_POST["plate"]);
     $plate = DATA.$_POST['plate'];
     $lines = explode(PHP_EOL, Logfile::load($plate));
     $txt = "<div id='over-log'><div id='log'>";
