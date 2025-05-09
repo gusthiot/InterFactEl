@@ -12,7 +12,7 @@ require_once("../session.inc");
  * Called while uploading new tarifs files
  */
 if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
-    checkPlateforme($dataGest, "tarifs", $_POST["plate"]);
+    checkPlateforme("tarifs", $_POST["plate"]);
     if($_FILES['zip_file']["error"] == 0) {
         $plateforme = $_POST['plate'];
         $fileName = $_FILES["zip_file"]["name"];

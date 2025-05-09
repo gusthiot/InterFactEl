@@ -4,9 +4,8 @@ require_once("assets/Lock.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
-if($dataGest) {
-    include("includes/lock.php");
-}
+include("includes/lock.php");
+
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +27,7 @@ if($dataGest) {
             </div>	
             <div class="title <?php if(TEST_MODE) echo "test";?>">
                 <h1 class="text-center p-1">Interface de facturation</h1>
-                <h6 class="text-center">Welcome <i><?= $user ?></i></h6>
+                <h6 class="text-center">Welcome <i><?= USER ?></i></h6>
             </div>
             <?php include("includes/message.php"); 
             if(!empty($lockUser)) { ?>
@@ -37,7 +36,7 @@ if($dataGest) {
             ?>
             <div id="index-canevas">
             <?php
-                if($superviseur->isSuperviseur($user)) {
+                if(IS_SUPER) {
                     // Only supervisor can upload/download config files
                 ?>
                 
@@ -63,18 +62,18 @@ if($dataGest) {
                 </div>
             <?php
                 }
-                if($dataGest) {
+                if(DATA_GEST) {
                     ?>             
                     <div class="index-primary">                  
                         <h3 class="">Gestion</h3>
                         <?php
-                        if(!empty($dataGest['facturation'])) {
+                        if(!empty(DATA_GEST['facturation'])) {
                             ?>   
                             <div class="index-secondary">  
                                 <h5 class="">Facturation</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach($dataGest['facturation'] as $plateforme => $name) {
+                                foreach(DATA_GEST['facturation'] as $plateforme => $name) {
                                 ?>
                                     <div class="facturation tile center-two">
                                         <input type="hidden" id="plate-fact" value="<?= $plateforme ?>" />
@@ -89,13 +88,13 @@ if($dataGest) {
                             </div>
                         <?php
                         }
-                        if(!empty($dataGest['tarifs'])) {
+                        if(!empty(DATA_GEST['tarifs'])) {
                             ?>      
                             <div class="index-secondary">                
                                 <h5 class="">Tarifs</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach($dataGest['tarifs'] as $plateforme => $name) {
+                                foreach(DATA_GEST['tarifs'] as $plateforme => $name) {
                                     $available = false;
                                     if(file_exists(DATA.$plateforme)) { 
                                         $available = true;
@@ -129,13 +128,13 @@ if($dataGest) {
                             </div>   
                         <?php
                         }
-                        if(!empty($dataGest['reporting'])) {
+                        if(!empty(DATA_GEST['reporting'])) {
                             ?>      
                             <div class="index-secondary">  
                                 <h5 class="">Reporting</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach($dataGest['reporting'] as $plateforme => $name) {
+                                foreach(DATA_GEST['reporting'] as $plateforme => $name) {
                                 ?>
                                     <div class="reporting tile center-two">
                                         <input type="hidden" id="plate-report" value="<?= $plateforme ?>" />

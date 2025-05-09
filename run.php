@@ -12,14 +12,14 @@ if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]
     exit;
 }
 $plateforme = $_GET['plateforme'];
-checkPlateforme($dataGest, "facturation", $plateforme);
+checkPlateforme("facturation", $plateforme);
 
 $year = $_GET['year'];
 $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
 $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
-$name = $dataGest['facturation'][$plateforme];
+$name = DATA_GEST['facturation'][$plateforme];
 
 $messages = new Message();
 $label = Label::load($dir);

@@ -5,7 +5,7 @@ require_once("../assets/Info.php");
 require_once("../session.inc");
 
 if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) { 
-    checkPlateforme($dataGest, "reporting", $_POST["plate"]);
+    checkPlateforme("reporting", $_POST["plate"]);
     $dir = DATA.$_POST['plate'];
     $choices = [];
     $html = "";

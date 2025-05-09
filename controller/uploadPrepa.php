@@ -22,12 +22,12 @@ if(isset($_POST['type'])) {
             header('Location: ../index.php');
             exit;
         }
-        checkPlateforme($dataGest, "facturation", $_POST["plate"]);
+        checkPlateforme("facturation", $_POST["plate"]);
         $plateforme = $_POST['plate'];
     }
 
     if($type == "ARCHIVE") {
-        if(!$superviseur->isSuperviseur($user) || TEST_MODE != "TEST") {  
+        if(!IS_SUPER || TEST_MODE != "TEST") {  
             $_SESSION['alert-danger'] = "wrong place, wrong user";
             header('Location: ../facturation.php?plateforme='.$plateforme);
             exit;
@@ -138,7 +138,7 @@ if(isset($_POST['type'])) {
                                     $unique = time();
                                     Lock::save("../", 'process', "prefa ".$plateforme." ".$unique);
                                     try {
-                                        runPrefa($tmpDir, $pathPlate, $paramedit, $plateforme, $unique, $messages, $user);
+                                        runPrefa($tmpDir, $pathPlate, $paramedit, $plateforme, $unique, $messages);
                                     }
                                     catch(Exception $e) {
                                         $msg = $e->getMessage(); 
@@ -198,10 +198,9 @@ else {
  * @param string $plateforme plateform number
  * @param string $unique run unique name
  * @param Message $messages config messages data
- * @param string $user user login surname
  * @return void
  */
-function runPrefa(string $tmpDir, string $path, Paramrun $paramedit, string $plateforme, string $unique, Message $messages, string $user): void 
+function runPrefa(string $tmpDir, string $path, Paramrun $paramedit, string $plateforme, string $unique, Message $messages): void 
 {
     $month = $paramedit->getParam('Month');
     $year = $paramedit->getParam('Year');
@@ -210,7 +209,7 @@ function runPrefa(string $tmpDir, string $path, Paramrun $paramedit, string $pla
     if(DEV_MODE) {
         $dev = " -n";
     }
-    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -s -d '.TEMP.' -u'.$unique.' -l '.$user;
+    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -s -d '.TEMP.' -u'.$unique.' -l '.USER;
     $res = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($res, 0, 2) === "OK") {
@@ -221,7 +220,7 @@ function runPrefa(string $tmpDir, string $path, Paramrun $paramedit, string $pla
             if (file_exists($dir) || mkdir($dir, 0755, true)) {
                 rename(TEMP.$unique, $dir."/".$unique);
                 $sap = new Sap($dir."/".$unique);
-                $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$sap->status();
+                $txt = date('Y-m-d H:i:s')." | ".USER." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$sap->status();
                 Logfile::write(DATA.$plateforme, $txt);
                 $_SESSION['alert-success'] = $messages->getMessage('msg1');
             }
@@ -231,8 +230,8 @@ function runPrefa(string $tmpDir, string $path, Paramrun $paramedit, string $pla
             }
         }
         else {
-            $name = $user."_".$type.'.zip';
-            Lock::saveByName("../".$user.".lock", TEMP.$name);
+            $name = USER."_".$type.'.zip';
+            Lock::saveByName("../".USER.".lock", TEMP.$name);
             Zip::setZipDir(TEMP.$name, TEMP.$unique."/", Lock::FILES['run']);
             State::delDir(TEMP.$unique);
             $_SESSION['alert-success'] = $messages->getMessage('msg2');

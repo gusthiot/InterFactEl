@@ -11,18 +11,47 @@ require_once("includes/Tequila.php");
 ini_set('display_errors', DISPLAY_ERRORS);
 error_reporting(ERROR_REPORTING);
 
+
+
 /**
- * Managing session
+ * Managing Tequila session
  */
+
 session_start();
 $oClient = new TequilaClient(TEQUILA_URL, TEQUILA_TIMEOUT, APP_NAME, APP_URL, TEQUILA_LANGUAGE);
 if(DEV_MODE) {
-    $user = DEV_MODE;
+    define( 'USER', DEV_MODE );
 }
 else {
     $oClient->authenticate(TEQUILA_REQUEST, TEQUILA_ALLOWS, TEQUILA_REQUIRED);
-    $user = $_SESSION[SESSION_USER];
+    define( 'USER', $_SESSION[SESSION_USER] );
 }
+
+
+// Authentication Entra
+/*
+session_start(); 
+if (!isset($_SESSION['user']))
+{
+    header("Location: ".WEBSITE_URL.$_ENV['OIDC_REDIRECT_URI']);
+    exit();
+}*/
+/*
+// init user details
+define('USER_EMAIL', $_SESSION["user"]->email);
+define('USER_SCIPER', $_SESSION["claims"]->uniqueid);
+define('USER_FULL_NAME',  $_SESSION["user"]->name);
+// We'll recreate the string with group names separated by commas and remove "_AppGrpU" suffix for each group (because Entra will return AD Groups corresponding to https://groups.epfl.ch groups, and they doesn't have the same name)
+$group_list = array();
+foreach ($_SESSION["claims"]->groups as $ad_group_name)
+{
+   $group_list[] = str_replace("_AppGrpU", "", $ad_group_name);
+}
+define('USER_GROUPS', implode(",", $group_list));
+*/
+
+
+
 
 
 /**
@@ -30,21 +59,21 @@ else {
  */
 $superviseur = new Superviseur();
 $gestionnaire = new Gestionnaire();
-$dataGest = $gestionnaire->getGestionnaire($user);
-if(!$dataGest) {
+define( 'DATA_GEST', $gestionnaire->getGestionnaire(USER) );
+if(!DATA_GEST) {
     $_SESSION['alert-info'] = "Vous n'avez aucun droit de gestion";
 }
+define( 'IS_SUPER', $superviseur->isSuperviseur(USER) );
 
 /**
  * Checks if user has managing rights
  *
- * @param array $dataGest user managing rights 
  * @param string $type type of right 
  * @return void
  */
-function checkGest(array $dataGest, string $type): void
+function checkGest(string $type): void
 {
-    if(!$dataGest[$type]) {
+    if(!DATA_GEST[$type]) {
         $_SESSION['alert-danger'] = "Vous n'avez aucun droit de ".$type." !";
         header('Location: index.php');
         exit;
@@ -54,15 +83,14 @@ function checkGest(array $dataGest, string $type): void
 /**
  * Checks if user has managing rights for a given plateform
  *
- * @param array $dataGest user managing rights
  * @param string $type type of right 
  * @param string $plateforme plateform number
  * @return void
  */
-function checkPlateforme(array $dataGest, string $type, string $plateforme): void
+function checkPlateforme(string $type, string $plateforme): void
 {
-    checkGest($dataGest, $type);
-    if(!array_key_exists($plateforme, $dataGest[$type])) {
+    checkGest($type);
+    if(!array_key_exists($plateforme, DATA_GEST[$type])) {
         $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
         header('Location: index.php');
         exit;

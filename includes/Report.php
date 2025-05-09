@@ -261,7 +261,6 @@ abstract class Report
 
     function loopOnMonths()
     {
-        $this->manquant = [];
         $date = $this->to;
         while(true) {       
             $this->month = substr($date, 4, 2);

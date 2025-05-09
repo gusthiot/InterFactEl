@@ -8,8 +8,8 @@ require_once("../session.inc");
  */
 if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
     $plateforme = $_GET["plate"];
-    checkPlateforme($dataGest, "facturation", $plateforme);
-    if($superviseur->isSuperviseur($user) && TEST_MODE == "TEST") {  
+    checkPlateforme("facturation", $plateforme);
+    if(IS_SUPER && TEST_MODE == "TEST") {  
         exec(sprintf("rm -rf %s", escapeshellarg(DATA.$plateforme)));
         $date = $_GET["from"];
         while(true) {

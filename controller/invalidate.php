@@ -10,7 +10,7 @@ require_once("../session.inc");
  * Called to manually invalidate a run
  */
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])) {
-    checkPlateforme($dataGest, "facturation", $_POST["plate"]);
+    checkPlateforme("facturation", $_POST["plate"]);
     $plateforme = $_POST["plate"];
     $year = $_POST["year"];
     $month = $_POST["month"];
@@ -22,7 +22,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $infos = Info::load($dir);
     if(!empty($infos)) {
         $infos["Closed"][2] = date('Y-m-d H:i:s');
-        $infos["Closed"][3] = $user;
+        $infos["Closed"][3] = USER;
         Info::save($dir, $infos);
     }
     else {
@@ -30,7 +30,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     }
     $sap = new Sap($dir);
     $status = $sap->status();
-    $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Invalidation | ".$status." | ".$status;
+    $txt = date('Y-m-d H:i:s')." | ".USER." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Invalidation | ".$status." | ".$status;
     Logfile::write(DATA.$plateforme, $txt);
     $_SESSION['alert-success'] = "invalidé";
 }

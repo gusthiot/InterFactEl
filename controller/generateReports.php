@@ -18,7 +18,7 @@ require_once("../session.inc");
  */
 if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && isset($_POST["type"])) {
     $plateforme = $_POST["plate"];
-    checkPlateforme($dataGest, "reporting", $plateforme);
+    checkPlateforme("reporting", $plateforme);
     switch($_POST["type"]) {
         case "montants":
             $report = new ReportMontants($plateforme, $_POST["to"], $_POST["from"]);

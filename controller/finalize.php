@@ -13,7 +13,7 @@ require_once("../session.inc");
  */
 if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && isset($_POST["version"]) && isset($_POST["run"])){
     $plateforme = $_POST["plate"];
-    checkPlateforme($dataGest, "facturation", $plateforme);
+    checkPlateforme("facturation", $plateforme);
     $year = $_POST["year"];
     $month = $_POST["month"];
     $run = $_POST["run"];
@@ -37,7 +37,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $infos = Info::load($dir);
     if(!empty($infos)) {
         $infos["Closed"][2] = date('Y-m-d H:i:s');
-        $infos["Closed"][3] = $user;
+        $infos["Closed"][3] = USER;
         Info::save($dir, $infos);
     }
     else {
@@ -45,7 +45,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     }
     $sap = new Sap($dir);
     $status = $sap->status();
-    $txt = date('Y-m-d H:i:s')." | ".$user." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;
+    $txt = date('Y-m-d H:i:s')." | ".USER." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;
     Logfile::write(DATA.$plateforme, $txt);
     $_SESSION['alert-success'] = "finalisé";
 }
