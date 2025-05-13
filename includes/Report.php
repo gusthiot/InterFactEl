@@ -35,6 +35,7 @@ abstract class Report
     protected $groupes;
     protected $categories;
     protected $users;
+    protected $prestations;
 
     protected $bilansStats;
     protected $in;
@@ -71,6 +72,7 @@ abstract class Report
         $this->groupes = [];
         $this->categories = [];
         $this->users = [];
+        $this->prestations = [];
 
         $this->monthList = [];
 
@@ -179,6 +181,48 @@ abstract class Report
     function prepareCategories()
     {
         self::mergeInCsv('categorie', $this->categories, self::CATEGORIE_KEY);
+    }
+
+    function preparePrestations()
+    {
+        $machinesTemp = [];
+        self::mergeInCsv('machine', $machinesTemp, self::MACHINE_KEY);
+        $prestationsTemp = [];
+        self::mergeInCsv('prestation', $prestationsTemp, self::PRESTATION_KEY);
+        $articlesTemp = [];
+        self::mergeInCsv('articlesap', $articlesTemp, self::ARTICLE_KEY);
+
+        if($this->factel > 7) {
+            $idSaps = [];
+            foreach($articlesTemp as $code=>$article) {
+                $idSaps[$article["item-idsap"]] = $code;
+            }
+        }
+        if($this->factel > 9) {
+            $classesPrestTemp = [];
+            self::mergeInCsv('classeprestation', $classesPrestTemp, self::CLASSEPRESTATION_KEY);
+        }
+        foreach($prestationsTemp as $code=>$line) {
+            if(!array_key_exists($code, $this->prestations)) {
+                $data = $line;
+                $line["mach-id"] == 0 ? $data["mach-name"] = "" : $data["mach-name"] = $machinesTemp[$line["mach-id"]]["mach-name"];
+                if($this->factel < 8) {
+                    $data["item-labelcode"] = $articlesTemp[$line["item-codeD"]]["item-labelcode"];
+                }
+                else {
+                    if($this->factel == 8 || $this->factel == 9) {
+                        $idSap = $idSaps[$line["item-idsap"]];
+                    }
+                    else {
+                        $classePrest = $classesPrestTemp[$line["item-idclass"]];
+                        $idSap = $idSaps[$classePrest["item-idsap"]];
+                    }
+                    $data["item-codeD"] = $articlesTemp[$idSap]["item-codeD"];
+                    $data["item-labelcode"] = $articlesTemp[$idSap]["item-labelcode"];
+                }
+                $this->prestations[$code] = $data;
+            }
+        }
     }
 
     function getColumnsNames() {
@@ -399,7 +443,7 @@ abstract class Report
         return '<div class="total"><a href="data:text/plain;base64,'.base64_encode($this->totalCsv).'" download="'.$csvKey.'.csv"><button type="button" id="'.$csvKey.'" class="btn but-line">Download Csv</button></a></div>';
     }
 
-    function templateDisplay($mainTitle, $withMonths=true)
+    function templateDisplay($mainTitle)
     {
         $period = $this->period();
         $html = $mainTitle;
@@ -412,15 +456,17 @@ abstract class Report
             $active = "";
         }
         $html .= '</ul>
-                <div class="tab-content p-3">'.$this->generateTablesAndCsv($withMonths).'</div>';
+                <div class="tab-content p-3">'.$this->generateTablesAndCsv().'</div>';
         echo $html;
     }
     
-    function generateTablesAndCsv($withMonths=true) 
+    function generateTablesAndCsv() 
     {
         $html = "";
         $show = "show active";
         foreach($this->tabs as $tab=>$data) {
+            $first = array_key_first($data["results"]);
+            $withMonths = array_key_exists("mois", $data["results"][$first]);
             $html .= '<div class="tab-pane fade '.$show.'" id="'.$tab.'" role="tabpanel" aria-labelledby="'.$tab.'-tab">
                         <div class="over report-large"><table class="table report-table" id="'.$tab.'-table"><thead><tr>';
             $show = "";
@@ -457,6 +503,4 @@ abstract class Report
         }
         return $html;
     }
-    
-    
 }

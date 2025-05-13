@@ -171,6 +171,6 @@ class ReportRuns extends Report
         $title = '<div class="total">Statistiques machines : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->totalM.'</div>';
         $title .= '<div class="subtotal">Nombre de runs productifs (temps machine > 0) = '.$this->totalN.'</div>';
-        echo $this->templateDisplay($title, false);
+        echo $this->templateDisplay($title);
     }
 }

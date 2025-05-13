@@ -1304,6 +1304,93 @@
             }
         }
     },
+    "9.1": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 0,
+                "client-sap": 1,
+                "client-name": 2,
+                "client-name2": 3
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-idsap": 0,
+                "item-codeD": 1,
+                "item-order": 5,
+                "item-labelcode": 6
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3,
+                "item-grp": 4
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-id-K1": 1,
+                "item-id-K2": 2,
+                "item-id-K3": 3,
+                "item-id-K4": 4,
+                "item-id-K5": 5,
+                "item-id-K6": 6,
+                "item-id-K7": 7
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 2,
+                "item-nbr": 3,
+                "item-name": 4,
+                "item-idsap": 5,
+                "item-unit": 6,
+                "mach-id": 9
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 0,
+                "proj-nbr": 1,
+                "proj-name": 2,
+                "proj-expl": 3,
+                "client-code": 4
+            }
+        }
+    },
     "10": {
         "client": {
             "prefix": "client",

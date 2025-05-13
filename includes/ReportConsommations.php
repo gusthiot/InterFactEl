@@ -2,12 +2,10 @@
 
 class ReportConsommations extends Report
 {
-    private $prestations;
     
     public function __construct($plateforme, $to, $from) 
     { 
         parent::__construct($plateforme, $to, $from);
-        $this->prestations = [];
         $this->tabs = [
             "consos" => [
                 "title" => "Consommations propre",
@@ -21,45 +19,7 @@ class ReportConsommations extends Report
     }
 
     function prepare() {
-        $this->prepareMachines();
-
-        $prestationsTemp = [];
-        self::mergeInCsv('prestation', $prestationsTemp, self::PRESTATION_KEY);
-        $articlesTemp = [];
-        self::mergeInCsv('articlesap', $articlesTemp, self::ARTICLE_KEY);
-
-        if($this->factel > 7) {
-            $idSaps = [];
-            foreach($articlesTemp as $code=>$article) {
-                $idSaps[$article["item-idsap"]] = $code;
-            }
-        }
-        if($this->factel > 9) {
-            $classesPrestTemp = [];
-            self::mergeInCsv('classeprestation', $classesPrestTemp, self::CLASSEPRESTATION_KEY);
-        }
-        foreach($prestationsTemp as $code=>$line) {
-            if(!array_key_exists($code, $this->prestations)) {
-                $data = $line;
-                $line["mach-id"] == 0 ? $data["mach-name"] = "" : $data["mach-name"] = $this->machines[$line["mach-id"]]["mach-name"];
-                if($this->factel == 7) {
-                    $data["item-labelcode"] = $articlesTemp[$line["item-codeD"]]["item-labelcode"];
-                }
-                else {
-                    if($this->factel == 8 || $this->factel == 9) {
-                        $idSap = $idSaps[$line["item-idsap"]];
-                    }
-                    else {
-                        $classePrest = $classesPrestTemp[$line["item-idclass"]];
-                        $idSap = $idSaps[$classePrest["item-idsap"]];
-                    }
-                    $data["item-codeD"] = $articlesTemp[$idSap]["item-codeD"];
-                    $data["item-labelcode"] = $articlesTemp[$idSap]["item-labelcode"];
-                }
-                $this->prestations[$code] = $data;
-            }
-        }
-
+        $this->preparePrestations();
 
         $columns = $this->bilansStats[$this->factel]['Bilan-c']['columns'];
         $lines = Csv::extract($this->getFileNameInBS('Bilan-c'));
@@ -82,14 +42,13 @@ class ReportConsommations extends Report
                 $this->tabs["consos"]["results"][$itemId][$operation] += $tab[$columns[$operation]];
                 $this->total += $tab[$columns[$operation]];
             }
-
         }
     }
 
     function display()
     {
         $title = '<div class="total">Total des consommations propres sur la période '.$this->period().' : '.number_format(floatval($this->total), 2, ".", "'").' CHF</div>';
-        echo $this->templateDisplay($title, false);
+        echo $this->templateDisplay($title);
     }
 
 }

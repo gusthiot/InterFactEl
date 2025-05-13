@@ -100,7 +100,7 @@ class ReportUsages extends Report
                     if($tab[$columns["client-code"]] != $this->plateforme) {
                         $nr3 = 1;
                     }
-                    $id = $tab[$columns["client-code"]]."-".$tab[$columns["user-id"]]."-".$tab[$columns["mach-id"]];
+                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu1' => 0, 'Smu2' => 0, 'Snr1' => 0, 'Snr3' => 0];
                     }
@@ -111,13 +111,10 @@ class ReportUsages extends Report
                 }
             }
             foreach($loopArray as $id=>$line) {
-                $ids = explode("-", $id);
+                $ids = explode("--", $id);
                 $classe = $this->clientsClasses[$ids[0]]['client-class'];
                 $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];/*
-                    (array_key_exists($ids[1], $this->users) ? $sciper = $this->users[$ids[1]]['user-sciper'] : 
-                        (!in_array($ids[1], $this->manquant) ? $this->manquant[] = $ids[1] : "" )
-                );*/
+                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
                 if($line['Smu1'] > 0 && $line['Snr1'] > 0) {
                     $usagesArray[] = [$ids[0], $classe, $sciper, 'K1', $ids[2], $line['Smu1'], $line['Snr1']];
                 }                
@@ -155,7 +152,7 @@ class ReportUsages extends Report
                         $nr = 1;
                     }
 
-                    $id = $tab[$columns["client-code"]]."-".$tab[$columns["client-class"]]."-".$tab[$columns["user-id"]]."-".$tab[$columns["mach-id"]]."-".$itemK;
+                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$itemK;
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu' => 0, 'Snr' => 0];
                     }
@@ -164,7 +161,7 @@ class ReportUsages extends Report
                 }
             }
             foreach($loopArray as $id=>$line) {
-                $ids = explode("-", $id);
+                $ids = explode("--", $id);
                 $sciper = $this->users[$ids[2]]['user-sciper'];
                 if($line['Smu'] > 0 && $line['Snr'] > 0) {
                     $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $line['Snr']];
@@ -178,13 +175,13 @@ class ReportUsages extends Report
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
                 if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae")) {
-                    $id = $tab[$columns["client-code"]]."-".$tab[$columns["client-class"]]."-".$tab[$columns["user-id"]]."-".$tab[$columns["mach-id"]]."-".$tab[$columns["item-codeK"]];
+                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu' => 0];
                     }
                     $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
                     
-                    $idn = $tab[$columns["client-code"]]."-".$tab[$columns["client-class"]]."-".$tab[$columns["user-id"]]."-".$tab[$columns["mach-id"]];
+                    $idn = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
                     if(!array_key_exists($idn, $nrArray)) {
                         $nrArray[$idn] = 0;
                     }
@@ -194,8 +191,8 @@ class ReportUsages extends Report
                 }
             }
             foreach($loopArray as $id=>$line) {
-                $ids = explode("-", $id);
-                $idn = $ids[0]."-".$ids[1]."-".$ids[2]."-".$ids[3];
+                $ids = explode("--", $id);
+                $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
                 $sciper = $this->users[$ids[2]]['user-sciper'];
                 if($line['Smu'] > 0) {
@@ -210,13 +207,13 @@ class ReportUsages extends Report
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
                 if(($this->year == $tab[$columns["editing-year"]]) && ($this->month == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae")) {
-                    $id = $tab[$columns["client-code"]]."-".$tab[$columns["client-class"]]."-".$tab[$columns["user-id"]]."-".$tab[$columns["mach-id"]]."-".$tab[$columns["item-codeK"]];
+                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu' => 0];
                     }
                     $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
                     
-                    $idn = $tab[$columns["client-code"]]."-".$tab[$columns["client-class"]]."-".$tab[$columns["user-id"]]."-".$tab[$columns["mach-id"]];
+                    $idn = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
                     if(!array_key_exists($idn, $nrArray)) {
                         $nrArray[$idn] = 0;
                     }
@@ -226,8 +223,8 @@ class ReportUsages extends Report
                 }
             }
             foreach($loopArray as $id=>$line) {
-                $ids = explode("-", $id);
-                $idn = $ids[0]."-".$ids[1]."-".$ids[2]."-".$ids[3];
+                $ids = explode("--", $id);
+                $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
                 $sciper = $this->users[$ids[2]]['user-sciper'];
                 if($line['Smu'] > 0) {
@@ -244,13 +241,15 @@ class ReportUsages extends Report
 
     function mapping($usagesArray)
     {
-        //$scipers = array_column
+        $scipers = [];
+        foreach($this->users as $id=>$user) {
+            $scipers[$user['user-sciper']] = $id;
+        }
         foreach($usagesArray as $line) {
             $client = $this->clients[$line[0]];
             $classe = $this->classes[$line[1]];
-            //array_search
             if($line[2] != 0) {
-                $user = $this->users[$line[2]];
+                $user = $this->users[$scipers[$line[2]]];
             }
             else {
                 $user = "";
@@ -264,13 +263,13 @@ class ReportUsages extends Report
                 "transac-runcae"=>$line[6]
             ];
             $ids = [
-                "par-machine" => $line[3], 
+                "par-machine" => $line[4], 
                 "par-client" => $line[0], 
                 "par-user" => $line[2], 
                 "par-client-user" => $line[0]."-".$line[2], 
                 "par-client-classe" => $line[0]."-".$line[1],
-                "use-machine" => $line[3], 
-                "use-categorie"=> $groupe["item-id-K1"]
+                "use-machine" => $line[4]."-".$line[3],
+                "use-categorie"=> $groupe["item-id-K1"]."-".$line[3]
             ];
             $extends = [
                 "par-machine"=>[$machine, $groupe, $categorie],
@@ -290,57 +289,76 @@ class ReportUsages extends Report
                 "use-machine" => [$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM], 
                 "use-categorie"=>[$this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM]
             ];
-/*
+
             foreach($this->tabs as $tab=>$data) {
-                if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
-                    $this->tabs[$tab]["results"][$ids[$tab]] = ["mois" => []];            
-                    foreach($dimensions[$tab] as $pos=>$dimension) {
-                        foreach($dimension as $d) {
-                            $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
+                if(in_array($tab, ["use-machine", "use-categorie"]) || $line[3] == "K1") {
+                    if($tab == "par-machine" && $this->plateforme == $line[0]) {
+                        continue;
+                    }
+                    if($tab == "par-user" && $line[2] == 0) {
+                        continue;
+                    }
+                    if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
+                        $this->tabs[$tab]["results"][$ids[$tab]] = []; 
+                        if(!in_array($tab, ["use-machine", "use-categorie"])) {  
+                            $this->tabs[$tab]["results"][$ids[$tab]]["mois"] = []; 
+                        }         
+                        foreach($dimensions[$tab] as $pos=>$dimension) {
+                            foreach($dimension as $d) {
+                                if($extends[$tab][$pos] != "") {
+                                    $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
+                                }
+                                else {
+                                    $this->tabs[$tab]["results"][$ids[$tab]][$d] = "";
+                                }
+                            }
+                        }
+                        foreach($this->tabs[$tab]["operations"] as $operation) {
+                            $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
+                        }
+                        if($tab == "par-machine") {
+                            $this->tabs[$tab]["results"][$ids[$tab]]["users"] = [];
+                            $this->tabs[$tab]["results"][$ids[$tab]]["clients"] = [];
                         }
                     }
-                    foreach($this->tabs[$tab]["operations"] as $operation) {
-                        $this->tabs[$tab]["results"][$ids[$tab]][$operation] = [];
+                    if(!in_array($tab, ["use-machine", "use-categorie"]) && !array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
+                        $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
+                    }
+                    if(in_array($tab, ["use-machine", "use-categorie"])) {
+                        $this->tabs[$tab]["results"][$ids[$tab]]["transac-usage"] += $values["transac-usage"];
+                    }
+                    else {
+                        $this->tabs[$tab]["results"][$ids[$tab]]["stat-hmach"] += $values["transac-usage"];
+                        $this->tabs[$tab]["results"][$ids[$tab]]["stat-run"] += $values["transac-runcae"];
+                        $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-runcae"];
+                    }
+                    if($line[3] == "K1") {
+                        $this->totalM += $values["transac-usage"];
+                        $this->totalN += $values["transac-runcae"];
+                    }
+                    if($tab == "par-machine") {
+                        if($line[2] != 0 && !in_array($line[2], $this->tabs[$tab]["results"][$ids[$tab]]["users"])) {
+                            $this->tabs[$tab]["results"][$ids[$tab]]["users"][] = $line[2];
+                        }
+                        if(!in_array($line[0], $this->tabs[$tab]["results"][$ids[$tab]]["clients"])) {
+                            $this->tabs[$tab]["results"][$ids[$tab]]["clients"][] = $line[0];
+                        }
                     }
                 }
-                if(!array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
-                    $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
-                }
-                foreach($values as $operation=>$value) {
-                    $this->tabs[$tab]["results"][$ids[$tab]][$operation][] = $value;
-                }
-                $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-runcae"];
-            } */
+            } 
         }
     }
 
     function display() 
     {
-        /*
-        foreach($this->tabs as $tab=>$data) {
-            foreach($data["results"] as $key=>$cells) {
-                $avg = $this->periodAverage($cells["runtime-N"], $cells["runtime-avg"]);
-                $stddev = $this->periodStdDev($cells["runtime-N"], $cells["runtime-avg"], $cells["runtime-stddev"], $avg);
-                $sum = 0;
-                $numTot = 0;
-                for($i=0; $i< count($cells["runtime-N"]); $i++) {
-                    $sum += $cells["transac-runtime"][$i];
-                    $numTot += $cells["runtime-N"][$i];
-                }
-                $this->tabs[$tab]["results"][$key]["transac-runtime"] = $sum;
-                $this->tabs[$tab]["results"][$key]["runtime-N"] = $numTot;
-                $this->tabs[$tab]["results"][$key]["runtime-avg"] = $avg;
-                $this->tabs[$tab]["results"][$key]["runtime-stddev"] = $stddev;
-                $this->totalM += $sum;
-                $this->totalN += $numTot;
-            }
+        foreach($this->tabs["par-machine"]["results"] as $key=>$cells) {
+            $this->tabs["par-machine"]["results"][$key]["stat-nbuser"] = count($this->tabs["par-machine"]["results"][$key]["users"]);
+            $this->tabs["par-machine"]["results"][$key]["stat-nbclient"] = count($this->tabs["par-machine"]["results"][$key]["clients"]);
         }
 
         $title = '<div class="total">Statistiques machines : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->totalM.'</div>';
         $title .= '<div class="subtotal">Nombre de runs CAE productifs = '.$this->totalN.'</div>';
-        echo $this->templateDisplay($title, false);
-        */
-        print_r($this->manquant);
+        echo $this->templateDisplay($title);
     }
 }

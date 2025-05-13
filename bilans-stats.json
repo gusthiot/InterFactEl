@@ -178,11 +178,11 @@
                 "user-id": 8,
                 "oper-id": 19,
                 "mach-id": 11,
-                "transac-date": 13,
-                "Tmach-HP": 14,
-                "Tmach-HC": 15,
-                "Toper": 16,
-                "staff-note": 20
+                "transac-date": 15,
+                "Tmach-HP": 16,
+                "Tmach-HC": 17,
+                "Toper": 18,
+                "staff-note": 22
             }
         },
         "lvr": {
