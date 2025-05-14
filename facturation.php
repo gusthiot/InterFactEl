@@ -179,7 +179,7 @@ include("includes/lock.php");
                                     </svg>
                                 <?php }
                                 echo $month.' '.$year;
-                                if (file_exists($dirMonth."/lockm.csv")) { ?>
+                                if (file_exists($dirMonth."/".Lock::FILES['month'])) { ?>
                                     <svg class="icon" aria-hidden="true">
                                         <use xlink:href="#lock"></use>
                                     </svg>
@@ -192,7 +192,7 @@ include("includes/lock.php");
                                         echo '<tr>';
                                     }
                                     echo '<td>'.$version;
-                                    if (file_exists($dirVersion."/lockv.csv")) { ?>
+                                    if (file_exists($dirVersion."/".Lock::FILES['version'])) { ?>
                                         <svg class="icon" aria-hidden="true">
                                             <use xlink:href="#lock"></use>
                                         </svg>

@@ -111,7 +111,7 @@ if(!$available) {
                                 $id = $year."-".$month;
                                 echo '<tr>';
                                 echo '<td>'.$month.' '.$year;
-                                if (file_exists($dirMonth."/lockm.csv")) { ?>
+                                if (file_exists($dirMonth."/".Lock::FILES['month'])) { ?>
                                     <svg class="icon" aria-hidden="true">
                                         <use xlink:href="#lock"></use>
                                     </svg>
