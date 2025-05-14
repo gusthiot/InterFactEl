@@ -20,6 +20,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $version = $_POST["version"];
 
     $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
+    $dirPrevMonth = DATA.$plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
 
     $state = new State(DATA.$plateforme);
     if(empty($state->getLast())) {
@@ -30,9 +31,14 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         }
     }
 
+    $sap = new Sap($dir);
+    $status = $sap->status();
     Lock::save($dir, 'run', Lock::STATES['finalized']);
     $sep = strrpos($dir, "/");
     Lock::save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
+    if (in_array($status, [0, 1]) && file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
+        Lock::save($dirPrevMonth, 'month', "");
+    }
 
     $infos = Info::load($dir);
     if(!empty($infos)) {
@@ -43,8 +49,6 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     else {
         $_SESSION['alert-warning'] = "info vide ? ";
     }
-    $sap = new Sap($dir);
-    $status = $sap->status();
     $txt = date('Y-m-d H:i:s')." | ".USER." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;
     Logfile::write(DATA.$plateforme, $txt);
     $_SESSION['alert-success'] = "finalisé";
