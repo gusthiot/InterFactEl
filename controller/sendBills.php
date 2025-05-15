@@ -99,6 +99,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                                 if(empty($infos["Sent"][2])) {
                                     $infos["Sent"][2] = date('Y-m-d H:i:s');
                                     $infos["Sent"][3] = USER;
+
                                     Info::save($dir, $infos);
                                 }
                                 if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
