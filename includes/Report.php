@@ -12,6 +12,7 @@ abstract class Report
     const CATEGORIE_DIM = ["item-nbr", "item-name", "item-unit"];
     const USER_DIM = ["user-sciper", "user-name", "user-first", "user-email"];
     const CODEK_DIM = ["item-codeK", "item-textK"];
+    const SERVICE_DIM = ["item-text2K", "oper-note"];
     const CLIENT_KEY = "client-code";
     const CLASSE_KEY = "client-class";
     const ARTICLE_KEY = "item-codeD";
@@ -198,7 +199,7 @@ abstract class Report
                 $idSaps[$article["item-idsap"]] = $code;
             }
         }
-        if($this->factel > 9) {
+        if($this->factel >= 10) {
             $classesPrestTemp = [];
             self::mergeInCsv('classeprestation', $classesPrestTemp, self::CLASSEPRESTATION_KEY);
         }
@@ -344,7 +345,7 @@ abstract class Report
         $files = scandir($this->dirRun."/Bilans_Stats/");
         $prefix = $this->bilansStats[$this->factel][$fileKey]['prefix'];
         foreach ($files as $file) {
-            if(str_contains($file, $prefix."_") || str_contains($file, $prefix.".")) {
+            if(str_starts_with($file, $prefix) &&( str_contains($file, $prefix."_") || str_contains($file, $prefix."."))) {
                 return $this->dirRun."/Bilans_Stats/".$file;
             }
         }
