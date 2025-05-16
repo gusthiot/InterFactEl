@@ -43,7 +43,7 @@
             "columns": {
                 "client-code": 4,
                 "user-id": 6,
-                "item-id": 10,
+                "item-id": 11,
                 "transac-usage": 14,
                 "transac-date": 20
             }

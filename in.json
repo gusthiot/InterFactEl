@@ -1110,6 +1110,7 @@
                 "item-name": 4,
                 "item-codeD": 5,
                 "item-unit": 6,
+                "platf-code": 5,
                 "mach-id": 9
             }
         },
@@ -1192,7 +1193,8 @@
                 "item-id": 0,
                 "item-nbr": 1,
                 "item-name": 2,
-                "item-unit": 3
+                "item-unit": 3,
+                "platf-code": 4
             }
         },
         "prestation": {
@@ -1203,6 +1205,7 @@
                 "item-name": 4,
                 "item-idsap": 5,
                 "item-unit": 6,
+                "platf-code": 8,
                 "mach-id": 9
             }
         },
@@ -1279,7 +1282,8 @@
                 "item-id": 0,
                 "item-nbr": 1,
                 "item-name": 2,
-                "item-unit": 3
+                "item-unit": 3,
+                "platf-code": 4
             }
         },
         "prestation": {
@@ -1290,7 +1294,8 @@
                 "item-name": 4,
                 "item-idsap": 5,
                 "item-unit": 6,
-                "mach-id": 9
+                "mach-id": 9,
+                "platf-code": 8
             }
         },
         "compte": {
@@ -1366,7 +1371,8 @@
                 "item-id": 0,
                 "item-nbr": 1,
                 "item-name": 2,
-                "item-unit": 3
+                "item-unit": 3,
+                "platf-code": 4
             }
         },
         "prestation": {
@@ -1377,7 +1383,8 @@
                 "item-name": 4,
                 "item-idsap": 5,
                 "item-unit": 6,
-                "mach-id": 9
+                "mach-id": 9,
+                "platf-code": 8
             }
         },
         "compte": {
@@ -1453,7 +1460,8 @@
                 "item-id": 0,
                 "item-nbr": 1,
                 "item-name": 2,
-                "item-unit": 3
+                "item-unit": 3,
+                "platf-code": 4
             }
         },
         "prestation": {
@@ -1464,7 +1472,8 @@
                 "item-name": 4,
                 "item-idclass": 5,
                 "item-unit": 6,
-                "mach-id": 9
+                "mach-id": 9,
+                "platf-code": 8
             }
         },
         "classeprestation": {
@@ -1548,7 +1557,8 @@
                 "item-id": 0,
                 "item-nbr": 1,
                 "item-name": 2,
-                "item-unit": 3
+                "item-unit": 3,
+                "platf-code": 4
             }
         },
         "prestation": {
@@ -1559,7 +1569,8 @@
                 "item-name": 4,
                 "item-idclass": 5,
                 "item-unit": 6,
-                "mach-id": 9
+                "mach-id": 9,
+                "platf-code": 8
             }
         },
         "classeprestation": {
@@ -1644,7 +1655,8 @@
                 "item-id": 0,
                 "item-nbr": 1,
                 "item-name": 2,
-                "item-unit": 3
+                "item-unit": 3,
+                "platf-code": 4
             }
         },
         "prestation": {
@@ -1655,7 +1667,8 @@
                 "item-name": 4,
                 "item-idclass": 5,
                 "item-unit": 6,
-                "mach-id": 9
+                "mach-id": 9,
+                "platf-code": 8
             }
         },
         "classeprestation": {

@@ -34,8 +34,6 @@ class ReportRuns extends Report
     function prepare() 
     {
         $this->prepareMachines();
-        $this->prepareGroupes();
-        $this->prepareCategories();
 
         $this->processReportFile();
     }
@@ -50,10 +48,7 @@ class ReportRuns extends Report
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
                 $machId = $tab[$columns["mach-id"]];
-                $itemGrp = $this->machines[$machId]["item-grp"];
-                $itemId = $this->groupes[$itemGrp]["item-id-K1"];
-                $plateId = $this->categories[$itemId]["platf-code"];
-                if($plateId == $this->plateforme) {
+                if(array_key_exists($machId, $this->machines)) {
                     $mu = ($tab[$columns["Tmach-HP"]] + $tab[$columns["Tmach-HC"]]) / 60;
                     $specials = ["mach022", "mach023", "mach036", "mach145"];
                     if(in_array($machId, $specials)) {

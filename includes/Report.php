@@ -122,26 +122,6 @@ abstract class Report
         }
     }
 
-    function prepareMachines() 
-    {
-        if($this->factel < 7) {
-            $machinesTemp = [];
-            $groupesTemp = [];
-            self::mergeInCsv('machine', $machinesTemp, self::MACHINE_KEY);
-            self::mergeInCsv('machgrp', $groupesTemp, self::MACHINE_KEY);    
-            foreach($machinesTemp as $code=>$line) {
-                if(!array_key_exists($code, $this->machines)) {
-                    $data = $line;
-                    $data["item-grp"] = $groupesTemp[$code]["item-grp"];
-                    $this->machines[$code] = $data;
-                }
-            }
-        }
-        else {
-            self::mergeInCsv('machine', $this->machines, self::MACHINE_KEY);
-        }
-    }
-
     function prepareUsers()
     {
         if($this->factel > 11) {
@@ -158,6 +138,35 @@ abstract class Report
                 }    
             }
 
+        }
+    }
+
+    function prepareMachines() 
+    {
+        $this->prepareGroupes();
+        $this->prepareCategories();
+        if($this->factel < 7) {
+            $machgrpsTemp = [];
+            self::mergeInCsv('machgrp', $machgrpsTemp, self::MACHINE_KEY);
+        }
+        $machinesTemp = [];
+        self::mergeInCsv('machine', $machinesTemp, self::MACHINE_KEY);
+        foreach($machinesTemp as $code=>$line) {
+            if(!array_key_exists($code, $this->machines)) {
+                $data = $line;
+                if($this->factel < 7) {
+                    $data["item-grp"] = $machgrpsTemp[$code]["item-grp"];
+                }
+                $itemGrp = $data["item-grp"];
+                $itemId = $this->groupes[$itemGrp]["item-id-K1"];
+                if($itemId == 0) {
+                    continue;
+                }
+                $plateId = $this->categories[$itemId]["platf-code"];
+                if($plateId == $this->plateforme) {
+                    $this->machines[$code] = $data;
+                }
+            }
         }
     }
 
