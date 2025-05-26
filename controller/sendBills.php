@@ -196,7 +196,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $sap = new Sap($dir);
     $status = $sap->status();
     $sapState = $sap->state();
-    if($type = "send-bills") {
+    if($type == "send-bills") {
         $title = "Envoi dans SAP";
     }
     else {
