@@ -125,7 +125,7 @@ function sending(mode) {
     if(bills.length > 0) {
         $(".lockable").prop('disabled', true);
         $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
-        $.post("controller/sendBills.php", Object.assign({}, postDir, {bills: bills, type: $("input[name='sending']").val(), mode: mode}), function () {
+        $.post("controller/sendBills.php", Object.assign({}, postDir, {bills: bills, type: $("#sending").val(), mode: mode}), function () {
             window.location.href = "facturation.php?plateforme="+$('#plate').val();
         });
     }
