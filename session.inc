@@ -16,7 +16,7 @@ error_reporting(ERROR_REPORTING);
 /**
  * Managing Tequila session
  */
-
+/*
 session_start();
 $oClient = new TequilaClient(TEQUILA_URL, TEQUILA_TIMEOUT, APP_NAME, APP_URL, TEQUILA_LANGUAGE);
 if(DEV_MODE) {
@@ -26,16 +26,21 @@ else {
     $oClient->authenticate(TEQUILA_REQUEST, TEQUILA_ALLOWS, TEQUILA_REQUIRED);
     define( 'USER', $_SESSION[SESSION_USER] );
 }
-
-
+*/
 // Authentication Entra
-/*
+
 session_start(); 
-if (!isset($_SESSION['user']))
-{
-    header("Location: ".WEBSITE_URL.$_ENV['OIDC_REDIRECT_URI']);
-    exit();
-}*/
+if(DEV_MODE) {
+    define( 'USER', DEV_MODE );
+}
+else {
+    if (!isset($_SESSION['user']))
+    {
+        header("Location: ".WEBSITE_URL."entra/entra.php");
+        exit();
+    }
+    define( 'USER', $_SESSION["user"]->name );
+}
 /*
 // init user details
 define('USER_EMAIL', $_SESSION["user"]->email);

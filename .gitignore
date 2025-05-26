@@ -8,3 +8,4 @@ config.prod.inc
 config.test.inc
 reveal.js
 openid
+entra/.env
