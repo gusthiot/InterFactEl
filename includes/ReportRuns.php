@@ -65,7 +65,7 @@ class ReportRuns extends Report
                         }
                     }
                     if($mr > 0) {
-                        if(!in_array($machId, $stats)) {
+                        if(!array_key_exists($machId, $stats)) {
                             $stats[$machId] = ["nb"=>0, "sum"=>0, "rts"=>[]];
                         }
                         $stats[$machId]["nb"] += 1;
