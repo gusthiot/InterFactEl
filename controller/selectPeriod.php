@@ -11,6 +11,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
     $html = "";
     switch($_POST["type"]) {
         case "consommations":
+        case "penalites":
             $vMin = 7.0;
             break;
         default:
