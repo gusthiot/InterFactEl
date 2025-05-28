@@ -58,7 +58,7 @@ class ReportRuns extends Report
                         if(!empty($tab[$columns["staff-note"]]) && str_contains($tab[$columns["staff-note"]], "Before cap")) {
                             $from = strpos($tab[$columns["staff-note"]], "cap:") + 5;
                             $to = strpos($tab[$columns["staff-note"]], "min)") - 1;
-                            $mr = substr($tab[$columns["staff-note"]], $from, $to-$from);
+                            $mr = floatval(substr($tab[$columns["staff-note"]], $from, $to-$from)) / 60;
                         }
                         else {
                             $mr = $mu;
