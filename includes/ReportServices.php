@@ -62,7 +62,8 @@ class ReportServices extends Report
     {   
         foreach($servicesArray as $line) {
             $groupe = $this->groupes[$line[4]];
-            $categorie = $this->categories[$line[5]];
+            $itemId = $groupe["item-id-".$line[5]];
+            $categorie = $this->categories[$itemId];
             $codeK = ["item-codeK"=>$line[5], "item-textK"=>$this->paramtext->getParam("item-".$line[5])];
             $service = ["item-text2K"=>$line[2], "oper-note"=>$line[3]];
             $values = [
