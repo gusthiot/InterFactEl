@@ -18,6 +18,7 @@ class ReportRuns extends Report
                 "columns" => ["mach-name"],
                 "dimensions" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM),
                 "operations" => ["transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"],
+                "formats" => ["float", "int", "float", "float"],
                 "results" => []
 
             ], 
@@ -26,6 +27,7 @@ class ReportRuns extends Report
                 "columns" => ["item-name"],
                 "dimensions" => array_merge($this::GROUPE_DIM, $this::CATEGORIE_DIM),
                 "operations" => ["transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"],
+                "formats" => ["float", "int", "float", "float"],
                 "results" => []
             ]
         ];
@@ -145,6 +147,7 @@ class ReportRuns extends Report
     function display() 
     {
         foreach($this->tabs as $tab=>$data) {
+            $doTotal = true;
             foreach($data["results"] as $key=>$cells) {
                 $avg = $this->periodAverage($cells["runtime-N"], $cells["runtime-avg"]);
                 $stddev = $this->periodStdDev($cells["runtime-N"], $cells["runtime-avg"], $cells["runtime-stddev"], $avg);
@@ -158,14 +161,17 @@ class ReportRuns extends Report
                 $this->tabs[$tab]["results"][$key]["runtime-N"] = $numTot;
                 $this->tabs[$tab]["results"][$key]["runtime-avg"] = $avg;
                 $this->tabs[$tab]["results"][$key]["runtime-stddev"] = $stddev;
-                $this->totalM += $sum;
-                $this->totalN += $numTot;
+                if($doTotal) {
+                    $this->totalM += $sum;
+                    $this->totalN += $numTot;
+                }
             }
+            $doTotal = false;
         }
 
         $title = '<div class="total">Statistiques machines : '.$this->period().' </div>';
-        $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->totalM.'</div>';
-        $title .= '<div class="subtotal">Nombre de runs productifs (temps machine > 0) = '.$this->totalN.'</div>';
+        $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->format($this->totalM, "float").'</div>';
+        $title .= '<div class="subtotal">Nombre de runs productifs (temps machine > 0) = '.$this->format($this->totalN, "int").'</div>';
         echo $this->templateDisplay($title);
     }
 }

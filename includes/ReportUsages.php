@@ -18,6 +18,7 @@ class ReportUsages extends Report
                 "columns" => ["mach-name"],
                 "dimensions" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, ["item-nbr", "item-name"]),
                 "operations" => ["stat-hmach", "stat-run", "stat-nbuser", "stat-nbclient"],
+                "formats" => ["float", "int", "int", "int"],
                 "results" => []
 
             ], 
@@ -26,6 +27,7 @@ class ReportUsages extends Report
                 "columns" => ["client-name"],
                 "dimensions" => $this::CLIENT_DIM,
                 "operations" => ["stat-hmach", "stat-run"],
+                "formats" => ["float", "int"],
                 "results" => []
             ], 
             "par-user"=>[
@@ -33,6 +35,7 @@ class ReportUsages extends Report
                 "columns" => ["user-sciper", "user-name", "user-first"],
                 "dimensions" => $this::USER_DIM,
                 "operations" => ["stat-hmach", "stat-run"],
+                "formats" => ["float", "int"],
                 "results" => []
             ], 
             "par-client-user"=>[
@@ -40,6 +43,7 @@ class ReportUsages extends Report
                 "columns" => ["client-name", "user-sciper", "user-name", "user-first"],
                 "dimensions" => array_merge($this::CLIENT_DIM, $this::USER_DIM),
                 "operations" => ["stat-hmach", "stat-run"],
+                "formats" => ["float", "int"],
                 "results" => []
             ], 
             "par-client-classe"=>[
@@ -47,6 +51,7 @@ class ReportUsages extends Report
                 "columns" => ["client-name", "client-labelclass"],
                 "dimensions" => array_merge($this::CLIENT_DIM, $this::CLASSE_DIM),
                 "operations" => ["stat-hmach", "stat-run"],
+                "formats" => ["float", "int"],
                 "results" => []
             ], 
             "use-machine"=>[
@@ -54,6 +59,7 @@ class ReportUsages extends Report
                 "columns" => ["mach-name", "item-nbr", "item-name", "item-unit", "item-textK"],
                 "dimensions" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM),
                 "operations" => ["transac-usage"],
+                "formats" => ["float"],
                 "results" => []
             ], 
             "use-categorie"=>[
@@ -61,6 +67,7 @@ class ReportUsages extends Report
                 "columns" => ["item-nbr", "item-name", "item-unit", "item-textK"],
                 "dimensions" => array_merge($this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM),
                 "operations" => ["transac-usage"],
+                "formats" => ["float", "int"],
                 "results" => []
             ]
         ];
@@ -163,7 +170,7 @@ class ReportUsages extends Report
                 }
             }
         }
-        elseif($this->factel == 8 || $this->factel == 9) {
+        elseif($this->factel >= 8 && $this->factel < 10) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             $nrArray = [];
@@ -352,8 +359,8 @@ class ReportUsages extends Report
         }
 
         $title = '<div class="total">Statistiques machines : '.$this->period().' </div>';
-        $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->totalM.'</div>';
-        $title .= '<div class="subtotal">Nombre de runs CAE productifs = '.$this->totalN.'</div>';
+        $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->format($this->totalM, "float").'</div>';
+        $title .= '<div class="subtotal">Nombre de runs CAE productifs = '.$this->format($this->totalN, "int").'</div>';
         echo $this->templateDisplay($title);
     }
 }

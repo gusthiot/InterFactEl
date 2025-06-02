@@ -14,6 +14,7 @@ class ReportConsommables extends Report
                 "columns" => ["item-name", "item-labelcode", "item-unit"],
                 "dimensions" => array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM),
                 "operations" => ["transac-quantity"],
+                "formats" => ["int"],
                 "results" => []
             ]
         ];
@@ -53,7 +54,7 @@ class ReportConsommables extends Report
                 $consosArray[] = [$ids[0], $sciper, $ids[2], $q];
             }
         }
-        elseif($this->factel > 6 && $this->factel < 10) {
+        elseif($this->factel >= 7 && $this->factel < 10) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {

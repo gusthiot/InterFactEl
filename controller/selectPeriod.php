@@ -14,6 +14,9 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
         case "penalites":
             $vMin = 7.0;
             break;
+        case "services":
+            $vMin = 11.0;
+            break;
         default:
             $vMin = 1.0;
     }
@@ -51,5 +54,8 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
                     </div>
                 </div>';
         echo $html;
+    }
+    else {
+        echo "Pas de données dans la période autorisée";
     }
 }

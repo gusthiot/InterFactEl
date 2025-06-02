@@ -220,7 +220,7 @@ abstract class Report
                     $data["item-labelcode"] = $articlesTemp[$line["item-codeD"]]["item-labelcode"];
                 }
                 else {
-                    if($this->factel == 8 || $this->factel == 9) {
+                    if($this->factel >= 8 && $this->factel < 10) {
                         $idSap = $idSaps[$line["item-idsap"]];
                     }
                     else {
@@ -469,7 +469,21 @@ abstract class Report
                 <div class="tab-content p-3">'.$this->generateTablesAndCsv().'</div>';
         echo $html;
     }
-    
+
+    function Format($val, $format="fin")
+    {
+        switch($format) {
+            case "int": 
+                return number_format(intval($val), 0, ".", "'");
+                break;
+            case "fin":
+                return number_format(floatval($val), 2, ".", "'");
+                break;
+            default:
+                return number_format(floatval($val), 3, ".", "'");
+        }
+    }
+
     function generateTablesAndCsv() 
     {
         $html = "";
@@ -502,8 +516,8 @@ abstract class Report
                         foreach($data["columns"] as $name) {
                             $html .= "<td>".$line[$name]."</td>";
                         }
-                        foreach($data["operations"] as $operation) {
-                            $html .= "<td class='right'>".number_format(floatval($line[$operation]), 2, ".", "'")."</td>";
+                        foreach($data["operations"] as $pos=>$operation) {
+                            $html .= "<td class='right'>".$this->format($line[$operation], $data["formats"][$pos])."</td>";
                         }
                         $html .= "</tr>";
                         $csv .= "\n".$this->csvLine($data["dimensions"], $data["operations"], $line, $withMonths);

@@ -7,13 +7,14 @@ class ReportServices extends Report
     { 
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'statsrv';
-        $this->reportColumns = ["client-code", "user-sciper", "item-id", "transac-usage"];
+        $this->reportColumns = ["client-code", "client-class", "item-text2K", "oper-note", "item-grp", "item-codeK", "transac-quantity", "transac-usage"];
         $this->tabs = [
-            "consos" => [
+            "services" => [
                 "title" => "Stats par Services",
                 "columns" => ["item-text2K", "oper-note", "item-textK", "item-name", "item-unit"],
                 "dimensions" => array_merge($this::SERVICE_DIM, $this::CODEK_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM),
                 "operations" => ["transac-quantity", "transac-usage"],
+                "formats" => ["float", "float"],
                 "results" => []
             ]
         ];
@@ -21,103 +22,78 @@ class ReportServices extends Report
     }
 
     function prepare() {
-        $this->preparePrestations();
-        $this->prepareUsers();
+        $this->prepareGroupes();
+        $this->prepareCategories();
 
         $this->processReportFile();
     }
 
     function generate()
     {
-        $consosArray = [];
+        $servicesArray = [];
         $loopArray = [];
-        if($this->factel < 7) {
-            $columns = $this->bilansStats[$this->factel]['lvr']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('lvr'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $itemId = $tab[$columns["item-id"]];
-                $plateId = $this->prestations[$itemId]["platf-code"];
-                if($plateId == $this->plateforme) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = 0;
-                    }
-                    $loopArray[$id] += $tab[$columns["transac-usage"]];
+        $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+        $lines = Csv::extract($this->getFileNameInBS('T3'));
+        for($i=1;$i<count($lines);$i++) {
+            $tab = explode(";", $lines[$i]);
+            if(($this->year == $tab[$columns["editing-year"]]) && ($this->month == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "srv")) {
+                $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["item-text2K"]]."--".$tab[$columns["oper-note"]]."--".$tab[$columns["item-grp"]]."--".$tab[$columns["item-codeK"]];
+                if(!array_key_exists($id, $loopArray)) {
+                    $loopArray[$id] = ['Smu' => 0, 'Q' => 0];
                 }
-            }
-            foreach($loopArray as $id=>$q) {
-                $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                $consosArray[] = [$ids[0], $sciper, $ids[2], $q];
+                $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
+                $loopArray[$id]['Q'] += $tab[$columns["transac-quantity"]];
             }
         }
-        elseif($this->factel > 6 && $this->factel < 10) {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr")) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = 0;
-                    }
-                    $loopArray[$id] += $tab[$columns["transac-usage"]];
-                }
-            }
-            foreach($loopArray as $id=>$q) {
-                $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                $consosArray[] = [$ids[0], $sciper, $ids[2], $q];
-            }
-        }
-        else {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($this->year == $tab[$columns["editing-year"]]) && ($this->month == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "lvr")) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = ['Smu' => 0, 'Q' => 0];
-                    }
-                    $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
-                    $loopArray[$id]['Q'] += $tab[$columns["transac-quantity"]];
-                }
-            }
-            foreach($loopArray as $id=>$line) {
-                $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                intval($this->year.$this->month) > 202408 ? $q = line['Smu'] : $q = $line['Q']; 
-                $consosArray[] = [$ids[0], $sciper, $ids[2], $q];
-            }
+        foreach($loopArray as $id=>$line) {
+            $ids = explode("--", $id);
+            $servicesArray[] = [$ids[0], $ids[1], $ids[2], $ids[3], $ids[4], $ids[5], $line["Q"], $line["Smu"]];
         }
 
-        for($i=0;$i<count($consosArray);$i++) {
-            $consosArray[$i][3] = round($consosArray[$i][3],3);
+        for($i=0;$i<count($servicesArray);$i++) {
+            $servicesArray[$i][6] = round($servicesArray[$i][6],3);
+            $servicesArray[$i][7] = round($servicesArray[$i][7],3);
         }
-        return $consosArray;
+        return $servicesArray;
     }
 
 
-    function mapping($consosArray)
-    {
-        foreach($consosArray as $line) {
-            $prestation = $this->prestations[$line[2]];
-            if(!array_key_exists($line[2], $this->tabs["consos"]["results"])) {
-                $this->tabs["consos"]["results"][$line[2]] = [];
-                foreach($this->tabs["consos"]["dimensions"] as $dimension) {
-                    $this->tabs["consos"]["results"][$line[2]][$dimension] = $prestation[$dimension];
+    function mapping($servicesArray)
+    {   
+        foreach($servicesArray as $line) {
+            $groupe = $this->groupes[$line[4]];
+            $categorie = $this->categories[$line[5]];
+            $codeK = ["item-codeK"=>$line[5], "item-textK"=>$this->paramtext->getParam("item-".$line[5])];
+            $service = ["item-text2K"=>$line[2], "oper-note"=>$line[3]];
+            $values = [
+                "transac-quantity"=>$line[6],
+                "transac-usage"=>$line[7]
+            ];
+            $ids = [
+                "services"=>$line[2]."-".$line[3]."-".$line[5]."-".$line[4]
+            ];
+            $extends = [
+                "services"=>[$service, $codeK, $groupe, $categorie]
+            ];
+            $dimensions = [
+                "services"=>[$this::SERVICE_DIM, $this::CODEK_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM]
+            ];
+
+            foreach($this->tabs as $tab=>$data) {
+                if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
+                    $this->tabs[$tab]["results"][$ids[$tab]] = [];
+                    foreach($dimensions[$tab] as $pos=>$dimension) {
+                        foreach($dimension as $d) {
+                            $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
+                        }
+                    }
+                    foreach($this->tabs[$tab]["operations"] as $operation) {
+                        $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
+                    }
                 }
-                foreach($this->tabs["consos"]["operations"] as $operation) {
-                    $this->tabs["consos"]["results"][$line[2]][$operation] = 0;
+                foreach($values as $operation=>$value) {
+                    $this->tabs[$tab]["results"][$ids[$tab]][$operation] = $value;
                 }
-            }
-            foreach($this->tabs["consos"]["operations"] as $operation) {
-                $this->tabs["consos"]["results"][$line[2]][$operation] += $line[3];
             }
         }
     }

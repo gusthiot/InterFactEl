@@ -12,6 +12,7 @@ class ReportConsommations extends Report
                 "columns" => ["item-nbr", "item-name"],
                 "dimensions" => array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM),
                 "operations" => ["conso-propre-march-expl", "conso-propre-extra-expl", "conso-propre-march-proj", "conso-propre-extra-proj"],
+                "formats" => ["fin", "fin", "fin", "fin"],
                 "results" => []
             ]
         ];
@@ -47,7 +48,7 @@ class ReportConsommations extends Report
 
     function display()
     {
-        $title = '<div class="total">Total des consommations propres sur la période '.$this->period().' : '.number_format(floatval($this->total), 2, ".", "'").' CHF</div>';
+        $title = '<div class="total">Total des consommations propres sur la période '.$this->period().' : '.$this->format($this->total, "fin").' CHF</div>';
         echo $this->templateDisplay($title);
     }
 

@@ -19,6 +19,7 @@ class ReportRabais extends Report
                 "columns" => ["client-name"],
                 "dimensions" => $this::CLIENT_DIM,
                 "operations" => ["discount-bonus", "subsid-bonus", "total-subsid"],
+                "formats" => ["fin", "fin", "fin"],
                 "results" => []
             ], 
             "subsid" => [
@@ -26,6 +27,7 @@ class ReportRabais extends Report
                 "columns" => ["client-name"],
                 "dimensions" => $this::CLIENT_DIM,
                 "operations" => ["deduct-CHF", "subsid-deduct", "discount-bonus", "subsid-bonus", "total-subsid"],
+                "formats" => ["fin", "fin", "fin", "fin", "fin"],
                 "results" => []
             ]
         ];
@@ -188,7 +190,7 @@ class ReportRabais extends Report
     function display()
     {
         $this->createTotalCsv("total-subsid");
-        $title = '<div class="total">Total rabais et subsides sur la période '.$this->period().' : '.number_format(floatval($this->total), 2, ".", "'").' CHF</div>';
+        $title = '<div class="total">Total rabais et subsides sur la période '.$this->period().' : '.$this->format($this->total, "fin").' CHF</div>';
         $title .= $this->totalCsvLink("total-subsides");
         echo $this->templateDisplay($title);
     }

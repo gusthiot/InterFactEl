@@ -19,6 +19,7 @@ class ReportMontants extends Report
                 "columns" => ["client-name"],
                 "dimensions" => $this::CLIENT_DIM,
                 "operations" => ["total-fact"],
+                "formats" => ["fin"],
                 "results" => []
             ], 
             "par-classe" => [
@@ -26,6 +27,7 @@ class ReportMontants extends Report
                 "columns" => ["client-labelclass"],
                 "dimensions" => $this::CLASSE_DIM,
                 "operations" => ["total-fact"],
+                "formats" => ["fin"],
                 "results" => []
 
             ], 
@@ -34,6 +36,7 @@ class ReportMontants extends Report
                 "columns" => ["item-labelcode"],
                 "dimensions" => ["item-codeD", "item-labelcode"],
                 "operations" => ["total-fact"],
+                "formats" => ["fin"],
                 "results" => []
 
             ], 
@@ -42,6 +45,7 @@ class ReportMontants extends Report
                 "columns" => ["client-name", "client-labelclass"],
                 "dimensions" => array_merge($this::CLIENT_DIM, $this::CLASSE_DIM),
                 "operations" => ["total-fact"],
+                "formats" => ["fin"],
                 "results" => []
                 
             ], 
@@ -50,6 +54,7 @@ class ReportMontants extends Report
                 "columns" => ["client-name", "item-labelcode"],
                 "dimensions" => array_merge($this::CLIENT_DIM, ["item-codeD", "item-labelcode"]),
                 "operations" => ["total-fact"],
+                "formats" => ["fin"],
                 "results" => []
 
             ], 
@@ -58,6 +63,7 @@ class ReportMontants extends Report
                 "columns" => ["item-labelcode", "client-labelclass"],
                 "dimensions" => array_merge(["item-codeD", "item-labelcode"], $this::CLASSE_DIM),
                 "operations" => ["total-fact"],
+                "formats" => ["fin"],
                 "results" => []
 
             ]
@@ -259,7 +265,7 @@ class ReportMontants extends Report
     function display()
     {
         $this->createTotalCsv("total-fact");
-        $title = '<div class="total">Total facturé sur la période '.$this->period().' : '.number_format(floatval($this->total), 2, ".", "'").' CHF</div>';
+        $title = '<div class="total">Total facturé sur la période '.$this->period().' : '.$this->format($this->total, "fin").' CHF</div>';
         $title .= $this->totalCsvLink("total-montants");
         echo $this->templateDisplay($title);
     }

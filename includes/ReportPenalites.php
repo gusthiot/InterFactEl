@@ -18,6 +18,7 @@ class ReportPenalites extends Report
                 "columns" => ["mach-name"],
                 "dimensions" => $this::MACHINE_DIM,
                 "operations" => ["transac-quantity"],
+                "formats" => ["float"],
                 "results" => []
             ],
             "par-client" => [
@@ -25,6 +26,7 @@ class ReportPenalites extends Report
                 "columns" => ["client-name"],
                 "dimensions" => $this::CLIENT_DIM,
                 "operations" => ["transac-quantity"],
+                "formats" => ["float"],
                 "results" => []
             ],
             "par-user" => [
@@ -32,6 +34,7 @@ class ReportPenalites extends Report
                 "columns" => ["user-sciper", "user-name", "user-first"],
                 "dimensions" => $this::USER_DIM,
                 "operations" => ["transac-quantity"],
+                "formats" => ["float"],
                 "results" => []
             ],
             "par-client-user" => [
@@ -39,6 +42,7 @@ class ReportPenalites extends Report
                 "columns" => ["client-name", "user-sciper", "user-name", "user-first"],
                 "dimensions" => array_merge($this::CLIENT_DIM, $this::USER_DIM),
                 "operations" => ["transac-quantity"],
+                "formats" => ["float"],
                 "results" => []
             ],
             "par-machine-user" => [
@@ -46,6 +50,7 @@ class ReportPenalites extends Report
                 "columns" => ["mach-name", "item-textK", "user-sciper", "user-name", "user-first"],
                 "dimensions" => array_merge($this::MACHINE_DIM, $this::CODEK_DIM, $this::USER_DIM),
                 "operations" => ["transac-quantity"],
+                "formats" => ["float"],
                 "results" => []
             ]
         ];
@@ -84,7 +89,7 @@ class ReportPenalites extends Report
                     $loopArray[$id] += $tab[$columns["transac-quantity"]];
                 }
             }
-            elseif($this->factel > 7 && $this->factel < 10) {
+            elseif($this->factel >= 8 && $this->factel < 10) {
                 if(($tab[$columns["platf-code"]] == $this->plateforme) && ($tab[$columns["flow-type"]] == "noshow") && ($tab[$columns["platf-code"]] != $tab[$columns["client-code"]])) {
                     $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
                     if(!array_key_exists($id, $loopArray)) {
@@ -177,8 +182,8 @@ class ReportPenalites extends Report
     function display()
     {
         $title = '<div class="total">Statistiques pénalités : '.$this->period().' </div>';
-        $title .= '<div class="subtotal">Nombre d’heures de pénalités en heures pleines = '.$this->total5.'</div>';
-        $title .= '<div class="subtotal">Nombre d’heures de pénalités en heures creuses = '.$this->total6.'</div>';
+        $title .= '<div class="subtotal">Nombre d’heures de pénalités en heures pleines = '.$this->format($this->total5, "float").'</div>';
+        $title .= '<div class="subtotal">Nombre d’heures de pénalités en heures creuses = '.$this->format($this->total6, "float").'</div>';
         echo $this->templateDisplay($title);
     }
 
