@@ -146,8 +146,8 @@ class ReportRuns extends Report
 
     function display() 
     {
+        $doTotal = true;
         foreach($this->tabs as $tab=>$data) {
-            $doTotal = true;
             foreach($data["results"] as $key=>$cells) {
                 $avg = $this->periodAverage($cells["runtime-N"], $cells["runtime-avg"]);
                 $stddev = $this->periodStdDev($cells["runtime-N"], $cells["runtime-avg"], $cells["runtime-stddev"], $avg);
