@@ -17,7 +17,7 @@ class ReportUsages extends Report
                 "title" => "Stats par Machine",
                 "columns" => ["mach-name"],
                 "dimensions" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, ["item-nbr", "item-name"]),
-                "operations" => ["stat-hmach", "stat-run", "stat-nbuser", "stat-nbclient"],
+                "operations" => ["stat-hmach", "stat-nbuser", "stat-nbclient", "stat-run"],
                 "formats" => ["float", "int", "int", "int"],
                 "results" => []
 
@@ -117,15 +117,9 @@ class ReportUsages extends Report
                 $classe = $this->clientsClasses[$ids[0]]['client-class'];
                 $sciper = 0;
                 $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                if($line['Smu1'] > 0 && $line['Snr1'] > 0) {
-                    $usagesArray[] = [$ids[0], $classe, $sciper, 'K1', $ids[2], $line['Smu1'], $line['Snr1']];
-                }                
-                if($line['Smu2'] > 0) {
-                    $usagesArray[] = [$ids[0], $classe, $sciper, 'K2', $ids[2], $line['Smu2'], 0];
-                }
-                if($line['Snr3'] > 0) {
-                    $usagesArray[] = [$ids[0], $classe, $sciper, 'K3', $ids[2], $line['Snr3'], 0];
-                } 
+                $usagesArray[] = [$ids[0], $classe, $sciper, 'K1', $ids[2], $line['Smu1'], $line['Snr1']];
+                $usagesArray[] = [$ids[0], $classe, $sciper, 'K2', $ids[2], $line['Smu2'], 0];
+                $usagesArray[] = [$ids[0], $classe, $sciper, 'K3', $ids[2], $line['Snr3'], 0];
             }
         }
         elseif($this->factel == 7) {
@@ -165,9 +159,7 @@ class ReportUsages extends Report
             foreach($loopArray as $id=>$line) {
                 $ids = explode("--", $id);
                 $sciper = $this->users[$ids[2]]['user-sciper'];
-                if($line['Smu'] > 0 && $line['Snr'] > 0) {
-                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $line['Snr']];
-                }
+                $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $line['Snr']];
             }
         }
         elseif($this->factel >= 8 && $this->factel < 10) {
@@ -197,9 +189,7 @@ class ReportUsages extends Report
                 $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
                 $sciper = $this->users[$ids[2]]['user-sciper'];
-                if($line['Smu'] > 0) {
-                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $nr];
-                }
+                $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $nr];
             }
         }
         else {
@@ -229,9 +219,7 @@ class ReportUsages extends Report
                 $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
                 $sciper = $this->users[$ids[2]]['user-sciper'];
-                if($line['Smu'] > 0) {
-                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $nr];
-                }
+                $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $nr];
             }
         }
 
@@ -294,6 +282,10 @@ class ReportUsages extends Report
 
             foreach($this->tabs as $tab=>$data) {
                 if(in_array($tab, ["use-machine", "use-categorie"]) || $line[3] == "K1") {
+                    if($tab == "par-machine" && $line[3] == "K1") {
+                        $this->totalM += $values["transac-usage"];
+                        $this->totalN += $values["transac-runcae"];
+                    }
                     if($tab == "par-machine" && $this->plateforme == $line[0]) {
                         continue;
                     }
@@ -333,10 +325,6 @@ class ReportUsages extends Report
                         $this->tabs[$tab]["results"][$ids[$tab]]["stat-hmach"] += $values["transac-usage"];
                         $this->tabs[$tab]["results"][$ids[$tab]]["stat-run"] += $values["transac-runcae"];
                         $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-runcae"];
-                    }
-                    if($line[3] == "K1") {
-                        $this->totalM += $values["transac-usage"];
-                        $this->totalN += $values["transac-runcae"];
                     }
                     if($tab == "par-machine") {
                         if($line[2] != 0 && !in_array($line[2], $this->tabs[$tab]["results"][$ids[$tab]]["users"])) {
