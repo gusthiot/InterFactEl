@@ -16,7 +16,7 @@ error_reporting(ERROR_REPORTING);
 /**
  * Managing Tequila session
  */
-
+/*
 session_start();
 $oClient = new TequilaClient(TEQUILA_URL, TEQUILA_TIMEOUT, APP_NAME, APP_URL, TEQUILA_LANGUAGE);
 if(DEV_MODE) {
@@ -26,10 +26,10 @@ else {
     $oClient->authenticate(TEQUILA_REQUEST, TEQUILA_ALLOWS, TEQUILA_REQUIRED);
     define( 'USER', $_SESSION[SESSION_USER] );
 }
-
+*/
 
 // Authentication Entra
-/*
+
 session_start(); 
 if(DEV_MODE) {
     define( 'USER', DEV_MODE );
@@ -41,8 +41,9 @@ else {
         exit();
     }
     define( 'USER', $_SESSION["user"]->name );
+    var_dump($_SESSION['user']);
 }
-*/
+
 
 /*
 // init user details
