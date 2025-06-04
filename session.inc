@@ -39,7 +39,7 @@ else {
         header("Location: ".WEBSITE_URL."entra/entra.php");
         exit();
     }
-    define( 'USER', $_SESSION["user"]->name );
+    define( 'USER', $_SESSION["claims"]->gaspar );
 }
 /*
 // init user details
