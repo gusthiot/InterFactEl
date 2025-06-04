@@ -2,10 +2,9 @@
 
 require_once("session.inc");
 
-if(DEV_MODE) {
-    header('Location: index.php');
+if(!DEV_MODE) {
+    $_SESSION = array();
+    session_destroy();
 }
-else {
-    $oClient->logout();
-}
+header('Location: index.php');
 
