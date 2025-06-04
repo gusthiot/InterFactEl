@@ -40,8 +40,7 @@ else {
         header("Location: https://cmifact.epfl.ch/entra/entra.php");
         exit();
     }
-    define( 'USER', $_SESSION["user"]->name );
-    var_dump($_SESSION['user']);
+    define( 'USER', $_SESSION["claims"]->gaspar );
 }
 
 
