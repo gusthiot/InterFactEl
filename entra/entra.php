@@ -12,7 +12,7 @@ $dotenv->load();
 session_start();
 // Init Entra client
 $oidc = new OpenIDConnectClient($_ENV['AUTH_URL'], $_ENV['CLIENT_ID'], $_ENV['CLIENT_SECRET']);
-$oidc->setRedirectURL(WEBSITE_URL.$_ENV['OIDC_REDIRECT_FILE']);
+$oidc->setRedirectURL($_ENV['OIDC_REDIRECT_FILE']);
 $oidc->setResponseTypes(['code']);
 $oidc->authenticate();
 

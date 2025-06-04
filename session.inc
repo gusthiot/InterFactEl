@@ -37,7 +37,7 @@ if(DEV_MODE) {
 else {
     if (!isset($_SESSION['user']))
     {
-        header("Location: ".WEBSITE_URL."entra/entra.php");
+        header("Location: https://cmifact.epfl.ch/entra/entra.php");
         exit();
     }
     define( 'USER', $_SESSION["user"]->name );
