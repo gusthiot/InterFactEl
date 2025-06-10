@@ -3,7 +3,6 @@
 require_once("config.inc");
 require_once("assets/Superviseur.php");
 require_once("assets/Gestionnaire.php");
-require_once("includes/Tequila.php");
 
 /**
  * Managing error reporting
@@ -12,21 +11,6 @@ ini_set('display_errors', DISPLAY_ERRORS);
 error_reporting(ERROR_REPORTING);
 
 
-
-/**
- * Managing Tequila session
- */
-/*
-session_start();
-$oClient = new TequilaClient(TEQUILA_URL, TEQUILA_TIMEOUT, APP_NAME, APP_URL, TEQUILA_LANGUAGE);
-if(DEV_MODE) {
-    define( 'USER', DEV_MODE );
-}
-else {
-    $oClient->authenticate(TEQUILA_REQUEST, TEQUILA_ALLOWS, TEQUILA_REQUIRED);
-    define( 'USER', $_SESSION[SESSION_USER] );
-}
-*/
 // Authentication Entra
 
 session_start(); 
@@ -36,27 +20,11 @@ if(DEV_MODE) {
 else {
     if (!isset($_SESSION['user']))
     {
-        header("Location: ".WEBSITE_URL."entra/entra.php");
+        header("Location: https://cmifact.epfl.ch/entra/entra.php");
         exit();
     }
     define( 'USER', $_SESSION["claims"]->gaspar );
 }
-/*
-// init user details
-define('USER_EMAIL', $_SESSION["user"]->email);
-define('USER_SCIPER', $_SESSION["claims"]->uniqueid);
-define('USER_FULL_NAME',  $_SESSION["user"]->name);
-// We'll recreate the string with group names separated by commas and remove "_AppGrpU" suffix for each group (because Entra will return AD Groups corresponding to https://groups.epfl.ch groups, and they doesn't have the same name)
-$group_list = array();
-foreach ($_SESSION["claims"]->groups as $ad_group_name)
-{
-   $group_list[] = str_replace("_AppGrpU", "", $ad_group_name);
-}
-define('USER_GROUPS', implode(",", $group_list));
-*/
-
-
-
 
 
 /**
