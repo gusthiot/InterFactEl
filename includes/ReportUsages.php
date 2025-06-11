@@ -286,9 +286,6 @@ class ReportUsages extends Report
                         $this->totalM += $values["transac-usage"];
                         $this->totalN += $values["transac-runcae"];
                     }
-                    if($tab == "par-machine" && $this->plateforme == $line[0]) {
-                        continue;
-                    }
                     if($tab == "par-user" && $line[2] == 0) {
                         continue;
                     }
@@ -326,7 +323,7 @@ class ReportUsages extends Report
                         $this->tabs[$tab]["results"][$ids[$tab]]["stat-run"] += $values["transac-runcae"];
                         $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-runcae"];
                     }
-                    if($tab == "par-machine") {
+                    if($tab == "par-machine" && $this->plateforme != $line[0]) {
                         if($line[2] != 0 && !in_array($line[2], $this->tabs[$tab]["results"][$ids[$tab]]["users"])) {
                             $this->tabs[$tab]["results"][$ids[$tab]]["users"][] = $line[2];
                         }
