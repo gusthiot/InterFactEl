@@ -62,8 +62,7 @@ abstract class Report
         $this->plateforme = $plateforme;
         $this->to = $to;
         $this->from = $from;
-        $state = new State(DATA.$plateforme);
-        $this->paramtext = new ParamRun($state->getLastPath()."/IN/", 'text');
+        $this->paramtext = new ParamText();
 
         $this->clients = [];
         $this->classes = [];

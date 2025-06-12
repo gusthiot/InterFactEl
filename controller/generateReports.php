@@ -3,8 +3,7 @@
 require_once("../assets/Csv.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Info.php");
-require_once("../assets/ParamRun.php");
-require_once("../includes/State.php");
+require_once("../assets/ParamText.php");
 require_once("../includes/Report.php");
 require_once("../includes/ReportMontants.php");
 require_once("../includes/ReportRabais.php");

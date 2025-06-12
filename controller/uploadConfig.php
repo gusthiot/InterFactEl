@@ -1,6 +1,9 @@
 <?php
 require_once("../includes/Config.php");
 require_once("../includes/Zip.php");
+require_once("../includes/State.php");
+require_once("../assets/Message.php");
+require_once("../assets/ParamText.php");
 require_once("../session.inc");
 
 /**
@@ -14,7 +17,7 @@ if(IS_SUPER) {
             if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
                 $tmpFile = TEMP.time().'_'.$fileName;
                 if(copy($source, $tmpFile)) {
-                    $msg = Config::upload($tmpFile, CONFIG);
+                    $msg = Config::upload($tmpFile);
                     unlink($tmpFile);
                     if(empty($msg)) {
                         $_SESSION['alert-success'] = "Fichiers correctement mis à jour !";

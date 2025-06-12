@@ -2,7 +2,9 @@
 
 require_once("../assets/ParamZip.php");
 require_once("../assets/Logfile.php");
-require_once("../assets/ParamRun.php");
+require_once("../assets/Result.php");
+require_once("../assets/ParamEdit.php");
+require_once("../assets/ParamText.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Message.php");
 require_once("../assets/Sap.php");
@@ -69,9 +71,9 @@ if(isset($_POST['type'])) {
                             else { 
                                 $messages = new Message();                 
                                 if($type == "FIRST") {
-                                    // if you need tu upload all data, we need ton check consistancy
-                                    $result = new ParamRun($tmpDir, 'result');
-                                    $paramedit = new ParamRun($tmpDir, 'edit');
+                                    // if you need to upload all data, we need ton check consistancy
+                                    $result = new Result($tmpDir);
+                                    $paramedit = new ParamEdit($tmpDir);
                                     if($plateforme !== $paramedit->getParam('Platform')) {
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
                                     }
@@ -83,8 +85,8 @@ if(isset($_POST['type'])) {
                                     }
                                 }
                                 elseif($type == "SIMU") {
-                                    $result = new ParamRun($tmpDir, 'result');
-                                    $paramedit = new ParamRun($tmpDir, 'edit');
+                                    $result = new Result($tmpDir);
+                                    $paramedit = new ParamEdit($tmpDir);
                                     if($paramedit->getParam('Type') !== "SIMU") {
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
                                     }
@@ -100,18 +102,19 @@ if(isset($_POST['type'])) {
                                     // with previous internal data, consistancy should be guaranteed
                                     $state = new State(DATA.$plateforme);
                                     $dirOut = $state->getLastPath()."/OUT/";
-                                        
+                                    if(!copy(CONFIG.Paramtext::NAME, $tmpDir.Paramtext::NAME)) {
+                                        $msg .= "erreur de copie de ".Paramtext::NAME;
+                                    }
                                     foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
                                         if(!copy($dirOut.$file, $tmpDir.$file)) {
-                                            $msg = "erreur de copie ".$dirOut.$file." vers ".$tmpDir.$file;
+                                            $msg .= "erreur de copie de ".$file;
                                             break;
                                         }
                                     }
-
                                     $wm = "";
                                     $tyfact = "SAP";
                                     if($type == "PROFORMA") {
-                                        $paramtext = new ParamRun($dirOut, 'text');
+                                        $paramtext = new ParamText();
                                         $wm = $paramtext->getParam('filigr-prof');
                                         $tyfact = "PROFORMA";
                                     }
@@ -124,12 +127,13 @@ if(isset($_POST['type'])) {
                                         $month = $state->getNextMonth();
                                     }
                                     $array = [["Platform", $plateforme], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
-                                    ParamRun::write($tmpDir."/".ParamRun::NAMES['edit'], $array);
-                                    $paramedit = new ParamRun($tmpDir, 'edit');
+                                    ParamEdit::write($tmpDir."/".ParamEdit::NAME, $array);
+                                    $paramedit = new ParamEdit($tmpDir);
+                                    $paramedit = new ParamEdit($tmpDir);
 
                                     $paramFile = DATA.$plateforme."/".$year."/".$month."/".ParamZip::NAME;
                                     if(file_exists($paramFile)) {
-                                        $msg = Zip::unzip($paramFile, $tmpDir);
+                                        $msg .= Zip::unzip($paramFile, $tmpDir);
                                     }
                                 }
                                 if(empty($msg)) {
@@ -194,13 +198,13 @@ else {
  *
  * @param string $tmpDir directory were to temporary find the files needed for the prefacturation
  * @param string $path path to plateform directory
- * @param Paramrun $paramedit edition parameters data
+ * @param ParamEdit $paramedit edition parameters data
  * @param string $plateforme plateform number
  * @param string $unique run unique name
  * @param Message $messages config messages data
  * @return void
  */
-function runPrefa(string $tmpDir, string $path, Paramrun $paramedit, string $plateforme, string $unique, Message $messages): void 
+function runPrefa(string $tmpDir, string $path, ParamEdit $paramedit, string $plateforme, string $unique, Message $messages): void 
 {
     $month = $paramedit->getParam('Month');
     $year = $paramedit->getParam('Year');
