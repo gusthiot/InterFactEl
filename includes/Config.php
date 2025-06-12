@@ -69,6 +69,11 @@ class Config
                     $msg .= "le label ".$label." est manquant dans ".$file;
                 }
             }
+            foreach($keys as $key) {
+                if(!in_array($key, $labels)) {
+                    $msg .= "le label ".$key." n'a rien a faire dans ".$file;
+                }
+            }
             
         }
 

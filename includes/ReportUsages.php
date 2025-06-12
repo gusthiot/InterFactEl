@@ -17,8 +17,8 @@ class ReportUsages extends Report
                 "title" => "Stats par Machine",
                 "columns" => ["mach-name"],
                 "dimensions" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, ["item-nbr", "item-name"]),
-                "operations" => ["stat-hmach", "stat-nbuser", "stat-nbclient", "stat-run"],
-                "formats" => ["float", "int", "int", "int"],
+                "operations" => ["stat-hmach", "stat-hoper", "stat-run-user", "stat-nbuser", "stat-nbclient", "stat-run"],
+                "formats" => ["float", "float", "int", "int", "int", "int"],
                 "results" => []
 
             ], 
@@ -281,7 +281,7 @@ class ReportUsages extends Report
             ];
 
             foreach($this->tabs as $tab=>$data) {
-                if(in_array($tab, ["use-machine", "use-categorie"]) || $line[3] == "K1") {
+                if(in_array($tab, ["use-machine", "use-categorie"]) || $line[3] == "K1" || ($tab == "par-machine" && ($line[3] == "K2" || $line[3] == "K3"))) {
                     if($tab == "par-machine" && $line[3] == "K1") {
                         $this->totalM += $values["transac-usage"];
                         $this->totalN += $values["transac-runcae"];
@@ -293,7 +293,7 @@ class ReportUsages extends Report
                         $this->tabs[$tab]["results"][$ids[$tab]] = []; 
                         if(!in_array($tab, ["use-machine", "use-categorie"])) {  
                             $this->tabs[$tab]["results"][$ids[$tab]]["mois"] = []; 
-                        }         
+                        }
                         foreach($dimensions[$tab] as $pos=>$dimension) {
                             foreach($dimension as $d) {
                                 if($extends[$tab][$pos] != "") {
@@ -319,9 +319,18 @@ class ReportUsages extends Report
                         $this->tabs[$tab]["results"][$ids[$tab]]["transac-usage"] += $values["transac-usage"];
                     }
                     else {
-                        $this->tabs[$tab]["results"][$ids[$tab]]["stat-hmach"] += $values["transac-usage"];
-                        $this->tabs[$tab]["results"][$ids[$tab]]["stat-run"] += $values["transac-runcae"];
-                        $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-runcae"];
+                        if($line[3] == "K1") {
+                            $this->tabs[$tab]["results"][$ids[$tab]]["stat-hmach"] += $values["transac-usage"];
+                            $this->tabs[$tab]["results"][$ids[$tab]]["stat-run"] += $values["transac-runcae"];
+                            $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-runcae"];
+                        }
+                        if($line[3] == "K2" && $tab == "par-machine") {
+                            $this->tabs[$tab]["results"][$ids[$tab]]["stat-hoper"] += $values["transac-usage"];
+
+                        }
+                        if($line[3] == "K3" && $tab == "par-machine") {
+                            $this->tabs[$tab]["results"][$ids[$tab]]["stat-run-user"] += $values["transac-usage"];
+                        }
                     }
                     if($tab == "par-machine" && $this->plateforme != $line[0]) {
                         if($line[2] != 0 && !in_array($line[2], $this->tabs[$tab]["results"][$ids[$tab]]["users"])) {
