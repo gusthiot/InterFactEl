@@ -65,7 +65,7 @@ class ReportUsages extends Report
             "use-categorie"=>[
                 "title" => "Utilisation par Catégorie",
                 "columns" => ["item-nbr", "item-name", "item-unit", "item-textK"],
-                "dimensions" => array_merge($this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM),
+                "dimensions" => array_merge([$this::CATEGORIE_KEY], $this::CATEGORIE_DIM, $this::CODEK_DIM),
                 "operations" => ["transac-usage"],
                 "formats" => ["float", "int"],
                 "results" => []
@@ -248,6 +248,7 @@ class ReportUsages extends Report
             $machine = $this->machines[$line[4]];
             $groupe = $this->groupes[$machine["item-grp"]];
             $categorie = $this->categories[$groupe["item-id-".$line[3]]];
+            $catK1 = $this->categories[$groupe["item-id-K1"]];
             $values = [
                 "transac-usage"=>$line[5], 
                 "transac-runcae"=>$line[6]
@@ -262,13 +263,13 @@ class ReportUsages extends Report
                 "use-categorie"=> $groupe["item-id-".$line[3]]
             ];
             $extends = [
-                "par-machine"=>[$machine, $groupe, $categorie],
+                "par-machine"=>[$machine, $groupe, $catK1],
                 "par-client" => [$client], 
                 "par-user" => [$user], 
                 "par-client-user" => [$client, $user], 
                 "par-client-classe" => [$client, $classe], 
                 "use-machine" => [$machine, $groupe, $categorie, $codeK], 
-                "use-categorie"=>[$groupe, $categorie, $codeK]
+                "use-categorie"=>[["item-id"=>$categorie["item-id"]], $categorie, $codeK]
             ];
             $dimensions = [
                 "par-machine"=>[$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM], 
@@ -277,7 +278,7 @@ class ReportUsages extends Report
                 "par-client-user" => [$this::CLIENT_DIM, $this::USER_DIM], 
                 "par-client-classe" => [$this::CLIENT_DIM, $this::CLASSE_DIM], 
                 "use-machine" => [$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM], 
-                "use-categorie"=>[$this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM]
+                "use-categorie"=>[[$this::CATEGORIE_KEY], $this::CATEGORIE_DIM, $this::CODEK_DIM]
             ];
 
             foreach($this->tabs as $tab=>$data) {
