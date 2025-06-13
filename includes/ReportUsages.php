@@ -247,7 +247,7 @@ class ReportUsages extends Report
             $codeK = ["item-codeK"=>$line[3], "item-textK"=>$this->paramtext->getParam("item-".$line[3])];
             $machine = $this->machines[$line[4]];
             $groupe = $this->groupes[$machine["item-grp"]];
-            $categorie = $this->categories[$groupe["item-id-K1"]];
+            $categorie = $this->categories[$groupe["item-id-".$line[3]]];
             $values = [
                 "transac-usage"=>$line[5], 
                 "transac-runcae"=>$line[6]
@@ -259,7 +259,7 @@ class ReportUsages extends Report
                 "par-client-user" => $line[0]."-".$line[2], 
                 "par-client-classe" => $line[0]."-".$line[1],
                 "use-machine" => $line[4]."-".$line[3],
-                "use-categorie"=> $groupe["item-id-K1"]."-".$line[3]
+                "use-categorie"=> $groupe["item-id-".$line[3]]
             ];
             $extends = [
                 "par-machine"=>[$machine, $groupe, $categorie],
