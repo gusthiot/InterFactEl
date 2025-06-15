@@ -162,6 +162,41 @@ class ReportUsages extends Report
                 $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $line['Snr']];
             }
         }
+        elseif($this->factel == 9) {
+            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            $nrArray = [];
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                $date = explode("-", $datetime[0]);
+                $aa = $date[0];
+                $mm = $date[1];
+
+                if(($aa == $this->year) && ($mm == $this->month) && ($tab[$columns["flow-type"]] == "cae")) {
+                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
+                    if(!array_key_exists($id, $loopArray)) {
+                        $loopArray[$id] = ['Smu' => 0];
+                    }
+                    $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
+                    
+                    $idn = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
+                    if(!array_key_exists($idn, $nrArray)) {
+                        $nrArray[$idn] = 0;
+                    }
+                    if($tab[$columns["transac-runcae"]] > 0) {
+                       $nrArray[$idn] += $tab[$columns["transac-runcae"]];
+                    }
+                }
+            }
+            foreach($loopArray as $id=>$line) {
+                $ids = explode("--", $id);
+                $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
+                $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
+                $sciper = $this->users[$ids[2]]['user-sciper'];
+                $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $nr];
+            }
+        }
         elseif($this->factel >= 8 && $this->factel < 10) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
