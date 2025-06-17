@@ -99,7 +99,7 @@ class ReportPenalites extends Report
                 }
             }
             else {
-                if(($this->year == $tab[$columns["editing-year"]]) && ($this->month == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "noshow") && ($tab[$columns["platf-code"]] != $tab[$columns["client-code"]])) {
+                if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "noshow") && ($tab[$columns["platf-code"]] != $tab[$columns["client-code"]])) {
                     $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;

@@ -233,7 +233,7 @@ class ReportUsages extends Report
             $nrArray = [];
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
-                if(($this->year == $tab[$columns["editing-year"]]) && ($this->month == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae")) {
+                if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae")) {
                     $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu' => 0];

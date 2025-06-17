@@ -79,7 +79,7 @@ class ReportConsommables extends Report
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
-                if(($this->year == $tab[$columns["editing-year"]]) && ($this->month == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "lvr")) {
+                if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "lvr")) {
                     $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu' => 0, 'Q' => 0];

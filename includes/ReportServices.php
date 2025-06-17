@@ -36,7 +36,7 @@ class ReportServices extends Report
         $lines = Csv::extract($this->getFileNameInBS('T3'));
         for($i=1;$i<count($lines);$i++) {
             $tab = explode(";", $lines[$i]);
-            if(($this->year == $tab[$columns["editing-year"]]) && ($this->month == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "srv")) {
+            if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "srv")) {
                 $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["item-text2K"]]."--".$tab[$columns["oper-note"]]."--".$tab[$columns["item-grp"]]."--".$tab[$columns["item-codeK"]];
                 if(!array_key_exists($id, $loopArray)) {
                     $loopArray[$id] = ['Smu' => 0, 'Q' => 0];
