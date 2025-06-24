@@ -69,7 +69,10 @@ if(isset($_POST['type'])) {
                                 $_SESSION['alert-success'] = "Archive correctement chargée";
                             }
                             else { 
-                                $messages = new Message();                 
+                                $messages = new Message();  
+                                if(!copy(CONFIG.ParamText::NAME, $tmpDir.ParamText::NAME)) {
+                                    $msg .= "erreur de copie de ".ParamText::NAME;
+                                }               
                                 if($type == "FIRST") {
                                     // if you need to upload all data, we need ton check consistancy
                                     $result = new Result($tmpDir);
@@ -102,9 +105,6 @@ if(isset($_POST['type'])) {
                                     // with previous internal data, consistancy should be guaranteed
                                     $state = new State(DATA.$plateforme);
                                     $dirOut = $state->getLastPath()."/OUT/";
-                                    if(!copy(CONFIG.Paramtext::NAME, $tmpDir.Paramtext::NAME)) {
-                                        $msg .= "erreur de copie de ".Paramtext::NAME;
-                                    }
                                     foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
                                         if(!copy($dirOut.$file, $tmpDir.$file)) {
                                             $msg .= "erreur de copie de ".$file;
