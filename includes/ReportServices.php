@@ -22,9 +22,10 @@ class ReportServices extends Report
     }
 
     function prepare() {
-        $this->prepareGroupes();
-        $this->prepareCategories();
-
+        $this->loadCategories();
+        $this->loadGroupes();
+        $this->loadMachinesGroupes();
+        
         $this->processReportFile();
     }
 

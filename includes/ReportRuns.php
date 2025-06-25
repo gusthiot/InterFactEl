@@ -4,19 +4,21 @@ class ReportRuns extends Report
 {
     private $totalM;
     private $totalN;
+    private $first;
 
     public function __construct($plateforme, $to, $from) 
     { 
         parent::__construct($plateforme, $to, $from);
         $this->totalM = 0;
         $this->totalN = 0;
+        $this->first = true;
         $this->reportKey = 'statmach';
         $this->reportColumns = ["mach-id", "transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"];
         $this->tabs = [
-            "par-machine" => [
-                "title" => "Stats par Machine",
-                "columns" => ["mach-name"],
-                "dimensions" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM),
+            "par-machine-categorie" => [
+                "title" => "Stats par Machine par Catégorie",
+                "columns" => ["mach-name", "item-nbr", "item-name", "item-unit"],
+                "dimensions" => array_merge($this::MACHINE_DIM, $this::CATEGORIE_DIM),
                 "operations" => ["transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"],
                 "formats" => ["float", "int", "float", "float"],
                 "results" => []
@@ -36,6 +38,12 @@ class ReportRuns extends Report
     function prepare() 
     {
         $this->prepareMachines();
+        if($this->first) {
+            $this->loadCategories();
+            $this->loadGroupes();
+            $this->loadMachinesGroupes();
+            $this->first = false;
+        }
 
         $this->processReportFile();
     }
@@ -104,8 +112,15 @@ class ReportRuns extends Report
     {
         foreach($runsArray as $line) {
             $machine = $this->machines[$line[0]];
-            $groupe = $this->groupes[$machine["item-grp"]];
-            $categorie = $this->categories[$groupe["item-id-K1"]];
+            $itemGrp = $this->machinesGroupes[$line[0]]["item-grp"];
+            $items = ["item-nbr"=>"0", "item-name"=>"0", "item-unit"=>"0"];
+            if($itemGrp != "0") {
+                $itemId = $this->groupes[$itemGrp]["item-id-K1"];
+                if($itemId != "0") {
+                    $categorie = $this->categories[$itemId];
+                    $items = ["item-nbr"=>$categorie["item-nbr"], "item-name"=>$categorie["item-name"], "item-unit"=>$categorie["item-unit"]];
+                }
+            }
             $values = [
                 "transac-runtime"=>$line[1], 
                 "runtime-N"=>$line[2], 
@@ -113,15 +128,15 @@ class ReportRuns extends Report
                 "runtime-stddev"=>$line[4]
             ];
             $ids = [
-                "par-machine"=>$line[0], 
-                "par-categorie"=>$groupe["item-id-K1"]
+                "par-machine-categorie"=>$line[0], 
+                "par-categorie"=>$itemGrp
             ];
             $extends = [
-                "par-machine"=>[$machine, $groupe, $categorie],
-                "par-categorie"=>[$groupe, $categorie]
+                "par-machine-categorie"=>[$machine, $items],
+                "par-categorie"=>[["item-grp"=>$itemGrp], $items]
             ];
             $dimensions = [
-                "par-machine"=>[$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM], 
+                "par-machine-categorie"=>[$this::MACHINE_DIM, $this::CATEGORIE_DIM], 
                 "par-categorie"=>[$this::GROUPE_DIM, $this::CATEGORIE_DIM]
             ];
 

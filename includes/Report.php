@@ -34,6 +34,7 @@ abstract class Report
     protected $articles;
     protected $machines;
     protected $groupes;
+    protected $machinesGroupes;
     protected $categories;
     protected $users;
     protected $prestations;
@@ -69,6 +70,7 @@ abstract class Report
         $this->clientsClasses = [];
         $this->articles = [];
         $this->machines = [];
+        $this->machinesGroupes = [];
         $this->groupes = [];
         $this->categories = [];
         $this->users = [];
@@ -142,54 +144,31 @@ abstract class Report
 
     function prepareMachines() 
     {
-        $this->prepareGroupes();
-        $this->prepareCategories();
-        if($this->factel < 7) {
-            $machgrpsTemp = [];
-            self::mergeInCsv('machgrp', $machgrpsTemp, self::MACHINE_KEY);
-        }
-        $machinesTemp = [];
-        self::mergeInCsv('machine', $machinesTemp, self::MACHINE_KEY);
-        foreach($machinesTemp as $code=>$line) {
-            if(!array_key_exists($code, $this->machines)) {
-                $data = $line;
-                if($this->factel < 7) {
-                    $data["item-grp"] = $machgrpsTemp[$code]["item-grp"];
-                }
-                $itemGrp = $data["item-grp"];
-                $itemId = $this->groupes[$itemGrp]["item-id-K1"];
-                if($itemId == 0) {
-                    continue;
-                }
-                $plateId = $this->categories[$itemId]["platf-code"];
-                if($plateId == $this->plateforme) {
-                    $this->machines[$code] = $data;
-                }
-            }
-        }
+        self::mergeInCsv('machine', $this->machines, self::MACHINE_KEY);
     }
 
-    function prepareGroupes()
+    function loadGroupes()
+    {
+        $this->groupes = [];
+        self::mergeInCsv('groupe', $this->groupes, self::GROUPE_KEY);
+    }
+
+    function loadCategories()
+    {
+        $this->categories = [];
+        self::mergeInCsv('categorie', $this->categories, self::CATEGORIE_KEY);
+    }
+
+    function loadMachinesGroupes()
     {
         if($this->factel < 7) {
-            $groupesTemp = [];
-            self::mergeInCsv('groupe', $groupesTemp, self::GROUPE_KEY);
-            foreach($groupesTemp as $code=>$line) {
-                if(!array_key_exists($code, $this->groupes)) {
-                    $data = $line;
-                    $data["item-id-K7"] = 0;
-                    $this->groupes[$code] = $data;
-                }    
-            }
+            $this->machinesGroupes = [];
+            self::mergeInCsv('machgrp', $this->machinesGroupes, self::MACHINE_KEY);
         }
         else {
-            self::mergeInCsv('groupe', $this->groupes, self::GROUPE_KEY);
+            $this->machinesGroupes = [];
+            self::mergeInCsv('machine', $this->machinesGroupes, self::MACHINE_KEY);
         }
-    }
-
-    function prepareCategories()
-    {
-        self::mergeInCsv('categorie', $this->categories, self::CATEGORIE_KEY);
     }
 
     function preparePrestations()

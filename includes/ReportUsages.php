@@ -11,12 +11,12 @@ class ReportUsages extends Report
         $this->totalM = 0;
         $this->totalN = 0;
         $this->reportKey = 'statcae';
-        $this->reportColumns = ["client-code", "client-class", "user-sciper", "item-codeK", "mach-id", "transac-usage", "transac-runcae"];
+        $this->reportColumns = ["client-code", "client-class", "user-sciper", "item-codeK", "mach-id", "item-nbr", "item-name", "item-unit", "transac-usage", "transac-runcae"];
         $this->tabs = [
             "par-machine" => [
                 "title" => "Stats par Machine",
                 "columns" => ["mach-name"],
-                "dimensions" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, ["item-nbr", "item-name"]),
+                "dimensions" => $this::MACHINE_DIM,
                 "operations" => ["stat-hmach", "stat-hoper", "stat-run-user", "stat-nbuser", "stat-nbclient", "stat-run"],
                 "formats" => ["float", "float", "int", "int", "int", "int"],
                 "results" => []
@@ -54,10 +54,10 @@ class ReportUsages extends Report
                 "formats" => ["float", "int"],
                 "results" => []
             ], 
-            "use-machine"=>[
-                "title" => "Utilisation par machine",
-                "columns" => ["mach-name", "item-nbr", "item-name", "item-unit", "item-textK"],
-                "dimensions" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM),
+            "use-machine-categorie"=>[
+                "title" => "Utilisation par Machine par Catégorie",
+                "columns" => ["mach-name", "item-textK", "item-nbr", "item-name", "item-unit"],
+                "dimensions" => array_merge($this::MACHINE_DIM, $this::CODEK_DIM, $this::CATEGORIE_DIM),
                 "operations" => ["transac-usage"],
                 "formats" => ["float"],
                 "results" => []
@@ -65,7 +65,7 @@ class ReportUsages extends Report
             "use-categorie"=>[
                 "title" => "Utilisation par Catégorie",
                 "columns" => ["item-nbr", "item-name", "item-unit", "item-textK"],
-                "dimensions" => array_merge([$this::CATEGORIE_KEY], $this::CATEGORIE_DIM, $this::CODEK_DIM),
+                "dimensions" => array_merge($this::CATEGORIE_DIM, $this::CODEK_DIM),
                 "operations" => ["transac-usage"],
                 "formats" => ["float", "int"],
                 "results" => []
@@ -80,7 +80,9 @@ class ReportUsages extends Report
         $this->prepareClientsClasses();
         $this->prepareMachines();
         $this->prepareUsers();
-
+        $this->loadCategories();
+        $this->loadGroupes();
+        $this->loadMachinesGroupes();
         $this->processReportFile();
     }
 
@@ -117,9 +119,18 @@ class ReportUsages extends Report
                 $classe = $this->clientsClasses[$ids[0]]['client-class'];
                 $sciper = 0;
                 $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                $usagesArray[] = [$ids[0], $classe, $sciper, 'K1', $ids[2], $line['Smu1'], $line['Snr1']];
-                $usagesArray[] = [$ids[0], $classe, $sciper, 'K2', $ids[2], $line['Smu2'], 0];
-                $usagesArray[] = [$ids[0], $classe, $sciper, 'K3', $ids[2], $line['Snr3'], 0];
+                $categorie1 = $this->getCategorie($ids[2], 'K1');
+                if($categorie1[0] != "0") {
+                    $usagesArray[] = [$ids[0], $classe, $sciper, 'K1', $ids[2], $categorie1[0], $categorie1[1], $categorie1[2], $line['Smu1'], $line['Snr1']];
+                }
+                $categorie2 = $this->getCategorie($ids[2], 'K2');
+                if($categorie2[0] != "0") {
+                    $usagesArray[] = [$ids[0], $classe, $sciper, 'K2', $ids[2], $categorie2[0], $categorie2[1], $categorie2[2], $line['Smu2'], 0];
+                }
+                $categorie3 = $this->getCategorie($ids[2], 'K3');
+                if($categorie3[0] != "0") {
+                    $usagesArray[] = [$ids[0], $classe, $sciper, 'K3', $ids[2], $categorie3[0], $categorie3[1], $categorie3[2], $line['Snr3'], 0];
+                }
             }
         }
         elseif($this->factel == 7) {
@@ -159,7 +170,10 @@ class ReportUsages extends Report
             foreach($loopArray as $id=>$line) {
                 $ids = explode("--", $id);
                 $sciper = $this->users[$ids[2]]['user-sciper'];
-                $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $line['Snr']];
+                $categorie = $this->getCategorie($ids[3], $ids[4]);
+                if($categorie[0] != "0") {
+                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $line['Snr']];
+                }
             }
         }
         elseif($this->factel == 8) {
@@ -189,7 +203,10 @@ class ReportUsages extends Report
                 $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
                 $sciper = $this->users[$ids[2]]['user-sciper'];
-                $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $nr];
+                $categorie = $this->getCategorie($ids[3], $ids[4]);
+                if($categorie[0] != "0") {
+                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
+                }
             }
         }
         elseif($this->factel == 9) {
@@ -224,7 +241,10 @@ class ReportUsages extends Report
                 $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
                 $sciper = $this->users[$ids[2]]['user-sciper'];
-                $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $nr];
+                $categorie = $this->getCategorie($ids[3], $ids[4]);
+                if($categorie[0] != "0") {
+                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
+                }
             }
         }
         else {
@@ -254,16 +274,32 @@ class ReportUsages extends Report
                 $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
                 $sciper = $this->users[$ids[2]]['user-sciper'];
-                $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $line['Smu'], $nr];
+                $categorie = $this->getCategorie($ids[3], $ids[4]);
+                if($categorie[0] != "0") {
+                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
+                }
             }
         }
 
         for($i=0;$i<count($usagesArray);$i++) {
-            $usagesArray[$i][5] = round($usagesArray[$i][5],3);
+            $usagesArray[$i][8] = round($usagesArray[$i][8],3);
         }
         return $usagesArray;
     }
 
+    function getCategorie($machId, $itemK)
+    {
+        $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
+        if($itemGrp != "0") {
+            $itemId = $this->groupes[$itemGrp]["item-id-".$itemK];
+            if($itemId != "0") {
+                $categorie = $this->categories[$itemId];
+                return [$categorie["item-nbr"], $categorie["item-name"], $categorie["item-unit"]];
+            }
+        }
+        return ["0", "0", "0"];
+    }
+    
     function mapping($usagesArray)
     {
         $scipers = [];
@@ -281,12 +317,10 @@ class ReportUsages extends Report
             }
             $codeK = ["item-codeK"=>$line[3], "item-textK"=>$this->paramtext->getParam("item-".$line[3])];
             $machine = $this->machines[$line[4]];
-            $groupe = $this->groupes[$machine["item-grp"]];
-            $categorie = $this->categories[$groupe["item-id-".$line[3]]];
-            $catK1 = $this->categories[$groupe["item-id-K1"]];
+            $categorie = ["item-nbr"=>$line[5], "item-name"=>$line[6], "item-unit"=>$line[7]];
             $values = [
-                "transac-usage"=>$line[5], 
-                "transac-runcae"=>$line[6]
+                "transac-usage"=>$line[8], 
+                "transac-runcae"=>$line[9]
             ];
             $ids = [
                 "par-machine" => $line[4], 
@@ -294,30 +328,30 @@ class ReportUsages extends Report
                 "par-user" => $line[2], 
                 "par-client-user" => $line[0]."-".$line[2], 
                 "par-client-classe" => $line[0]."-".$line[1],
-                "use-machine" => $line[4]."-".$line[3],
-                "use-categorie"=> $groupe["item-id-".$line[3]]
+                "use-machine-categorie" => $line[4]."-".$line[3]."-".$line[5]."-".$line[6]."-".$line[7],
+                "use-categorie"=> $line[5]."-".$line[6]."-".$line[7]
             ];
             $extends = [
-                "par-machine"=>[$machine, $groupe, $catK1],
+                "par-machine"=>[$machine],
                 "par-client" => [$client], 
                 "par-user" => [$user], 
                 "par-client-user" => [$client, $user], 
                 "par-client-classe" => [$client, $classe], 
-                "use-machine" => [$machine, $groupe, $categorie, $codeK], 
-                "use-categorie"=>[["item-id"=>$categorie["item-id"]], $categorie, $codeK]
+                "use-machine-categorie" => [$machine, $codeK, $categorie], 
+                "use-categorie"=>[$categorie, $codeK]
             ];
             $dimensions = [
-                "par-machine"=>[$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM], 
+                "par-machine"=>[$this::MACHINE_DIM], 
                 "par-client" => [$this::CLIENT_DIM], 
                 "par-user" => [$this::USER_DIM], 
                 "par-client-user" => [$this::CLIENT_DIM, $this::USER_DIM], 
                 "par-client-classe" => [$this::CLIENT_DIM, $this::CLASSE_DIM], 
-                "use-machine" => [$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM], 
-                "use-categorie"=>[[$this::CATEGORIE_KEY], $this::CATEGORIE_DIM, $this::CODEK_DIM]
+                "use-machine-categorie" => [$this::MACHINE_DIM, $this::CODEK_DIM, $this::CATEGORIE_DIM], 
+                "use-categorie"=>[$this::CATEGORIE_DIM, $this::CODEK_DIM]
             ];
 
             foreach($this->tabs as $tab=>$data) {
-                if(in_array($tab, ["use-machine", "use-categorie"]) || $line[3] == "K1" || ($tab == "par-machine" && ($line[3] == "K2" || $line[3] == "K3"))) {
+                if(in_array($tab, ["use-machine-categorie", "use-categorie"]) || $line[3] == "K1" || ($tab == "par-machine" && ($line[3] == "K2" || $line[3] == "K3"))) {
                     if($tab == "par-machine" && $line[3] == "K1") {
                         $this->totalM += $values["transac-usage"];
                         $this->totalN += $values["transac-runcae"];
@@ -327,7 +361,7 @@ class ReportUsages extends Report
                     }
                     if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
                         $this->tabs[$tab]["results"][$ids[$tab]] = []; 
-                        if(!in_array($tab, ["use-machine", "use-categorie"])) {  
+                        if(!in_array($tab, ["use-machine-categorie", "use-categorie"])) {  
                             $this->tabs[$tab]["results"][$ids[$tab]]["mois"] = []; 
                         }
                         foreach($dimensions[$tab] as $pos=>$dimension) {
@@ -348,10 +382,10 @@ class ReportUsages extends Report
                             $this->tabs[$tab]["results"][$ids[$tab]]["clients"] = [];
                         }
                     }
-                    if(!in_array($tab, ["use-machine", "use-categorie"]) && !array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
+                    if(!in_array($tab, ["use-machine-categorie", "use-categorie"]) && !array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
                         $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
                     }
-                    if(in_array($tab, ["use-machine", "use-categorie"])) {
+                    if(in_array($tab, ["use-machine-categorie", "use-categorie"])) {
                         $this->tabs[$tab]["results"][$ids[$tab]]["transac-usage"] += $values["transac-usage"];
                     }
                     else {
