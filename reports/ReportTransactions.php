@@ -66,8 +66,7 @@ class ReportTransactions extends Report
                 if(array_key_exists($machId, $this->machines)) {
                     $itemGrp = $this->machines[$machId]["item-grp"];
                     $itemId = $this->groupes[$itemGrp]["item-id-K1"];
-                    $plateId = $this->categories[$itemId]["platf-code"];
-                    if($tab[$columns["client-code"]] != $plateId) {
+                    if($tab[$columns["client-code"]] != $this->categories[$itemId]["platf-code"]) {
                         $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]];
                         if(!array_key_exists($id, $loopArray)) {
                             $loopArray[$id] = 0;

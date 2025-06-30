@@ -13,6 +13,8 @@ abstract class Report
     const USER_DIM = ["user-sciper", "user-name", "user-first", "user-email"];
     const CODEK_DIM = ["item-codeK", "item-textK"];
     const SERVICE_DIM = ["item-text2K", "oper-note"];
+    const PROJET_DIM = ["proj-id", "proj-nbr", "proj-name"];
+    const OPER_DIM = ["oper-sciper", "oper-name", "oper-first", "date", "flow-type"];
     const CLIENT_KEY = "client-code";
     const CLASSE_KEY = "client-class";
     const ARTICLE_KEY = "item-codeD";
@@ -22,6 +24,7 @@ abstract class Report
     const GROUPE_KEY = "item-grp";
     const CATEGORIE_KEY = "item-id";
     const USER_KEY = "user-id";
+    const PROJET_KEY = "proj-id";
     
     protected $plateforme;
     protected $to;
@@ -213,9 +216,9 @@ abstract class Report
         }
     }
 
-    function getColumnsNames() {
+    function getColumnsNames($columns) {
         $names = [];
-        foreach($this->reportColumns as $column) {
+        foreach($columns as $column) {
             $names[] = $this->paramtext->getParam($column);
         }
         return [$names];
@@ -223,14 +226,27 @@ abstract class Report
 
     function processReportFile()
     {
+        if(is_array($this->reportKey)) {
+            foreach($this->reportKey as $key) {
+                $this->processOneReport($key, true);
+            }
+        }
+        else {
+            $this->processOneReport($this->reportKey);
+        }
+    }
+
+    function processOneReport($key, $multiple=false)
+    {
         $monthArray = [];
-        $reportFile = $this->dirRun."/REPORT/".$this->report[$this->factel][$this->reportKey]['prefix'].".csv";
+        $reportFile = $this->dirRun."/REPORT/".$this->report[$this->factel][$key]['prefix'].".csv";
         if(!file_exists($reportFile)) {
             if(!file_exists($this->dirRun."/REPORT/")) {
                 mkdir($this->dirRun."/REPORT/");
             }
-            $monthArray = $this->generate();
-            Csv::write($reportFile, array_merge($this->getColumnsNames(), $monthArray));
+            $multiple ? $monthArray = $this->generate($key) : $monthArray = $this->generate();
+            $multiple ? $columns = $this->reportColumns[$key] : $columns = $this->reportColumns;
+            Csv::write($reportFile, array_merge($this->getColumnsNames($columns), $monthArray));
 
         }
         else {
@@ -240,7 +256,8 @@ abstract class Report
             }
         }
 
-        $this->mapping($monthArray);
+        $multiple ? $this->mapping($monthArray, $key) : $this->mapping($monthArray);
+
     }
 
     function monthAverage($sum, $num)
