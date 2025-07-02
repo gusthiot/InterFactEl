@@ -16,7 +16,7 @@ class ParamText extends Csv
                     "staff-note", "mach-id", "mach-name", "mach-extra", "user-id", "user-sciper", "user-name", "user-first", "user-name-f", "user-email", "proj-id", 
                     "proj-nbr", "proj-nbr-0", "proj-name", "proj-name-0", "proj-expl", "flow-type", "flow-cae", "flow-noshow", "flow-lvr", "flow-srv", "item-grp", 
                     "item-cae", "item-id", "item-idclass", "item-idsap", "item-codeK", "item-textK", "item-text2K", "item-K1", "item-K1a", "item-K1b", "item-K2", "item-K2a", 
-                    "item-K3", "item-K3a", "item-K4", "item-K4a", "item-K5", "item-K5a", "item-K6", "item-K6a", "item-K7", "item-K7a", "item-nbr", "item-name", "item-unit", 
+                    "item-K3", "item-K3a", "item-K4", "item-K4a", "item-K5", "item-K5a", "item-K6", "item-K6a", "item-K7", "item-K7a", "item-nbr", "item-name", "item-unit", "item-nbdeci",
                     "item-codeD", "item-flag-usage", "item-flag-conso", "item-eligible", "item-order", "item-labelcode", "item-extra", "transac-date", "transac-raw", 
                     "transac-quantity", "transac-valid", "transac-id-staff", "transac-staff", "transac-usage", "transac-runtime", "transac-runcae", "valuation-price", 
                     "valuation-brut", "discount-type", "discount-HC", "discount-CHF", "deduct-CHF", "sum-deduct", "valuation-net", "valuation-net-cancel", "valuation-net-notbill", 
