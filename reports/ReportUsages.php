@@ -4,12 +4,16 @@ class ReportUsages extends Report
 {
     private $totalM;
     private $totalN;
+    private $totalChange;
+    private $changeMachines;
 
     public function __construct($plateforme, $to, $from) 
     { 
         parent::__construct($plateforme, $to, $from);
         $this->totalM = 0;
         $this->totalN = 0;
+        $this->totalChange = 0;
+        $this->changeMachines = [];
         $this->reportKey = 'statcae';
         $this->reportColumns = ["client-code", "client-class", "user-sciper", "item-codeK", "mach-id", "item-nbr", "item-name", "item-unit", "transac-usage", "transac-runcae"];
         $this->tabs = [
@@ -317,7 +321,8 @@ class ReportUsages extends Report
             }
             $codeK = ["item-codeK"=>$line[3], "item-textK"=>$this->paramtext->getParam("item-".$line[3])];
             $machine = $this->machines[$line[4]];
-            $categorie = ["item-nbr"=>$line[5], "item-name"=>$line[6], "item-unit"=>$line[7]];
+            $catName = str_replace('"', '', $line[6]);
+            $categorie = ["item-nbr"=>$line[5], "item-name"=>$catName, "item-unit"=>$line[7]];
             $values = [
                 "transac-usage"=>$line[8], 
                 "transac-runcae"=>$line[9]
@@ -328,8 +333,8 @@ class ReportUsages extends Report
                 "par-user" => $line[2], 
                 "par-client-user" => $line[0]."-".$line[2], 
                 "par-client-classe" => $line[0]."-".$line[1],
-                "use-machine-categorie" => $line[4]."-".$line[3]."-".$line[5]."-".$line[6]."-".$line[7],
-                "use-categorie"=> $line[5]."-".$line[6]."-".$line[7]
+                "use-machine-categorie" => $line[4]."-".$line[3]."-".$line[5]."-".$catName."-".$line[7],
+                "use-categorie"=> $line[5]."-".$catName."-".$line[7]
             ];
             $extends = [
                 "par-machine"=>[$machine],
@@ -421,10 +426,33 @@ class ReportUsages extends Report
             $this->tabs["par-machine"]["results"][$key]["stat-nbuser"] = count($this->tabs["par-machine"]["results"][$key]["users"]);
             $this->tabs["par-machine"]["results"][$key]["stat-nbclient"] = count($this->tabs["par-machine"]["results"][$key]["clients"]);
         }
+        foreach($this->tabs["use-machine-categorie"]["results"] as $key=>$cells) {
+            $cmKey = $cells["mach-id"]."--".$cells["item-codeK"];
+            $catKey = $cells["item-nbr"]."--".$cells["item-name"]."--".$cells["item-unit"];
+            if(array_key_exists($cmKey, $this->changeMachines)) {
+                if(!in_array($catKey, $this->changeMachines[$cmKey])) {
+                    $this->changeMachines[$cmKey][] = $catKey;
+                    $this->totalChange += 1;
+                }
+            }
+            else {
+                $this->changeMachines[$cmKey] = [$catKey];
+            }
+        }
 
         $title = '<div class="total">Statistiques machines : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->format($this->totalM, "float").'</div>';
         $title .= '<div class="subtotal">Nombre de runs CAE productifs = '.$this->format($this->totalN, "int").'</div>';
+        $title .= '<div>
+                        <svg class="icon red" aria-hidden="true">
+                            <use xlink:href="#alert-triangle"></use>
+                        </svg>
+                        '.$this->totalChange.' machines ont changé de catégories sur la période
+                        <svg class="icon red" aria-hidden="true">
+                            <use xlink:href="#alert-triangle"></use>
+                        </svg>
+                    
+                    </div>';
         echo $this->templateDisplay($title);
     }
 }

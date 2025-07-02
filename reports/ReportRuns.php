@@ -15,10 +15,10 @@ class ReportRuns extends Report
         $this->reportKey = 'statmach';
         $this->reportColumns = ["mach-id", "transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"];
         $this->tabs = [
-            "par-machine-categorie" => [
-                "title" => "Stats par Machine par Catégorie",
+            "par-machine" => [
+                "title" => "Stats par Machine",
                 "columns" => ["mach-name", "item-nbr", "item-name", "item-unit"],
-                "dimensions" => array_merge($this::MACHINE_DIM, $this::CATEGORIE_DIM),
+                "dimensions" => array_merge($this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM),
                 "operations" => ["transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"],
                 "formats" => ["float", "int", "float", "float"],
                 "results" => []
@@ -128,15 +128,15 @@ class ReportRuns extends Report
                 "runtime-stddev"=>$line[4]
             ];
             $ids = [
-                "par-machine-categorie"=>$line[0], 
+                "par-machine"=>$line[0], 
                 "par-categorie"=>$itemGrp
             ];
             $extends = [
-                "par-machine-categorie"=>[$machine, $items],
+                "par-machine"=>[$machine, ["item-grp"=>$itemGrp], $items],
                 "par-categorie"=>[["item-grp"=>$itemGrp], $items]
             ];
             $dimensions = [
-                "par-machine-categorie"=>[$this::MACHINE_DIM, $this::CATEGORIE_DIM], 
+                "par-machine"=>[$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM], 
                 "par-categorie"=>[$this::GROUPE_DIM, $this::CATEGORIE_DIM]
             ];
 
@@ -187,6 +187,17 @@ class ReportRuns extends Report
         $title = '<div class="total">Statistiques machines : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->format($this->totalM, "float").'</div>';
         $title .= '<div class="subtotal">Nombre de runs productifs (temps machine > 0) = '.$this->format($this->totalN, "int").'</div>';
+        $title .= '<div>
+                        <svg class="icon red" aria-hidden="true">
+                            <use xlink:href="#alert-triangle"></use>
+                        </svg>
+                        Les catégories de machines, et la répartition de machines dans les catégories sont définies 
+                        par le dernier mois de la période : '.substr($this->to, 4, 2)."/".substr($this->to, 0, 4).'
+                        <svg class="icon red" aria-hidden="true">
+                            <use xlink:href="#alert-triangle"></use>
+                        </svg>
+                    
+                    </div>';
         echo $this->templateDisplay($title);
     }
 }
