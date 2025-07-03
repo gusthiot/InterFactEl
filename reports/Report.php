@@ -403,7 +403,7 @@ abstract class Report
                 $header .= ";".$monthly;
             }
         }
-        return $header;
+        return Csv::formatLine($header);
     }
     
     function csvLine($dimensions, $operations, $line, $withMonths = true) 
@@ -425,7 +425,7 @@ abstract class Report
                 }
             }
         }
-        return $data;
+        return Csv::formatLine($data);
     }
 
     function createTotalCsv($notBeNull)

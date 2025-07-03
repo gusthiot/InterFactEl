@@ -3,15 +3,11 @@
 class ReportTransactions extends Report
 {
     private $totalT;
-    private $totalC;
-    private $totalU;
     
     public function __construct($plateforme, $to, $from) 
     { 
         parent::__construct($plateforme, $to, $from);
         $this->totalT = 0;
-        $this->totalC = 0;
-        $this->totalU = 0;
         $this->reportKey = 'stattran';
         $this->reportColumns = ["client-code", "user-sciper", "flow-type", "transac-nbr"];
         $this->tabs = [
@@ -176,7 +172,7 @@ class ReportTransactions extends Report
         }
         foreach($transArray as $line) {
             $client = $this->clients[$line[0]];
-            if($line[2] != 0) {
+            if($line[1] != 0) {
                 $user = $this->users[$scipers[$line[1]]];
             }
             else {
@@ -199,7 +195,7 @@ class ReportTransactions extends Report
             ];
 
             foreach($this->tabs as $tab=>$data) {
-                if($tab != "par-client" && $line[2] == 0) {
+                if($tab != "par-client" && $line[1] == 0) {
                     continue;
                 }
                 if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
