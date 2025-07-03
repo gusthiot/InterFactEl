@@ -106,6 +106,9 @@ if(isset($_POST['type'])) {
                                     $state = new State(DATA.$plateforme);
                                     $dirOut = $state->getLastPath()."/OUT/";
                                     foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
+                                        if($file == "paramtext.csv") {
+                                            continue;
+                                        }
                                         if(!copy($dirOut.$file, $tmpDir.$file)) {
                                             $msg .= "erreur de copie de ".$file;
                                             break;
@@ -129,8 +132,6 @@ if(isset($_POST['type'])) {
                                     $array = [["Platform", $plateforme], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
                                     ParamEdit::write($tmpDir."/".ParamEdit::NAME, $array);
                                     $paramedit = new ParamEdit($tmpDir);
-                                    $paramedit = new ParamEdit($tmpDir);
-
                                     $paramFile = DATA.$plateforme."/".$year."/".$month."/".ParamZip::NAME;
                                     if(file_exists($paramFile)) {
                                         $msg .= Zip::unzip($paramFile, $tmpDir);
