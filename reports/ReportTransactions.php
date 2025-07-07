@@ -176,7 +176,7 @@ class ReportTransactions extends Report
                 $user = $this->users[$scipers[$line[1]]];
             }
             else {
-                $user = "";
+                $user = ["user-sciper"=>"0", "user-name"=>"", "user-first"=>"", "user-email"=>""];
             }
             $ids = [
                 "par-client"=>$line[0], 
@@ -195,9 +195,6 @@ class ReportTransactions extends Report
             ];
 
             foreach($this->tabs as $tab=>$data) {
-                if($tab != "par-client" && $line[1] == 0) {
-                    continue;
-                }
                 if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
                     $this->tabs[$tab]["results"][$ids[$tab]] = ["mois" => []];
                     foreach($dimensions[$tab] as $pos=>$dimension) {
