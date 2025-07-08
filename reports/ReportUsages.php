@@ -12,7 +12,7 @@ class ReportUsages extends Report
         parent::__construct($plateforme, $to, $from);
         $this->totalM = 0;
         $this->totalN = 0;
-        $this->totalChange = 0;
+        $this->totalChange = [];
         $this->changeMachines = [];
         $this->reportKey = 'statcae';
         $this->reportColumns = ["client-code", "client-class", "user-sciper", "item-codeK", "mach-id", "item-nbr", "item-name", "item-unit", "transac-usage", "transac-runcae"];
@@ -432,7 +432,9 @@ class ReportUsages extends Report
             if(array_key_exists($cmKey, $this->changeMachines)) {
                 if(!in_array($catKey, $this->changeMachines[$cmKey])) {
                     $this->changeMachines[$cmKey][] = $catKey;
-                    $this->totalChange += 1;
+                    if(!in_array($cells["mach-id"], $this->totalChange)) {
+                        $this->totalChange[] = $cells["mach-id"];
+                    }
                 }
             }
             else {
@@ -447,7 +449,7 @@ class ReportUsages extends Report
                         <svg class="icon red" aria-hidden="true">
                             <use xlink:href="#alert-triangle"></use>
                         </svg>
-                        '.$this->totalChange.' machines ont changé de catégories sur la période
+                        '.count($this->totalChange).' machines ont changé de catégories sur la période
                         <svg class="icon red" aria-hidden="true">
                             <use xlink:href="#alert-triangle"></use>
                         </svg>
