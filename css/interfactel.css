@@ -368,7 +368,7 @@ table.modifs td:nth-child(5), table.modifs td:nth-child(8), table.modifs td:nth-
 
 table.infos td:nth-child(1), table.infos td:nth-child(3) { text-align: left; }
 
-table.modifs thead tr th, table.journal thead tr th, table.client thead tr th, table.factures thead tr th {
+table.modifs thead tr th, table.journal thead tr th, table.client thead tr th, table.factures thead tr th, table.report-table thead tr th {
   background-color: white;
   position: sticky;
   z-index: 100;
@@ -478,7 +478,7 @@ table.report-table th {
 
 .report-large {
   width: 80%;
-  padding: 30px;
+  margin-top: 30px;
 }
 
 #dates {
