@@ -444,16 +444,26 @@ class ReportUsages extends Report
         $title = '<div class="total">Statistiques machines : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre d’heures productives = '.$this->format($this->totalM, "float").'</div>';
         $title .= '<div class="subtotal">Nombre de runs CAE productifs = '.$this->format($this->totalN, "int").'</div>';
-        $title .= '<div>
-                        <svg class="icon red" aria-hidden="true">
-                            <use xlink:href="#alert-triangle"></use>
-                        </svg>
-                        '.count($this->totalChange).' machines ont changé de catégories sur la période
-                        <svg class="icon red" aria-hidden="true">
-                            <use xlink:href="#alert-triangle"></use>
-                        </svg>
-                    
-                    </div>';
+        $change = count($this->totalChange);
+        if($change > 0) {
+            if($change == 1) {
+                $sentence = "1 machine a changé de catégorie";
+            }
+            else {
+                $sentence = $change." machines ont changé de catégories";
+            }
+            $title .= '<div>
+                            <svg class="icon red" aria-hidden="true">
+                                <use xlink:href="#alert-triangle"></use>
+                            </svg>
+                            '.$sentence.' sur la période
+                            <svg class="icon red" aria-hidden="true">
+                                <use xlink:href="#alert-triangle"></use>
+                            </svg>
+                        
+                        </div>';
+        }
+        
         echo $this->templateDisplay($title);
     }
 }
