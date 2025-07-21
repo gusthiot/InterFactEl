@@ -365,10 +365,7 @@ class ReportUsages extends Report
                         continue;
                     }
                     if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
-                        $this->tabs[$tab]["results"][$ids[$tab]] = []; 
-                        if(!in_array($tab, ["use-machine-categorie", "use-categorie"])) {  
-                            $this->tabs[$tab]["results"][$ids[$tab]]["mois"] = []; 
-                        }
+                        $this->tabs[$tab]["results"][$ids[$tab]] = ["mois"=>[]]; 
                         foreach($dimensions[$tab] as $pos=>$dimension) {
                             foreach($dimension as $d) {
                                 if($extends[$tab][$pos] != "") {
@@ -387,8 +384,11 @@ class ReportUsages extends Report
                             $this->tabs[$tab]["results"][$ids[$tab]]["clients"] = [];
                         }
                     }
-                    if(!in_array($tab, ["use-machine-categorie", "use-categorie"]) && !array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
+                    if(!array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
                         $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
+                    }
+                    if($line[3] == "K1") {
+                        $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-runcae"];
                     }
                     if(in_array($tab, ["use-machine-categorie", "use-categorie"])) {
                         $this->tabs[$tab]["results"][$ids[$tab]]["transac-usage"] += $values["transac-usage"];
@@ -397,7 +397,6 @@ class ReportUsages extends Report
                         if($line[3] == "K1") {
                             $this->tabs[$tab]["results"][$ids[$tab]]["stat-hmach"] += $values["transac-usage"];
                             $this->tabs[$tab]["results"][$ids[$tab]]["stat-run"] += $values["transac-runcae"];
-                            $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-runcae"];
                         }
                         if($line[3] == "K2" && $tab == "par-machine") {
                             $this->tabs[$tab]["results"][$ids[$tab]]["stat-hoper"] += $values["transac-usage"];

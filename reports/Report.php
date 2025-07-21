@@ -8,7 +8,7 @@ abstract class Report
     const ARTICLE_DIM = ["item-codeD", "item-order", "item-labelcode"];
     const PRESTATION_DIM = ["item-id", "item-nbr", "item-name", "item-unit", "item-codeD", "item-labelcode"];
     const MACHINE_DIM = ["mach-id", "mach-name"];
-    const GROUPE_DIM = ["item-grp"];
+    const GROUPE_DIM = ["item-grp", "item-cae"];
     const CATEGORIE_DIM = ["item-nbr", "item-name", "item-unit"];
     const USER_DIM = ["user-sciper", "user-name", "user-first", "user-email"];
     const CODEK_DIM = ["item-codeK", "item-textK"];
