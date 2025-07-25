@@ -28,7 +28,6 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
             $month = basename($dirMonth);
             $glob = glob($dirMonth."/*", GLOB_ONLYDIR);
             if (!empty($glob)) {
-                $dirVersion = array_reverse($glob)[0];
                 if (file_exists($dirMonth."/".Lock::FILES['month'])) {
                     if(!empty($open)) {
                         $infos = Info::load($open[0]);
@@ -38,6 +37,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
                         }
                         $open = [];
                     }
+                    $dirVersion = array_reverse($glob)[0];
                     $run = Lock::load($dirVersion, "version");
                     $infos = Info::load($dirVersion."/".$run);
                     $factel = $infos["FactEl"][2];
@@ -46,8 +46,13 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
                     }
                 }
                 else {
-                    $globVer = glob($dirVersion."/*", GLOB_ONLYDIR);
-                    $open = [array_reverse($globVer)[0], $year, $month];
+                    foreach(array_reverse($glob) as $dirVersion) {
+                        if (file_exists($dirVersion."/".Lock::FILES['version'])) {
+                            $run = Lock::load($dirVersion, "version");
+                            $open = [$run, $year, $month];
+                            break;
+                        }
+                    }
                 }
             }
         }
