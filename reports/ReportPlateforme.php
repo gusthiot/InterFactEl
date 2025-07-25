@@ -33,8 +33,11 @@ class ReportPlateforme extends Report
     }
 
     function prepare() {
+        $this->loadCategories();
+        $this->loadGroupes();
         $this->prepareUsers();
         $this->prepareMachines();
+        $this->prepareComptes();
 
         $this->processReportFile();
     }
@@ -42,10 +45,10 @@ class ReportPlateforme extends Report
     function generate($key) 
     {
         if($key == "statoper") {
-            $this->generateOper();
+            return $this->generateOper();
         }
         if($key == "statpltf") {
-            $this->generatePltf();
+            return $this->generatePltf();
         }
     }
 
@@ -180,71 +183,179 @@ class ReportPlateforme extends Report
                 $pltfArray[] = [$ids[0], $itemGrp, "K2", $mu[1]];
             }
         }
+        elseif($this->factel == 7) {
+            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                $machId = $tab[$columns["mach-id"]];
+                if(array_key_exists($machId, $this->machines)) {
+                    $itemGrp = $this->machines[$machId]["item-grp"];
+                    if(($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"])) {
+                        $letter = substr($tab[$columns["item-nbr"]], 0, 1);
+                        switch($letter) {
+                            case "E": 
+                                $itemK = "K1";
+                                break;
+                            case "S":
+                                $itemK = "K2";
+                                break;
+                            case "U":
+                                $itemK = "K3";
+                                break;
+                            case "X":
+                                $itemK = "K4";
+                                break;
+                        }
+
+                        $id = $tab[$columns["proj-id"]]."--".$itemGrp."--".$itemK;
+                        if(!array_key_exists($id, $loopArray)) {
+                            $loopArray[$id] = 0;
+                        }
+                        $loopArray[$id] += $tab[$columns["transac-usage"]];
+                    }
+                }
+            }
+            foreach($loopArray as $id=>$mu) {
+                $ids = explode("--", $id);
+                $pltfArray[] = [$ids[0], $ids[1], $ids[2], $mu];
+            }
+        }
+        elseif($this->factel >= 8 || $this->factel < 10) {
+            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                $machId = $tab[$columns["mach-id"]];
+                if(array_key_exists($machId, $this->machines)) {
+                    $itemGrp = $this->machines[$machId]["item-grp"];
+                    if(($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"])) {
+                        $id = $tab[$columns["proj-id"]]."--".$itemGrp."--".$tab[$columns["item-codeK"]];
+                        if(!array_key_exists($id, $loopArray)) {
+                            $loopArray[$id] = 0;
+                        }
+                        $loopArray[$id] += $tab[$columns["transac-usage"]];
+                    }
+                }
+            }
+            foreach($loopArray as $id=>$mu) {
+                $ids = explode("--", $id);
+                $pltfArray[] = [$ids[0], $ids[1], $ids[2], $mu];
+            }
+        }
+        elseif($this->factel = 10) {
+            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                $machId = $tab[$columns["mach-id"]];
+                if(array_key_exists($machId, $this->machines)) {
+                    $itemGrp = $this->machines[$machId]["item-grp"];
+                    if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"])) {
+                        $id = $tab[$columns["proj-id"]]."--".$itemGrp."--".$tab[$columns["item-codeK"]];
+                        if(!array_key_exists($id, $loopArray)) {
+                            $loopArray[$id] = 0;
+                        }
+                        $loopArray[$id] += $tab[$columns["transac-usage"]];
+                    }
+                }
+            }
+            foreach($loopArray as $id=>$mu) {
+                $ids = explode("--", $id);
+                $pltfArray[] = [$ids[0], $ids[1], $ids[2], $mu];
+            }
+        }
+        else {
+            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"])) {
+                    $id = $tab[$columns["proj-id"]]."--".$tab[$columns["item-grp"]]."--".$tab[$columns["item-codeK"]];
+                    if(!array_key_exists($id, $loopArray)) {
+                        $loopArray[$id] = 0;
+                    }
+                    $loopArray[$id] += $tab[$columns["transac-usage"]];
+                }
+            }
+            foreach($loopArray as $id=>$mu) {
+                $ids = explode("--", $id);
+                $pltfArray[] = [$ids[0], $ids[1], $ids[2], $mu];
+            }
+        }
+        return $pltfArray;
     }
 
 
-    function mapping($transArray)
+    function mapping($monthArray, $key) 
+    {
+        if($key == "statoper") {
+            $this->mappingOper($monthArray);
+        }
+        if($key == "statpltf") {
+            $this->mappingPltf($monthArray);
+        }
+    }
+
+    function mappingOper($operArray)
     {   
         $scipers = [];
         foreach($this->users as $id=>$user) {
             $scipers[$user['user-sciper']] = $id;
         }
-        foreach($transArray as $line) {
-            $client = $this->clients[$line[0]];
-            if($line[2] != 0) {
-                $user = $this->users[$scipers[$line[1]]];
+        foreach($operArray as $line) {
+            if($line[0] != 0) {
+                $user = $this->users[$scipers[$line[0]]];
             }
             else {
-                $user = "";
+                $user = ["user-sciper"=>"0", "user-name"=>"", "user-first"=>"", "user-email"=>""];
             }
-            $ids = [
-                "par-client"=>$line[0], 
-                "par-user"=>$line[1], 
-                "par-client-user"=>$line[0]."-".$line[1]
-            ];
-            $extends = [
-                "par-client"=>[$client],
-                "par-user"=>[$user],
-                "par-client-user"=>[$client, $user]
-            ];
-            $dimensions = [
-                "par-client"=>[$this::CLIENT_DIM],
-                "par-user"=>[$this::USER_DIM],
-                "par-client-user"=>[$this::CLIENT_DIM, $this::USER_DIM]
-            ];
+            $oper = ["oper-sciper"=>$user["user-sciper"], "oper-name"=>$user["user-name"], "oper-first"=>$user["user-first"], "date"=>$line[1], "flow-type"=>$line[2]];
 
-            foreach($this->tabs as $tab=>$data) {
-                if($tab != "par-client" && $line[2] == 0) {
-                    continue;
+            if(!array_key_exists($line[0], $this->tabs["par-staff"]["results"])) {
+                $this->tabs["par-staff"]["results"][$line[0]] = [];
+                foreach($this::OPER_DIM as $d) {
+                    $this->tabs["par-staff"]["results"][$line[0]][$d] = $oper[$d];
                 }
-                if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
-                    $this->tabs[$tab]["results"][$ids[$tab]] = ["mois" => []];
-                    foreach($dimensions[$tab] as $pos=>$dimension) {
-                        foreach($dimension as $d) {
-                            $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
-                        }
-                    }
-                    foreach($this->tabs[$tab]["operations"] as $operation) {
-                        $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
-                    }
-                }     
-                if(!array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
-                    $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
+                foreach($this->tabs["par-staff"]["operations"] as $operation) {
+                    $this->tabs["par-staff"]["results"][$line[0]][$operation] = 0;
                 }
-                $this->tabs[$tab]["results"][$ids[$tab]]["transac-nbr"] += $line[3];
-                $this->tabs[$tab]["results"][$ids[$tab]]["transac-nbr-".$line[2]] += $line[3];
-                $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $line[3];
-            }
-            $this->totalT += $line[3];
+            } 
+            $this->tabs["par-staff"]["results"][$line[0]]["transac-usage"] += $line[3];
         }
     }
 
+
+    function mappingPltf($pltfArray)
+    {   
+        foreach($pltfArray as $line) {
+            $projet = $this->comptes[$line[0]];
+            $groupe = $this->groupes[$line[1]];
+            $itemId = $groupe["item-id-".$line[2]];
+            $categorie = $this->categories[$itemId];
+            $codeK = ["item-codeK"=>$line[2], "item-textK"=>$this->paramtext->getParam("item-".$line[2])];
+            $extends = [$projet, $groupe, $categorie, $codeK];
+            $dimensions = [$this::PROJET_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM];
+
+            if(!array_key_exists($line[0], $this->tabs["par-projet"]["results"])) {
+                $this->tabs["par-projet"]["results"][$line[0]] = [];
+                foreach($dimensions as $pos=>$dimension) {
+                    foreach($dimension as $d) {
+                        $this->tabs["par-projet"]["results"][$line[0]][$d] = $extends[$pos][$d];
+                    }
+                }
+                foreach($this->tabs["par-projet"]["operations"] as $operation) {
+                    $this->tabs["par-projet"]["results"][$line[0]][$operation] = 0;
+                }
+            }
+            $this->tabs["par-projet"]["results"][$line[0]]["transac-usage"] += $line[3];
+        }
+    }
+
+
     function display()
     {
-        $title = '<div class="total">Statistiques utilisateurs et clients : '.$this->period().' </div>';
-        $title .= '<div class="subtotal">Nombre total de transactions = '.$this->format($this->totalT, "int").'</div>';
-        $title .= '<div class="subtotal">Nombre de clients = '.$this->format(count($this->tabs["par-client"]["results"]), "int").'</div>';
-        $title .= '<div class="subtotal">Nombre d’utilisateurs = '.$this->format(count($this->tabs["par-user"]["results"]), "int").'</div>';
+        $title = '<div class="total">Statistiques plateforme : '.$this->period().' </div>';
         echo $this->templateDisplay($title);
     }
 

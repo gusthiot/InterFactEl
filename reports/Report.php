@@ -8,7 +8,7 @@ abstract class Report
     const ARTICLE_DIM = ["item-codeD", "item-order", "item-labelcode"];
     const PRESTATION_DIM = ["item-id", "item-nbr", "item-name", "item-unit", "item-codeD", "item-labelcode"];
     const MACHINE_DIM = ["mach-id", "mach-name"];
-    const GROUPE_DIM = ["item-grp", "item-cae"];
+    const GROUPE_DIM = ["item-grp"];
     const CATEGORIE_DIM = ["item-nbr", "item-name", "item-unit"];
     const USER_DIM = ["user-sciper", "user-name", "user-first", "user-email"];
     const CODEK_DIM = ["item-codeK", "item-textK"];
@@ -30,11 +30,13 @@ abstract class Report
     protected $to;
     protected $from;
     protected $paramtext;
+    protected $open;
 
     protected $clients;
     protected $classes;
     protected $clientsClasses;
     protected $articles;
+    protected $comptes;
     protected $machines;
     protected $groupes;
     protected $machinesGroupes;
@@ -67,11 +69,14 @@ abstract class Report
         $this->to = $to;
         $this->from = $from;
         $this->paramtext = new ParamText();
+    
+        $this->open = "";
 
         $this->clients = [];
         $this->classes = [];
         $this->clientsClasses = [];
         $this->articles = [];
+        $this->comptes = [];
         $this->machines = [];
         $this->machinesGroupes = [];
         $this->groupes = [];
@@ -143,6 +148,11 @@ abstract class Report
             }
 
         }
+    }
+
+    function prepareComptes() 
+    {
+        self::mergeInCsv('compte', $this->comptes, self::PROJET_KEY);
     }
 
     function prepareMachines() 
@@ -316,9 +326,17 @@ abstract class Report
             $this->year = substr($date, 0, 4);
             $dir = DATA.$this->plateforme."/".$this->year."/".$this->month;
             $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
-            $run = Lock::load($dirVersion, "version");
-            $this->dirRun = $dirVersion."/".$run;
-    
+
+            if (file_exists($dir."/".Lock::FILES['month'])) {
+                $run = Lock::load($dirVersion, "version");
+                $this->dirRun = $dirVersion."/".$run;
+            }
+            else {
+                $globVer = glob($dirVersion."/*", GLOB_ONLYDIR);
+                $this->dirRun = array_reverse($globVer)[0];
+                $this->open = substr($date, 4, 2)." ".substr($date, 0, 4);
+            }
+
             $infos = Info::load($this->dirRun);
             $this->factel = $infos["FactEl"][2];
     
@@ -452,6 +470,18 @@ abstract class Report
     {
         $period = $this->period();
         $html = $mainTitle;
+        if($this->open) {
+            $html .= '<div>
+                        <svg class="icon red" aria-hidden="true">
+                            <use xlink:href="#alert-triangle"></use>
+                        </svg>
+                        Le mois '.$this->open.' n’est pas clôturé, des factures pourraient être refaites, impactant les statistiques
+                        <svg class="icon red" aria-hidden="true">
+                            <use xlink:href="#alert-triangle"></use>
+                        </svg>
+                    
+                    </div>';
+        }
         $html .= '<ul class="nav nav-tabs" role="tablist">';
         $active = "active";
         foreach($this->tabs as $tab => $data) { 
