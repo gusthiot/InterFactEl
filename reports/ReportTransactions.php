@@ -42,7 +42,7 @@ class ReportTransactions extends Report
     function prepare() {
         $this->prepareClients();
         $this->prepareUsers();
-        $this->preparePrestations();
+        $this->loadPrestations();
         $this->prepareMachines();
 
         $this->processReportFile();

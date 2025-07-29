@@ -15,6 +15,8 @@ require_once("../reports/ReportServices.php");
 require_once("../reports/ReportPenalites.php");
 require_once("../reports/ReportTransactions.php");
 require_once("../reports/ReportPlateforme.php");
+//require_once("../reports/ReportClients.php");
+require_once("../reports/ReportPropres.php");
 require_once("../session.inc");
 
 /**
@@ -53,6 +55,12 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
             break;
         case "plateforme":
             $report = new ReportPlateforme($plateforme, $_POST["to"], $_POST["from"]);
+            break;
+        //case "clients":
+        //    $report = new ReportClients($plateforme, $_POST["to"], $_POST["from"]);
+        //    break;
+        case "propres":
+            $report = new ReportPropres($plateforme, $_POST["to"], $_POST["from"]);
             break;
         default:
             exit("Type de rapport non pris en compte !");

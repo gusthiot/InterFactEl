@@ -14,7 +14,7 @@ class ReportPlateforme extends Report
         $this->tabs = [
             "par-projet" => [
                 "title" => "Stats par Projet",
-                "columns" => ["proj-nbr", "proj-name","item-name", "item-textK"],
+                "columns" => ["proj-nbr", "proj-name", "item-name", "item-textK"],
                 "dimensions" => array_merge($this::PROJET_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM),
                 "operations" => ["transac-usage"],
                 "formats" => ["float"],

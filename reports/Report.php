@@ -13,7 +13,7 @@ abstract class Report
     const USER_DIM = ["user-sciper", "user-name", "user-first", "user-email"];
     const CODEK_DIM = ["item-codeK", "item-textK"];
     const SERVICE_DIM = ["item-text2K", "oper-note"];
-    const PROJET_DIM = ["proj-id", "proj-nbr", "proj-name"];
+    const PROJET_DIM = ["proj-id", "proj-nbr", "proj-name", "proj-expl"];
     const OPER_DIM = ["oper-sciper", "oper-name", "oper-first", "date", "flow-type"];
     const CLIENT_KEY = "client-code";
     const CLASSE_KEY = "client-class";
@@ -184,6 +184,12 @@ abstract class Report
         }
     }
 
+    function loadPrestations()
+    {
+        $this->prestations = [];
+        self::mergeInCsv('prestation', $this->prestations, self::PRESTATION_KEY);
+    }
+
     function preparePrestations()
     {
         $machinesTemp = [];
@@ -206,7 +212,14 @@ abstract class Report
         foreach($prestationsTemp as $code=>$line) {
             if(!array_key_exists($code, $this->prestations)) {
                 $data = $line;
-                $line["mach-id"] == 0 ? $data["mach-name"] = "" : $data["mach-name"] = $machinesTemp[$line["mach-id"]]["mach-name"];
+                if($line["mach-id"] == 0) {
+                    $data["mach-name"] = "";
+                    $data["item-extra"] = "FALSE";
+                }
+                else {
+                    $data["mach-name"] = $machinesTemp[$line["mach-id"]]["mach-name"];
+                    $data["item-extra"] = "TRUE";
+                } 
                 if($this->factel < 8) {
                     $data["item-labelcode"] = $articlesTemp[$line["item-codeD"]]["item-labelcode"];
                 }

@@ -1,0 +1,158 @@
+<?php
+
+class ReportPropres extends Report
+{
+    private $totalM;
+        
+    public function __construct($plateforme, $to, $from) 
+    { 
+        parent::__construct($plateforme, $to, $from);
+        $this->totalM = 0;
+        $this->reportKey = 'consopltf';
+        $this->reportColumns = ["proj-id", "item-id", "valuation-net"];
+        $this->tabs = [
+            "par-article" => [
+                "title" => "Par article",
+                "columns" => ["item-nbr", "item-name"],
+                "dimensions" => array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM, ["item-extra"]),
+                "operations" => ["valuation-net"],
+                "formats" => ["fin"],
+                "results" => []
+            ],
+            "par-projet" => [
+                "title" => "Par projet",
+                "columns" => ["proj-nbr", "proj-name"],
+                "dimensions" => $this::PROJET_DIM,
+                "operations" => ["valuation-net"],
+                "formats" => ["fin"],
+                "results" => []
+            ],
+            "par-projet-machine" => [
+                "title" => "Par projet & machine",
+                "columns" => ["proj-nbr", "proj-name", "mach-id", "mach-name"],
+                "dimensions" => array_merge($this::PROJET_DIM, $this::MACHINE_DIM, ["item-extra"]),
+                "operations" => ["conso-propre-march-expl", "conso-propre-extra-expl", "conso-propre-march-proj", "conso-propre-extra-proj"],
+                "formats" => ["fin", "fin", "fin", "fin"],
+                "results" => []
+            ]
+        ];
+
+    }
+
+    function prepare() {
+        $this->prepareComptes();
+        $this->preparePrestations();
+
+        $this->processReportFile();
+    }
+
+    function generate()
+    {        
+        $pltfArray = [];
+        $loopArray = [];
+
+        if($this->factel <= 9) {
+            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI")) {
+                    $id = $tab[$columns["proj-id"]]."--".$tab[$columns["item-id"]];
+                    if(!array_key_exists($id, $loopArray)) {
+                        $loopArray[$id] = 0;
+                    }
+                    $loopArray[$id] += $tab[$columns["aluation-net "]];
+                }
+            }
+        }
+        else {
+            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI") && ($tab[$columns["transac-valid"]] != 2)) {
+                    $id = $tab[$columns["proj-id"]]."--".$tab[$columns["item-id"]];
+                    if(!array_key_exists($id, $loopArray)) {
+                        $loopArray[$id] = 0;
+                    }
+                    $loopArray[$id] += $tab[$columns["transac-usage"]];
+                }
+            }
+        }
+        foreach($loopArray as $id=>$mu) {
+            $ids = explode("--", $id);
+            $pltfArray[] = [$ids[0], $ids[1], $mu];
+        }
+        return $pltfArray;
+    }
+
+
+    function mapping($pltfArray) 
+    {
+        foreach($pltfArray as $line) {
+            $compte = $this->comptes[$line[0]];
+            $prestation = $this->prestations[$line[1]];
+
+            $ids = [
+                "par-article"=>$line[1], 
+                "par-projet"=>$line[0], 
+                "par-projet-machine"=>$line[0]."-".$prestation["mach-id"]
+            ];
+            $extends = [
+                "par-article"=>[$prestation],
+                "par-projet"=>[$compte],
+                "par-projet-machine"=>[$compte, $prestation]
+            ];
+            $dimensions = [
+                "par-article"=>[array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM, ["item-extra"])],
+                "par-projet"=>[$this::PROJET_DIM],
+                "par-projet-machine"=>[$this::PROJET_DIM, array_merge($this::MACHINE_DIM, ["item-extra"])]
+            ];
+
+            foreach($this->tabs as $tab=>$data) {
+                if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
+                    $this->tabs[$tab]["results"][$ids[$tab]] = [];            
+                    foreach($dimensions[$tab] as $pos=>$dimension) {
+                        foreach($dimension as $d) {
+                            $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
+                        }
+                    }
+                    foreach($this->tabs[$tab]["operations"] as $operation) {
+                        $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
+                    }
+                }
+                if($tab == "par-projet-machine") {
+                    if($compte["proj-expl"] == "TRUE") {
+                        if($prestation["item-extra"] == "TRUE") {
+                            $this->tabs[$tab]["results"][$ids[$tab]]["conso-propre-extra-expl"] += $line[2];
+                        }
+                        else {
+                            $this->tabs[$tab]["results"][$ids[$tab]]["conso-propre-march-expl"] += $line[2];
+                        }
+                    }
+                    else {
+                        if($prestation["item-extra"] == "TRUE") {
+                            $this->tabs[$tab]["results"][$ids[$tab]]["conso-propre-extra-proj"] += $line[2];
+                        }
+                        else {
+                            $this->tabs[$tab]["results"][$ids[$tab]]["conso-propre-march-proj"] += $line[2];
+                        }
+                    }
+                }
+                else {
+                    $this->tabs[$tab]["results"][$ids[$tab]]["valuation-net"] += $line[2];
+                }
+            }
+            $this->totalM += $line[2];
+        }
+    }
+
+
+    function display()
+    {
+        $title = '<div class="total">Total des consommations propres sur la période (CHF) : '.$this->period().' </div>';
+        $title .= '<div class="subtotal">'.$this->format($this->totalM, "fin").'</div>';
+        echo $this->templateDisplay($title);
+    }
+
+}

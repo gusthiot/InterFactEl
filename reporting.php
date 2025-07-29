@@ -120,6 +120,12 @@ include("includes/lock.php");
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
+                <div type="button" id="propres" class="select-period tile center-two">
+                    <p class="title">Consommations <br/> propres Plateforme</p>
+                    <svg class="icon feather icon-tile" aria-hidden="true">
+                        <use xlink:href="#anchor"></use>
+                    </svg>
+                </div>
             </div>
 
             <div id="period"></div>

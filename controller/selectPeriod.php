@@ -14,6 +14,9 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
         case "penalites":
             $vMin = 7.0;
             break;
+        case "propres":
+            $vMin = 8.0;
+            break;
         case "services":
             $vMin = 11.0;
             break;
