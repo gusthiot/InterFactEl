@@ -103,7 +103,15 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                                     Info::save($dir, $infos);
                                 }
                                 if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
-                                    Lock::save($dirPrevMonth, 'month', "");
+                                    $prevVersion = 0;
+                                    foreach(array_reverse(glob($dirPrevMonth."/*", GLOB_ONLYDIR)) as $dirPrevVersion) {
+                                            if (file_exists($dirPrevVersion."/".Lock::FILES['version'])) {
+                                                $sep = strrpos($dirPrevVersion, "/");
+                                                $prevVersion = substr($dir, $sep+1);
+                                                break;
+                                            }
+                                    }
+                                    Lock::save($dirPrevMonth, 'month', $prevVersion);
                                 }
                                 if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
                                     if($mode == "REAL") {
