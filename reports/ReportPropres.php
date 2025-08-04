@@ -61,7 +61,7 @@ class ReportPropres extends Report
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;
                     }
-                    $loopArray[$id] += $tab[$columns["aluation-net "]];
+                    $loopArray[$id] += $tab[$columns["valuation-net"]];
                 }
             }
         }
@@ -75,7 +75,7 @@ class ReportPropres extends Report
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;
                     }
-                    $loopArray[$id] += $tab[$columns["transac-usage"]];
+                    $loopArray[$id] += $tab[$columns["valuation-net"]];
                 }
             }
         }

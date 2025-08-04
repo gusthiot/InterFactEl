@@ -73,9 +73,7 @@ class ReportTransactions extends Report
             }
             foreach($loopArray as $id=>$q) {
                 $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                $transArray[] = [$ids[0], $sciper, "cae", $q];
+                $transArray[] = [$ids[0], $this->sciper($ids[1]), "cae", $q];
             }
             $columns = $this->bilansStats[$this->factel]['lvr']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('lvr'));
@@ -93,9 +91,7 @@ class ReportTransactions extends Report
             }
             foreach($loopArray as $id=>$q) {
                 $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                $transArray[] = [$ids[0], $sciper, "lvr", $q];
+                $transArray[] = [$ids[0], $this->sciper($ids[1]), "lvr", $q];
             }
         }
         elseif($this->factel >= 7 && $this->factel < 9) {
@@ -113,9 +109,7 @@ class ReportTransactions extends Report
             }
             foreach($loopArray as $id=>$q) {
                 $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                $transArray[] = [$ids[0], $sciper, $ids[2], $q];
+                $transArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
         elseif($this->factel >= 9 && $this->factel < 10) {
@@ -133,9 +127,7 @@ class ReportTransactions extends Report
             }
             foreach($loopArray as $id=>$q) {
                 $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                $transArray[] = [$ids[0], $sciper, $ids[2], $q];
+                $transArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
         else {
@@ -154,9 +146,7 @@ class ReportTransactions extends Report
             }
             foreach($loopArray as $id=>$q) {
                 $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                $transArray[] = [$ids[0], $sciper, $ids[2], $q];
+                $transArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
 
@@ -166,10 +156,7 @@ class ReportTransactions extends Report
 
     function mapping($transArray)
     {   
-        $scipers = [];
-        foreach($this->users as $id=>$user) {
-            $scipers[$user['user-sciper']] = $id;
-        }
+        $scipers = $this->scipers();
         foreach($transArray as $line) {
             $client = $this->clients[$line[0]];
             if($line[1] != 0) {

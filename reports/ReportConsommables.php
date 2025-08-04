@@ -49,9 +49,7 @@ class ReportConsommables extends Report
             }
             foreach($loopArray as $id=>$q) {
                 $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                $consosArray[] = [$ids[0], $sciper, $ids[2], $q];
+                $consosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
         elseif($this->factel >= 7 && $this->factel < 10) {
@@ -69,9 +67,7 @@ class ReportConsommables extends Report
             }
             foreach($loopArray as $id=>$q) {
                 $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-                $consosArray[] = [$ids[0], $sciper, $ids[2], $q];
+                $consosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
         else {
@@ -90,10 +86,8 @@ class ReportConsommables extends Report
             }
             foreach($loopArray as $id=>$line) {
                 $ids = explode("--", $id);
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
                 intval($this->year.$this->month) > 202408 ? $q = $line['Smu'] : $q = $line['Q']; 
-                $consosArray[] = [$ids[0], $sciper, $ids[2], $q];
+                $consosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
 

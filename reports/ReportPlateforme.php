@@ -137,9 +137,7 @@ class ReportPlateforme extends Report
         }
         foreach($loopArray as $id=>$q) {
             $ids = explode("--", $id);
-            $sciper = 0;
-            $ids[0] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[0]]['user-sciper'];
-            $operArray[] = [$sciper, $ids[1], $ids[2], $q];
+            $operArray[] = [$this->sciper($ids[0]), $ids[1], $ids[2], $q];
         }
         return $operArray;
     }
@@ -299,10 +297,7 @@ class ReportPlateforme extends Report
 
     function mappingOper($operArray)
     {   
-        $scipers = [];
-        foreach($this->users as $id=>$user) {
-            $scipers[$user['user-sciper']] = $id;
-        }
+        $scipers = $this->scipers();
         foreach($operArray as $line) {
             if($line[0] != 0) {
                 $user = $this->users[$scipers[$line[0]]];

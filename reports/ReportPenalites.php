@@ -110,9 +110,7 @@ class ReportPenalites extends Report
         }
         foreach($loopArray as $id=>$q) {
             $ids = explode("--", $id);
-            $sciper = 0;
-            $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
-            $penosArray[] = [$ids[0], $sciper, $ids[3], $ids[2], round($q,3)];
+            $penosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[3], $ids[2], round($q,3)];
         }
         return $penosArray;
     }
@@ -120,10 +118,7 @@ class ReportPenalites extends Report
 
     function mapping($penosArray)
     {   
-        $scipers = [];
-        foreach($this->users as $id=>$user) {
-            $scipers[$user['user-sciper']] = $id;
-        }
+        $scipers = $this->scipers();
         foreach($penosArray as $line) {
             $client = $this->clients[$line[0]];
             $user = $this->users[$scipers[$line[1]]];

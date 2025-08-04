@@ -121,8 +121,7 @@ class ReportUsages extends Report
             foreach($loopArray as $id=>$line) {
                 $ids = explode("--", $id);
                 $classe = $this->clientsClasses[$ids[0]]['client-class'];
-                $sciper = 0;
-                $ids[1] == 0 ? $sciper = 0 : $sciper = $this->users[$ids[1]]['user-sciper'];
+                $sciper = $this->sciper($ids[1]);
                 $categorie1 = $this->getCategorie($ids[2], 'K1');
                 if($categorie1[0] != "0") {
                     $usagesArray[] = [$ids[0], $classe, $sciper, 'K1', $ids[2], $categorie1[0], $categorie1[1], $categorie1[2], $line['Smu1'], $line['Snr1']];
@@ -173,10 +172,9 @@ class ReportUsages extends Report
             }
             foreach($loopArray as $id=>$line) {
                 $ids = explode("--", $id);
-                $sciper = $this->users[$ids[2]]['user-sciper'];
                 $categorie = $this->getCategorie($ids[3], $ids[4]);
                 if($categorie[0] != "0") {
-                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $line['Snr']];
+                    $usagesArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $line['Snr']];
                 }
             }
         }
@@ -206,10 +204,9 @@ class ReportUsages extends Report
                 $ids = explode("--", $id);
                 $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
-                $sciper = $this->users[$ids[2]]['user-sciper'];
                 $categorie = $this->getCategorie($ids[3], $ids[4]);
                 if($categorie[0] != "0") {
-                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
+                    $usagesArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
                 }
             }
         }
@@ -244,10 +241,9 @@ class ReportUsages extends Report
                 $ids = explode("--", $id);
                 $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
-                $sciper = $this->users[$ids[2]]['user-sciper'];
                 $categorie = $this->getCategorie($ids[3], $ids[4]);
                 if($categorie[0] != "0") {
-                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
+                    $usagesArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
                 }
             }
         }
@@ -277,10 +273,9 @@ class ReportUsages extends Report
                 $ids = explode("--", $id);
                 $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
-                $sciper = $this->users[$ids[2]]['user-sciper'];
                 $categorie = $this->getCategorie($ids[3], $ids[4]);
                 if($categorie[0] != "0") {
-                    $usagesArray[] = [$ids[0], $ids[1], $sciper, $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
+                    $usagesArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
                 }
             }
         }
@@ -306,10 +301,7 @@ class ReportUsages extends Report
     
     function mapping($usagesArray)
     {
-        $scipers = [];
-        foreach($this->users as $id=>$user) {
-            $scipers[$user['user-sciper']] = $id;
-        }
+        $scipers = $this->scipers();
         foreach($usagesArray as $line) {
             $client = $this->clients[$line[0]];
             $classe = $this->classes[$line[1]];

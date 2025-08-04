@@ -15,6 +15,7 @@ abstract class Report
     const SERVICE_DIM = ["item-text2K", "oper-note"];
     const PROJET_DIM = ["proj-id", "proj-nbr", "proj-name", "proj-expl"];
     const OPER_DIM = ["oper-sciper", "oper-name", "oper-first", "date", "flow-type"];
+    const DATE_DIM = ["year", "month"];
     const CLIENT_KEY = "client-code";
     const CLASSE_KEY = "client-class";
     const ARTICLE_KEY = "item-codeD";
@@ -245,6 +246,23 @@ abstract class Report
             $names[] = $this->paramtext->getParam($column);
         }
         return [$names];
+    }
+
+    function sciper($id)
+    {
+        if($id == 0) {
+            return 0;
+        } 
+        return $this->users[$id]['user-sciper'];
+    }
+
+    function scipers()
+    {
+        $scipers = [];
+        foreach($this->users as $id=>$user) {
+            $scipers[$user['user-sciper']] = $id;
+        }
+        return $scipers;
     }
 
     function processReportFile()

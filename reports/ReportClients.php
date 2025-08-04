@@ -1,0 +1,275 @@
+<?php
+
+class ReportClients extends Report
+{
+    private $totalC;
+    private $totalU;
+        
+    public function __construct($plateforme, $to, $from) 
+    { 
+        parent::__construct($plateforme, $to, $from);
+        $this->totalC = [];
+        $this->totalU = [];
+        $this->reportKey = 'statdate';
+        $this->reportColumns = ["client-code", "client-class", "user-sciper", "date"];
+        $this->tabs = [
+            "user-jour" => [
+                "title" => "nbre utilisateurs par jour, par semaine",
+                "columns" => ["year", "month", "day", "week-nbr"],
+                "dimensions" => array_merge($this::DATE_DIM, ["day", "week-nbr"]),
+                "operations" => ["stat-nbuser-d", "stat-nbuser-w"],
+                "formats" => ["int", "int"],
+                "results" => [],
+                "weeks" => []
+            ],
+            "user-mois" => [
+                "title" => "nbre utilisateurs par mois",
+                "columns" => ["year", "month"],
+                "dimensions" => $this::DATE_DIM,
+                "operations" => ["stat-nbuser-m", "stat-nbuser-3m", "stat-nbuser-6m", "stat-nbuser-12m"],
+                "formats" => ["int", "int", "int", "int"],
+                "results" => []
+            ],
+            "client-mois" => [
+                "title" => "nbre clients par mois",
+                "columns" => ["year", "month"],
+                "dimensions" => $this::DATE_DIM,
+                "operations" => ["stat-nbclient-m", "stat-nbclient-3m", "stat-nbclient-6m", "stat-nbclient-12m"],
+                "formats" => ["int", "int", "int", "int"],
+                "results" => []
+            ],
+            "client-classe" => [
+                "title" => "nbre clients par classe",
+                "columns" => ["client-class", "client-labelclass"],
+                "dimensions" => $this::CLASSE_DIM,
+                "operations" => ["stat-nbclient"],
+                "formats" => ["int"],
+                "results" => []
+            ],
+            "user-client" => [
+                "title" => "nbre utilisateurs par client",
+                "columns" => ["client-code", "client-sap", "client-name", "client-name2"],
+                "dimensions" => $this::CLIENT_DIM,
+                "operations" => ["stat-nbuser"],
+                "formats" => ["int"],
+                "results" => []
+            ]
+        ];
+
+    }
+
+    function prepare() 
+    {
+        $this->prepareMachines();
+        $this->prepareClients();
+        $this->prepareClientsClasses();
+        $this->prepareClasses();
+        $this->prepareUsers();
+        $this->preparePrestations();
+
+        $this->processReportFile();
+    }
+
+    function generate()
+    {        
+        $clientArray = [];
+
+        if($this->factel < 7) {
+            $columns = $this->bilansStats[$this->factel]['cae']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('cae'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                $machId = $tab[$columns["mach-id"]];
+                if(array_key_exists($machId, $this->machines)) {
+                    $itemGrp = $this->machines[$machId]["item-grp"];
+                    $itemId = $this->groupes[$itemGrp]["item-id-K1"];
+                    $code = $tab[$columns["client-code"]];
+                    if($code != $this->categories[$itemId]["platf-code"]) {
+                        $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                        $id = $code."--".$tab[$columns["user-id"]]."--".$datetime[0];
+                        $clcl = $this->clientsClasses[$code]['client-class'];
+                        $sciper = $this->sciper($tab[$columns["user-id"]]);
+                        $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
+                    }
+                }
+            }
+            $columns = $this->bilansStats[$this->factel]['lvr']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('lvr'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                $itemId = $tab[$columns["item-id"]];
+                $plateId = $this->prestations[$itemId]["platf-code"];
+                $code = $tab[$columns["client-code"]];
+                if(($plateId == $this->plateforme) && ($code != $plateId)) {
+                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                    $id = $code."--".$tab[$columns["user-id"]]."--".$datetime[0];
+                    $clcl = $this->clientsClasses[$code]['client-class'];
+                    $sciper = $this->sciper($tab[$columns["user-id"]]);
+                    $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
+                }
+            }
+        }
+        elseif($this->factel >= 7 && $this->factel < 9) {
+            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                $code = $tab[$columns["client-code"]];
+                $clcl = $tab[$columns["client-class"]];
+                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["platf-code"]] != $code)) {
+                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                    $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$datetime[0];
+                    $sciper = $this->sciper($tab[$columns["user-id"]]);
+                    $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
+                }
+            }
+        }
+        elseif($this->factel >= 9 && $this->factel < 10) {
+            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                $code = $tab[$columns["client-code"]];
+                $clcl = $tab[$columns["client-class"]];
+                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($code != $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2)) {
+                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                    $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$datetime[0];
+                    $sciper = $this->sciper($tab[$columns["user-id"]]);
+                    $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
+                }
+            }
+        }
+        else {
+            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            for($i=1;$i<count($lines);$i++) {
+                $tab = explode(";", $lines[$i]);
+                $code = $tab[$columns["client-code"]];
+                $clcl = $tab[$columns["client-class"]];
+                if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($code != $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2)) {
+                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                    $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$datetime[0];
+                    $sciper = $this->sciper($tab[$columns["user-id"]]);
+                    $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
+                }
+            }
+        }
+        return $clientArray;
+    }
+
+
+    function mapping($clientArray) 
+    {
+        foreach($clientArray as $id=>$line) {
+            $client = $this->clients[$line[0]];
+            $classe = $this->classes[$line[1]];
+            $date = new DateTimeImmutable($line[3]); 
+            $datetb = ["year"=>$date->format('Y'), "month"=>$date->format('m'), "day"=>$date->format('d'), "week-nbr"=>$date->format('W')];
+
+            $ids = [
+                "user-jour"=>$line[3],
+                "user-mois"=>$date->format('Y-m'),
+                "client-mois"=>$date->format('Y-m'),
+                "client-classe"=>$line[1],
+                "user-client"=>$line[0]
+            ];
+
+            $extends = [
+                "user-jour"=>[$datetb],
+                "user-mois"=>[$datetb],
+                "client-mois"=>[$datetb],
+                "client-classe"=>[$classe],
+                "user-client"=>[$client]
+            ];
+            $dimensions = [
+                "user-jour"=>[array_merge($this::DATE_DIM, ["day", "week-nbr"])],
+                "user-mois"=>[$this::DATE_DIM],
+                "client-mois"=>[$this::DATE_DIM],
+                "client-classe"=>[$this::CLASSE_DIM],
+                "user-client"=>[$this::CLIENT_DIM]
+            ];
+
+            foreach($this->tabs as $tab=>$data) {
+                if(in_array($tab, ["user-jour", "user-mois", "user-client"])) {
+                    if($line[2] == 0) {
+                        continue;
+                    }
+                }
+                if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
+                    $this->tabs[$tab]["results"][$ids[$tab]] = [];            
+                    foreach($dimensions[$tab] as $pos=>$dimension) {
+                        foreach($dimension as $d) {
+                            $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
+                        }
+                    }
+                    foreach($this->tabs[$tab]["operations"] as $operation) {
+                        $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
+                    }
+                    if(in_array($tab, ["user-jour", "user-mois", "user-client"])) {
+                        $this->tabs[$tab]["results"][$ids[$tab]]["users"] = [];
+                    }
+                    else {
+                        $this->tabs[$tab]["results"][$ids[$tab]]["clients"] = [];
+                    }
+                    if($tab == "user-jour") {
+                        if($date->format('w') == 1) {
+                            $this->tabs[$tab]["weeks"][$date->format('W')] = [];
+                        }
+                    }
+                }
+                if(in_array($tab, ["user-jour", "user-mois", "user-client"])) {
+                    if(!in_array($line[2], $this->tabs[$tab]["results"][$ids[$tab]]["users"])) {
+                        $this->tabs[$tab]["results"][$ids[$tab]]["users"][] = $line[2];
+                    }
+                }
+                else {
+                    if(!in_array($line[0], $this->tabs[$tab]["results"][$ids[$tab]]["clients"])) {
+                        $this->tabs[$tab]["results"][$ids[$tab]]["clients"][] = $line[0];
+                    }
+                }
+                if($tab == "user-jour") {
+                    if(array_key_exists($date->format('W'), $this->tabs[$tab]["weeks"])) {
+                        $this->tabs[$tab]["weeks"][$date->format('W')][] = $line[2];
+                    }
+                }
+            }
+            if($line[2] != 0 && !in_array($line[2], $this->totalU)) {
+                $this->totalU[] = $line[2];
+            }
+            if(!in_array($line[0], $this->totalC)) {
+                $this->totalC[] = $line[0];
+            }
+        }
+    }
+
+
+    function display()
+    {
+        foreach($this->tabs["user-jour"]["results"] as $jour=>$data) {
+            $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-d"] = count($data["users"]);
+                $date = new DateTimeImmutable($jour);
+                if($date->format('w') == 0) {
+                    if(array_key_exists($date->format('W'), $this->tabs["user-jour"]["weeks"])) {
+                        $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = count($this->tabs["user-jour"]["weeks"][$date->format('W')]);
+                    }
+                }
+        }
+        foreach($this->tabs["user-mois"]["results"] as $mois=>$data) {
+            $this->tabs["user-mois"]["results"][$mois]["stat-nbuser-m"] = count($data["users"]);
+        }
+        foreach($this->tabs["client-mois"]["results"] as $mois=>$data) {
+            $this->tabs["client-mois"]["results"][$mois]["stat-nbclient-m"] = count($data["clients"]);
+        }
+        foreach($this->tabs["client-classe"]["results"] as $classe=>$data) {
+            $this->tabs["client-classe"]["results"][$classe]["stat-nbclient"] = count($data["clients"]);
+        }
+        foreach($this->tabs["user-client"]["results"] as $client=>$data) {
+            $this->tabs["user-client"]["results"][$client]["stat-nbuser"] = count($data["users"]);
+        }
+        $title = '<div class="total">Statistiques nombre utilisateurs et clients : '.$this->period().' </div>';
+        $title .= '<div class="subtotal">Nombre de clients = '.$this->format(count($this->totalC), "int").'</div>';
+        $title .= '<div class="subtotal">Nombre d\'utilisateurs = '.$this->format(count($this->totalU), "int").'</div>';
+        echo $this->templateDisplay($title);
+    }
+
+}
