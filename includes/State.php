@@ -71,11 +71,11 @@ class State
         $this->last_v = "";
         $this->last_r = "";
         if(file_exists($pathPlate)) {
-            foreach(array_reverse(glob($pathPlate."/*", GLOB_ONLYDIR)) as $dirYear) {
+            foreach(globReverse($pathPlate) as $dirYear) {
                 $year = basename($dirYear);
-                foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+                foreach(globReverse($dirYear) as $dirMonth) {
                     $month = basename($dirMonth);
-                    foreach(array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR)) as $dirVersion) {
+                    foreach(globReverse($dirMonth) as $dirVersion) {
                         $version = basename($dirVersion);
                         if (file_exists($dirVersion."/".Lock::FILES['version'])) {
                             $this->last_y = $year;
@@ -101,13 +101,13 @@ class State
     static function currentState(string $pathPlate): string         
     {
         if(file_exists($pathPlate)) {
-            foreach(array_reverse(glob($pathPlate."/*", GLOB_ONLYDIR)) as $dirYear) {
+            foreach(globReverse($pathPlate) as $dirYear) {
                 $year = basename($dirYear);
-                foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+                foreach(globReverse($dirYear) as $dirMonth) {
                     $month = basename($dirMonth);
-                    foreach(array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR)) as $dirVersion) {
+                    foreach(globReverse($dirMonth) as $dirVersion) {
                         $version = basename($dirVersion);
-                        foreach(array_reverse(glob($dirVersion."/*", GLOB_ONLYDIR)) as $dirRun) {
+                        foreach(globReverse($dirVersion) as $dirRun) {
                             if (!file_exists($dirRun."/".Lock::FILES['run'])) {
                                 return "(".$month." ".$year.", ".$version.")";
                             }

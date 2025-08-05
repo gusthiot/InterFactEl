@@ -356,15 +356,21 @@ abstract class Report
             $this->month = substr($date, 4, 2);
             $this->year = substr($date, 0, 4);
             $dir = DATA.$this->plateforme."/".$this->year."/".$this->month;
-            $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
 
             if (file_exists($dir."/".Lock::FILES['month'])) {
+                $version = Lock::load($dir, "month");
+                $dirVersion = $dir."/".$version;
                 $run = Lock::load($dirVersion, "version");
                 $this->dirRun = $dirVersion."/".$run;
             }
             else {
-                $globVer = glob($dirVersion."/*", GLOB_ONLYDIR);
-                $this->dirRun = array_reverse($globVer)[0];
+                foreach(globReverse($dir) as $dirVersion) {
+                    $run = Lock::load($dirVersion, "version");
+                    if ($run) {
+                        $this->dirRun = $dirVersion."/".$run;
+                        break;
+                    }
+                }
                 $this->open = substr($date, 4, 2)." ".substr($date, 0, 4);
             }
 

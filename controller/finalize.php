@@ -38,7 +38,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     Lock::save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
     if (in_array($status, [0, 1]) && file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
         $prevVersion = 0;
-        foreach(array_reverse(glob($dirPrevMonth."/*", GLOB_ONLYDIR)) as $dirPrevVersion) {
+        foreach(globReverse($dirPrevMonth) as $dirPrevVersion) {
                 if (file_exists($dirPrevVersion."/".Lock::FILES['version'])) {
                     $sep = strrpos($dirPrevVersion, "/");
                     $prevVersion = substr($dir, $sep+1);

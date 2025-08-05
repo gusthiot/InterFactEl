@@ -21,7 +21,7 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
     $month = substr($_GET["from"], 4, 2);
     $year = substr($_GET["from"], 0, 4);
     $dir = DATA.$plateforme."/".$year."/".$month;
-    $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
+    $dirVersion = globReverse($dir)[0];
     $run = Lock::load($dirVersion, "version");
     $infos = Info::load($dirVersion."/".$run);
     $fact_from = $infos["FactEl"][2];
@@ -29,7 +29,7 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
     $month = substr($_GET["to"], 4, 2);
     $year = substr($_GET["to"], 0, 4);
     $dir = DATA.$plateforme."/".$year."/".$month;
-    $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
+    $dirVersion = globReverse($dir)[0];
     $run = Lock::load($dirVersion, "version");
     $infos = Info::load($dirVersion."/".$run);
     $fact_to = $infos["FactEl"][2];
@@ -54,7 +54,7 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
             $month = substr($date, 4, 2);
             $year = substr($date, 0, 4);
             $dir = DATA.$plateforme."/".$year."/".$month;
-            $dirVersion = array_reverse(glob($dir."/*", GLOB_ONLYDIR))[0];
+            $dirVersion = globReverse($dir)[0];
             $run = Lock::load($dirVersion, "version");
 
             $suf = "_".$abrev."_".$year."_".$month."_".basename($dirVersion).".csv";

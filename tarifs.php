@@ -75,9 +75,9 @@ if(!$available) {
                 <input type="hidden" id="last-year" value="<?= $state->getLastYear() ?>" />
                 <table id="tarifs" class="table table-boxed">
                     <?php
-                    foreach(array_reverse(glob($dir."/*", GLOB_ONLYDIR)) as $dirYear) {
+                    foreach(globReverse($dir) as $dirYear) {
                         $year = basename($dirYear);
-                        foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+                        foreach(globReverse($dirYear) as $dirMonth) {
                             $month = basename($dirMonth);
                             if (file_exists($dirMonth."/".ParamZip::NAME)) {
                                 $label = Label::load($dirMonth);
@@ -95,8 +95,8 @@ if(!$available) {
 
                                 $lastRun = 0;
                                 $lastVersion = 0;
-                                foreach(array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR)) as $dirVersion) {
-                                    foreach(array_reverse(glob($dirVersion."/*", GLOB_ONLYDIR)) as $dirRun) {
+                                foreach(globReverse($dirMonth) as $dirVersion) {
+                                    foreach(globReverse($dirVersion) as $dirRun) {
                                         $sap = new Sap($dirRun);
                                         if(file_exists($dirRun."/lock.csv") || $sap->status() > 1) {
                                             $lastRun = basename($dirRun);

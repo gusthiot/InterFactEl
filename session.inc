@@ -69,3 +69,8 @@ function checkPlateforme(string $type, string $plateforme): void
         exit;
     }
 }
+
+function globReverse(string $dir): array
+{
+    return array_reverse(glob($dir."/*", GLOB_ONLYDIR));
+}

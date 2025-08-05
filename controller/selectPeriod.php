@@ -24,23 +24,24 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
             $vMin = 1.0;
     }
 
-    foreach(array_reverse(glob($dir."/*", GLOB_ONLYDIR))  as $dirYear) {
+    foreach(globReverse($dir)  as $dirYear) {
         $year = basename($dirYear);
         $open = [];
-        foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+        foreach(globReverse($dirYear) as $dirMonth) {
             $month = basename($dirMonth);
             $glob = glob($dirMonth."/*", GLOB_ONLYDIR);
             if (!empty($glob)) {
-                if (file_exists($dirMonth."/".Lock::FILES['month'])) {
+                $version = Lock::load($dirMonth, "month");
+                if ($version) {
                     if(!empty($open)) {
-                        $infos = Info::load($open[0]);
+                        $infos = Info::load($open[2]."/".$open[3]);
                         $factel = $infos["FactEl"][2];
                         if($factel >= $vMin) {
-                            $choices[$open[1].$open[2]] = [$open[1], $open[2], $factel];
+                            $choices[$open[0].$open[1]] = [$open[0], $open[1], $factel];
                         }
                         $open = [];
                     }
-                    $dirVersion = array_reverse($glob)[0];
+                    $dirVersion = $dirMonth."/".$version;
                     $run = Lock::load($dirVersion, "version");
                     $infos = Info::load($dirVersion."/".$run);
                     $factel = $infos["FactEl"][2];
@@ -50,9 +51,9 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
                 }
                 else {
                     foreach(array_reverse($glob) as $dirVersion) {
-                        if (file_exists($dirVersion."/".Lock::FILES['version'])) {
-                            $run = Lock::load($dirVersion, "version");
-                            $open = [$run, $year, $month];
+                        $run = Lock::load($dirVersion, "version");
+                        if ($run) {
+                            $open = [$year, $month, $dirVersion, $run];
                             break;
                         }
                     }

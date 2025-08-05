@@ -31,8 +31,9 @@ class Lock
     {
         $lock = "";
         if(array_key_exists($type, self::FILES)) {
-            return trim(self::loadByName($dir."/".self::FILES[$type]));
-
+            if(file_exists($dir."/".self::FILES[$type])) {
+                return trim(self::loadByName($dir."/".self::FILES[$type]));
+            }
         }
         return false;
     }
@@ -45,7 +46,7 @@ class Lock
      */
     static function loadByName(string $file): string
     {
-        if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
+        if ((file_exists($file)) && (filesize($file) > 0) && (($open = fopen($file, "r")) !== false)) {
             $lock = fread($open, filesize($file));    
             fclose($open);
             return trim($lock);

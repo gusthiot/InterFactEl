@@ -103,9 +103,9 @@ include("includes/lock.php");
                                         $title = "Réinitialiser et charger une période";
                                     }
                                     $prod = str_replace("data", "../prod/data", DATA.$plateforme);
-                                    foreach(array_reverse(glob($prod."/*", GLOB_ONLYDIR))  as $dirYear) {
+                                    foreach(globReverse($prod)  as $dirYear) {
                                         $year = basename($dirYear);
-                                        foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+                                        foreach(globReverse($dirYear) as $dirMonth) {
                                             $month = basename($dirMonth);
                                             $choices[$year.$month] = [$year, $month];
                                         }
@@ -165,11 +165,11 @@ include("includes/lock.php");
                     <?php
 
                     // Listing of all year/month/version/run for th plateform
-                    foreach(array_reverse(glob($dir."/*", GLOB_ONLYDIR)) as $dirYear) {
+                    foreach(globReverse($dir) as $dirYear) {
                         $year = basename($dirYear);
-                        foreach(array_reverse(glob($dirYear."/*", GLOB_ONLYDIR)) as $dirMonth) {
+                        foreach(globReverse($dirYear) as $dirMonth) {
                             $month = basename($dirMonth);
-                            $dirVersions = array_reverse(glob($dirMonth."/*", GLOB_ONLYDIR));
+                            $dirVersions = globReverse($dirMonth);
                             if(count($dirVersions) > 0) {
                                 echo '<tr>';
                                 echo '<td rowspan="'.count($dirVersions).'">';
@@ -198,7 +198,7 @@ include("includes/lock.php");
                                         </svg>
                                     <?php }
                                     echo '</td><td>';
-                                    foreach(array_reverse(glob($dirVersion."/*", GLOB_ONLYDIR)) as $dirRun) {
+                                    foreach(globReverse($dirVersion) as $dirRun) {
                                         $run = basename($dirRun);
                                         if($run != $lockedRun || $lockedProcessus != "Une préfacturation") {
                                             $value = 'year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
