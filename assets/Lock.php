@@ -27,15 +27,18 @@ class Lock
      * @param string $type the type of lock file wanted (to get the file name)
      * @return string the content, or false if type doesn't exists or loadByName returns false
      */
-    static function load(string $dir, string $type): string 
+    static function load(string $dir, string $type): string|null 
     {
         $lock = "";
         if(array_key_exists($type, self::FILES)) {
             if(file_exists($dir."/".self::FILES[$type])) {
-                return trim(self::loadByName($dir."/".self::FILES[$type]));
+                $loaded = self::loadByName($dir."/".self::FILES[$type]);
+                if(!is_null($loaded)) {
+                    return trim($loaded);
+                }
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -44,14 +47,14 @@ class Lock
      * @param string $file the file name
      * @return string the content, or false if fopen returns an error
      */
-    static function loadByName(string $file): string
+    static function loadByName(string $file): string|null
     {
         if ((file_exists($file)) && (filesize($file) > 0) && (($open = fopen($file, "r")) !== false)) {
             $lock = fread($open, filesize($file));    
             fclose($open);
             return trim($lock);
         }
-        return false;
+        return null;
     }
     
     /**

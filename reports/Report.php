@@ -366,7 +366,7 @@ abstract class Report
             else {
                 foreach(globReverse($dir) as $dirVersion) {
                     $run = Lock::load($dirVersion, "version");
-                    if ($run) {
+                    if (!is_null($run)) {
                         $this->dirRun = $dirVersion."/".$run;
                         break;
                     }

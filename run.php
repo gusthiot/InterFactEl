@@ -74,11 +74,11 @@ include("includes/lock.php");
                     <button type="button" id="open-ticket" class="btn but-line">Contrôler le ticket</button>
                     <button type="button" id="open-changes" class="btn but-line">Afficher les modifications</button>
                 <?php 
-                    if(($status < 4) && !$lockRun) {
+                    if(($status < 4) && is_null($lockRun)) {
                         echo '<button type="button" id="invalidate" '.$disabled.' class="btn but-line lockable">Invalider</button>';
                     } 
                 }
-                if(in_array($status, [0, 1, 4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run)) { ?>
+                if(in_array($status, [0, 1, 4, 5, 6, 7]) && !is_null($lockVersion) && ($lockVersion == $run)) { ?>
                     <button type="button" id="bilans" class="btn but-line">Exporter Bilans & Stats</button>
                     <?php if(!$archive) { ?> 
                         <button type="button" id="annexes" class="btn but-line">Exporter Annexes csv</button>
@@ -87,13 +87,13 @@ include("includes/lock.php");
                 ?>
                 <button type="button" id="all" class="btn but-line">Exporter Tout</button>
                 <?php 
-                if(!$archive && in_array($status, [1, 2, 3, 5, 6, 7]) && !$lockRun) {
+                if(!$archive && in_array($status, [1, 2, 3, 5, 6, 7]) && is_null($lockRun)) {
                     echo '<button type="button" id="send" '.$disabled.' class="btn but-line-green lockable">Envoi SAP</button>';
                 }
-                if(!$archive && in_array($status, [0, 1, 5, 6, 7]) && !$lockRun) {
+                if(!$archive && in_array($status, [0, 1, 5, 6, 7]) && is_null($lockRun)) {
                     echo '<button type="button" id="finalize" '.$disabled.' class="btn but-line-blue lockable">Finaliser SAP</button>';
                 }
-                if(!$archive && (in_array($status, [5, 6, 7]) && !$lockRun) || (in_array($status, [1, 4, 5, 6, 7]) && $lockVersion && ($lockVersion == $run))) {
+                if(!$archive && (in_array($status, [5, 6, 7]) && is_null($lockRun)) || (in_array($status, [1, 4, 5, 6, 7]) && !is_null($lockVersion) && ($lockVersion == $run))) {
                     echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg5').'" '.$disabled.' class="btn but-line-red lockable">Renvoi SAP</button>';
                 }
                 if(!$archive && $status > 1) {

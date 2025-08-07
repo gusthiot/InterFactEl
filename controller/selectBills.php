@@ -29,7 +29,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
             }
             else {
                 $lockRun = Lock::load($dir, "run");
-                if( $line[3] === "SENT" || ($lockRun && $line[3] === "READY") ) {
+                if( $line[3] === "SENT" || (!is_null($lockRun) && $line[3] === "READY") ) {
                     $choices[] = choice($i, $line);
                 }
             }

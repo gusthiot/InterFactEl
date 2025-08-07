@@ -38,7 +38,7 @@ if(isset($_POST['type'])) {
 
     if($type != "ARCHIVE") {
         $lockProcess = Lock::load("../", "process");
-        if(!empty($lockProcess)) {
+        if(!is_null($lockProcess)) {
             $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';
             if($type == "SIMU") {
                 header('Location: ../index.php');

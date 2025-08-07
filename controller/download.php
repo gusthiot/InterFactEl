@@ -24,7 +24,7 @@ if(isset($_GET['type'])) {
     elseif($type==="generated") {
         // prefacturation, only for the user running it
         $fileName = Lock::loadByName("../".USER.".lock");
-        if(!empty($fileName)) {   
+        if(!is_null($fileName)) {   
             header('Content-disposition: attachment; filename="'.basename($fileName).'"');
             header('Content-type: application/zip');
             readfile($fileName);

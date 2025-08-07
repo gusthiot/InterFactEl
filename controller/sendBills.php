@@ -23,7 +23,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $version = $_POST["version"];
     $mode = $_POST["mode"];
     $lockProcess = Lock::load("../", "process");
-    if(!empty($lockProcess)) {
+    if(!is_null($lockProcess)) {
         $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...';
         header('Location: ../run.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
         exit;

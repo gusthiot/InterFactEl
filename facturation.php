@@ -208,8 +208,8 @@ include("includes/lock.php");
                                             }
                                             $sap = new Sap($dirRun);
                                             $lockRun = Lock::load($dirRun, "run");
-                                            echo ' <button type="button" value="'.$value.'" class="open-run btn '.Sap::color($sap->status(), $lockRun).'"> '.$label;
-                                            if ($lockRun) { ?>
+                                            echo ' <button type="button" value="'.$value.'" class="open-run btn '.Sap::color($sap->status(), is_null($lockRun) ? "" : $lockRun).'"> '.$label;
+                                            if (!is_null($lockRun)) { ?>
                                                 <svg class="icon" aria-hidden="true">
                                                     <use xlink:href="#lock"></use>
                                                 </svg>

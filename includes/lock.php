@@ -12,12 +12,12 @@ $lockUser = "";
 $lockProcess = "";
 if(DATA_GEST) {
     $lockUser = Lock::loadByName(USER.".lock");
-    if(!empty($lockUser)) {
+    if(!is_null($lockUser)) {
         $disabled = "disabled";
         $dlTxt = '<a href="#" id="download-generated">Vous avez un dossier à télécharger avant de pouvoir faire d’autres actions.</a>';
     }
     $lockProcess = Lock::load("./", "process");
-    if(!empty($lockProcess)) {
+    if(!is_null($lockProcess)) {
         $disabled = "disabled";
         $lockedTab = explode(" ", $lockProcess);
         if($lockedTab[0] == "prefa") {
