@@ -2,6 +2,9 @@
 
 require_once("Csv.php");
 
+/**
+ * ParamText class represents a csv file with all the key/label for the columns names
+ */
 class ParamText extends Csv 
 { 
 
@@ -10,6 +13,9 @@ class ParamText extends Csv
      */
     const NAME = "paramtext.csv";
 
+    /**
+     * The complete keys list
+     */
     const LABELS = ["editing-year", "editing-month", "invoice-year", "invoice-month", "invoice-version", "invoice-project", "invoice-id", "invoice-type", "invoice-ref", 
                     "platf-code", "platf-op", "platf-name", "client-code", "client-sap", "client-name", "client-name2", "client-name3", "client-ref", "client-email", 
                     "client-deliv", "client-idclass", "client-class", "client-labelclass", "oper-id", "oper-sciper", "oper-name", "oper-first", "oper-note", "oper-PO", 

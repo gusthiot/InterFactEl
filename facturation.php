@@ -6,6 +6,10 @@ require_once("assets/Lock.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
+/**
+ * Page to manage a plateform facturation
+ */
+
 if(!isset($_GET["plateforme"])) {
     $_SESSION['alert-danger'] = "Manque un numéro de plateforme !";
     header('Location: index.php');

@@ -7,6 +7,10 @@ require_once("assets/Sap.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
+/**
+ * Page to manage the tarifs for a given plateform, upload and modify them
+ */
+
 if(!isset($_GET["plateforme"])) {
     $_SESSION['alert-danger'] = "Manque un numéro de plateforme !";
     header('Location: index.php');

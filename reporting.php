@@ -4,6 +4,10 @@ require_once("assets/Lock.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
+/**
+ * Page to generate and display different reports
+ */
+
 if(!isset($_GET["plateforme"])) {
     $_SESSION['alert-danger'] = "Manque un numéro de plateforme !";
     header('Location: index.php');

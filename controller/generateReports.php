@@ -20,7 +20,7 @@ require_once("../reports/ReportPropres.php");
 require_once("../session.inc");
 
 /**
- * 
+ * Called to generate a given report for a given period
  */
 if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && isset($_POST["type"])) {
     $plateforme = $_POST["plate"];

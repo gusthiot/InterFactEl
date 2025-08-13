@@ -4,6 +4,9 @@ require_once("../assets/Lock.php");
 require_once("../assets/Info.php");
 require_once("../session.inc");
 
+/**
+ * Called to display a selector to choose a period for a report
+ */
 if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) { 
     checkPlateforme("reporting", $_POST["plate"]);
     $dir = DATA.$_POST['plate'];
@@ -36,7 +39,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
                     if(!empty($open)) {
                         $infos = Info::load($open[2]."/".$open[3]);
                         $factel = $infos["FactEl"][2];
-                        if($factel >= $vMin) {
+                        if(floatval($factel) >= $vMin) {
                             $choices[$open[0].$open[1]] = [$open[0], $open[1], $factel];
                         }
                         $open = [];
@@ -45,7 +48,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
                     $run = Lock::load($dirVersion, "version");
                     $infos = Info::load($dirVersion."/".$run);
                     $factel = $infos["FactEl"][2];
-                    if($factel >= $vMin) {
+                    if(floatval($factel) >= $vMin) {
                         $choices[$year.$month] = [$year, $month, $factel];
                     }
                 }

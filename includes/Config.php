@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Config Class represents the config directory and its content
+ * Config class represents the config directory and its content
  */
 class Config
 {
@@ -39,7 +39,17 @@ class Config
         return error_get_last();
     }
 
-    static function checkColumns($tmpDir, $file, $nb, $rights=false, $labels="")
+    /**
+     * Checks the csv files columns number
+     *
+     * @param string $tmpDir directory were to temporary find the new config files
+     * @param string $file file name
+     * @param integer $nb the expected number of columns
+     * @param boolean $rights if we also want to check the rights
+     * @param array $labels if we also want to check if all the labels exists, and only the expected ones
+     * @return string error or empty string
+     */
+    static function checkColumns(string $tmpDir, string $file, int $nb, bool $rights=false, array $labels=[]): string
     {
         $lines = Csv::extract($tmpDir.$file);
         $msg = "";

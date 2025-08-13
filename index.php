@@ -6,6 +6,10 @@ require_once("session.inc");
 
 include("includes/lock.php");
 
+/**
+ * Main page
+ */
+
 ?>
 
 <!DOCTYPE html>

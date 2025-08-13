@@ -16,7 +16,6 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
     checkPlateforme("reporting", $plateforme);
     $abrev = DATA_GEST['reporting'][$plateforme];
     $date = $_GET["from"];
-    $factel = "";
 
     $month = substr($_GET["from"], 4, 2);
     $year = substr($_GET["from"], 0, 4);

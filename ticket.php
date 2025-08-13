@@ -3,6 +3,10 @@
 require_once("assets/Ticket.php");
 require_once("session.inc");
 
+/**
+ * Page to display the ticket for a given run from a plateform facturation, or a ticket from external data
+ */
+
 if(isset($_GET["unique"])) {
     $unique = $_GET["unique"];
     $dir = TEMP.$unique;

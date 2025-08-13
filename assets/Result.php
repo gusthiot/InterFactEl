@@ -2,7 +2,9 @@
 
 require_once("Csv.php");
 
-
+/**
+ * Result class represents a csv file with the facturation result parameters
+ */
 class Result extends Csv 
 { 
 

@@ -2,7 +2,9 @@
 
 require_once("Csv.php");
 
-
+/**
+ * ParamEdit class represents a csv file with edition parameters
+ */
 class ParamEdit extends Csv 
 { 
 

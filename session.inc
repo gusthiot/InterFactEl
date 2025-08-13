@@ -10,9 +10,9 @@ require_once("assets/Gestionnaire.php");
 ini_set('display_errors', DISPLAY_ERRORS);
 error_reporting(ERROR_REPORTING);
 
-
-// Authentication Entra
-
+/**
+ * Authentication Entra
+ */
 session_start(); 
 if(DEV_MODE) {
     define( 'USER', DEV_MODE );
@@ -25,7 +25,6 @@ else {
     }
     define( 'USER', $_SESSION["claims"]->gaspar );
 }
-
 
 /**
  * Managing user rights
@@ -70,6 +69,12 @@ function checkPlateforme(string $type, string $plateforme): void
     }
 }
 
+/**
+ * Gives a directory content in reverse order
+ *
+ * @param string $dir targeted directory
+ * @return array
+ */
 function globReverse(string $dir): array
 {
     return array_reverse(glob($dir."/*", GLOB_ONLYDIR));

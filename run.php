@@ -6,6 +6,10 @@ require_once("assets/Lock.php");
 require_once("assets/Message.php");
 require_once("session.inc");
 
+/**
+ * Page to manage a plateform facturation run
+ */
+
 if(!isset($_GET["plateforme"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
     $_SESSION['alert-danger'] = "Manque un paramètre !";
     header('Location: index.php');

@@ -2,6 +2,10 @@
 
 require_once("session.inc");
 
+/**
+ * Complete logout from Entra
+ */
+
 if(DEV_MODE) {
     header('Location: index.php');
 }
