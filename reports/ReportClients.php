@@ -105,67 +105,34 @@ class ReportClients extends Report
         $clientArray = [];
 
         if(floatval($this->factel) < 7) {
-            $columns = $this->bilansStats[$this->factel]['cae']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('cae'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $machId = $tab[$columns["mach-id"]];
-                if(array_key_exists($machId, $this->machines)) {
-                    $itemGrp = $this->machines[$machId]["item-grp"];
-                    $itemId = $this->groupes[$itemGrp]["item-id-K1"];
-                    $code = $tab[$columns["client-code"]];
-                    if($code != $this->categories[$itemId]["platf-code"]) {
+            foreach(['cae', 'lvr'] as $flux) {
+                $columns = $this->bilansStats[$this->factel][$flux]['columns'];
+                $lines = Csv::extract($this->getFileNameInBS($flux));
+                for($i=1;$i<count($lines);$i++) {
+                    $tab = explode(";", $lines[$i]);
+                    if($flux == 'cae') {
+                        $machId = $tab[$columns["mach-id"]];
+                        if(!array_key_exists($machId, $this->machines)) {
+                            continue;
+                        }
+                        $itemGrp = $this->machines[$machId]["item-grp"];
+                        $itemId = $this->groupes[$itemGrp]["item-id-K1"];
+                        $code = $tab[$columns["client-code"]];
+                        $cond = $code != $this->categories[$itemId]["platf-code"];
+                    }
+                    else {
+                        $itemId = $tab[$columns["item-id"]];
+                        $plateId = $this->prestations[$itemId]["platf-code"];
+                        $code = $tab[$columns["client-code"]];
+                        $cond = ($plateId == $this->plateforme) && ($code != $plateId);
+                    }
+                    if($cond) {
                         $datetime = explode(" ", $tab[$columns["transac-date"]]);
                         $id = $code."--".$tab[$columns["user-id"]]."--".$datetime[0];
                         $clcl = $this->clientsClasses[$code]['client-class'];
                         $sciper = $this->sciper($tab[$columns["user-id"]]);
                         $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
                     }
-                }
-            }
-            $columns = $this->bilansStats[$this->factel]['lvr']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('lvr'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $itemId = $tab[$columns["item-id"]];
-                $plateId = $this->prestations[$itemId]["platf-code"];
-                $code = $tab[$columns["client-code"]];
-                if(($plateId == $this->plateforme) && ($code != $plateId)) {
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                    $id = $code."--".$tab[$columns["user-id"]]."--".$datetime[0];
-                    $clcl = $this->clientsClasses[$code]['client-class'];
-                    $sciper = $this->sciper($tab[$columns["user-id"]]);
-                    $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
-                }
-            }
-        }
-        elseif(floatval($this->factel) >= 7 && floatval($this->factel) < 9) {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $code = $tab[$columns["client-code"]];
-                $clcl = $tab[$columns["client-class"]];
-                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["platf-code"]] != $code)) {
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                    $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$datetime[0];
-                    $sciper = $this->sciper($tab[$columns["user-id"]]);
-                    $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
-                }
-            }
-        }
-        elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $code = $tab[$columns["client-code"]];
-                $clcl = $tab[$columns["client-class"]];
-                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($code != $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2)) {
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                    $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$datetime[0];
-                    $sciper = $this->sciper($tab[$columns["user-id"]]);
-                    $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
                 }
             }
         }
@@ -176,7 +143,17 @@ class ReportClients extends Report
                 $tab = explode(";", $lines[$i]);
                 $code = $tab[$columns["client-code"]];
                 $clcl = $tab[$columns["client-class"]];
-                if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($code != $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2)) {
+                if(floatval($this->factel) >= 7 && floatval($this->factel) < 9) {
+                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["platf-code"]] != $code);
+                }
+                elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
+                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($code != $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2);
+                }
+                else {
+                    $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($code != $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2);
+
+                }
+                if($cond) {
                     $datetime = explode(" ", $tab[$columns["transac-date"]]);
                     $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$datetime[0];
                     $sciper = $this->sciper($tab[$columns["user-id"]]);

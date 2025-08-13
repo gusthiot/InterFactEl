@@ -148,7 +148,7 @@ class ReportMontants extends Report
             foreach($t1Array as $code=>$pc) {
                 foreach($pc as $clcl=>$pcl) {
                     foreach($pcl as $item=>$tot) {
-                        $montantsArray[] = [$code, $clcl, $item, $tot];
+                        $montantsArray[] = [$code, $clcl, $item, round((2*$tot),1)/2];
                     }
                 }
             }
@@ -192,16 +192,42 @@ class ReportMontants extends Report
                             if(($tab[$columns["item-codeD"]] == "R") && ($montant < 50)) {
                                 $montant = 0;
                             }
-                            $montantsArray[] = [$code, $clcl, $tab[$columns["item-codeD"]], $montant];
+                            $montantsArray[] = [$code, $clcl, $tab[$columns["item-codeD"]], round((2*$montant),1)/2];
                         }
                     }
                 }
             }
         }
-        for($i=0;$i<count($montantsArray);$i++) {
-            $montantsArray[$i][3] = round((2*$montantsArray[$i][3]),1)/2;
-        }
         return $montantsArray;
+    }
+
+    /**
+     * generates amounts line
+     *
+     * @param array $montantsArray array containing lines for the report
+     * @param float $montant total amount
+     * @param array $tab base data line
+     * @param array $columns base data line columns
+     * @param string $clcl client classe
+     * @param float $dM total amount substraction
+     * @param array $dMontants part amounts substraction
+     * @return void
+     */
+    function facts(array &$montantsArray, float $montant, array $tab, array $columns, string $clcl, float $dM=0.0, array $dMontants=[0, 0, 0, 0, 0]): void
+    {
+        $code = $tab[$columns['client-code']];
+        $facts = ["total-fact-l", "total-fact-c", "total-fact-w", "total-fact-x", "total-fact-r"];
+        $types = ["L", "C", "W", "X", "R"];
+        if(($montant - $dM) > 0) {
+            $montantsArray[] = [$code, $clcl, "M", ($montant - $dM)];
+        }
+        foreach($facts as $pos=>$fact) {
+            if(array_key_exists($fact, $columns)) {
+                if(($tab[$columns[$fact]] - $dMontants[$pos]) > 0) {
+                    $montantsArray[] = [$code, $clcl, $types[$pos], round((2*($tab[$columns[$fact]] - $dMontants[$pos])),1)/2];
+                }
+            }
+        }
     }
 
     /**
@@ -275,35 +301,6 @@ class ReportMontants extends Report
             }
             $this->totalCsvData["results"][$ids["for-csv"]]["total-fact"] += $montant;
             $this->totalCsvData["results"][$ids["for-csv"]]["mois"][$this->monthly] += $montant;
-        }
-    }
-
-    /**
-     * generates amounts line
-     *
-     * @param array $montantsArray array containing lines for the report
-     * @param float $montant total amount
-     * @param array $tab base data line
-     * @param array $columns base data line columns
-     * @param string $clcl client classe
-     * @param float $dM total amount substraction
-     * @param array $dMontants part amounts substraction
-     * @return void
-     */
-    function facts(array &$montantsArray, float $montant, array $tab, array $columns, string $clcl, float $dM=0.0, array $dMontants=[0, 0, 0, 0, 0]): void
-    {
-        $code = $tab[$columns['client-code']];
-        $facts = ["total-fact-l", "total-fact-c", "total-fact-w", "total-fact-x", "total-fact-r"];
-        $types = ["L", "C", "W", "X", "R"];
-        if(($montant - $dM) > 0) {
-            $montantsArray[] = [$code, $clcl, "M", ($montant - $dM)];
-        }
-        foreach($facts as $pos=>$fact) {
-            if(array_key_exists($fact, $columns)) {
-                if(($tab[$columns[$fact]] - $dMontants[$pos]) > 0) {
-                    $montantsArray[] = [$code, $clcl, $types[$pos], ($tab[$columns[$fact]] - $dMontants[$pos])];
-                }
-            }
         }
     }
 

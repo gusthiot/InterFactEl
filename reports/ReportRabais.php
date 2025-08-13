@@ -79,8 +79,8 @@ class ReportRabais extends Report
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
                 if(($tab[$columns["platf-code"]] == $this->plateforme) && ($tab[$columns['client-code']] != $this->plateforme )) {
-                    $rabaisArray[] = [$tab[$columns['client-code']], $tab[$columns['client-class']], $tab[$columns["item-codeD"]], $tab[$columns["deduct-CHF"]],
-                                        $tab[$columns["subsid-deduct"]], $tab[$columns["discount-bonus"]], $tab[$columns["subsid-bonus"]]];
+                    $rabaisArray[] = [$tab[$columns['client-code']], $tab[$columns['client-class']], $tab[$columns["item-codeD"]], round($tab[$columns["deduct-CHF"]], 3),
+                                        round($tab[$columns["subsid-deduct"]], 3), round($tab[$columns["discount-bonus"]], 3), round($tab[$columns["subsid-bonus"]], 3)];
                 }
             }
         }
@@ -102,27 +102,20 @@ class ReportRabais extends Report
                         $mbm = $tab[$columns["bonus-m"]];
                         $msc = $tab[$columns["subsides-c"]];
                         if($mbm > 0 || $msm > 0) {
-                            $rabaisArray[] = [$code, $clcl, "M", 0, 0, $mbm, $msm];
+                            $rabaisArray[] = [$code, $clcl, "M", 0, 0, round($mbm, 3), round($msm, 3)];
                         }
                         if($msc > 0) {
-                            $rabaisArray[] = [$code, $clcl, "C", 0, 0, 0, $msc];
+                            $rabaisArray[] = [$code, $clcl, "C", 0, 0, 0, round($msc, 3)];
                         }
                     }
                     else {
                         if($code != $this->plateforme) {
-                            $rabaisArray[] = [$code, $tab[$columns['client-class']], $tab[$columns["item-codeD"]], $tab[$columns["deduct-CHF"]],
-                                                $tab[$columns["subsid-deduct"]], $tab[$columns["discount-bonus"]], $tab[$columns["subsid-bonus"]]];
+                            $rabaisArray[] = [$code, $tab[$columns['client-class']], $tab[$columns["item-codeD"]], round($tab[$columns["deduct-CHF"]], 3),
+                                                round($tab[$columns["subsid-deduct"]], 3), round($tab[$columns["discount-bonus"]], 3), round($tab[$columns["subsid-bonus"]], 3)];
                         }
                     }
                 }
             }
-        }
-
-        for($i=0;$i<count($rabaisArray);$i++) {
-            $rabaisArray[$i][3] = round($rabaisArray[$i][3],2);
-            $rabaisArray[$i][4] = round($rabaisArray[$i][4],2);
-            $rabaisArray[$i][5] = round($rabaisArray[$i][5],2);
-            $rabaisArray[$i][6] = round($rabaisArray[$i][6],2);
         }
         return $rabaisArray;
     }

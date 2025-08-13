@@ -124,7 +124,7 @@ class ReportRuns extends Report
             foreach($stats as $id=>$value) {
                 $avg = $this->monthAverage($value["sum"], $value["nb"]);
                 $stddev = $this->monthStdDev($value["rts"], $avg, $value["nb"]);
-                $runsArray[] = [$id, $value["sum"], $value["nb"], $avg, $stddev];
+                $runsArray[] = [$id, round($value["sum"], 3), $value["nb"], round($avg, 3), round($stddev, 3)];
             }
         }
         else {
@@ -133,14 +133,9 @@ class ReportRuns extends Report
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
                 if($tab[$columns["flow-type"]] == "cae" && $tab[$columns["transac-runtime"]] > 0 && $tab[$columns["item-codeK"]] == "K1") {
-                    $runsArray[] = [$tab[$columns["mach-id"]], $tab[$columns["transac-runtime"]], $tab[$columns["runtime-N"]], $tab[$columns["runtime-avg"]], $tab[$columns["runtime-stddev"]]]; 
+                    $runsArray[] = [$tab[$columns["mach-id"]], round($tab[$columns["transac-runtime"]], 3), $tab[$columns["runtime-N"]], round($tab[$columns["runtime-avg"]], 3), round($tab[$columns["runtime-stddev"]], 3)]; 
                 }
             }
-        }
-        for($i=0;$i<count($runsArray);$i++) {
-            $runsArray[$i][1] = round($runsArray[$i][1],3);
-            $runsArray[$i][3] = round($runsArray[$i][3],3);
-            $runsArray[$i][4] = round($runsArray[$i][4],3);
         }
         return $runsArray;
     }

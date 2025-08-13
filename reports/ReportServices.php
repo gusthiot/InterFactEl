@@ -50,7 +50,6 @@ class ReportServices extends Report
      */
     function generate(): array
     {
-        $servicesArray = [];
         $loopArray = [];
         $columns = $this->bilansStats[$this->factel]['T3']['columns'];
         $lines = Csv::extract($this->getFileNameInBS('T3'));
@@ -65,14 +64,10 @@ class ReportServices extends Report
                 $loopArray[$id]['Q'] += $tab[$columns["transac-quantity"]];
             }
         }
+        $servicesArray = [];
         foreach($loopArray as $id=>$line) {
             $ids = explode("--", $id);
-            $servicesArray[] = [$ids[0], $ids[1], $ids[2], $ids[3], $ids[4], $ids[5], $line["Q"], $line["Smu"]];
-        }
-
-        for($i=0;$i<count($servicesArray);$i++) {
-            $servicesArray[$i][6] = round($servicesArray[$i][6],3);
-            $servicesArray[$i][7] = round($servicesArray[$i][7],3);
+            $servicesArray[] = [$ids[0], $ids[1], $ids[2], $ids[3], $ids[4], $ids[5], round($line["Q"], 3), round($line["Smu"], 3)];
         }
         return $servicesArray;
     }

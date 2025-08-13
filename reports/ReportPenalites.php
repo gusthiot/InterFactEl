@@ -98,7 +98,6 @@ class ReportPenalites extends Report
      */
     function generate(): array
     {
-        $penosArray = [];
         $loopArray = [];
         $columns = $this->bilansStats[$this->factel]['T3']['columns'];
         $lines = Csv::extract($this->getFileNameInBS('T3'));
@@ -139,6 +138,7 @@ class ReportPenalites extends Report
                 }
             }
         }
+        $penosArray = [];
         foreach($loopArray as $id=>$q) {
             $ids = explode("--", $id);
             $penosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[3], $ids[2], round($q,3)];

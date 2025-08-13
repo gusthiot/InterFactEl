@@ -51,37 +51,36 @@ class ReportConsommables extends Report
     {
         $consosArray = [];
         $loopArray = [];
-        if(floatval($this->factel) < 7) {
-            $columns = $this->bilansStats[$this->factel]['lvr']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('lvr'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $itemId = $tab[$columns["item-id"]];
-                $plateId = $this->prestations[$itemId]["platf-code"];
-                if($plateId == $this->plateforme) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = 0;
+        if(floatval($this->factel) < 10) {
+
+            if(floatval($this->factel) < 7) {
+                $columns = $this->bilansStats[$this->factel]['lvr']['columns'];
+                $lines = Csv::extract($this->getFileNameInBS('lvr'));
+                for($i=1;$i<count($lines);$i++) {
+                    $tab = explode(";", $lines[$i]);
+                    $itemId = $tab[$columns["item-id"]];
+                    $plateId = $this->prestations[$itemId]["platf-code"];
+                    if($plateId == $this->plateforme) {
+                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
+                        if(!array_key_exists($id, $loopArray)) {
+                            $loopArray[$id] = 0;
+                        }
+                        $loopArray[$id] += $tab[$columns["transac-usage"]];
                     }
-                    $loopArray[$id] += $tab[$columns["transac-usage"]];
                 }
             }
-            foreach($loopArray as $id=>$q) {
-                $ids = explode("--", $id);
-                $consosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
-            }
-        }
-        elseif(floatval($this->factel) >= 7 && floatval($this->factel) < 10) {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr")) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = 0;
+            else {
+                $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+                $lines = Csv::extract($this->getFileNameInBS('T3'));
+                for($i=1;$i<count($lines);$i++) {
+                    $tab = explode(";", $lines[$i]);
+                    if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr")) {
+                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
+                        if(!array_key_exists($id, $loopArray)) {
+                            $loopArray[$id] = 0;
+                        }
+                        $loopArray[$id] += $tab[$columns["transac-usage"]];
                     }
-                    $loopArray[$id] += $tab[$columns["transac-usage"]];
                 }
             }
             foreach($loopArray as $id=>$q) {

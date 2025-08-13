@@ -74,37 +74,27 @@ class ReportPropres extends Report
      */
     function generate(): array
     {        
-        $pltfArray = [];
         $loopArray = [];
+        $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+        $lines = Csv::extract($this->getFileNameInBS('T3'));
+        for($i=1;$i<count($lines);$i++) {
+            $tab = explode(";", $lines[$i]);
+            if(floatval($this->factel) <= 9) {
+                $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI");
+            }
+            else {
+                $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI") && ($tab[$columns["transac-valid"]] != 2);
 
-        if(floatval($this->factel) <= 9) {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI")) {
-                    $id = $tab[$columns["proj-id"]]."--".$tab[$columns["item-id"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = 0;
-                    }
-                    $loopArray[$id] += $tab[$columns["valuation-net"]];
+            }                
+            if($cond) {
+                $id = $tab[$columns["proj-id"]]."--".$tab[$columns["item-id"]];
+                if(!array_key_exists($id, $loopArray)) {
+                    $loopArray[$id] = 0;
                 }
+                $loopArray[$id] += $tab[$columns["valuation-net"]];
             }
         }
-        else {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI") && ($tab[$columns["transac-valid"]] != 2)) {
-                    $id = $tab[$columns["proj-id"]]."--".$tab[$columns["item-id"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = 0;
-                    }
-                    $loopArray[$id] += $tab[$columns["valuation-net"]];
-                }
-            }
-        }
+        $pltfArray = [];
         foreach($loopArray as $id=>$mu) {
             $ids = explode("--", $id);
             $pltfArray[] = [$ids[0], $ids[1], $mu];

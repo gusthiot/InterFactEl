@@ -165,17 +165,20 @@ class ReportUsages extends Report
                 $ids = explode("--", $id);
                 $classe = $this->clientsClasses[$ids[0]]['client-class'];
                 $sciper = $this->sciper($ids[1]);
-                $categorie1 = $this->getCategorie($ids[2], 'K1');
-                if($categorie1[0] != "0") {
-                    $usagesArray[] = [$ids[0], $classe, $sciper, 'K1', $ids[2], $categorie1[0], $categorie1[1], $categorie1[2], $line['Smu1'], $line['Snr1']];
-                }
-                $categorie2 = $this->getCategorie($ids[2], 'K2');
-                if($categorie2[0] != "0") {
-                    $usagesArray[] = [$ids[0], $classe, $sciper, 'K2', $ids[2], $categorie2[0], $categorie2[1], $categorie2[2], $line['Smu2'], 0];
-                }
-                $categorie3 = $this->getCategorie($ids[2], 'K3');
-                if($categorie3[0] != "0") {
-                    $usagesArray[] = [$ids[0], $classe, $sciper, 'K3', $ids[2], $categorie3[0], $categorie3[1], $categorie3[2], $line['Snr3'], 0];
+                foreach(['K1', 'K2', 'K3'] as $itemK) {
+                    $categorie = $this->getCategorie($ids[2], $itemK);
+                    if($categorie[0] != "0") {
+                        $mu = $line['Snr3'];
+                        $n = 0;
+                        if($itemK == 'K1') {
+                            $mu = $line['Smu1'];
+                            $n = $line['Snr1'];
+                        }
+                        if($itemK == 'K2') {
+                            $mu = $line['Smu2'];
+                        }
+                        $usagesArray[] = [$ids[0], $classe, $sciper, $itemK, $ids[2], $categorie[0], $categorie[1], $categorie[2], round($mu, 3), $n];
+                    }
                 }
             }
         }
@@ -217,76 +220,7 @@ class ReportUsages extends Report
                 $ids = explode("--", $id);
                 $categorie = $this->getCategorie($ids[3], $ids[4]);
                 if($categorie[0] != "0") {
-                    $usagesArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $line['Snr']];
-                }
-            }
-        }
-        elseif(floatval($this->factel) == 8) {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            $nrArray = [];
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae")) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = ['Smu' => 0];
-                    }
-                    $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
-                    
-                    $idn = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
-                    if(!array_key_exists($idn, $nrArray)) {
-                        $nrArray[$idn] = 0;
-                    }
-                    if($tab[$columns["transac-runcae"]] > 0) {
-                       $nrArray[$idn] += $tab[$columns["transac-runcae"]];
-                    }
-                }
-            }
-            foreach($loopArray as $id=>$line) {
-                $ids = explode("--", $id);
-                $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
-                $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
-                $categorie = $this->getCategorie($ids[3], $ids[4]);
-                if($categorie[0] != "0") {
-                    $usagesArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
-                }
-            }
-        }
-        elseif(floatval($this->factel) == 9) {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            $nrArray = [];
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                $date = explode("-", $datetime[0]);
-                $aa = $date[0];
-                $mm = $date[1];
-
-                if(($aa == $this->year) && ($mm == $this->month) && ($tab[$columns["flow-type"]] == "cae")) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = ['Smu' => 0];
-                    }
-                    $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
-                    
-                    $idn = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
-                    if(!array_key_exists($idn, $nrArray)) {
-                        $nrArray[$idn] = 0;
-                    }
-                    if($tab[$columns["transac-runcae"]] > 0) {
-                       $nrArray[$idn] += $tab[$columns["transac-runcae"]];
-                    }
-                }
-            }
-            foreach($loopArray as $id=>$line) {
-                $ids = explode("--", $id);
-                $idn = $ids[0]."--".$ids[1]."--".$ids[2]."--".$ids[3];
-                $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
-                $categorie = $this->getCategorie($ids[3], $ids[4]);
-                if($categorie[0] != "0") {
-                    $usagesArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
+                    $usagesArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], round($line['Smu'], 3), $line['Snr']];
                 }
             }
         }
@@ -296,7 +230,20 @@ class ReportUsages extends Report
             $nrArray = [];
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
-                if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae")) {
+                if(floatval($this->factel) == 8) {
+                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae");
+                }
+                elseif(floatval($this->factel) == 9) {
+                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                    $date = explode("-", $datetime[0]);
+                    $aa = $date[0];
+                    $mm = $date[1];
+                    $cond = ($aa == $this->year) && ($mm == $this->month) && ($tab[$columns["flow-type"]] == "cae");
+                }
+                else {
+                    $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae");
+                }
+                if($cond) {
                     $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu' => 0];
@@ -308,7 +255,7 @@ class ReportUsages extends Report
                         $nrArray[$idn] = 0;
                     }
                     if($tab[$columns["transac-runcae"]] > 0) {
-                       $nrArray[$idn] += $tab[$columns["transac-runcae"]];
+                    $nrArray[$idn] += $tab[$columns["transac-runcae"]];
                     }
                 }
             }
@@ -318,13 +265,9 @@ class ReportUsages extends Report
                 $ids[4] == "K1" ? $nr = $nrArray[$idn] : $nr = 0;
                 $categorie = $this->getCategorie($ids[3], $ids[4]);
                 if($categorie[0] != "0") {
-                    $usagesArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], $line['Smu'], $nr];
+                    $usagesArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[4], $ids[3], $categorie[0], $categorie[1], $categorie[2], round($line['Smu'], 3), $nr];
                 }
             }
-        }
-
-        for($i=0;$i<count($usagesArray);$i++) {
-            $usagesArray[$i][8] = round($usagesArray[$i][8],3);
         }
         return $usagesArray;
     }
