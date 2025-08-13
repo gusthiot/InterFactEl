@@ -1,15 +1,36 @@
 <?php
 
+/**
+ * ReportPenalites class allows to generate reports about penalties stats
+ */
 class ReportPenalites extends Report
 {
-    private $total5;
-    private $total6;
+    /**
+     * total penalties for K5
+     *
+     * @var float
+     */
+    private float $total5;
+
+    /**
+     * total penalties for K6
+     *
+     * @var float
+     */
+    private float $total6;
     
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
-        $this->total5 = 0;
-        $this->total6 = 0;
+        $this->total5 = 0.0;
+        $this->total6 = 0.0;
         $this->reportKey = 'statnoshow';
         $this->reportColumns = ["client-code", "user-sciper", "item-codeK", "mach-id", "transac-quantity"];
         $this->tabs = [
@@ -54,10 +75,15 @@ class ReportPenalites extends Report
                 "results" => []
             ]
         ];
-
     }
 
-    function prepare() {
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void
+    {
         $this->prepareClients();
         $this->prepareUsers();
         $this->prepareMachines();
@@ -65,7 +91,12 @@ class ReportPenalites extends Report
         $this->processReportFile();
     }
 
-    function generate()
+    /**
+     * generates report file and returns its data
+     *
+     * @return array
+     */
+    function generate(): array
     {
         $penosArray = [];
         $loopArray = [];
@@ -73,7 +104,7 @@ class ReportPenalites extends Report
         $lines = Csv::extract($this->getFileNameInBS('T3'));
         for($i=1;$i<count($lines);$i++) {
             $tab = explode(";", $lines[$i]);
-            if($this->factel < 8) {
+            if(floatval($this->factel) < 8) {
                 if(($tab[$columns["platf-code"]] == $this->plateforme) && ($tab[$columns["flow-type"]] == "noshow") && ($tab[$columns["platf-code"]] != $tab[$columns["client-code"]])) {
                     $itemN = $tab[$columns["item-nbr"]];
                     if(substr($itemN, 0, 1) == "P") {
@@ -89,7 +120,7 @@ class ReportPenalites extends Report
                     $loopArray[$id] += $tab[$columns["transac-quantity"]];
                 }
             }
-            elseif($this->factel >= 8 && $this->factel < 10) {
+            elseif(floatval($this->factel) >= 8 && floatval($this->factel) < 10) {
                 if(($tab[$columns["platf-code"]] == $this->plateforme) && ($tab[$columns["flow-type"]] == "noshow") && ($tab[$columns["platf-code"]] != $tab[$columns["client-code"]])) {
                     $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
                     if(!array_key_exists($id, $loopArray)) {
@@ -115,8 +146,13 @@ class ReportPenalites extends Report
         return $penosArray;
     }
 
-
-    function mapping($penosArray)
+    /**
+     * maps report data for tabs tables and csv 
+     *
+     * @param array $penosArray report data
+     * @return void
+     */
+    function mapping(array $penosArray): void
     {   
         $scipers = $this->scipers();
         foreach($penosArray as $line) {
@@ -174,7 +210,12 @@ class ReportPenalites extends Report
         }
     }
 
-    function display()
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
         $title = '<div class="total">Statistiques pénalités : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre d’heures de pénalités en heures pleines = '.$this->format($this->total5, "float").'</div>';

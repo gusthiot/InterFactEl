@@ -1,11 +1,28 @@
 <?php
 
+/**
+ * ReportConsommations class allows to generate reports about self consumptions
+ */
 class ReportConsommations extends Report
 {
+    /**
+     * total amount of self consumption
+     *
+     * @var float
+     */
+    private float $totalC;
     
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
+        $this->totalC = 0.0;
         $this->tabs = [
             "consos" => [
                 "title" => "Consommations propre",
@@ -16,10 +33,15 @@ class ReportConsommations extends Report
                 "results" => []
             ]
         ];
-
     }
 
-    function prepare() {
+    /**
+     * prepares dimensions, and extracts and maps data
+     *
+     * @return void
+     */
+    function prepare(): void 
+    {
         $this->preparePrestations();
 
         $columns = $this->bilansStats[$this->factel]['Bilan-c']['columns'];
@@ -41,14 +63,19 @@ class ReportConsommations extends Report
             }
             foreach($this->tabs["consos"]["operations"] as $operation) {
                 $this->tabs["consos"]["results"][$itemId][$operation] += $tab[$columns[$operation]];
-                $this->total += $tab[$columns[$operation]];
+                $this->totalC += $tab[$columns[$operation]];
             }
         }
     }
 
-    function display()
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display():void
     {
-        $title = '<div class="total">Total des consommations propres sur la période '.$this->period().' : '.$this->format($this->total, "fin").' CHF</div>';
+        $title = '<div class="total">Total des consommations propres sur la période '.$this->period().' : '.$this->format($this->totalC).' CHF</div>';
         echo $this->templateDisplay($title);
     }
 

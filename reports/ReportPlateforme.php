@@ -1,9 +1,18 @@
 <?php
 
+/**
+ * ReportPlateforme class allows to generate reports about projects and staff
+ */
 class ReportPlateforme extends Report
 {
-        
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = ['statpltf', 'statoper'];
@@ -29,10 +38,15 @@ class ReportPlateforme extends Report
                 "results" => []
             ]
         ];
-
     }
 
-    function prepare() {
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void
+    {
         $this->loadCategories();
         $this->loadGroupes();
         $this->prepareUsers();
@@ -42,7 +56,13 @@ class ReportPlateforme extends Report
         $this->processReportFile();
     }
 
-    function generate($key) 
+    /**
+     * generates report file defined by its key and returns its data
+     *
+     * @param string $key report key
+     * @return array
+     */
+    function generate(string $key): array 
     {
         if($key == "statoper") {
             return $this->generateOper();
@@ -52,12 +72,17 @@ class ReportPlateforme extends Report
         }
     }
 
-    function generateOper()
+    /**
+     * generates report file for staff and returns its data
+     *
+     * @return array
+     */
+    function generateOper(): array
     {
         $operArray = [];
         $loopArray = [];
 
-        if($this->factel < 7) {
+        if(floatval($this->factel) < 7) {
             $columns = $this->bilansStats[$this->factel]['cae']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('cae'));
             for($i=1;$i<count($lines);$i++) {
@@ -74,7 +99,7 @@ class ReportPlateforme extends Report
                 }
             }
         }
-        elseif($this->factel == 7) {
+        elseif(floatval($this->factel) == 7) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -90,7 +115,7 @@ class ReportPlateforme extends Report
                 }
             }
         }
-        elseif($this->factel >= 8 && $this->factel < 10) {
+        elseif(floatval($this->factel) >= 8 && floatval($this->factel) < 10) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -105,7 +130,7 @@ class ReportPlateforme extends Report
                 }
             }
         }
-        elseif($this->factel == 10) {
+        elseif(floatval($this->factel) == 10) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -142,17 +167,22 @@ class ReportPlateforme extends Report
         return $operArray;
     }
 
-    function generatePltf()
+    /**
+     * generates report file for projects and returns its data
+     *
+     * @return array
+     */
+    function generatePltf(): array
     {
         $cptExplArray = [];
-        if($this->factel < 7) {
+        if(floatval($this->factel) < 7) {
             self::mergeInCsv('cptexpl', $cptExplArray, self::PROJET_KEY);
         }
         
         $pltfArray = [];
         $loopArray = [];
 
-        if($this->factel < 7) {
+        if(floatval($this->factel) < 7) {
             $columns = $this->bilansStats[$this->factel]['cae']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('cae'));
             for($i=1;$i<count($lines);$i++) {
@@ -181,7 +211,7 @@ class ReportPlateforme extends Report
                 $pltfArray[] = [$ids[0], $itemGrp, "K2", $mu[1]];
             }
         }
-        elseif($this->factel == 7) {
+        elseif(floatval($this->factel) == 7) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -219,7 +249,7 @@ class ReportPlateforme extends Report
                 $pltfArray[] = [$ids[0], $ids[1], $ids[2], $mu];
             }
         }
-        elseif($this->factel >= 8 || $this->factel < 10) {
+        elseif(floatval($this->factel) >= 8 || floatval($this->factel) < 10) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -241,7 +271,7 @@ class ReportPlateforme extends Report
                 $pltfArray[] = [$ids[0], $ids[1], $ids[2], $mu];
             }
         }
-        elseif($this->factel = 10) {
+        elseif(floatval($this->factel) == 10) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -284,8 +314,14 @@ class ReportPlateforme extends Report
         return $pltfArray;
     }
 
-
-    function mapping($monthArray, $key) 
+    /**
+     * maps report data defined by its key for tabs tables and csv 
+     *
+     * @param array $monthArray report data
+     * @param string $key report key
+     * @return void
+     */
+    function mapping(array $monthArray, string $key): void
     {
         if($key == "statoper") {
             $this->mappingOper($monthArray);
@@ -295,7 +331,13 @@ class ReportPlateforme extends Report
         }
     }
 
-    function mappingOper($operArray)
+    /**
+     * maps report data for staff for tabs tables and csv 
+     *
+     * @param array $operArray report data
+     * @return void
+     */
+    function mappingOper(array $operArray): void
     {   
         $scipers = $this->scipers();
         foreach($operArray as $line) {
@@ -320,8 +362,13 @@ class ReportPlateforme extends Report
         }
     }
 
-
-    function mappingPltf($pltfArray)
+    /**
+     * maps report data for projects for tabs tables and csv 
+     *
+     * @param array $pltfArray report data
+     * @return void
+     */
+    function mappingPltf(array $pltfArray): void
     {   
         foreach($pltfArray as $line) {
             $projet = $this->comptes[$line[0]];
@@ -347,8 +394,12 @@ class ReportPlateforme extends Report
         }
     }
 
-
-    function display()
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
         $title = '<div class="total">Statistiques plateforme : '.$this->period().' </div>';
         echo $this->templateDisplay($title);

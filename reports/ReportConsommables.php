@@ -1,9 +1,18 @@
 <?php
 
+/**
+ * ReportConsommables class allows to generate reports about consommables stats
+ */
 class ReportConsommables extends Report
 {
-    
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'statlvr';
@@ -18,21 +27,31 @@ class ReportConsommables extends Report
                 "results" => []
             ]
         ];
-
     }
 
-    function prepare() {
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void 
+    {
         $this->preparePrestations();
         $this->prepareUsers();
 
         $this->processReportFile();
     }
 
-    function generate()
+    /**
+     * generates report file and returns its data
+     *
+     * @return array
+     */
+    function generate(): array
     {
         $consosArray = [];
         $loopArray = [];
-        if($this->factel < 7) {
+        if(floatval($this->factel) < 7) {
             $columns = $this->bilansStats[$this->factel]['lvr']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('lvr'));
             for($i=1;$i<count($lines);$i++) {
@@ -52,7 +71,7 @@ class ReportConsommables extends Report
                 $consosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
-        elseif($this->factel >= 7 && $this->factel < 10) {
+        elseif(floatval($this->factel) >= 7 && floatval($this->factel) < 10) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -97,8 +116,13 @@ class ReportConsommables extends Report
         return $consosArray;
     }
 
-
-    function mapping($consosArray)
+    /**
+     * maps report data for tabs tables and csv 
+     *
+     * @param array $consosArray report data
+     * @return void
+     */
+    function mapping(array $consosArray): void
     {
         foreach($consosArray as $line) {
             $prestation = $this->prestations[$line[2]];
@@ -117,7 +141,12 @@ class ReportConsommables extends Report
         }
     }
 
-    function display()
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
         $title = '<div class="total">Statistiques consommables : '.$this->period().' </div>';
         echo $this->templateDisplay($title);

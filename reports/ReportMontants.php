@@ -1,11 +1,28 @@
 <?php
 
+/**
+ * ReportMontants class allows to generate reports about clients, classes and articles distribution
+ */
 class ReportMontants extends Report
 {
+    /**
+     * total amount
+     *
+     * @var float
+     */
+    private float $totalM;
     
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
+        $this->totalM = 0.0;
         $this->reportKey = 'montants';
         $this->reportColumns = ["client-code", "client-class", "item-codeD", "total-fact"];
         $this->totalCsvData = [
@@ -70,7 +87,13 @@ class ReportMontants extends Report
         ];
     }
 
-    function prepare() {
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void 
+    {
         $this->prepareClients();
         $this->prepareClasses();
         $this->prepareClientsClasses();
@@ -79,10 +102,15 @@ class ReportMontants extends Report
         $this->processReportFile();
     }
 
-    function generate()
+    /**
+     * generates report file and returns its data
+     *
+     * @return array
+     */
+    function generate(): array
     {
         $crpArray = [];
-        if($this->factel == 6) {
+        if(floatval($this->factel) == 6) {
             $crpFileName = $this->getFileNameInBS('Bilancrp-f');
             if($crpFileName) {
                 $lines = Csv::extract($crpFileName);        
@@ -97,7 +125,7 @@ class ReportMontants extends Report
         }
 
         $montantsArray = [];
-        if($this->factel >= 9) {
+        if(floatval($this->factel) >= 9) {
             $columns = $this->bilansStats[$this->factel]['T1']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T1'));
             $t1Array = [];
@@ -132,33 +160,33 @@ class ReportMontants extends Report
                 $tab = explode(";", $lines[$i]);
                 $code = $tab[$columns['client-code']];
                 if($code != $this->plateforme) {
-                    if($this->factel < 7) {
+                    if(floatval($this->factel) < 7) {
                         $clcl = $this->clientsClasses[$code]['client-class'];
                     }
                     else {
                         $clcl = $tab[$columns['client-class']];
                     }
-                    if($this->factel == 1) {
+                    if(floatval($this->factel) == 1) {
                         $montant = $tab[$columns["somme-t"]] + $tab[$columns["emolument-b"]] - $tab[$columns["emolument-r"]] - $tab[$columns["total-fact-l"]]
                                 - $tab[$columns["total-fact-c"]] - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]];
-                        $montantsArray = $this->facts($montantsArray, $montant, $tab, $columns, $clcl);
+                        $this->facts($montantsArray, $montant, $tab, $columns, $clcl);
                     }
-                    elseif($this->factel >=3 && $this->factel < 6) {
+                    elseif(floatval($this->factel) >=3 && floatval($this->factel) < 6) {
                         $montant = $tab[$columns["total-fact"]] -$tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
                                 - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
-                        $montantsArray = $this->facts($montantsArray, $montant, $tab, $columns, $clcl);
+                        $this->facts($montantsArray, $montant, $tab, $columns, $clcl);
                     }
-                    elseif($this->factel == 6) {
+                    elseif(floatval($this->factel) == 6) {
                         $montant = $tab[$columns["total-fact"]] - $tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
                                 - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
                         if(!empty($crpArray) && array_key_exists($code, $crpArray)) {
-                            $montantsArray = $this->facts($montantsArray, $montant, $tab, $columns, $clcl, $crpArray[$code]["dM"], $crpArray[$code]["dMontants"]);
+                            $this->facts($montantsArray, $montant, $tab, $columns, $clcl, $crpArray[$code]["dM"], $crpArray[$code]["dMontants"]);
                         } 
                         else {
-                            $montantsArray = $this->facts($montantsArray, $montant, $tab, $columns, $clcl);
+                            $this->facts($montantsArray, $montant, $tab, $columns, $clcl);
                         }        
                     }
-                    elseif($this->factel == 7 || $this->factel == 8) {
+                    elseif(floatval($this->factel) == 7 || floatval($this->factel) == 8) {
                         if($tab[$columns["platf-code"]] == $this->plateforme) {
                             $montant = $tab[$columns["total-fact"]];
                             if(($tab[$columns["item-codeD"]] == "R") && ($montant < 50)) {
@@ -176,10 +204,16 @@ class ReportMontants extends Report
         return $montantsArray;
     }
 
-    function mapping($montantsArray)
+    /**
+     * maps report data for tabs tables and csv 
+     *
+     * @param array $montantsArray report data
+     * @return void
+     */
+    function mapping(array $montantsArray): void
     {
         foreach($montantsArray as $line) {
-            $this->total += $line[3];
+            $this->totalM += $line[3];
             $client = $this->clients[$line[0]];
             $classe = $this->classes[$line[1]];
             $article = $this->articles[$line[2]];
@@ -244,7 +278,19 @@ class ReportMontants extends Report
         }
     }
 
-    function facts($montantsArray, $montant, $tab, $columns, $clcl, $dM=0, $dMontants=[0, 0, 0, 0, 0]) 
+    /**
+     * generates amounts line
+     *
+     * @param array $montantsArray array containing lines for the report
+     * @param float $montant total amount
+     * @param array $tab base data line
+     * @param array $columns base data line columns
+     * @param string $clcl client classe
+     * @param float $dM total amount substraction
+     * @param array $dMontants part amounts substraction
+     * @return void
+     */
+    function facts(array &$montantsArray, float $montant, array $tab, array $columns, string $clcl, float $dM=0.0, array $dMontants=[0, 0, 0, 0, 0]): void
     {
         $code = $tab[$columns['client-code']];
         $facts = ["total-fact-l", "total-fact-c", "total-fact-w", "total-fact-x", "total-fact-r"];
@@ -259,14 +305,17 @@ class ReportMontants extends Report
                 }
             }
         }
-        return $montantsArray;
     }
 
-    function display()
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
-        $this->createTotalCsv("total-fact");
-        $title = '<div class="total">Total facturé sur la période '.$this->period().' : '.$this->format($this->total, "fin").' CHF</div>';
-        $title .= $this->totalCsvLink("total-montants");
+        $title = '<div class="total">Total facturé sur la période '.$this->period().' : '.$this->format($this->totalM).' CHF</div>';
+        $title .= $this->totalCsvLink("total-montants", "total-fact");
         echo $this->templateDisplay($title);
     }
 

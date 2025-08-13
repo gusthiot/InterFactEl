@@ -1,15 +1,42 @@
 <?php
 
+/**
+ * ReportRuns class allows to generate reports about machines and categories stats for runs and hours
+ */
 class ReportRuns extends Report
 {
-    private $totalM;
-    private $totalN;
-    private $first;
+    /**
+     * total of hours
+     *
+     * @var float
+     */
+    private float $totalM;
 
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * total of runs
+     *
+     * @var integer
+     */
+    private int $totalN;
+
+    /**
+     * to load dimensions only from the last month
+     *
+     * @var boolean
+     */
+    private bool $first;
+
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
-        $this->totalM = 0;
+        $this->totalM = 0.0;
         $this->totalN = 0;
         $this->first = true;
         $this->reportKey = 'statmach';
@@ -35,7 +62,12 @@ class ReportRuns extends Report
         ];
     }
 
-    function prepare() 
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void 
     {
         $this->prepareMachines();
         if($this->first) {
@@ -48,10 +80,15 @@ class ReportRuns extends Report
         $this->processReportFile();
     }
 
-    function generate()
+    /**
+     * generates report file and returns its data
+     *
+     * @return array
+     */
+    function generate(): array
     {
         $runsArray = [];
-        if($this->factel < 8) {
+        if(floatval($this->factel) < 8) {
             $columns = $this->bilansStats[$this->factel]['cae']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('cae'));
             $stats = [];
@@ -108,7 +145,13 @@ class ReportRuns extends Report
         return $runsArray;
     }
 
-    function mapping($runsArray)
+    /**
+     * maps report data for tabs tables and csv 
+     *
+     * @param array $montantsArray report data
+     * @return void
+     */
+    function mapping(array $runsArray): void
     {
         foreach($runsArray as $line) {
             $machine = $this->machines[$line[0]];
@@ -159,7 +202,91 @@ class ReportRuns extends Report
         }
     }
 
-    function display() 
+    /**
+     * returns average for the month
+     *
+     * @param float $sum hours sum for the month
+     * @param integer $num runs number for the month
+     * @return float
+     */
+    function monthAverage(float $sum, int $num): float
+    {
+        if($num == 0) {
+            return 0.0;
+        }
+        return $sum / $num;
+    }
+
+    /**
+     * returns standard deviation for the month
+     *
+     * @param array $values values array for the month
+     * @param float $avg average value for the month
+     * @param integer $num runs number for the month
+     * @return float
+     */
+    function monthStdDev(array $values, float $avg, int $num): float
+    {
+        $sum = 0;
+        foreach($values as $value) {
+            $sum += pow($value-$avg, 2);
+        }
+        if($num == 0 || $sum == 0) {
+            return 0;
+        }
+        return sqrt(1 / $num * $sum);
+    }
+
+    /**
+     * returns average for the period
+     *
+     * @param array $nums array of months runs numbers
+     * @param array $avgs array of months average values
+     * @return float
+     */
+    function periodAverage(array $nums, array $avgs): float
+    {
+        $sum = 0;
+        $numTot = 0;
+        for($i=0; $i< count($nums); $i++) {
+            $sum += $nums[$i]*$avgs[$i];
+            $numTot += $nums[$i];
+        }
+        if($numTot == 0) {
+            return 0;
+        }
+        return $sum / $numTot;
+    }
+
+    /**
+     * returns standard deviation for the period
+     *
+     * @param array $nums array of months runs numbers
+     * @param array $avgs array of months average values
+     * @param array $stddevs array of months standard deviation values
+     * @param float $pAvg average value for the period
+     * @return void
+     */
+    function periodStdDev(array $nums, array $avgs, array $stddevs, float $pAvg)
+    {
+        $sum = 0;
+        $numTot = 0;
+        for($i=0; $i< count($nums); $i++) {
+            $sum += $nums[$i]*(pow($stddevs[$i], 2) + pow($avgs[$i]-$pAvg, 2));
+            $numTot += $nums[$i];
+        }
+        if($numTot == 0 || $sum == 0) {
+            return 0;
+        }
+        return sqrt(1 / $numTot * $sum);
+    }
+
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
         $doTotal = true;
         foreach($this->tabs as $tab=>$data) {

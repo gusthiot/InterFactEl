@@ -1,9 +1,18 @@
 <?php
 
+/**
+ * ReportServices class allows to generate reports about services stats
+ */
 class ReportServices extends Report
 {
-    
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'statsrv';
@@ -18,10 +27,15 @@ class ReportServices extends Report
                 "results" => []
             ]
         ];
-
     }
 
-    function prepare() {
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void 
+    {
         $this->loadCategories();
         $this->loadGroupes();
         $this->loadMachinesGroupes();
@@ -29,7 +43,12 @@ class ReportServices extends Report
         $this->processReportFile();
     }
 
-    function generate()
+    /**
+     * generates report file and returns its data
+     *
+     * @return array
+     */
+    function generate(): array
     {
         $servicesArray = [];
         $loopArray = [];
@@ -59,7 +78,13 @@ class ReportServices extends Report
     }
 
 
-    function mapping($servicesArray)
+    /**
+     * maps report data for tabs tables and csv 
+     *
+     * @param array $montantsArray report data
+     * @return void
+     */
+    function mapping(array $servicesArray): void
     {   
         foreach($servicesArray as $line) {
             $groupe = $this->groupes[$line[4]];
@@ -100,7 +125,12 @@ class ReportServices extends Report
         }
     }
 
-    function display()
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
         $title = '<div class="total">Statistiques services : '.$this->period().' </div>';
         echo $this->templateDisplay($title);

@@ -1,8 +1,13 @@
 <?php
 
+/**
+ * Report abstract class contains all reports shared data and functions
+ */
 abstract class Report
 {
-    
+    /**
+     * Dimensions labels
+     */
     const CLIENT_DIM = ["client-code", "client-sap", "client-name", "client-name2"];
     const CLASSE_DIM = ["client-class", "client-labelclass"];
     const ARTICLE_DIM = ["item-codeD", "item-order", "item-labelcode"];
@@ -16,6 +21,10 @@ abstract class Report
     const PROJET_DIM = ["proj-id", "proj-nbr", "proj-name", "proj-expl"];
     const OPER_DIM = ["oper-sciper", "oper-name", "oper-first", "date", "flow-type"];
     const DATE_DIM = ["year", "month"];
+
+    /**
+     * Dimensions keys
+     */
     const CLIENT_KEY = "client-code";
     const CLASSE_KEY = "client-class";
     const ARTICLE_KEY = "item-codeD";
@@ -26,45 +35,157 @@ abstract class Report
     const CATEGORIE_KEY = "item-id";
     const USER_KEY = "user-id";
     const PROJET_KEY = "proj-id";
-    
-    protected $plateforme;
-    protected $to;
-    protected $from;
-    protected $paramtext;
-    protected $open;
 
-    protected $clients;
-    protected $classes;
-    protected $clientsClasses;
-    protected $articles;
-    protected $comptes;
-    protected $machines;
-    protected $groupes;
-    protected $machinesGroupes;
-    protected $categories;
-    protected $users;
-    protected $prestations;
+    /**
+     * Dimensions data arrays
+     */
+    protected array $clients;
+    protected array $classes;
+    protected array $clientsClasses;
+    protected array $articles;
+    protected array $comptes;
+    protected array $machines;
+    protected array $groupes;
+    protected array $machinesGroupes;
+    protected array $categories;
+    protected array $users;
+    protected array $prestations;
 
-    protected $bilansStats;
-    protected $in;
-    protected $report;
-    protected $reportKey;
-    protected $reportColumns;
+    /**
+     * bilans-stats.json content
+     *
+     * @var array
+     */
+    protected array $bilansStats;
 
-    protected $month;
-    protected $year;
-    protected $dirRun;
-    protected $factel;
-    protected $monthly;
+    /**
+     * in.json content
+     *
+     * @var array
+     */
+    protected array $in;
 
-    protected $monthList;
-    protected $total;
-    protected $totalCsv;
-    protected $totalCsvData;
-    protected $tabs;
+    /**
+     * report.json content
+     *
+     * @var array
+     */
+    protected array $report;
+
+    /**
+     * report file prefix name(s)
+     *
+     * @var mixed
+     */
+    protected mixed $reportKey;
+
+    /**
+     * report file columns
+     *
+     * @var array
+     */
+    protected array $reportColumns;
+
+    /**
+     * processed plateform
+     *
+     * @var string
+     */
+    protected string $plateforme;
+
+    /**
+     * last month of the period
+     *
+     * @var string
+     */
+    protected string $to;
+
+    /**
+     * first month of the period
+     *
+     * @var string
+     */
+    protected string $from;
+
+    /**
+     * ParamText object to get columns labels
+     *
+     * @var ParamText
+     */
+    protected ParamText $paramtext;
+
+    /**
+     * unclosed month if exists
+     *
+     * @var string
+     */
+    protected string $open;
+
+    /**
+     * processed month
+     *
+     * @var string
+     */
+    protected string $month;
+
+    /**
+     * processed year
+     *
+     * @var string
+     */
+    protected string $year;
+
+    /**
+     * processed run directory
+     *
+     * @var string
+     */
+    protected string $dirRun;
+
+    /**
+     * processed facturation version
+     *
+     * @var string
+     */
+    protected string $factel;
+
+    /**
+     * processed "year-month"
+     *
+     * @var string
+     */
+    protected string $monthly;
+
+    /**
+     * list of "year-month" for the period
+     *
+     * @var array
+     */
+    protected array $monthList;
+
+    /**
+     * total csv data if needed
+     *
+     * @var array
+     */
+    protected array $totalCsvData;
+
+    /**
+     * tabs data for tables and csv
+     *
+     * @var array
+     */
+    protected array $tabs;
 
 
-    function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from) 
     {
         $this->plateforme = $plateforme;
         $this->to = $to;
@@ -89,32 +210,54 @@ abstract class Report
 
         $this->bilansStats = self::getJsonStructure("../bilans-stats.json");
         $this->in = self::getJsonStructure("../in.json");
-        $this->report = self::getJsonStructure("../report.json");
-
-        $this->total = 0;
-        
+        $this->report = self::getJsonStructure("../report.json");        
     }
 
-    function prepareClients()
+    /**
+     * Functions to prepare dimensions on all period
+     *
+     */
+
+    /**
+     * merges clients on period
+     *
+     * @return void
+     */
+    function prepareClients(): void
     {
         self::mergeInCsv('client', $this->clients, self::CLIENT_KEY);
     }
 
-    function prepareClasses()
+    /**
+     * merges clients classes on period
+     *
+     * @return void
+     */
+    function prepareClasses(): void
     {
         self::mergeInCsv('classeclient', $this->classes, self::CLASSE_KEY);
     }
 
-    function prepareClientsClasses()
+    /**
+     * merges clientclasse bridge on period, for V < 7
+     *
+     * @return void
+     */
+    function prepareClientsClasses(): void
     {
-        if($this->factel < 7) {
+        if(floatval($this->factel) < 7) {
             self::mergeInCsv('clientclasse', $this->clientsClasses, self::CLIENT_KEY);
         }
     }
 
-    function prepareArticles()
+    /**
+     * merges SAP articles on period
+     *
+     * @return void
+     */
+    function prepareArticles(): void
     {
-        if($this->factel == 8) {
+        if(floatval($this->factel) == 8) {
             $articlesTemp = [];
             $ordersTemp = [];
             self::mergeInCsv('articlesap', $articlesTemp, self::ARTICLE_KEY);
@@ -132,9 +275,14 @@ abstract class Report
         }
     }
 
-    function prepareUsers()
+    /**
+     * merges users on period
+     *
+     * @return void
+     */
+    function prepareUsers(): void 
     {
-        if($this->factel > 11) {
+        if(floatval($this->factel) > 11) {
             self::mergeInCsv('user', $this->users, self::USER_KEY);
         }
         else {
@@ -151,47 +299,22 @@ abstract class Report
         }
     }
 
-    function prepareComptes() 
+    /**
+     * merges projects on period
+     *
+     * @return void
+     */
+    function prepareComptes(): void
     {
         self::mergeInCsv('compte', $this->comptes, self::PROJET_KEY);
     }
 
-    function prepareMachines() 
-    {
-        self::mergeInCsv('machine', $this->machines, self::MACHINE_KEY);
-    }
-
-    function loadGroupes()
-    {
-        $this->groupes = [];
-        self::mergeInCsv('groupe', $this->groupes, self::GROUPE_KEY);
-    }
-
-    function loadCategories()
-    {
-        $this->categories = [];
-        self::mergeInCsv('categorie', $this->categories, self::CATEGORIE_KEY);
-    }
-
-    function loadMachinesGroupes()
-    {
-        if($this->factel < 7) {
-            $this->machinesGroupes = [];
-            self::mergeInCsv('machgrp', $this->machinesGroupes, self::MACHINE_KEY);
-        }
-        else {
-            $this->machinesGroupes = [];
-            self::mergeInCsv('machine', $this->machinesGroupes, self::MACHINE_KEY);
-        }
-    }
-
-    function loadPrestations()
-    {
-        $this->prestations = [];
-        self::mergeInCsv('prestation', $this->prestations, self::PRESTATION_KEY);
-    }
-
-    function preparePrestations()
+    /**
+     * merges prestations on period
+     *
+     * @return void
+     */
+    function preparePrestations() :void
     {
         $machinesTemp = [];
         self::mergeInCsv('machine', $machinesTemp, self::MACHINE_KEY);
@@ -200,13 +323,13 @@ abstract class Report
         $articlesTemp = [];
         self::mergeInCsv('articlesap', $articlesTemp, self::ARTICLE_KEY);
 
-        if($this->factel > 7) {
+        if(floatval($this->factel) > 7) {
             $idSaps = [];
             foreach($articlesTemp as $code=>$article) {
                 $idSaps[$article["item-idsap"]] = $code;
             }
         }
-        if($this->factel >= 10) {
+        if(floatval($this->factel) >= 10) {
             $classesPrestTemp = [];
             self::mergeInCsv('classeprestation', $classesPrestTemp, self::CLASSEPRESTATION_KEY);
         }
@@ -221,11 +344,11 @@ abstract class Report
                     $data["mach-name"] = $machinesTemp[$line["mach-id"]]["mach-name"];
                     $data["item-extra"] = "TRUE";
                 } 
-                if($this->factel < 8) {
+                if(floatval($this->factel) < 8) {
                     $data["item-labelcode"] = $articlesTemp[$line["item-codeD"]]["item-labelcode"];
                 }
                 else {
-                    if($this->factel >= 8 && $this->factel < 10) {
+                    if(floatval($this->factel) >= 8 && floatval($this->factel) < 10) {
                         $idSap = $idSaps[$line["item-idsap"]];
                     }
                     else {
@@ -240,32 +363,76 @@ abstract class Report
         }
     }
 
-    function getColumnsNames($columns) {
-        $names = [];
-        foreach($columns as $column) {
-            $names[] = $this->paramtext->getParam($column);
-        }
-        return [$names];
-    }
-
-    function sciper($id)
+    /**
+     * merges machines on period
+     *
+     * @return void
+     */
+    function prepareMachines(): void
     {
-        if($id == 0) {
-            return 0;
-        } 
-        return $this->users[$id]['user-sciper'];
+        self::mergeInCsv('machine', $this->machines, self::MACHINE_KEY);
     }
 
-    function scipers()
+    /**
+     * Functions to load dimensions for one month
+     */
+
+    /**
+     * loads groups for the month
+     *
+     * @return void
+     */
+    function loadGroupes(): void
     {
-        $scipers = [];
-        foreach($this->users as $id=>$user) {
-            $scipers[$user['user-sciper']] = $id;
-        }
-        return $scipers;
+        $this->groupes = [];
+        self::mergeInCsv('groupe', $this->groupes, self::GROUPE_KEY);
     }
 
-    function processReportFile()
+    /**
+     * loads categories for the month
+     *
+     * @return void
+     */
+    function loadCategories(): void
+    {
+        $this->categories = [];
+        self::mergeInCsv('categorie', $this->categories, self::CATEGORIE_KEY);
+    }
+
+    /**
+     * loads machines groups for the month
+     *
+     * @return void
+     */
+    function loadMachinesGroupes(): void
+    {
+        if(floatval($this->factel) < 7) {
+            $this->machinesGroupes = [];
+            self::mergeInCsv('machgrp', $this->machinesGroupes, self::MACHINE_KEY);
+        }
+        else {
+            $this->machinesGroupes = [];
+            self::mergeInCsv('machine', $this->machinesGroupes, self::MACHINE_KEY);
+        }
+    }
+
+    /**
+     * loads prestations for the month
+     *
+     * @return void
+     */
+    function loadPrestations(): void
+    {
+        $this->prestations = [];
+        self::mergeInCsv('prestation', $this->prestations, self::PRESTATION_KEY);
+    }
+
+    /**
+     * processes simplified reports csv file
+     *
+     * @return void
+     */
+    function processReportFile(): void
     {
         if(is_array($this->reportKey)) {
             foreach($this->reportKey as $key) {
@@ -277,7 +444,14 @@ abstract class Report
         }
     }
 
-    function processOneReport($key, $multiple=false)
+    /**
+     * processes one simplified report file, if not existing
+     *
+     * @param string $key report key name
+     * @param boolean $multiple if it's one report among more or not
+     * @return void
+     */
+    function processOneReport(string $key, bool $multiple=false): void
     {
         $monthArray = [];
         $reportFile = $this->dirRun."/REPORT/".$this->report[$this->factel][$key]['prefix'].".csv";
@@ -301,55 +475,55 @@ abstract class Report
 
     }
 
-    function monthAverage($sum, $num)
+    /**
+     * returns the columns names from their keys
+     *
+     * @param array $columns columns keys
+     * @return array
+     */
+    function getColumnsNames(array $columns): array 
     {
-        if($num == 0) {
-            return 0;
+        $names = [];
+        foreach($columns as $column) {
+            $names[] = $this->paramtext->getParam($column);
         }
-        return $sum / $num;
+        return [$names];
     }
 
-    function monthStdDev($values, $avg, $num)
+    /**
+     * returns user sciper from its id, 0 if id = 0
+     *
+     * @param string $id user id
+     * @return string
+     */
+    function sciper(string $id): string
     {
-        $sum = 0;
-        foreach($values as $value) {
-            $sum += pow($value-$avg, 2);
-        }
-        if($num == 0 || $sum == 0) {
+        if($id == "0") {
             return 0;
-        }
-        return sqrt(1 / $num * $sum);
+        } 
+        return $this->users[$id]['user-sciper'];
     }
 
-    function periodAverage($nums, $avgs)
+    /**
+     * maps sciper->id user
+     *
+     * @return array
+     */
+    function scipers(): array
     {
-        $sum = 0;
-        $numTot = 0;
-        for($i=0; $i< count($nums); $i++) {
-            $sum += $nums[$i]*$avgs[$i];
-            $numTot += $nums[$i];
+        $scipers = [];
+        foreach($this->users as $id=>$user) {
+            $scipers[$user['user-sciper']] = $id;
         }
-        if($numTot == 0) {
-            return 0;
-        }
-        return $sum / $numTot;
+        return $scipers;
     }
 
-    function periodStdDev($nums, $avgs, $stddevs, $pAvg)
-    {
-        $sum = 0;
-        $numTot = 0;
-        for($i=0; $i< count($nums); $i++) {
-            $sum += $nums[$i]*(pow($stddevs[$i], 2) + pow($avgs[$i]-$pAvg, 2));
-            $numTot += $nums[$i];
-        }
-        if($numTot == 0 || $sum == 0) {
-            return 0;
-        }
-        return sqrt(1 / $numTot * $sum);
-    }
-
-    function loopOnMonths()
+    /**
+     * loops on all the period, one month after another, from the last to the first
+     *
+     * @return void
+     */
+    function loopOnMonths(): void
     {
         $date = $this->to;
         while(true) {       
@@ -383,6 +557,7 @@ abstract class Report
             $this->monthly = $this->year."-".$this->month;
             $this->monthList[] = $this->monthly;
 
+            // prepare is different for each report
             $this->prepare();
 
             if($date == $this->from) {
@@ -399,7 +574,13 @@ abstract class Report
         sort($this->monthList);
     }
 
-    function getFileNameInBS($fileKey)
+    /**
+     * finds complete filename for a Bilans&Stats file
+     *
+     * @param string $fileKey key to obtain the name prefix in json file
+     * @return string complete filename or empty string
+     */
+    function getFileNameInBS(string $fileKey): string
     {
         $files = scandir($this->dirRun."/Bilans_Stats/");
         $prefix = $this->bilansStats[$this->factel][$fileKey]['prefix'];
@@ -408,13 +589,18 @@ abstract class Report
                 return $this->dirRun."/Bilans_Stats/".$file;
             }
         }
-        return false;
+        return "";
     }
 
-
-    static function getJsonStructure($name) 
+    /**
+     * extracts content from Json structure file
+     *
+     * @param string $name Json file name
+     * @return array content or empty array
+     */
+    static function getJsonStructure(string $name): array 
     {
-        $structure = "";
+        $structure = [];
         if ((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
             $structure = json_decode(fread($open, filesize($name)), true);
             fclose($open);
@@ -422,7 +608,15 @@ abstract class Report
         return $structure;
     }
     
-    function mergeInCsv($fileKey, &$array, $idKey) 
+    /**
+     * adds data from csv file to array if not already exists
+     *
+     * @param string $fileKey file key to get data from Json file
+     * @param array $array array to merge in
+     * @param string $idKey key of the targeted data
+     * @return void
+     */
+    function mergeInCsv(string $fileKey, array &$array, string $idKey): void 
     {
         $fileData = $this->in[$this->factel][$fileKey];
         $columns = $fileData['columns'];
@@ -442,7 +636,15 @@ abstract class Report
         }
     }
     
-    function csvHeader($dimensions, $operations, $withMonths = true) 
+    /**
+     * generates csv header
+     *
+     * @param array $dimensions dimensions columns keys
+     * @param array $operations operations columns keys
+     * @param boolean $withMonths if column for each month is expected or not
+     * @return string
+     */
+    function csvHeader(array $dimensions, array $operations, bool $withMonths = true): string 
     {
         $header = "";
         $first = true;
@@ -461,7 +663,16 @@ abstract class Report
         return Csv::formatLine($header);
     }
     
-    function csvLine($dimensions, $operations, $line, $withMonths = true) 
+    /**
+     * generates csv line
+     *
+     * @param array $dimensions dimensions columns keys
+     * @param array $operations operations columns keys
+     * @param array $line line data
+     * @param boolean $withMonths if column for each month is expected or not
+     * @return string
+     */
+    function csvLine(array $dimensions, array $operations, array $line, bool $withMonths = true): string 
     {
         $data = "";
         $first = true;
@@ -483,27 +694,62 @@ abstract class Report
         return Csv::formatLine($data);
     }
 
-    function createTotalCsv($notBeNull)
+    /**
+     * returns link for all data csv file
+     *
+     * @param string $csvKey csv link id
+     * @param string $notBeNull the data, usually a final total, that should not be null if we want to generate the file
+     * @return string
+     */
+    function totalCsvLink(string $csvKey, string $notBeNull): string
     {
-        $this->totalCsv = $this->csvHeader($this->totalCsvData["dimensions"], $this->totalCsvData["operations"]);
+        $totalCsv = $this->csvHeader($this->totalCsvData["dimensions"], $this->totalCsvData["operations"]);
         foreach($this->totalCsvData["results"] as $line) {
             if(floatval($line[$notBeNull]) > 0) {
-                $this->totalCsv .= "\n".$this->csvLine($this->totalCsvData["dimensions"], $this->totalCsvData["operations"], $line);
+                $totalCsv .= "\n".$this->csvLine($this->totalCsvData["dimensions"], $this->totalCsvData["operations"], $line);
             }
+        }
+        return '<div class="total"><a href="data:text/plain;base64,'.base64_encode($totalCsv).'" download="'.$csvKey.'.csv"><button type="button" id="'.$csvKey.'" class="btn but-line">Download Csv</button></a></div>';
+    }
+
+    /**
+     * returns formatted number
+     *
+     * @param mixed $val number value in indetermined format
+     * @param string $format expected format (int, fin(ancial) or float)
+     * @return string
+     */
+    function format(mixed $val, string $format="fin"): string
+    {
+        switch($format) {
+            case "int": 
+                return number_format(intval($val), 0, ".", "'");
+                break;
+            case "fin":
+                return number_format(floatval($val), 2, ".", "'");
+                break;
+            default:
+                return number_format(floatval($val), 3, ".", "'");
         }
     }
 
-    function period()
+    /**
+     * returns period as text
+     *
+     * @return string
+     */
+    function period(): string
     {
         return substr($this->from, 4, 2)."/".substr($this->from, 0, 4)." - ".substr($this->to, 4, 2)."/".substr($this->to, 0, 4);
     }
 
-    function totalCsvLink($csvKey)
-    {
-        return '<div class="total"><a href="data:text/plain;base64,'.base64_encode($this->totalCsv).'" download="'.$csvKey.'.csv"><button type="button" id="'.$csvKey.'" class="btn but-line">Download Csv</button></a></div>';
-    }
-
-    function templateDisplay($mainTitle)
+    /**
+     * displays title and tabs with tables and csv links
+     *
+     * @param string $mainTitle main title base text
+     * @return void
+     */
+    function templateDisplay(string $mainTitle): void
     {
         $period = $this->period();
         $html = $mainTitle;
@@ -532,21 +778,12 @@ abstract class Report
         echo $html;
     }
 
-    function Format($val, $format="fin")
-    {
-        switch($format) {
-            case "int": 
-                return number_format(intval($val), 0, ".", "'");
-                break;
-            case "fin":
-                return number_format(floatval($val), 2, ".", "'");
-                break;
-            default:
-                return number_format(floatval($val), 3, ".", "'");
-        }
-    }
-
-    function generateTablesAndCsv() 
+    /**
+     * generates tabs with tables and csv links
+     *
+     * @return string
+     */
+    function generateTablesAndCsv(): string 
     {
         $html = "";
         $show = "show active";

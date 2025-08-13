@@ -1,11 +1,28 @@
 <?php
 
+/**
+ * ReportRabais class allows to generate reports about rabais and bonus
+ */
 class ReportRabais extends Report
 {
+    /**
+     * total amount
+     *
+     * @var float
+     */
+    private float $totalR;
 
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
+        $this->totalR = 0.0;
         $this->reportKey = 'rabaisbonus';
         $this->reportColumns = ["client-code", "client-class", "item-codeD", "deduct-CHF", "subsid-deduct", "discount-bonus", "subsid-bonus"];
         $this->totalCsvData = [
@@ -33,7 +50,13 @@ class ReportRabais extends Report
         ];
     }
 
-    function prepare() {
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void 
+    {
         $this->prepareClients();
         $this->prepareClasses();
         $this->prepareClientsClasses();
@@ -42,10 +65,15 @@ class ReportRabais extends Report
         $this->processReportFile();
     }
     
-    function generate()
+    /**
+     * generates report file and returns its data
+     *
+     * @return array
+     */
+    function generate(): array
     {
         $rabaisArray = [];
-        if($this->factel == 7 || $this->factel == 8) {
+        if(floatval($this->factel) == 7 || floatval($this->factel) == 8) {
             $columns = $this->bilansStats[$this->factel]['Bilan-f']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('Bilan-f'));
             for($i=1;$i<count($lines);$i++) {
@@ -63,8 +91,8 @@ class ReportRabais extends Report
                 $tab = explode(";", $lines[$i]);
                 $code = $tab[$columns['client-code']];
                 if($code != $this->plateforme) {
-                    if($this->factel < 7) {
-                        if($this->factel == 6) {
+                    if(floatval($this->factel) < 7) {
+                        if(floatval($this->factel) == 6) {
                             $msm = $tab[$columns["subsides-m"]];
                         }
                         else {
@@ -99,11 +127,16 @@ class ReportRabais extends Report
         return $rabaisArray;
     }
 
-
-    function mapping($rabaisArray)
+    /**
+     * maps report data for tabs tables and csv 
+     *
+     * @param array $montantsArray report data
+     * @return void
+     */
+    function mapping(array $rabaisArray): void
     {
         foreach($rabaisArray as $line) {
-            $this->total += $line[3]+$line[4]+$line[5]+$line[6];
+            $this->totalR += $line[3]+$line[4]+$line[5]+$line[6];
             $client = $this->clients[$line[0]];
             $classe = $this->classes[$line[1]];
             $article = $this->articles[$line[2]];
@@ -187,11 +220,15 @@ class ReportRabais extends Report
         }   
     }
 
-    function display()
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
-        $this->createTotalCsv("total-subsid");
-        $title = '<div class="total">Total rabais et subsides sur la période '.$this->period().' : '.$this->format($this->total, "fin").' CHF</div>';
-        $title .= $this->totalCsvLink("total-subsides");
+        $title = '<div class="total">Total rabais et subsides sur la période '.$this->period().' : '.$this->format($this->totalR).' CHF</div>';
+        $title .= $this->totalCsvLink("total-subsides", "total-subsid");
         echo $this->templateDisplay($title);
     }
 

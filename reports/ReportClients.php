@@ -1,11 +1,32 @@
 <?php
 
+/**
+ * ReportClients class allows to generate reports about number of users and clients
+ */
 class ReportClients extends Report
 {
-    private $totalC;
-    private $totalU;
+    /**
+     * total number of clients
+     *
+     * @var array
+     */
+    private array $totalC;
+
+    /**
+     * total number of users
+     *
+     * @var array
+     */
+    private array $totalU;
         
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
         $this->totalC = [];
@@ -55,10 +76,14 @@ class ReportClients extends Report
                 "results" => []
             ]
         ];
-
     }
 
-    function prepare() 
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void 
     {
         $this->prepareMachines();
         $this->prepareClients();
@@ -70,11 +95,16 @@ class ReportClients extends Report
         $this->processReportFile();
     }
 
-    function generate()
+    /**
+     * generates report file and returns its data
+     *
+     * @return array
+     */
+    function generate(): array
     {        
         $clientArray = [];
 
-        if($this->factel < 7) {
+        if(floatval($this->factel) < 7) {
             $columns = $this->bilansStats[$this->factel]['cae']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('cae'));
             for($i=1;$i<count($lines);$i++) {
@@ -109,7 +139,7 @@ class ReportClients extends Report
                 }
             }
         }
-        elseif($this->factel >= 7 && $this->factel < 9) {
+        elseif(floatval($this->factel) >= 7 && floatval($this->factel) < 9) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -124,7 +154,7 @@ class ReportClients extends Report
                 }
             }
         }
-        elseif($this->factel >= 9 && $this->factel < 10) {
+        elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -157,8 +187,13 @@ class ReportClients extends Report
         return $clientArray;
     }
 
-
-    function mapping($clientArray) 
+    /**
+     * maps report data for tabs tables and csv 
+     *
+     * @param array $clientArray report data
+     * @return void
+     */
+    function mapping(array $clientArray): void
     {
         foreach($clientArray as $id=>$line) {
             $client = $this->clients[$line[0]];
@@ -242,8 +277,12 @@ class ReportClients extends Report
         }
     }
 
-
-    function display()
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
         foreach($this->tabs["user-jour"]["results"] as $jour=>$data) {
             $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-d"] = count($data["users"]);

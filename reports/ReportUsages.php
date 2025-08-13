@@ -1,13 +1,46 @@
 <?php
 
+/**
+ * ReportUsages class allows to generate reports about machines, clients and users usages stats
+ */
 class ReportUsages extends Report
 {
-    private $totalM;
-    private $totalN;
-    private $totalChange;
-    private $changeMachines;
+    /**
+     * total of hours
+     *
+     * @var float
+     */
+    private float $totalM;
 
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * total of runs
+     *
+     * @var integer
+     */
+    private int $totalN;
+
+    /**
+     * total machines categories changes
+     *
+     * @var array
+     */
+    private array $totalChange;
+
+    /**
+     * machines categories
+     *
+     * @var array
+     */
+    private array $changeMachines;
+
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
         $this->totalM = 0;
@@ -77,7 +110,12 @@ class ReportUsages extends Report
         ];
     }
 
-    function prepare() 
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void 
     {
         $this->prepareClients();
         $this->prepareClasses();
@@ -90,11 +128,16 @@ class ReportUsages extends Report
         $this->processReportFile();
     }
 
-    function generate()
+    /**
+     * generates report file and returns its data
+     *
+     * @return array
+     */
+    function generate(): array
     {
         $usagesArray = [];
         $loopArray = [];
-        if($this->factel < 7) {
+        if(floatval($this->factel) < 7) {
             $columns = $this->bilansStats[$this->factel]['cae']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('cae'));
             for($i=1;$i<count($lines);$i++) {
@@ -136,7 +179,7 @@ class ReportUsages extends Report
                 }
             }
         }
-        elseif($this->factel == 7) {
+        elseif(floatval($this->factel) == 7) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -178,7 +221,7 @@ class ReportUsages extends Report
                 }
             }
         }
-        elseif($this->factel == 8) {
+        elseif(floatval($this->factel) == 8) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             $nrArray = [];
@@ -210,7 +253,7 @@ class ReportUsages extends Report
                 }
             }
         }
-        elseif($this->factel == 9) {
+        elseif(floatval($this->factel) == 9) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             $nrArray = [];
@@ -286,7 +329,14 @@ class ReportUsages extends Report
         return $usagesArray;
     }
 
-    function getCategorie($machId, $itemK)
+    /**
+     * returns categories data for a machine and an item K
+     *
+     * @param string $machId machine id
+     * @param string $itemK item K
+     * @return array
+     */
+    function getCategorie(string $machId, string $itemK): array
     {
         $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
         if($itemGrp != "0") {
@@ -299,7 +349,13 @@ class ReportUsages extends Report
         return ["0", "0", "0"];
     }
     
-    function mapping($usagesArray)
+    /**
+     * maps report data for tabs tables and csv 
+     *
+     * @param array $montantsArray report data
+     * @return void
+     */
+    function mapping(array $usagesArray): void
     {
         $scipers = $this->scipers();
         foreach($usagesArray as $line) {
@@ -411,7 +467,12 @@ class ReportUsages extends Report
         }
     }
 
-    function display() 
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
         foreach($this->tabs["par-machine"]["results"] as $key=>$cells) {
             $this->tabs["par-machine"]["results"][$key]["stat-nbuser"] = count($this->tabs["par-machine"]["results"][$key]["users"]);

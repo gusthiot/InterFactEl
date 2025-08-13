@@ -1,10 +1,25 @@
 <?php
 
+/**
+ * ReportTransactions class allows to generate reports about users and clients transactions
+ */
 class ReportTransactions extends Report
 {
-    private $totalT;
+    /**
+     * total of transactions
+     *
+     * @var integer
+     */
+    private int $totalT;
     
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
         $this->totalT = 0;
@@ -39,7 +54,13 @@ class ReportTransactions extends Report
 
     }
 
-    function prepare() {
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void 
+    {
         $this->prepareClients();
         $this->prepareUsers();
         $this->loadPrestations();
@@ -48,12 +69,17 @@ class ReportTransactions extends Report
         $this->processReportFile();
     }
 
-    function generate()
+    /**
+     * generates report file and returns its data
+     *
+     * @return array
+     */
+    function generate(): array
     {
         $transArray = [];
         $loopArray = [];
 
-        if($this->factel < 7) {
+        if(floatval($this->factel) < 7) {
             $columns = $this->bilansStats[$this->factel]['cae']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('cae'));
             for($i=1;$i<count($lines);$i++) {
@@ -94,7 +120,7 @@ class ReportTransactions extends Report
                 $transArray[] = [$ids[0], $this->sciper($ids[1]), "lvr", $q];
             }
         }
-        elseif($this->factel >= 7 && $this->factel < 9) {
+        elseif($this->factel >= 7 && floatval($this->factel) < 9) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -112,7 +138,7 @@ class ReportTransactions extends Report
                 $transArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
-        elseif($this->factel >= 9 && $this->factel < 10) {
+        elseif($this->factel >= 9 && floatval($this->factel) < 10) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -153,8 +179,13 @@ class ReportTransactions extends Report
         return $transArray;
     }
 
-
-    function mapping($transArray)
+    /**
+     * maps report data for tabs tables and csv 
+     *
+     * @param array $montantsArray report data
+     * @return void
+     */
+    function mapping(array $transArray): void
     {   
         $scipers = $this->scipers();
         foreach($transArray as $line) {
@@ -204,7 +235,12 @@ class ReportTransactions extends Report
         }
     }
 
-    function display()
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
         $nbUsers = count($this->tabs["par-user"]["results"]);
         if(array_key_exists(0, $this->tabs["par-user"]["results"])) {

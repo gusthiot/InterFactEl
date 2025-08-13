@@ -1,13 +1,28 @@
 <?php
 
+/**
+ * ReportPropres class allows to generate reports about articles, projects and machines for self amounts
+ */
 class ReportPropres extends Report
 {
-    private $totalM;
+    /**
+     * total amount
+     *
+     * @var float
+     */
+    private float $totalM;
         
-    public function __construct($plateforme, $to, $from) 
+    /**
+     * Class constructor
+     *
+     * @param string $plateforme reports for this given plateform
+     * @param string $to last month of the period
+     * @param string $from first month of the period
+     */
+    function __construct(string $plateforme, string $to, string $from)
     { 
         parent::__construct($plateforme, $to, $from);
-        $this->totalM = 0;
+        $this->totalM = 0.0;
         $this->reportKey = 'consopltf';
         $this->reportColumns = ["proj-id", "item-id", "valuation-net"];
         $this->tabs = [
@@ -39,19 +54,30 @@ class ReportPropres extends Report
 
     }
 
-    function prepare() {
+    /**
+     * prepares dimensions, generates report file if not exists and extracts its data
+     *
+     * @return void
+     */
+    function prepare(): void 
+    {
         $this->prepareComptes();
         $this->preparePrestations();
 
         $this->processReportFile();
     }
 
-    function generate()
+    /**
+     * generates report file and returns its data
+     *
+     * @return array
+     */
+    function generate(): array
     {        
         $pltfArray = [];
         $loopArray = [];
 
-        if($this->factel <= 9) {
+        if(floatval($this->factel) <= 9) {
             $columns = $this->bilansStats[$this->factel]['T3']['columns'];
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
@@ -87,7 +113,13 @@ class ReportPropres extends Report
     }
 
 
-    function mapping($pltfArray) 
+    /**
+     * maps report data for tabs tables and csv 
+     *
+     * @param array $montantsArray report data
+     * @return void
+     */
+    function mapping(array $pltfArray): void 
     {
         foreach($pltfArray as $line) {
             $compte = $this->comptes[$line[0]];
@@ -148,10 +180,15 @@ class ReportPropres extends Report
     }
 
 
-    function display()
+    /**
+     * displays title and tabs
+     *
+     * @return void
+     */
+    function display(): void
     {
         $title = '<div class="total">Total des consommations propres sur la période (CHF) : '.$this->period().' </div>';
-        $title .= '<div class="subtotal">'.$this->format($this->totalM, "fin").'</div>';
+        $title .= '<div class="subtotal">'.$this->format($this->totalM).'</div>';
         echo $this->templateDisplay($title);
     }
 
