@@ -97,8 +97,8 @@
         "cptexpl": {
             "prefix": "cptexpl",
             "columns": {
-                "proj-id": 1,
-                "proj-expl": 2
+                "proj-id": 0,
+                "proj-expl": 1
             }
         }
     },
@@ -201,8 +201,8 @@
         "cptexpl": {
             "prefix": "cptexpl",
             "columns": {
-                "proj-id": 1,
-                "proj-expl": 2
+                "proj-id": 0,
+                "proj-expl": 1
             }
         }
     },
@@ -305,8 +305,8 @@
         "cptexpl": {
             "prefix": "cptexpl",
             "columns": {
-                "proj-id": 1,
-                "proj-expl": 2
+                "proj-id": 0,
+                "proj-expl": 1
             }
         }
     },
@@ -409,8 +409,8 @@
         "cptexpl": {
             "prefix": "cptexpl",
             "columns": {
-                "proj-id": 1,
-                "proj-expl": 2
+                "proj-id": 0,
+                "proj-expl": 1
             }
         }
     },
@@ -513,8 +513,8 @@
         "cptexpl": {
             "prefix": "cptexpl",
             "columns": {
-                "proj-id": 1,
-                "proj-expl": 2
+                "proj-id": 0,
+                "proj-expl": 1
             }
         }
     },
@@ -617,8 +617,8 @@
         "cptexpl": {
             "prefix": "cptexpl",
             "columns": {
-                "proj-id": 1,
-                "proj-expl": 2
+                "proj-id": 0,
+                "proj-expl": 1
             }
         }
     },
@@ -721,8 +721,8 @@
         "cptexpl": {
             "prefix": "cptexpl",
             "columns": {
-                "proj-id": 1,
-                "proj-expl": 2
+                "proj-id": 0,
+                "proj-expl": 1
             }
         }
     },
@@ -825,8 +825,8 @@
         "cptexpl": {
             "prefix": "cptexpl",
             "columns": {
-                "proj-id": 1,
-                "proj-expl": 2
+                "proj-id": 0,
+                "proj-expl": 1
             }
         }
     },
@@ -929,8 +929,8 @@
         "cptexpl": {
             "prefix": "cptexpl",
             "columns": {
-                "proj-id": 1,
-                "proj-expl": 2
+                "proj-id": 0,
+                "proj-expl": 1
             }
         }
     },
@@ -1033,8 +1033,8 @@
         "cptexpl": {
             "prefix": "cptexpl",
             "columns": {
-                "proj-id": 1,
-                "proj-expl": 2
+                "proj-id": 0,
+                "proj-expl": 1
             }
         }
     },

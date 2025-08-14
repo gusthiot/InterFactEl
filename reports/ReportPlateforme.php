@@ -51,6 +51,8 @@ class ReportPlateforme extends Report
         $this->loadGroupes();
         $this->prepareUsers();
         $this->prepareMachines();
+        $this->loadGroupes();
+        $this->loadMachinesGroupes();
         $this->prepareComptes();
 
         $this->processReportFile();
@@ -156,7 +158,7 @@ class ReportPlateforme extends Report
                 $tab = explode(";", $lines[$i]);
                 $machId = $tab[$columns["mach-id"]];
                 if(array_key_exists($machId, $this->machines)) {
-                    $itemGrp = $this->machines[$machId]["item-grp"];
+                    $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
                     $itemId = $this->groupes[$itemGrp]["item-id-K1"];
                     $expl = $cptExplArray[$tab[$columns["proj-id"]]];
                     if(($tab[$columns["client-code"]] == $this->categories[$itemId]["platf-code"]) && ($expl == "FALSE")) {
@@ -173,7 +175,7 @@ class ReportPlateforme extends Report
             }
             foreach($loopArray as $id=>$mu) {
                 $ids = explode("--", $id);
-                $itemGrp = $this->machines[$ids[1]]["item-grp"];
+                $itemGrp = $this->machinesGroupes[$ids[1]]["item-grp"];
                 $pltfArray[] = [$ids[0], $itemGrp, "K1", $mu[0]];
                 $pltfArray[] = [$ids[0], $itemGrp, "K2", $mu[1]];
             }

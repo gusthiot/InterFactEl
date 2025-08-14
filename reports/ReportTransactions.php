@@ -65,6 +65,9 @@ class ReportTransactions extends Report
         $this->prepareUsers();
         $this->loadPrestations();
         $this->prepareMachines();
+        $this->loadCategories();
+        $this->loadGroupes();
+        $this->loadMachinesGroupes();
 
         $this->processReportFile();
     }
@@ -87,12 +90,14 @@ class ReportTransactions extends Report
                     $tab = explode(";", $lines[$i]);
                     if($flux == 'cae') {
                         $machId = $tab[$columns["mach-id"]];
-                        if(!array_key_exists($machId, $this->machines)) {
-                            continue;
+                        if(array_key_exists($machId, $this->machines)) {
+                            $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
+                            $itemId = $this->groupes[$itemGrp]["item-id-K1"];
+                            $cond = $tab[$columns["client-code"]] != $this->categories[$itemId]["platf-code"];
                         }
-                        $itemGrp = $this->machines[$machId]["item-grp"];
-                        $itemId = $this->groupes[$itemGrp]["item-id-K1"];
-                        $cond = $tab[$columns["client-code"]] != $this->categories[$itemId]["platf-code"];
+                        else {
+                            $cond = false;
+                        }
                     }
                     else {
                         $itemId = $tab[$columns["item-id"]];
