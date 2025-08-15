@@ -76,6 +76,7 @@ class ReportClients extends Report
                 "results" => []
             ]
         ];
+
     }
 
     /**
@@ -116,21 +117,13 @@ class ReportClients extends Report
                     $code = $tab[$columns["client-code"]];
                     if($flux == 'cae') {
                         $machId = $tab[$columns["mach-id"]];
-                        if(array_key_exists($machId, $this->machines)) {
-                            $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
-                            $itemId = $this->groupes[$itemGrp]["item-id-K1"];
-                            $cond = $code != $this->categories[$itemId]["platf-code"];
-                        }
-                        else {
-                            $cond = false;
-                        }
+                        $plateId = $this->getPlateformeFromMachine($machId);
                     }
                     else {
                         $itemId = $tab[$columns["item-id"]];
                         $plateId = $this->prestations[$itemId]["platf-code"];
-                        $cond = ($plateId == $this->plateforme) && ($code != $plateId);
                     }
-                    if($cond) {
+                    if($plateId && ($plateId == $this->plateforme) && ($code != $plateId)) {
                         $datetime = explode(" ", $tab[$columns["transac-date"]]);
                         $id = $code."--".$tab[$columns["user-id"]]."--".$datetime[0];
                         $clcl = $this->clientsClasses[$code]['client-class'];
@@ -179,7 +172,7 @@ class ReportClients extends Report
         foreach($clientArray as $id=>$line) {
             $client = $this->clients[$line[0]];
             $classe = $this->classes[$line[1]];
-            $date = new DateTimeImmutable($line[3]); 
+            $date = new DateTimeImmutable($line[3]);
             $datetb = ["year"=>$date->format('Y'), "month"=>$date->format('m'), "day"=>$date->format('d'), "week-nbr"=>$date->format('W')];
 
             $ids = [
@@ -221,15 +214,34 @@ class ReportClients extends Report
                     foreach($this->tabs[$tab]["operations"] as $operation) {
                         $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
                     }
+
                     if(in_array($tab, ["user-jour", "user-mois", "user-client"])) {
                         $this->tabs[$tab]["results"][$ids[$tab]]["users"] = [];
                     }
                     else {
                         $this->tabs[$tab]["results"][$ids[$tab]]["clients"] = [];
                     }
+
                     if($tab == "user-jour") {
                         if($date->format('w') == 1) {
                             $this->tabs[$tab]["weeks"][$date->format('W')] = [];
+                        }
+                    }
+
+                    if(in_array($tab, ["user-mois", "client-mois"])) {
+                        $tab == "user-mois" ? $pre = "users" : $pre = "clients";
+                        foreach([3, 6, 12] as $before) {
+                            if(intval($this->month) < $before) {
+                                $mb = State::addToMonth($this->month, 13-$before);
+                                $yb = State::addToString($this->year, -1);
+                            }
+                            else {
+                                $mb = State::addToMonth($this->month, 1-$before);
+                                $yb = $this->year;
+                            }
+                            if (file_exists(DATA.$this->plateforme."/".$yb."/".$mb)) {
+                                $this->tabs[$tab]["results"][$ids[$tab]][$pre."-".$before."m"] = [];
+                            }
                         }
                     }
                 }
@@ -247,6 +259,12 @@ class ReportClients extends Report
                     if(array_key_exists($date->format('W'), $this->tabs[$tab]["weeks"])) {
                         $this->tabs[$tab]["weeks"][$date->format('W')][] = $line[2];
                     }
+                }                
+                if($tab == "user-mois") {
+                    $this->putInNext($tab, $ids[$tab], "users", $line[2]);
+                }
+                if($tab == "client-mois") {
+                    $this->putInNext($tab, $ids[$tab], "clients", $line[0]);
                 }
             }
             if($line[2] != 0 && !in_array($line[2], $this->totalU)) {
@@ -254,6 +272,49 @@ class ReportClients extends Report
             }
             if(!in_array($line[0], $this->totalC)) {
                 $this->totalC[] = $line[0];
+            }
+        }
+    }
+
+    function putInNext($tab, $date, $type, $value)
+    {
+        foreach([3, 6, 12] as $before) {
+            $ms = $date;
+            for($i=0;$i<$before;$i++) {
+                if(!$this->isLater($ms)) {
+                    if(array_key_exists($type."-".$before."m", $this->tabs[$tab]["results"][$ms])) {
+                        if(!in_array($value, $this->tabs[$tab]["results"][$ms][$type."-".$before."m"])) {
+                            $this->tabs[$tab]["results"][$ms][$type."-".$before."m"][] = $value;
+                        }
+                    }
+                }
+                $ms = $this->nextDate($ms);
+            }
+        }
+    }
+
+    function nextDate(string $date): string
+    {
+        $tb = explode("-", $date);
+        $y = $tb[1] == "12" ? State::addToString($tb[0], 1) : $tb[0];
+        $m = $tb[1] == "12" ? "01" : State::addToMonth($tb[1], 1);
+        return $y."-".$m;
+    }
+
+    function isLater(string $date): bool
+    {
+        $tb = explode("-", $date);
+        $m = substr($this->to, 4, 2);
+        $y = substr($this->to, 0, 4);
+        if($y == $tb[0]) {
+            return (intval($tb[1]) > (intval($m)));
+        }
+        else {
+            if($tb[0] < $y) {
+                return false;
+            }
+            else {
+                return true;
             }
         }
     }
@@ -276,9 +337,19 @@ class ReportClients extends Report
         }
         foreach($this->tabs["user-mois"]["results"] as $mois=>$data) {
             $this->tabs["user-mois"]["results"][$mois]["stat-nbuser-m"] = count($data["users"]);
+            foreach([3, 6, 12] as $before) {
+                if(array_key_exists("users-".$before."m", $this->tabs["user-mois"]["results"][$mois])) {
+                    $this->tabs["user-mois"]["results"][$mois]["stat-nbuser-".$before."m"] = count($this->tabs["user-mois"]["results"][$mois]["users-".$before."m"]);
+                }
+            }
         }
         foreach($this->tabs["client-mois"]["results"] as $mois=>$data) {
             $this->tabs["client-mois"]["results"][$mois]["stat-nbclient-m"] = count($data["clients"]);
+            foreach([3, 6, 12] as $before) {
+                if(array_key_exists("clients-".$before."m", $this->tabs["client-mois"]["results"][$mois])) {
+                    $this->tabs["client-mois"]["results"][$mois]["stat-nbclient-".$before."m"] = count($this->tabs["client-mois"]["results"][$mois]["clients-".$before."m"]);
+                }
+            }
         }
         foreach($this->tabs["client-classe"]["results"] as $classe=>$data) {
             $this->tabs["client-classe"]["results"][$classe]["stat-nbclient"] = count($data["clients"]);

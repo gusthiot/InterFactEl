@@ -490,6 +490,20 @@ abstract class Report
         return [$names];
     }
 
+    function getPlateformeFromMachine(string $machId): string
+    {
+        if(array_key_exists($machId, $this->machinesGroupes)) {
+            $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
+            if($itemGrp != "0") {
+                $itemId = $this->groupes[$itemGrp]["item-id-K1"];
+                if($itemId != "0") {
+                    return $this->categories[$itemId]["platf-code"];
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * returns user sciper from its id, 0 if id = 0
      *

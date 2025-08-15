@@ -143,7 +143,8 @@ class ReportUsages extends Report
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
                 $machId = $tab[$columns["mach-id"]];
-                if(array_key_exists($machId, $this->machines)) {
+                $plateId = $this->getPlateformeFromMachine($machId);
+                if($plateId && ($plateId == $this->plateforme)) {
                     $mu1 = ($tab[$columns["Tmach-HP"]] + $tab[$columns["Tmach-HC"]]) / 60;
                     $mu2 = $tab[$columns["Toper"]]  / 60;
                     $nr1 = 1;

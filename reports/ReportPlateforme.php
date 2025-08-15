@@ -89,7 +89,8 @@ class ReportPlateforme extends Report
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
                 $machId = $tab[$columns["mach-id"]];
-                if(array_key_exists($machId, $this->machines)) {
+                $plateId = $this->getPlateformeFromMachine($machId);
+                if($plateId && ($plateId == $this->plateforme)) {
                     $mu2 = $tab[$columns["Toper"]] / 60;
                     $datetime = explode(" ", $tab[$columns["transac-date"]]);
                     $id = $tab[$columns["oper-id"]]."--".$datetime[0]."--cae";
@@ -157,20 +158,17 @@ class ReportPlateforme extends Report
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
                 $machId = $tab[$columns["mach-id"]];
-                if(array_key_exists($machId, $this->machines)) {
-                    $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
-                    $itemId = $this->groupes[$itemGrp]["item-id-K1"];
-                    $expl = $cptExplArray[$tab[$columns["proj-id"]]];
-                    if(($tab[$columns["client-code"]] == $this->categories[$itemId]["platf-code"]) && ($expl == "FALSE")) {
-                        $mu1 = ($tab[$columns["Tmach-HP"]]+$tab[$columns["Tmach-HC"]]) / 60;
-                        $mu2 = $tab[$columns["Toper"]] / 60;
-                        $id = $tab[$columns["proj-id"]]."--".$tab[$columns["mach-id"]];
-                        if(!array_key_exists($id, $loopArray)) {
-                            $loopArray[$id] = [0, 0];
-                        }
-                        $loopArray[$id][0] += $mu1;
-                        $loopArray[$id][1] += $mu2;
+                $expl = $cptExplArray[$tab[$columns["proj-id"]]];
+                $plateId = $this->getPlateformeFromMachine($machId);
+                if($plateId && ($plateId == $this->plateforme) && ($tab[$columns["client-code"]] == $plateId) && ($expl == "FALSE")) {
+                    $mu1 = ($tab[$columns["Tmach-HP"]]+$tab[$columns["Tmach-HC"]]) / 60;
+                    $mu2 = $tab[$columns["Toper"]] / 60;
+                    $id = $tab[$columns["proj-id"]]."--".$tab[$columns["mach-id"]];
+                    if(!array_key_exists($id, $loopArray)) {
+                        $loopArray[$id] = [0, 0];
                     }
+                    $loopArray[$id][0] += $mu1;
+                    $loopArray[$id][1] += $mu2;
                 }
             }
             foreach($loopArray as $id=>$mu) {
@@ -185,69 +183,46 @@ class ReportPlateforme extends Report
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
-                if(floatval($this->factel) == 7) {
-                    $machId = $tab[$columns["mach-id"]];
-                    if(array_key_exists($machId, $this->machines)) {
-                        $itemGrp = $this->machines[$machId]["item-grp"];
-                        if(($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"])) {
-                            $letter = substr($tab[$columns["item-nbr"]], 0, 1);
-                            switch($letter) {
-                                case "E": 
-                                    $itemK = "K1";
-                                    break;
-                                case "S":
-                                    $itemK = "K2";
-                                    break;
-                                case "U":
-                                    $itemK = "K3";
-                                    break;
-                                case "X":
-                                    $itemK = "K4";
-                                    break;
-                            }
-
-                            $id = $tab[$columns["proj-id"]]."--".$itemGrp."--".$itemK;
-                            if(!array_key_exists($id, $loopArray)) {
-                                $loopArray[$id] = 0;
-                            }
-                            $loopArray[$id] += $tab[$columns["transac-usage"]];
-                        }
-                    }
-                }
-                elseif(floatval($this->factel) >= 8 || floatval($this->factel) < 10) {
-                    $machId = $tab[$columns["mach-id"]];
-                    if(array_key_exists($machId, $this->machines)) {
-                        $itemGrp = $this->machines[$machId]["item-grp"];
-                        if(($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"])) {
-                            $id = $tab[$columns["proj-id"]]."--".$itemGrp."--".$tab[$columns["item-codeK"]];
-                            if(!array_key_exists($id, $loopArray)) {
-                                $loopArray[$id] = 0;
-                            }
-                            $loopArray[$id] += $tab[$columns["transac-usage"]];
-                        }
-                    }
-                }
-                elseif(floatval($this->factel) == 10) {
-                    $machId = $tab[$columns["mach-id"]];
-                    if(array_key_exists($machId, $this->machines)) {
-                        $itemGrp = $this->machines[$machId]["item-grp"];
-                        if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"])) {
-                            $id = $tab[$columns["proj-id"]]."--".$itemGrp."--".$tab[$columns["item-codeK"]];
-                            if(!array_key_exists($id, $loopArray)) {
-                                $loopArray[$id] = 0;
-                            }
-                            $loopArray[$id] += $tab[$columns["transac-usage"]];
-                        }
-                    }
+                $fceCond = ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"]);
+                if(floatval($this->factel) < 10) {
+                    $cond = ($tab[$columns["platf-code"]] == $this->plateforme) && $fceCond;
                 }
                 else {
-                    if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"])) {
-                        $id = $tab[$columns["proj-id"]]."--".$tab[$columns["item-grp"]]."--".$tab[$columns["item-codeK"]];
-                        if(!array_key_exists($id, $loopArray)) {
-                            $loopArray[$id] = 0;
+                    $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && $fceCond;
+                }
+                if($cond) {
+                    if(floatval($this->factel) == 7) {
+                        $letter = substr($tab[$columns["item-nbr"]], 0, 1);
+                        switch($letter) {
+                            case "E": 
+                                $itemK = "K1";
+                                break;
+                            case "S":
+                                $itemK = "K2";
+                                break;
+                            case "U":
+                                $itemK = "K3";
+                                break;
+                            case "X":
+                                $itemK = "K4";
+                                break;
                         }
-                        $loopArray[$id] += $tab[$columns["transac-usage"]];
                     }
+                    else {
+                        $itemK = $tab[$columns["item-codeK"]];
+                    }
+                    if(floatval($this->factel) < 11) {
+                        $machId = $tab[$columns["mach-id"]];
+                        $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
+                    }
+                    else {
+                        $itemGrp = $tab[$columns["item-grp"]];
+                    }
+                    $id = $tab[$columns["proj-id"]]."--".$itemGrp."--".$itemK;
+                    if(!array_key_exists($id, $loopArray)) {
+                        $loopArray[$id] = 0;
+                    }
+                    $loopArray[$id] += $tab[$columns["transac-usage"]];
                 }
             }
             foreach($loopArray as $id=>$mu) {

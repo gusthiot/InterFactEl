@@ -196,7 +196,7 @@ class State
      */
     function getNextMonth(): string
     {
-        return $this->last_m == "12" ? "01" : self::addToMonth($this->last_m, 1); 
+        return $this->last_m == "12" ? "01" : self::addToMonth($this->last_m, 1);
     }
 
     /**
@@ -204,8 +204,6 @@ class State
      *
      * @param string $month month to check
      * @param string $year year to check
-     * @param string $m month as reference
-     * @param string $y year as reference
      * @return boolean
      */
     function isLater(string $month, string $year): bool

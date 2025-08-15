@@ -95,7 +95,8 @@ class ReportRuns extends Report
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
                 $machId = $tab[$columns["mach-id"]];
-                if(array_key_exists($machId, $this->machines)) {
+                $plateId = $this->getPlateformeFromMachine($machId);
+                if($plateId && ($plateId == $this->plateforme)) {
                     $mu = ($tab[$columns["Tmach-HP"]] + $tab[$columns["Tmach-HC"]]) / 60;
                     $specials = ["mach022", "mach023", "mach036", "mach145"];
                     if(in_array($machId, $specials)) {

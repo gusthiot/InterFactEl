@@ -88,23 +88,16 @@ class ReportTransactions extends Report
                 $lines = Csv::extract($this->getFileNameInBS($flux));
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
+                    $code = $tab[$columns["client-code"]];
                     if($flux == 'cae') {
                         $machId = $tab[$columns["mach-id"]];
-                        if(array_key_exists($machId, $this->machines)) {
-                            $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
-                            $itemId = $this->groupes[$itemGrp]["item-id-K1"];
-                            $cond = $tab[$columns["client-code"]] != $this->categories[$itemId]["platf-code"];
-                        }
-                        else {
-                            $cond = false;
-                        }
+                        $plateId = $this->getPlateformeFromMachine($machId);
                     }
                     else {
                         $itemId = $tab[$columns["item-id"]];
                         $plateId = $this->prestations[$itemId]["platf-code"];
-                        $cond = ($plateId == $this->plateforme) && ($tab[$columns["client-code"]] != $plateId);
                     }                    
-                    if($cond) {
+                    if($plateId && ($plateId == $this->plateforme) && ($code != $plateId)) {
                         $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]];
                         if(!array_key_exists($id, $loopArray)) {
                             $loopArray[$id] = 0;

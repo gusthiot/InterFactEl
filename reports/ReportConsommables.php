@@ -61,7 +61,7 @@ class ReportConsommables extends Report
                     $itemId = $tab[$columns["item-id"]];
                     $plateId = $this->prestations[$itemId]["platf-code"];
                     if($plateId == $this->plateforme) {
-                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
+                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$itemId;
                         if(!array_key_exists($id, $loopArray)) {
                             $loopArray[$id] = 0;
                         }
