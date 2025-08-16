@@ -490,6 +490,12 @@ abstract class Report
         return [$names];
     }
 
+    /**
+     * returns the plateform concerned by a machine or false
+     *
+     * @param string $machId machine id
+     * @return string
+     */
     function getPlateformeFromMachine(string $machId): string
     {
         if(array_key_exists($machId, $this->machinesGroupes)) {
@@ -564,9 +570,6 @@ abstract class Report
 
             $infos = Info::load($this->dirRun);
             $this->factel = $infos["FactEl"][2];
-    
-            $versionTab = explode("/", $dirVersion);
-            $version = $versionTab[count($versionTab)-1];
 
             $this->monthly = $this->year."-".$this->month;
             $this->monthList[] = $this->monthly;

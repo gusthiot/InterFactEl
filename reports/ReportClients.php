@@ -259,7 +259,7 @@ class ReportClients extends Report
                     if(array_key_exists($date->format('W'), $this->tabs[$tab]["weeks"])) {
                         $this->tabs[$tab]["weeks"][$date->format('W')][] = $line[2];
                     }
-                }                
+                }
                 if($tab == "user-mois") {
                     $this->putInNext($tab, $ids[$tab], "users", $line[2]);
                 }
@@ -293,11 +293,51 @@ class ReportClients extends Report
         }
     }
 
+    function putInFrom($ecart, $tab, $type, $value)
+    {
+        $ms = substr($this->from, 0, 4)."-".substr($this->from, 4, 2);
+        while(true) {
+            if(array_key_exists($type."-12m", $this->tabs[$tab]["results"][$ms])) {
+                if(!in_array($value, $this->tabs[$tab]["results"][$ms][$type."-12m"])) {
+                    $this->tabs[$tab]["results"][$ms][$type."-12m"][] = $value;
+                }
+            }
+            if($ecart < 6) {
+                if(array_key_exists($type."-6m", $this->tabs[$tab]["results"][$ms])) {
+                    if(!in_array($value, $this->tabs[$tab]["results"][$ms][$type."-6m"])) {
+                        $this->tabs[$tab]["results"][$ms][$type."-6m"][] = $value;
+                    }
+                }
+            }
+            if($ecart < 3) {
+                if(array_key_exists($type."-3m", $this->tabs[$tab]["results"][$ms])) {
+                    if(!in_array($value, $this->tabs[$tab]["results"][$ms][$type."-3m"])) {
+                        $this->tabs[$tab]["results"][$ms][$type."-3m"][] = $value;
+                    }
+                }
+            }
+            $ms = $this->nextDate($ms);
+            $ecart++;
+            if($ecart > 11 || $this->isLater($ms)) {
+                break;
+            }
+        }
+    }
+
     function nextDate(string $date): string
     {
         $tb = explode("-", $date);
         $y = $tb[1] == "12" ? State::addToString($tb[0], 1) : $tb[0];
         $m = $tb[1] == "12" ? "01" : State::addToMonth($tb[1], 1);
+        return $y."-".$m;
+    }
+
+
+    function previousDate(string $date): string
+    {
+        $tb = explode("-", $date);
+        $y = $tb[1] == "01" ? State::addToString($tb[0], -1) : $tb[0];
+        $m = $tb[1] == "01" ? "12" : State::addToMonth($tb[1], -1);
         return $y."-".$m;
     }
 
@@ -326,6 +366,51 @@ class ReportClients extends Report
      */
     function display(): void
     {
+        $date = $this->from;
+        $month = substr($date, 4, 2);
+        for($i=1;$i<12;$i++) {
+            if($month == "01") {
+                $date -= 89;
+            }
+            else {
+                $date--;
+            }
+            $month = substr($date, 4, 2);
+            $year = substr($date, 0, 4);
+            $dir = DATA.$this->plateforme."/".$year."/".$month;
+            if (!file_exists($dir)) {
+                break;
+            }
+            $version = Lock::load($dir, "month");
+            $dirVersion = $dir."/".$version;
+            $run = Lock::load($dirVersion, "version");
+            $dirRun = $dirVersion."/".$run;
+            $infos = Info::load($dirRun);
+            $factel = $infos["FactEl"][2];
+
+            $monthArray = [];
+            $reportFile = $dirRun."/REPORT/".$this->report[$factel][$this->reportKey]['prefix'].".csv";
+            if(!file_exists($reportFile)) {
+                if(!file_exists($dirRun."/REPORT/")) {
+                    mkdir($dirRun."/REPORT/");
+                }
+                $monthArray = $this->generate();
+                $columns = $this->reportColumns;
+                Csv::write($reportFile, array_merge($this->getColumnsNames($columns), $monthArray));
+
+            }
+            else {
+                $lines = Csv::extract($reportFile);
+                for($j=1;$j<count($lines);$j++) {
+                    $monthArray[] = explode(";", $lines[$j]);
+                }
+            }
+            foreach($monthArray as $id=>$line) {
+                $this->putInFrom($i, "user-mois", "users", $line[2]);
+                $this->putInFrom($i, "client-mois", "clients", $line[0]);
+            }            
+        }
+
         foreach($this->tabs["user-jour"]["results"] as $jour=>$data) {
             $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-d"] = count($data["users"]);
                 $date = new DateTimeImmutable($jour);
@@ -357,6 +442,7 @@ class ReportClients extends Report
         foreach($this->tabs["user-client"]["results"] as $client=>$data) {
             $this->tabs["user-client"]["results"][$client]["stat-nbuser"] = count($data["users"]);
         }
+
         $title = '<div class="total">Statistiques nombre utilisateurs et clients : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre de clients = '.$this->format(count($this->totalC), "int").'</div>';
         $title .= '<div class="subtotal">Nombre d\'utilisateurs = '.$this->format(count($this->totalU), "int").'</div>';

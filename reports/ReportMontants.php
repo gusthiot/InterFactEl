@@ -219,7 +219,7 @@ class ReportMontants extends Report
         $facts = ["total-fact-l", "total-fact-c", "total-fact-w", "total-fact-x", "total-fact-r"];
         $types = ["L", "C", "W", "X", "R"];
         if(($montant - $dM) > 0) {
-            $montantsArray[] = [$code, $clcl, "M", ($montant - $dM)];
+            $montantsArray[] = [$code, $clcl, "M", round((2*($montant - $dM)),1)/2];
         }
         foreach($facts as $pos=>$fact) {
             if(array_key_exists($fact, $columns)) {
