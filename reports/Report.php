@@ -499,15 +499,31 @@ abstract class Report
     function getPlateformeFromMachine(string $machId): string
     {
         if(array_key_exists($machId, $this->machinesGroupes)) {
-            $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
-            if($itemGrp != "0") {
-                $itemId = $this->groupes[$itemGrp]["item-id-K1"];
-                if($itemId != "0") {
-                    return $this->categories[$itemId]["platf-code"];
-                }
+            $categorie = getCategorieFromMachine($machId, "K1");
+            if(!empty($categorie)) {
+                return $categorie["platf-code"];
             }
         }
         return false;
+    }
+
+    /**
+     * returns the categorie concerned by a grouped machine for an item K or empty array
+     *
+     * @param string $machId machine id
+     * @param string $itemK item K
+     * @return array
+     */
+    function getCategorieFromMachine(string $machId, string $itemK): array
+    {
+        $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
+        if($itemGrp != "0") {
+            $itemId = $this->groupes[$itemGrp]["item-id-".$itemK];
+            if($itemId != "0") {
+                $categorie = $this->categories[$itemId];
+            }
+        }
+        return [];
     }
 
     /**

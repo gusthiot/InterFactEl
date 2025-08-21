@@ -213,7 +213,12 @@ class ReportPlateforme extends Report
                     }
                     if(floatval($this->factel) < 11) {
                         $machId = $tab[$columns["mach-id"]];
-                        $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
+                        if(array_key_exists($machId, $this->machinesGroupes)) {
+                            $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
+                        }
+                        else {
+                            $itemGrp = "0";
+                        }
                     }
                     else {
                         $itemGrp = $tab[$columns["item-grp"]];

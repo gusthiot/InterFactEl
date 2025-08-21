@@ -282,13 +282,9 @@ class ReportUsages extends Report
      */
     function getCategorie(string $machId, string $itemK): array
     {
-        $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
-        if($itemGrp != "0") {
-            $itemId = $this->groupes[$itemGrp]["item-id-".$itemK];
-            if($itemId != "0") {
-                $categorie = $this->categories[$itemId];
-                return [$categorie["item-nbr"], $categorie["item-name"], $categorie["item-unit"]];
-            }
+        $categorie = $this->categories[$itemId];
+        if(!empty($categorie)) {
+            return [$categorie["item-nbr"], $categorie["item-name"], $categorie["item-unit"]];
         }
         return ["0", "0", "0"];
     }

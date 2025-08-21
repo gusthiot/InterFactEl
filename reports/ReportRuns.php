@@ -151,12 +151,12 @@ class ReportRuns extends Report
     {
         foreach($runsArray as $line) {
             $machine = $this->machines[$line[0]];
-            $itemGrp = $this->machinesGroupes[$line[0]]["item-grp"];
             $items = ["item-nbr"=>"0", "item-name"=>"0", "item-unit"=>"0"];
-            if($itemGrp != "0") {
-                $itemId = $this->groupes[$itemGrp]["item-id-K1"];
-                if($itemId != "0") {
-                    $categorie = $this->categories[$itemId];
+            $itemGrp = "0";
+            if(array_key_exists($line[0], $this->machinesGroupes)) {
+                $itemGrp = $this->machinesGroupes[$line[0]]["item-grp"];
+                $categorie = getCategorieFromMachine($line[0], "K1");
+                if(!empty($categorie)) {
                     $items = ["item-nbr"=>$categorie["item-nbr"], "item-name"=>$categorie["item-name"], "item-unit"=>$categorie["item-unit"]];
                 }
             }
