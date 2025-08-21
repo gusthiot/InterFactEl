@@ -520,7 +520,7 @@ abstract class Report
         if($itemGrp != "0") {
             $itemId = $this->groupes[$itemGrp]["item-id-".$itemK];
             if($itemId != "0") {
-                $categorie = $this->categories[$itemId];
+                return $this->categories[$itemId];
             }
         }
         return [];
