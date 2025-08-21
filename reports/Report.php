@@ -499,7 +499,7 @@ abstract class Report
     function getPlateformeFromMachine(string $machId): string
     {
         if(array_key_exists($machId, $this->machinesGroupes)) {
-            $categorie = getCategorieFromMachine($machId, "K1");
+            $categorie = $this->getCategorieFromMachine($machId, "K1");
             if(!empty($categorie)) {
                 return $categorie["platf-code"];
             }

@@ -155,7 +155,7 @@ class ReportRuns extends Report
             $itemGrp = "0";
             if(array_key_exists($line[0], $this->machinesGroupes)) {
                 $itemGrp = $this->machinesGroupes[$line[0]]["item-grp"];
-                $categorie = getCategorieFromMachine($line[0], "K1");
+                $categorie = $this->getCategorieFromMachine($line[0], "K1");
                 if(!empty($categorie)) {
                     $items = ["item-nbr"=>$categorie["item-nbr"], "item-name"=>$categorie["item-name"], "item-unit"=>$categorie["item-unit"]];
                 }

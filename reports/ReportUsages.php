@@ -282,13 +282,13 @@ class ReportUsages extends Report
      */
     function getCategorie(string $machId, string $itemK): array
     {
-        $categorie = $this->categories[$itemId];
+        $categorie = $this->getCategorieFromMachine($machId, $itemK);
         if(!empty($categorie)) {
             return [$categorie["item-nbr"], $categorie["item-name"], $categorie["item-unit"]];
         }
         return ["0", "0", "0"];
     }
-    
+
     /**
      * maps report data for tabs tables and csv 
      *
