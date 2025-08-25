@@ -53,7 +53,7 @@ class ReportConsommables extends Report
         $loopArray = [];
         if(floatval($this->factel) < 10) {
             if(floatval($this->factel) < 7) {
-                $columns = $this->bilansStats[$this->factel]['lvr']['columns'];
+                $columns = $this->bilansStats->getColumns($this->factel, 'lvr');
                 $lines = Csv::extract($this->getFileNameInBS('lvr'));
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
@@ -69,7 +69,7 @@ class ReportConsommables extends Report
                 }
             }
             else {
-                $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+                $columns = $this->bilansStats->getColumns($this->factel, 'T3');
                 $lines = Csv::extract($this->getFileNameInBS('T3'));
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
@@ -88,7 +88,7 @@ class ReportConsommables extends Report
             }
         }
         else {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'T3');
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);

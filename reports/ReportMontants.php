@@ -114,7 +114,7 @@ class ReportMontants extends Report
             $crpFileName = $this->getFileNameInBS('Bilancrp-f');
             if($crpFileName) {
                 $lines = Csv::extract($crpFileName);        
-                $columns = $this->bilansStats[$this->factel]['Bilancrp-f']['columns'];
+                $columns = $this->bilansStats->getColumns($this->factel, 'Bilancrp-f');
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
                     $code = $tab[$columns['client-code']];
@@ -126,7 +126,7 @@ class ReportMontants extends Report
 
         $montantsArray = [];
         if(floatval($this->factel) >= 9) {
-            $columns = $this->bilansStats[$this->factel]['T1']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'T1');
             $lines = Csv::extract($this->getFileNameInBS('T1'));
             $t1Array = [];
             for($i=1;$i<count($lines);$i++) {
@@ -154,7 +154,7 @@ class ReportMontants extends Report
             }
         }
         else {
-            $columns = $this->bilansStats[$this->factel]['Bilan-f']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'Bilan-f');
             $lines = Csv::extract($this->getFileNameInBS('Bilan-f'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);

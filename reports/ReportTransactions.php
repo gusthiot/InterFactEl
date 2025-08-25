@@ -84,7 +84,7 @@ class ReportTransactions extends Report
 
         if(floatval($this->factel) < 7) {
             foreach(['cae', 'lvr'] as $flux) {
-                $columns = $this->bilansStats[$this->factel][$flux]['columns'];
+                $columns = $this->bilansStats->getColumns($this->factel, $flux);
                 $lines = Csv::extract($this->getFileNameInBS($flux));
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
@@ -112,7 +112,7 @@ class ReportTransactions extends Report
             }
         }
         else {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'T3');
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);

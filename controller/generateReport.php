@@ -5,6 +5,7 @@ require_once("../assets/Lock.php");
 require_once("../assets/Info.php");
 require_once("../assets/ParamText.php");
 require_once("../includes/State.php");
+require_once("../reports/BSFile.php");
 require_once("../reports/Report.php");
 require_once("../reports/ReportMontants.php");
 require_once("../reports/ReportRabais.php");

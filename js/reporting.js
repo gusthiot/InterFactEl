@@ -47,7 +47,7 @@ $(document).on("click", "#generate", function() {
         window.location.href = "controller/generateConcatenation.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val();
     }
     else {
-        $.post("controller/generateReports.php", {type: report, plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()}, function (data) {
+        $.post("controller/generateReport.php", {type: report, plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()}, function (data) {
             $('#period').html("");
             $('#message').html("");
             $('#report-content').html(data);

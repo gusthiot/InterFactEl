@@ -51,7 +51,7 @@ class ReportServices extends Report
     function generate(): array
     {
         $loopArray = [];
-        $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+        $columns = $this->bilansStats->getColumns($this->factel, 'T3');
         $lines = Csv::extract($this->getFileNameInBS('T3'));
         for($i=1;$i<count($lines);$i++) {
             $tab = explode(";", $lines[$i]);

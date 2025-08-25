@@ -44,7 +44,7 @@ class ReportConsommations extends Report
     {
         $this->preparePrestations();
 
-        $columns = $this->bilansStats[$this->factel]['Bilan-c']['columns'];
+        $columns = $this->bilansStats->getColumns($this->factel, 'Bilan-c');
         $lines = Csv::extract($this->getFileNameInBS('Bilan-c'));
 
         for($i=1;$i<count($lines);$i++) {

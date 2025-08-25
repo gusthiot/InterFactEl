@@ -84,7 +84,7 @@ class ReportPlateforme extends Report
         $loopArray = [];
 
         if(floatval($this->factel) < 7) {
-            $columns = $this->bilansStats[$this->factel]['cae']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'cae');
             $lines = Csv::extract($this->getFileNameInBS('cae'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
@@ -102,7 +102,7 @@ class ReportPlateforme extends Report
             }
         }
         else {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'T3');
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
@@ -153,7 +153,7 @@ class ReportPlateforme extends Report
         $loopArray = [];
 
         if(floatval($this->factel) < 7) {
-            $columns = $this->bilansStats[$this->factel]['cae']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'cae');
             $lines = Csv::extract($this->getFileNameInBS('cae'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
@@ -179,7 +179,7 @@ class ReportPlateforme extends Report
             }
         }
         else {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'T3');
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);

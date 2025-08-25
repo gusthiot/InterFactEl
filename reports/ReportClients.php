@@ -110,7 +110,7 @@ class ReportClients extends Report
 
         if(floatval($this->factel) < 7) {
             foreach(['cae', 'lvr'] as $flux) {
-                $columns = $this->bilansStats[$this->factel][$flux]['columns'];
+                $columns = $this->bilansStats->getColumns($this->factel, $flux);
                 $lines = Csv::extract($this->getFileNameInBS($flux));
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
@@ -134,7 +134,7 @@ class ReportClients extends Report
             }
         }
         else {
-            $columns = $this->bilansStats[$this->factel]['T3']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'T3');
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
@@ -389,7 +389,7 @@ class ReportClients extends Report
             $factel = $infos["FactEl"][2];
 
             $monthArray = [];
-            $reportFile = $dirRun."/REPORT/".$this->report[$factel][$this->reportKey]['prefix'].".csv";
+            $reportFile = $this->report->getCsvUrl($dirRun, $factel, $this->reportKey);
             if(!file_exists($reportFile)) {
                 if(!file_exists($dirRun."/REPORT/")) {
                     mkdir($dirRun."/REPORT/");

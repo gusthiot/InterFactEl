@@ -54,23 +54,23 @@ abstract class Report
     /**
      * bilans-stats.json content
      *
-     * @var array
+     * @var BSFile
      */
-    protected array $bilansStats;
+    protected BSFile $bilansStats;
 
     /**
      * in.json content
      *
-     * @var array
+     * @var BSFile
      */
-    protected array $in;
+    protected BSFile $in;
 
     /**
      * report.json content
      *
-     * @var array
+     * @var BSFile
      */
-    protected array $report;
+    protected BSFile $report;
 
     /**
      * report file prefix name(s)
@@ -208,9 +208,9 @@ abstract class Report
 
         $this->monthList = [];
 
-        $this->bilansStats = self::getJsonStructure("../bilans-stats.json");
-        $this->in = self::getJsonStructure("../in.json");
-        $this->report = self::getJsonStructure("../report.json");        
+        $this->bilansStats = new BSFile("../bilans-stats.json", "Bilans_Stats");
+        $this->in = new BSFile("../in.json", "IN");
+        $this->report = new BSFile("../report.json", "REPORT");        
     }
 
     /**
@@ -454,7 +454,7 @@ abstract class Report
     function processOneReport(string $key, bool $multiple=false): void
     {
         $monthArray = [];
-        $reportFile = $this->dirRun."/REPORT/".$this->report[$this->factel][$key]['prefix'].".csv";
+        $reportFile = $this->report->getCsvUrl($this->dirRun, $this->factel, $key);
         if(!file_exists($reportFile)) {
             if(!file_exists($this->dirRun."/REPORT/")) {
                 mkdir($this->dirRun."/REPORT/");
@@ -615,32 +615,9 @@ abstract class Report
      */
     function getFileNameInBS(string $fileKey): string
     {
-        $files = scandir($this->dirRun."/Bilans_Stats/");
-        $prefix = $this->bilansStats[$this->factel][$fileKey]['prefix'];
-        foreach ($files as $file) {
-            if(str_starts_with($file, $prefix) &&( str_contains($file, $prefix."_") || str_contains($file, $prefix."."))) {
-                return $this->dirRun."/Bilans_Stats/".$file;
-            }
-        }
-        return "";
+        return $this->bilansStats->findCsvUrl($this->dirRun, $this->factel, $fileKey);
     }
 
-    /**
-     * extracts content from Json structure file
-     *
-     * @param string $name Json file name
-     * @return array content or empty array
-     */
-    static function getJsonStructure(string $name): array 
-    {
-        $structure = [];
-        if ((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
-            $structure = json_decode(fread($open, filesize($name)), true);
-            fclose($open);
-        }
-        return $structure;
-    }
-    
     /**
      * adds data from csv file to array if not already exists
      *
@@ -651,17 +628,14 @@ abstract class Report
      */
     function mergeInCsv(string $fileKey, array &$array, string $idKey): void 
     {
-        $fileData = $this->in[$this->factel][$fileKey];
-        $columns = $fileData['columns'];
-        $names = array_keys($columns);
-        $name = $fileData['prefix'];
-        $lines = Csv::extract($this->dirRun."/IN/".$name.".csv");                
+        $columns = $this->in->getColumns($this->factel, $fileKey);
+        $lines = Csv::extract($this->in->getCsvUrl($this->dirRun, $this->factel, $fileKey));                
         for($i=1;$i<count($lines);$i++) {
             $tab = explode(";", $lines[$i]);
             $code = $tab[$columns[$idKey]];
             if(!array_key_exists($code, $array)) {
                 $data = [];
-                foreach($names as $key) {
+                foreach(array_keys($columns) as $key) {
                     $data[$key] = str_replace('"', '', $tab[$columns[$key]]);
                 }
                 $array[$code] = $data;

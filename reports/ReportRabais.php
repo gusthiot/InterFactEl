@@ -74,7 +74,7 @@ class ReportRabais extends Report
     {
         $rabaisArray = [];
         if(floatval($this->factel) == 7 || floatval($this->factel) == 8) {
-            $columns = $this->bilansStats[$this->factel]['Bilan-f']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'Bilan-f');
             $lines = Csv::extract($this->getFileNameInBS('Bilan-f'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
@@ -85,7 +85,7 @@ class ReportRabais extends Report
             }
         }
         else {
-            $columns = $this->bilansStats[$this->factel]['Bilan-s']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'Bilan-s');
             $lines = Csv::extract($this->getFileNameInBS('Bilan-s'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);

@@ -89,7 +89,7 @@ class ReportRuns extends Report
     {
         $runsArray = [];
         if(floatval($this->factel) < 8) {
-            $columns = $this->bilansStats[$this->factel]['cae']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'cae');
             $lines = Csv::extract($this->getFileNameInBS('cae'));
             $stats = [];
             for($i=1;$i<count($lines);$i++) {
@@ -129,7 +129,7 @@ class ReportRuns extends Report
             }
         }
         else {
-            $columns = $this->bilansStats[$this->factel]['Stat-m']['columns'];
+            $columns = $this->bilansStats->getColumns($this->factel, 'Stat-m');
             $lines = Csv::extract($this->getFileNameInBS('Stat-m'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
