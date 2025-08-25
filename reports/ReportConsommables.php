@@ -52,7 +52,6 @@ class ReportConsommables extends Report
         $consosArray = [];
         $loopArray = [];
         if(floatval($this->factel) < 10) {
-
             if(floatval($this->factel) < 7) {
                 $columns = $this->bilansStats[$this->factel]['lvr']['columns'];
                 $lines = Csv::extract($this->getFileNameInBS('lvr'));
@@ -79,7 +78,7 @@ class ReportConsommables extends Report
                         if(!array_key_exists($id, $loopArray)) {
                             $loopArray[$id] = 0;
                         }
-                        $loopArray[$id] += $tab[$columns["transac-usage"]];
+                        $loopArray[$id] += $tab[$columns["transac-quantity"]];
                     }
                 }
             }
