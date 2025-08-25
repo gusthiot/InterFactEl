@@ -52,84 +52,37 @@ include("includes/lock.php");
             <?php }
             ?>
             <div id="report-tiles">
-                <div type="button" id="concatenation" class="select-period tile center-one">
-                    <p class="title">Concaténer</p>
+            <?php
+            $tiles = [
+                ["concatenation", "Concaténer", "one"],
+                ["montants", "Montants facturés", "one"],
+                ["rabais", "Rabais & Subsides", "one"],
+                ["consommations", "Montants <br/> Consommations <br/> plateforme", "three"],
+                ["runs", "Statistiques  <br/>  durées runs machines", "three"],
+                ["usages", "Statistiques  <br/>  d’utilisation machines", "three"],
+                ["consommables", "Statistiques  <br/>  Consommables", "two"],
+                ["services", "Statistiques  <br/>  Services", "two"],
+                ["penalites", "Statistiques  <br/>  Pénalités", "two"],
+                ["transactions", "Statistiques  <br/>  Transactions", "two"],
+                ["plateforme", "Statistiques  <br/>  Plateforme", "two"],
+                ["clients", "Nombre clients <br/> et utilisateurs", "two"],
+                ["propres", "Consommations <br/> propres Plateforme", "two"],
+                ["t1", "Extrait T1 Facturation (facture)", "three"],
+                ["t2", "Extrait T2 Facturation (annexe)", "three"],
+                ["t3f", "Extrait T3 Facturation (détails)", "three"],
+                ["t3s", "Extrait T3 Statistiques (détails)", "three"]
+            ];
+            foreach($tiles as $tile) {
+            ?>
+                <div type="button" id="<?= $tile[0] ?>" class="select-period tile center-<?= $tile[2] ?>">
+                    <p class="title"><?= $tile[1] ?></p>
                     <svg class="icon feather icon-tile" aria-hidden="true">
                         <use xlink:href="#anchor"></use>
                     </svg>
                 </div>
-                <div type="button" id="montants" class="select-period tile center-one">
-                    <p class="title">Montants facturés</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="rabais" class="select-period tile center-one">
-                    <p class="title">Rabais & Subsides</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="consommations" class="select-period tile center-three">
-                    <p class="title">Montants <br/> Consommations <br/> plateforme</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="runs" class="select-period tile center-three">
-                    <p class="title">Statistiques  <br/>  durées runs machines</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="usages" class="select-period tile center-three">
-                    <p class="title">Statistiques <br/> d’utilisation machines</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="consommables" class="select-period tile center-two">
-                    <p class="title">Statistiques <br/> Consommables</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="services" class="select-period tile center-two">
-                    <p class="title">Statistiques <br/> Services</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="penalites" class="select-period tile center-two">
-                    <p class="title">  Statistiques <br/> Pénalités</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="transactions" class="select-period tile center-two">
-                    <p class="title">Statistiques <br/> Transactions</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="plateforme" class="select-period tile center-two">
-                    <p class="title">Statistiques <br/> Plateforme</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="clients" class="select-period tile center-two">
-                    <p class="title">Nombre clients <br/> et utilisateurs</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
-                <div type="button" id="propres" class="select-period tile center-two">
-                    <p class="title">Consommations <br/> propres Plateforme</p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
-                </div>
+            <?php
+            }
+            ?>
             </div>
 
             <div id="period"></div>

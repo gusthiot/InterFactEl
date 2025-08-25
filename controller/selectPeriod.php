@@ -20,6 +20,12 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
         case "propres":
             $vMin = 8.0;
             break;
+        case "t1":
+        case "t2":
+        case "t3f":
+        case "t3s":
+            $vMin = 9.1;
+            break;
         case "services":
             $vMin = 11.0;
             break;

@@ -43,8 +43,8 @@ $(document).on("change", "#to", function() {
 $(document).on("click", "#generate", function() {
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
     $(".lockable").prop('disabled', true);
-    if(report == "concatenation") {
-        window.location.href = "controller/generateConcatenation.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val();
+    if(["concatenation", "t1", "t2", "t3f", "t3s"].includes(report)) {
+        window.location.href = "controller/generateConcatenation.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val()+"&type="+report;
     }
     else {
         $.post("controller/generateReport.php", {type: report, plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()}, function (data) {
