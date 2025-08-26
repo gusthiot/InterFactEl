@@ -22,8 +22,8 @@ class ReportServices extends Report
                 "title" => "Stats par Services",
                 "columns" => ["item-text2K", "oper-note", "item-textK", "item-name", "item-unit"],
                 "dimensions" => array_merge($this::SERVICE_DIM, $this::CODEK_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM),
-                "operations" => ["transac-quantity"],
-                "formats" => ["float"],
+                "operations" => ["transac-quantity", "transac-usage"],
+                "formats" => ["float", "float"],
                 "results" => []
             ]
         ];
@@ -109,12 +109,12 @@ class ReportServices extends Report
                             $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
                         }
                     }
-                    foreach($values as $operation=>$value) {
+                    foreach($this->tabs[$tab]["operations"] as $operation) {
                         $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
                     }
                 }
-                foreach($values as $operation=>$value) {
-                    $this->tabs[$tab]["results"][$ids[$tab]][$operation] += $value;
+                foreach($this->tabs[$tab]["operations"] as $operation) {
+                    $this->tabs[$tab]["results"][$ids[$tab]][$operation] += $values[$operation];
                 }
             }
         }

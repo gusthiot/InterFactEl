@@ -102,7 +102,12 @@ class ConcatT
                     if($cond) {
                         $line = [];
                         foreach($columns as $column) {
-                            $line[] = $tab[$positions[$column]];
+                            if(array_key_exists($column, $positions)) {
+                                $line[] = $tab[$positions[$column]];
+                            }
+                            else {
+                                $line[] = "";
+                            }
                         }
                         $content[] = $line;
                     }                   
