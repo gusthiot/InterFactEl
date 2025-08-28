@@ -256,7 +256,7 @@ class ReportUsages extends Report
                         $nrArray[$idn] = 0;
                     }
                     if($tab[$columns["transac-runcae"]] > 0) {
-                    $nrArray[$idn] += $tab[$columns["transac-runcae"]];
+                        $nrArray[$idn] += $tab[$columns["transac-runcae"]];
                     }
                 }
             }

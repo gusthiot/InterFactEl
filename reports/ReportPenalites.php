@@ -160,9 +160,7 @@ class ReportPenalites extends Report
             $user = $this->users[$scipers[$line[1]]];
             $machine = $this->machines[$line[3]];
             $codeK = ["item-codeK"=>$line[2], "item-textK"=>$this->paramtext->getParam("item-".$line[2])];
-            $values = [
-                "transac-quantity"=>$line[4]
-            ];
+            $value = $line[4];
             $ids = [
                 "par-machine"=>$line[3], 
                 "par-client"=>$line[0], 
@@ -193,19 +191,15 @@ class ReportPenalites extends Report
                             $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
                         }
                     }
-                    foreach($this->tabs[$tab]["operations"] as $operation) {
-                        $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
-                    }
+                    $this->tabs[$tab]["results"][$ids[$tab]]["transac-quantity"] = 0;
                 }
-                foreach($values as $operation=>$value) {
-                    $this->tabs[$tab]["results"][$ids[$tab]][$operation] = $value;
-                    if($line[2] == "K5") {
-                        $this->total5 += $value;
-                    }
-                    else {
-                        $this->total6 += $value;
-                    }
-                }
+                $this->tabs[$tab]["results"][$ids[$tab]]["transac-quantity"] += $value;
+            }
+            if($line[2] == "K5") {
+                $this->total5 += $value;
+            }
+            else {
+                $this->total6 += $value;
             }
         }
     }
