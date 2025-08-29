@@ -116,10 +116,10 @@ class ReportTransactions extends Report
                         $loopArray[$id] += $n;
                     }
                 }
-                foreach($loopArray as $id=>$q) {
-                    $ids = explode("--", $id);
-                    $transArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
-                }
+            }
+            foreach($loopArray as $id=>$q) {
+                $ids = explode("--", $id);
+                $transArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
         else {
