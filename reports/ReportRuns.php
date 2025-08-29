@@ -116,7 +116,7 @@ class ReportRuns extends Report
                         if(!array_key_exists($machId, $stats)) {
                             $stats[$machId] = ["nb"=>0, "sum"=>0, "rts"=>[]];
                         }
-                        $stats[$machId]["nb"] += 1;
+                        $stats[$machId]["nb"] ++;
                         $stats[$machId]["sum"] += floatval($mr);
                         $stats[$machId]["rts"][] = $mr;
                     }

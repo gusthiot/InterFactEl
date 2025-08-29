@@ -90,10 +90,21 @@ class ReportTransactions extends Report
                     $tab = explode(";", $lines[$i]);
                     $code = $tab[$columns["client-code"]];
                     if($flux == 'cae') {
+                        $n = 0;
                         $machId = $tab[$columns["mach-id"]];
                         $plateId = $this->getPlateformeFromMachine($machId);
+                        if($tab[$columns["Tmach-HP"]] > 0) {
+                            $n++;
+                        }
+                        if($tab[$columns["Tmach-HC"]] > 0) {
+                            $n++;
+                        }
+                        if($tab[$columns["Toper"]] > 0) {
+                            $n++;
+                        }
                     }
                     else {
+                        $n = 1;
                         $itemId = $tab[$columns["item-id"]];
                         $plateId = $this->prestations[$itemId]["platf-code"];
                     }                    
@@ -102,7 +113,7 @@ class ReportTransactions extends Report
                         if(!array_key_exists($id, $loopArray)) {
                             $loopArray[$id] = 0;
                         }
-                        $loopArray[$id] += 1;
+                        $loopArray[$id] += $n;
                     }
                 }
                 foreach($loopArray as $id=>$q) {
@@ -120,7 +131,9 @@ class ReportTransactions extends Report
                     $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);
                 }
                 elseif($this->factel >= 9 && floatval($this->factel) < 10) {
-                    $cond = ($tab[$columns["transac-valid"]] != 2) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);
+                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                    $parts = explode("-", $datetime[0]);
+                    $cond = ($parts[0] == $tab[$columns["invoice-year"]]) && ($parts[1] == $tab[$columns["invoice-month"]]) && ($tab[$columns["transac-valid"]] != 2) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);
                 }
                 else {
                     $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["transac-valid"]] != 2) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);
@@ -130,7 +143,7 @@ class ReportTransactions extends Report
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;
                     }
-                    $loopArray[$id] += 1;
+                    $loopArray[$id] ++;
                 }
             }
             foreach($loopArray as $id=>$q) {

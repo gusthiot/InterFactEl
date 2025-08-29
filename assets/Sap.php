@@ -95,7 +95,7 @@ class Sap extends Csv
     {
         $state = ['READY'=>0, 'ERROR'=>0, 'SENT'=>0];
         foreach($this->bills as $bill) {
-                $state[$bill[3]] += 1;
+                $state[$bill[3]] ++;
         }
         return "SENT = ".$state['SENT'].", ERROR = ".$state['ERROR'].", READY = ".$state['READY'];
     }

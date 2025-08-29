@@ -79,8 +79,13 @@ class ReportPropres extends Report
         $lines = Csv::extract($this->getFileNameInBS('T3'));
         for($i=1;$i<count($lines);$i++) {
             $tab = explode(";", $lines[$i]);
-            if(floatval($this->factel) <= 9) {
+            if(floatval($this->factel) < 9) {
                 $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI");
+            }
+            elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
+                $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                $parts = explode("-", $datetime[0]);
+                $cond = ($parts[0] == $tab[$columns["invoice-year"]]) && ($parts[1] == $tab[$columns["invoice-month"]]) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI");
             }
             else {
                 $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI") && ($tab[$columns["transac-valid"]] != 2);
