@@ -110,8 +110,13 @@ class ReportPlateforme extends Report
                     $letterK = substr($tab[$columns["item-nbr"]], 0, 1);
                     $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae") && ($letterK == "S"); // S => K2 
                 }
-                elseif(floatval($this->factel) >= 8 && floatval($this->factel) < 10) {
+                elseif(floatval($this->factel) >= 8 && floatval($this->factel) < 9) {
                     $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["item-codeK"]] == "K2");
+                }
+                elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
+                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                    $parts = explode("-", $datetime[0]);
+                    $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["item-codeK"]] == "K2");
                 }
                 elseif(floatval($this->factel) == 10) {
                     $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["item-codeK"]] == "K2");
@@ -184,8 +189,13 @@ class ReportPlateforme extends Report
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
                 $fceCond = ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"]);
-                if(floatval($this->factel) < 10) {
+                if(floatval($this->factel) < 9) {
                     $cond = ($tab[$columns["platf-code"]] == $this->plateforme) && $fceCond;
+                }
+                elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
+                $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                $parts = explode("-", $datetime[0]);
+                    $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($tab[$columns["platf-code"]] == $this->plateforme) && $fceCond;
                 }
                 else {
                     $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && $fceCond;

@@ -133,7 +133,7 @@ class ReportTransactions extends Report
                 elseif($this->factel >= 9 && floatval($this->factel) < 10) {
                     $datetime = explode(" ", $tab[$columns["transac-date"]]);
                     $parts = explode("-", $datetime[0]);
-                    $cond = ($parts[0] == $tab[$columns["invoice-year"]]) && ($parts[1] == $tab[$columns["invoice-month"]]) && ($tab[$columns["transac-valid"]] != 2) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);
+                    $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($tab[$columns["transac-valid"]] != 2) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);
                 }
                 else {
                     $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["transac-valid"]] != 2) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);

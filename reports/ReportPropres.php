@@ -85,7 +85,7 @@ class ReportPropres extends Report
             elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
                 $datetime = explode(" ", $tab[$columns["transac-date"]]);
                 $parts = explode("-", $datetime[0]);
-                $cond = ($parts[0] == $tab[$columns["invoice-year"]]) && ($parts[1] == $tab[$columns["invoice-month"]]) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI");
+                $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI");
             }
             else {
                 $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI") && ($tab[$columns["transac-valid"]] != 2);
