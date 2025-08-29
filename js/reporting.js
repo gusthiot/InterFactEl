@@ -5,9 +5,11 @@ $('.select-period').on('click', function () {
     $($(this).attr('id')).addClass('selected-tile');
     report = $(this).attr('id');
     const title = $('.title', this).text();
-    $('#report-content').html("");
     $.post("controller/selectPeriod.php", {plate: $('#plate').val(), type: report, title: title}, function (data) {
-        $('#period').html(data);
+        $('#report-tiles').hide();
+        $('#report-period').html(data);
+        $('#report-period').show();
+        $('#back').show();
     });
 } );
 
@@ -40,16 +42,27 @@ $(document).on("change", "#to", function() {
     $('#generate').html('<button type="button" class="btn but-line lockable">Générer</button>');
 } );
 
+
+$(document).on("click", "#back", function() {
+    $('#report-period').hide();
+    $('#report-content').hide();
+    $('#back').hide();
+    $('#report-tiles').show();
+});
+
 $(document).on("click", "#generate", function() {
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
     $(".lockable").prop('disabled', true);
+    $('#back').hide();
     if(["concatenation", "t1", "t2", "t3f", "t3s"].includes(report)) {
         window.location.href = "controller/generateConcatenation.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val()+"&type="+report;
     }
     else {
         $.post("controller/generateReport.php", {type: report, plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()}, function (data) {
-            $('#period').html("");
+            $('#report-period').hide();
+            $('#report-content').show();
             $('#message').html("");
+            $('#back').show();
             $('#report-content').html(data);
         });
     }

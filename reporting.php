@@ -84,8 +84,13 @@ include("includes/lock.php");
             }
             ?>
             </div>
-
-            <div id="period"></div>
+            <div id="back"><a href="#">
+                <svg class="icon feather" aria-hidden="true">
+                    <use xlink:href="#arrow-left"></use>
+                </svg>
+                Back</a>
+            </div>
+            <div id="report-period"></div>
             <div id="report-content"></div>
         </div>
         <?php include("includes/footer.php");?> 

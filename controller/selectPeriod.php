@@ -8,8 +8,9 @@ require_once("../session.inc");
  * Called to display a selector to choose a period for a report
  */
 if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) { 
-    checkPlateforme("reporting", $_POST["plate"]);
-    $dir = DATA.$_POST['plate'];
+    $plateforme = $_POST["plate"];
+    checkPlateforme("reporting", $plateforme);
+    $dir = DATA.$plateforme;
     $choices = [];
     $html = "";
     switch($_POST["type"]) {
@@ -71,7 +72,8 @@ if(isset($_POST["plate"]) && isset($_POST["type"]) && isset($_POST["title"])) {
         }
     }
     if(count($choices) > 0) {
-        $html = '<div id="date-title">'.$_POST["title"].'</div><div id="dates">
+        $html = '<div id="date-title">'.$_POST["title"].'</div>
+                <div id="dates">
                     <div id="first">
                         <label for="from">De</label>
                         <select id="from" class="custom-select lockable" <?= $disabled ?> >

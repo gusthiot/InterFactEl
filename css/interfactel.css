@@ -446,13 +446,19 @@ table.report-table th {
   text-align: center;
 }
 
-#period {
+#report-period {
   margin: 10px;
   text-align: center;
 }
 
 .report-table {
   text-align: left;
+}
+
+#back {
+  display: none;
+  margin: 10px;
+  text-align: center;
 }
 
 .right {
