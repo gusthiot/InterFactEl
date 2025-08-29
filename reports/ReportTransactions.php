@@ -109,7 +109,7 @@ class ReportTransactions extends Report
                         $plateId = $this->prestations[$itemId]["platf-code"];
                     }                    
                     if($plateId && ($plateId == $this->plateforme) && ($code != $plateId)) {
-                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]];
+                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$flux;
                         if(!array_key_exists($id, $loopArray)) {
                             $loopArray[$id] = 0;
                         }
@@ -118,7 +118,7 @@ class ReportTransactions extends Report
                 }
                 foreach($loopArray as $id=>$q) {
                     $ids = explode("--", $id);
-                    $transArray[] = [$ids[0], $this->sciper($ids[1]), $flux, $q];
+                    $transArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
                 }
             }
         }
@@ -225,7 +225,7 @@ class ReportTransactions extends Report
         $title .= '<div class="subtotal">Nombre total de transactions = '.$this->format($this->totalT, "int").'</div>';
         $title .= '<div class="subtotal">Nombre de clients = '.$this->format(count($this->tabs["par-client"]["results"]), "int").'</div>';
         $title .= '<div class="subtotal">Nombre d’utilisateurs = '.$this->format($nbUsers, "int").'</div>';
-        echo $this->templateDisplay($title);
+        echo $this->templateDisplay($title, true);
     }
 
 }

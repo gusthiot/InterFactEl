@@ -753,10 +753,11 @@ abstract class Report
     /**
      * displays title and tabs with tables and csv links
      *
-     * @param string $mainTitle main title base text
+     * @param string $mainTitle content of the title part
+     * @param boolean $null if we accepts results = 0 or not
      * @return void
      */
-    function templateDisplay(string $mainTitle): void
+    function templateDisplay(string $mainTitle, bool $null=false): void
     {
         $period = $this->period();
         $html = $mainTitle;
@@ -781,16 +782,17 @@ abstract class Report
             $active = "";
         }
         $html .= '</ul>
-                <div class="tab-content p-3">'.$this->generateTablesAndCsv().'</div>';
+                <div class="tab-content p-3">'.$this->generateTablesAndCsv($null).'</div>';
         echo $html;
     }
 
     /**
      * generates tabs with tables and csv links
      *
+     * @param boolean $null if we accepts results = 0 or not
      * @return string
      */
-    function generateTablesAndCsv(): string 
+    function generateTablesAndCsv(bool $null=false): string 
     {
         $html = "";
         $show = "show active";
@@ -810,11 +812,14 @@ abstract class Report
                 }
                 $html .= "</tr></thead><tbody>";
                 foreach($data["results"] as $line) {
-                    $notNull = false;
-                    foreach($data["operations"] as $operation) {
-                        if(floatval($line[$operation]) > 0) {
-                            $notNull = true;
-                            break;
+                    $notNull = true;
+                    if(!$null) {
+                        $notNull = false;
+                        foreach($data["operations"] as $operation) {
+                            if(floatval($line[$operation]) > 0) {
+                                $notNull = true;
+                                break;
+                            }
                         }
                     }
                     if($notNull) {
