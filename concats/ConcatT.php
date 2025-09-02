@@ -48,7 +48,6 @@ class ConcatT
     {
         $abrev = DATA_GEST['reporting'][$plateforme];
         $bilansStats = new BSFile("../bilans-stats.json", "Bilans_Stats");
-        $content = [];
         if(strlen($type) == 2) {
             $columns = self::COLUMNS[$type];
             $nom = self::NAMES[$type];
@@ -59,9 +58,14 @@ class ConcatT
             $nom = self::NAMES["t3"];
             $key = self::KEYS["t3"];
         }
-        $content[] = $columns;
         $date = $from;
+        $first = true;
         while(true) {
+            $content = [];
+            if($first) {
+                $first = false;
+                $content[] = $columns;
+            }
             $month = substr($date, 4, 2);
             $year = substr($date, 0, 4);
             $dir = DATA.$plateforme."/".$year."/".$month;
