@@ -293,7 +293,7 @@ class ReportClients extends Report
                     $yb = $this->year;
                 }
                 if (file_exists(DATA.$this->plateforme."/".$yb."/".$mb)) {
-                    $this->tabs[$tab]["results"][$ids[$tab]][$pre."-".$before."m"] = [];
+                    $this->tabs[$tab]["results"][$id][$pre."-".$before."m"] = [];
                 }
             }
         }
