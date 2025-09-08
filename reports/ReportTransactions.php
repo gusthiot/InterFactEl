@@ -261,13 +261,21 @@ class ReportTransactions extends Report
      */
     function display(): void
     {
-        $nbUsers = count($this->tabs["par-user"]["results"]);
-        if(array_key_exists(0, $this->tabs["par-user"]["results"])) {
-            $nbUsers -= 1;
+        $nbUsers = 0;
+        foreach($this->tabs["par-user"]["results"] as $key => $values) {
+            if(($key != 0) && ($values["transac-nbr"] > 0)) {
+                $nbUsers ++;
+            }
+        }
+        $nbClients = 0;
+        foreach($this->tabs["par-client"]["results"] as $key => $values) {
+            if($values["transac-nbr"] > 0) {
+                $nbClients ++;
+            }
         }
         $title = '<div class="total">Statistiques utilisateurs et clients : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre total de transactions = '.$this->format($this->totalT, "int").'</div>';
-        $title .= '<div class="subtotal">Nombre de clients = '.$this->format(count($this->tabs["par-client"]["results"]), "int").'</div>';
+        $title .= '<div class="subtotal">Nombre de clients = '.$this->format($nbClients, "int").'</div>';
         $title .= '<div class="subtotal">Nombre d’utilisateurs = '.$this->format($nbUsers, "int").'</div>';
         echo $this->templateDisplay($title, true);
     }
