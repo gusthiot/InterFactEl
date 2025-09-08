@@ -755,9 +755,10 @@ abstract class Report
      *
      * @param string $mainTitle content of the title part
      * @param boolean $null if we accepts results = 0 or not
+     * @param array $sort titles not allwed to be sorted
      * @return void
      */
-    function templateDisplay(string $mainTitle, bool $null=false): void
+    function templateDisplay(string $mainTitle, bool $null=false, array $sort=[]): void
     {
         $period = $this->period();
         $html = $mainTitle;
@@ -782,7 +783,7 @@ abstract class Report
             $active = "";
         }
         $html .= '</ul>
-                <div class="tab-content p-3">'.$this->generateTablesAndCsv($null).'</div>';
+                <div class="tab-content p-3">'.$this->generateTablesAndCsv($null, $sort).'</div>';
         echo $html;
     }
 
@@ -790,9 +791,10 @@ abstract class Report
      * generates tabs with tables and csv links
      *
      * @param boolean $null if we accepts results = 0 or not
+     * @param array $sort titles not allwed to be sorted
      * @return string
      */
-    function generateTablesAndCsv(bool $null=false): string 
+    function generateTablesAndCsv(bool $null=false, array $sort=[]): string 
     {
         $html = "";
         $show = "show active";
@@ -805,10 +807,18 @@ abstract class Report
                 $show = "";
                 $csv = $this->csvHeader($data["dimensions"], $data["operations"], $withMonths);
                 foreach($data["columns"] as $name) {
-                    $html .= "<th class='sort-text'>".$this->paramtext->getParam($name)."</th>";
+                    $html .= "<th";
+                    if(!in_array($tab, $sort)) {
+                        $html .= " class='sort-text'";
+                    }
+                    $html .= ">".$this->paramtext->getParam($name)."</th>";
                 }   
                 foreach($data["operations"] as $operation) {   
-                    $html .= "<th class='right sort-number'>".$this->paramtext->getParam($operation)."</th>";
+                    $html .= "<th class='right";
+                    if(!in_array($tab, $sort)) {
+                        $html .= " sort-number";
+                    }
+                    $html .= "'>".$this->paramtext->getParam($operation)."</th>";
                 }
                 $html .= "</tr></thead><tbody>";
                 foreach($data["results"] as $line) {

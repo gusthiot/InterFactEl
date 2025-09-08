@@ -64,7 +64,12 @@ class ConcatT
             $content = [];
             if($first) {
                 $first = false;
-                $content[] = $columns;
+                $line = [];
+                $paramtext = new ParamText();
+                foreach($columns as $label) {
+                    $line[] = $paramtext->getParam($label);
+                }
+                $content[] = $line;
             }
             $month = substr($date, 4, 2);
             $year = substr($date, 0, 4);

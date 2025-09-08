@@ -3,6 +3,7 @@
 require_once("../assets/Lock.php");
 require_once("../assets/Info.php");
 require_once("../assets/Csv.php");
+require_once("../assets/ParamText.php");
 require_once("../assets/Message.php");
 require_once("../includes/Zip.php");
 require_once("../includes/State.php");

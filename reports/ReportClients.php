@@ -207,44 +207,20 @@ class ReportClients extends Report
                     }
                 }
                 if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
-                    $this->tabs[$tab]["results"][$ids[$tab]] = [];            
-                    foreach($dimensions[$tab] as $pos=>$dimension) {
-                        foreach($dimension as $d) {
-                            $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
+                    if($tab == "user-jour") {
+                        for($day=1; $day<=cal_days_in_month(CAL_GREGORIAN, $datetb["month"], $datetb["year"]); $day++) {
+                            if($day < 10) {
+                                $day = "0".$day;
+                            }
+                            $jour = $datetb["year"]."-".$datetb["month"]."-".$day;
+                            $dd = new DateTimeImmutable($jour);
+                            $tb = ["year"=>$dd->format('Y'), "month"=>$dd->format('m'), "day"=>$dd->format('d'), "week-nbr"=>$dd->format('W')];
+                            $ext = [$tb];
+                            $this->init($tab, $jour, $dimensions, $ext, $dd);
                         }
-                    }
-                    foreach($this->tabs[$tab]["operations"] as $operation) {
-                        $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
-                    }
-
-                    if(in_array($tab, ["user-jour", "user-mois", "user-client"])) {
-                        $this->tabs[$tab]["results"][$ids[$tab]]["users"] = [];
                     }
                     else {
-                        $this->tabs[$tab]["results"][$ids[$tab]]["clients"] = [];
-                    }
-
-                    if($tab == "user-jour") {
-                        if($date->format('w') == 1) {
-                            $this->tabs[$tab]["weeks"][$date->format('W')] = [];
-                        }
-                    }
-
-                    if(in_array($tab, ["user-mois", "client-mois"])) {
-                        $tab == "user-mois" ? $pre = "users" : $pre = "clients";
-                        foreach([3, 6, 12] as $before) {
-                            if(intval($this->month) < $before) {
-                                $mb = State::addToMonth($this->month, 13-$before);
-                                $yb = State::addToString($this->year, -1);
-                            }
-                            else {
-                                $mb = State::addToMonth($this->month, 1-$before);
-                                $yb = $this->year;
-                            }
-                            if (file_exists(DATA.$this->plateforme."/".$yb."/".$mb)) {
-                                $this->tabs[$tab]["results"][$ids[$tab]][$pre."-".$before."m"] = [];
-                            }
-                        }
+                        $this->init($tab, $ids[$tab], $dimensions, $extends[$tab], $date);
                     }
                 }
                 if(in_array($tab, ["user-jour", "user-mois", "user-client"])) {
@@ -259,7 +235,9 @@ class ReportClients extends Report
                 }
                 if($tab == "user-jour") {
                     if(array_key_exists($date->format('W'), $this->tabs[$tab]["weeks"])) {
-                        $this->tabs[$tab]["weeks"][$date->format('W')][] = $line[2];
+                        if(!in_array($line[2], $this->tabs[$tab]["weeks"][$date->format('W')])) {
+                            $this->tabs[$tab]["weeks"][$date->format('W')][] = $line[2];
+                        }
                     }
                 }
                 if($tab == "user-mois") {
@@ -274,6 +252,49 @@ class ReportClients extends Report
             }
             if(!in_array($line[0], $this->totalC)) {
                 $this->totalC[] = $line[0];
+            }
+        }
+    }
+
+    function init($tab, $id, $dimensions, $extend, $date)
+    {
+        $this->tabs[$tab]["results"][$id] = [];            
+        foreach($dimensions[$tab] as $pos=>$dimension) {
+            foreach($dimension as $d) {
+                $this->tabs[$tab]["results"][$id][$d] = $extend[$pos][$d];
+            }
+        }
+        foreach($this->tabs[$tab]["operations"] as $operation) {
+            $this->tabs[$tab]["results"][$id][$operation] = 0;
+        }
+
+        if(in_array($tab, ["user-jour", "user-mois", "user-client"])) {
+            $this->tabs[$tab]["results"][$id]["users"] = [];
+        }
+        else {
+            $this->tabs[$tab]["results"][$id]["clients"] = [];
+        }
+
+        if($tab == "user-jour") {
+            if($date->format('w') == 1) {
+                $this->tabs[$tab]["weeks"][$date->format('W')] = [];
+            }
+        }
+
+        if(in_array($tab, ["user-mois", "client-mois"])) {
+            $tab == "user-mois" ? $pre = "users" : $pre = "clients";
+            foreach([3, 6, 12] as $before) {
+                if(intval($this->month) < $before) {
+                    $mb = State::addToMonth($this->month, 13-$before);
+                    $yb = State::addToString($this->year, -1);
+                }
+                else {
+                    $mb = State::addToMonth($this->month, 1-$before);
+                    $yb = $this->year;
+                }
+                if (file_exists(DATA.$this->plateforme."/".$yb."/".$mb)) {
+                    $this->tabs[$tab]["results"][$ids[$tab]][$pre."-".$before."m"] = [];
+                }
             }
         }
     }
@@ -413,6 +434,7 @@ class ReportClients extends Report
             }            
         }
 
+        ksort($this->tabs["user-jour"]["results"]);
         foreach($this->tabs["user-jour"]["results"] as $jour=>$data) {
             $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-d"] = count($data["users"]);
                 $date = new DateTimeImmutable($jour);
@@ -421,7 +443,11 @@ class ReportClients extends Report
                         $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = count($this->tabs["user-jour"]["weeks"][$date->format('W')]);
                     }
                 }
+                else {
+                    $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = "";
+                }
         }
+        ksort($this->tabs["user-mois"]["results"]);
         foreach($this->tabs["user-mois"]["results"] as $mois=>$data) {
             $this->tabs["user-mois"]["results"][$mois]["stat-nbuser-m"] = count($data["users"]);
             foreach([3, 6, 12] as $before) {
@@ -430,6 +456,7 @@ class ReportClients extends Report
                 }
             }
         }
+        ksort($this->tabs["client-mois"]["results"]);
         foreach($this->tabs["client-mois"]["results"] as $mois=>$data) {
             $this->tabs["client-mois"]["results"][$mois]["stat-nbclient-m"] = count($data["clients"]);
             foreach([3, 6, 12] as $before) {
@@ -448,7 +475,7 @@ class ReportClients extends Report
         $title = '<div class="total">Statistiques nombre utilisateurs et clients : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre de clients = '.$this->format(count($this->totalC), "int").'</div>';
         $title .= '<div class="subtotal">Nombre d\'utilisateurs = '.$this->format(count($this->totalU), "int").'</div>';
-        echo $this->templateDisplay($title);
+        echo $this->templateDisplay($title, true, ["user-jour", "user-mois", "client-mois"]);
     }
 
 }
