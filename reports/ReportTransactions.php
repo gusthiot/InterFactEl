@@ -42,10 +42,42 @@ class ReportTransactions extends Report
                 "formats" => ["int", "int", "int", "int", "int"],
                 "results" => []
             ],
+            "par-classe" => [
+                "title" => "par Classe",
+                "columns" => ["client-labelclass"],
+                "dimensions" => $this::CLASSE_DIM,
+                "operations" => ["transac-nbr-cae", "transac-nbr-lvr", "transac-nbr-srv", "transac-nbr-noshow", "transac-nbr"],
+                "formats" => ["int", "int", "int", "int", "int"],
+                "results" => []
+            ],
             "par-client-user" => [
                 "title" => "par Client par Utilisateur",
                 "columns" => ["client-name", "user-name", "user-first"],
                 "dimensions" => array_merge($this::CLIENT_DIM, $this::USER_DIM),
+                "operations" => ["transac-nbr-cae", "transac-nbr-lvr", "transac-nbr-srv", "transac-nbr-noshow", "transac-nbr"],
+                "formats" => ["int", "int", "int", "int", "int"],
+                "results" => []
+            ],
+            "par-client-classe" => [
+                "title" => "par Client par Classe",
+                "columns" => ["client-name", "client-labelclass"],
+                "dimensions" => array_merge($this::CLIENT_DIM, $this::CLASSE_DIM),
+                "operations" => ["transac-nbr-cae", "transac-nbr-lvr", "transac-nbr-srv", "transac-nbr-noshow", "transac-nbr"],
+                "formats" => ["int", "int", "int", "int", "int"],
+                "results" => []
+            ],
+            "par-classe-user" => [
+                "title" => "par Classe par Utilisateur",
+                "columns" => ["client-labelclass", "user-name", "user-first"],
+                "dimensions" => array_merge($this::CLASSE_DIM, $this::USER_DIM),
+                "operations" => ["transac-nbr-cae", "transac-nbr-lvr", "transac-nbr-srv", "transac-nbr-noshow", "transac-nbr"],
+                "formats" => ["int", "int", "int", "int", "int"],
+                "results" => []
+            ],
+            "par-client-classe-user" => [
+                "title" => "par Client par Classe par Utilisateur",
+                "columns" => ["client-name", "client-labelclass", "user-name", "user-first"],
+                "dimensions" => array_merge($this::CLIENT_DIM, $this::CLASSE_DIM, $this::USER_DIM),
                 "operations" => ["transac-nbr-cae", "transac-nbr-lvr", "transac-nbr-srv", "transac-nbr-noshow", "transac-nbr"],
                 "formats" => ["int", "int", "int", "int", "int"],
                 "results" => []
@@ -62,6 +94,8 @@ class ReportTransactions extends Report
     function prepare(): void 
     {
         $this->prepareClients();
+        $this->prepareClasses();
+        $this->prepareClientsClasses();
         $this->prepareUsers();
         $this->loadPrestations();
         $this->prepareMachines();
@@ -89,6 +123,7 @@ class ReportTransactions extends Report
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
                     $code = $tab[$columns["client-code"]];
+                    $clcl = $this->clientsClasses[$code]['client-class'];
                     if($flux == 'cae') {
                         $n = 0;
                         $machId = $tab[$columns["mach-id"]];
@@ -109,17 +144,13 @@ class ReportTransactions extends Report
                         $plateId = $this->prestations[$itemId]["platf-code"];
                     }                    
                     if($plateId && ($plateId == $this->plateforme) && ($code != $plateId)) {
-                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$flux;
+                        $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$flux;
                         if(!array_key_exists($id, $loopArray)) {
                             $loopArray[$id] = 0;
                         }
                         $loopArray[$id] += $n;
                     }
                 }
-            }
-            foreach($loopArray as $id=>$q) {
-                $ids = explode("--", $id);
-                $transArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
         else {
@@ -139,17 +170,17 @@ class ReportTransactions extends Report
                     $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["transac-valid"]] != 2) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);
                 }    
                 if($cond) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["flow-type"]];
+                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["flow-type"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;
                     }
                     $loopArray[$id] ++;
                 }
             }
-            foreach($loopArray as $id=>$q) {
-                $ids = explode("--", $id);
-                $transArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
-            }
+        }
+        foreach($loopArray as $id=>$q) {
+            $ids = explode("--", $id);
+            $transArray[] = [$ids[0], $ids[1], $this->sciper($ids[2]), $ids[3], $q];
         }
         return $transArray;
     }
@@ -165,26 +196,39 @@ class ReportTransactions extends Report
         $scipers = $this->scipers();
         foreach($transArray as $line) {
             $client = $this->clients[$line[0]];
-            if($line[1] != 0) {
-                $user = $this->users[$scipers[$line[1]]];
+            $classe = $this->classes[$line[1]];
+            if($line[2] != 0) {
+                $user = $this->users[$scipers[$line[2]]];
             }
             else {
                 $user = ["user-sciper"=>"0", "user-name"=>"", "user-first"=>"", "user-email"=>""];
             }
             $ids = [
                 "par-client"=>$line[0], 
-                "par-user"=>$line[1], 
-                "par-client-user"=>$line[0]."-".$line[1]
+                "par-classe"=>$line[1], 
+                "par-user"=>$line[2], 
+                "par-client-user"=>$line[0]."-".$line[2], 
+                "par-client-classe"=>$line[0]."-".$line[1], 
+                "par-classe-user"=>$line[1]."-".$line[2], 
+                "par-client-classe-user"=>$line[0]."-".$line[1]."-".$line[2]
             ];
             $extends = [
                 "par-client"=>[$client],
+                "par-classe"=>[$classe],
                 "par-user"=>[$user],
-                "par-client-user"=>[$client, $user]
+                "par-client-user"=>[$client, $user],
+                "par-client-classe"=>[$client, $classe],
+                "par-classe-user"=>[$classe, $user],
+                "par-client-classe-user"=>[$client, $classe, $user]
             ];
             $dimensions = [
                 "par-client"=>[$this::CLIENT_DIM],
+                "par-classe"=>[$this::CLASSE_DIM],
                 "par-user"=>[$this::USER_DIM],
-                "par-client-user"=>[$this::CLIENT_DIM, $this::USER_DIM]
+                "par-client-user"=>[$this::CLIENT_DIM, $this::USER_DIM],
+                "par-client-classe"=>[$this::CLIENT_DIM, $this::CLASSE_DIM],
+                "par-classe-user"=>[$this::CLASSE_DIM, $this::USER_DIM],
+                "par-client-classe-user"=>[$this::CLIENT_DIM, $this::CLASSE_DIM, $this::USER_DIM]
             ];
 
             foreach($this->tabs as $tab=>$data) {
@@ -202,11 +246,11 @@ class ReportTransactions extends Report
                 if(!array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
                     $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
                 }
-                $this->tabs[$tab]["results"][$ids[$tab]]["transac-nbr"] += $line[3];
-                $this->tabs[$tab]["results"][$ids[$tab]]["transac-nbr-".$line[2]] += $line[3];
-                $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $line[3];
+                $this->tabs[$tab]["results"][$ids[$tab]]["transac-nbr"] += $line[4];
+                $this->tabs[$tab]["results"][$ids[$tab]]["transac-nbr-".$line[3]] += $line[4];
+                $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $line[4];
             }
-            $this->totalT += $line[3];
+            $this->totalT += $line[4];
         }
     }
 
