@@ -90,6 +90,7 @@ include("includes/lock.php");
                 </svg>
                 Back</a>
             </div>
+            <div id="report-title"></div>
             <div id="report-period"></div>
             <div id="report-content"></div>
         </div>

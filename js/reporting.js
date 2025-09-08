@@ -5,10 +5,12 @@ $('.select-period').on('click', function () {
     $($(this).attr('id')).addClass('selected-tile');
     report = $(this).attr('id');
     const title = $('.title', this).text();
-    $.post("controller/selectPeriod.php", {plate: $('#plate').val(), type: report, title: title}, function (data) {
+    $.post("controller/selectPeriod.php", {plate: $('#plate').val(), type: report}, function (data) {
         $('#report-tiles').hide();
         $('#report-period').html(data);
         $('#report-period').show();
+        $('#report-title').html('<div id="date-title">'+title+'</div>');
+        $('#report-title').show();
         $('#back').show();
     });
 } );
@@ -45,6 +47,7 @@ $(document).on("change", "#to", function() {
 
 $(document).on("click", "#back", function() {
     $('#report-period').hide();
+    $('#report-title').hide();
     $('#report-content').hide();
     $('#back').hide();
     $('#report-tiles').show();

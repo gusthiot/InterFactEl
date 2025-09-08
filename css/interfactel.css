@@ -451,6 +451,11 @@ table.report-table th {
   text-align: center;
 }
 
+#report-title {
+  margin: 10px;
+  text-align: center;
+}
+
 .report-table {
   text-align: left;
 }
