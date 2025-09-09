@@ -140,23 +140,24 @@ class ReportClients extends Report
                 $tab = explode(";", $lines[$i]);
                 $code = $tab[$columns["client-code"]];
                 $clcl = $tab[$columns["client-class"]];
-                if(floatval($this->factel) >= 7 && floatval($this->factel) < 9) {
-                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["platf-code"]] != $code);
-                }
-                elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                    $parts = explode("-", $datetime[0]);
-                    $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($code != $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2);
-                }
-                else {
-                    $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($code != $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2);
-
-                }
-                if($cond) {
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                    $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$datetime[0];
-                    $sciper = $this->sciper($tab[$columns["user-id"]]);
-                    $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
+                if($tab[$columns["platf-code"]] != $code) {
+                    if(floatval($this->factel) >= 7 && floatval($this->factel) < 9) {
+                        $cond = ($this->plateforme == $tab[$columns["platf-code"]]);
+                    }
+                    elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
+                        $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                        $parts = explode("-", $datetime[0]);
+                        $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2);
+                    }
+                    else {
+                        $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["transac-valid"]] != 2);
+                    }
+                    if($cond) {
+                        $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                        $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$datetime[0];
+                        $sciper = $this->sciper($tab[$columns["user-id"]]);
+                        $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
+                    }
                 }
             }
         }

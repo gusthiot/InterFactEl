@@ -231,32 +231,34 @@ class ReportUsages extends Report
             $nrArray = [];
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
-                if(floatval($this->factel) == 8) {
-                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae");
-                }
-                elseif(floatval($this->factel) == 9) {
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                    $date = explode("-", $datetime[0]);
-                    $aa = $date[0];
-                    $mm = $date[1];
-                    $cond = ($aa == $this->year) && ($mm == $this->month) && ($tab[$columns["flow-type"]] == "cae");
-                }
-                else {
-                    $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae");
-                }
-                if($cond) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = ['Smu' => 0];
+                if($tab[$columns["flow-type"]] == "cae") {
+                    if(floatval($this->factel) == 8) {
+                        $cond = ($this->plateforme == $tab[$columns["platf-code"]]);
                     }
-                    $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
-                    
-                    $idn = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
-                    if(!array_key_exists($idn, $nrArray)) {
-                        $nrArray[$idn] = 0;
+                    elseif(floatval($this->factel) == 9) {
+                        $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                        $date = explode("-", $datetime[0]);
+                        $aa = $date[0];
+                        $mm = $date[1];
+                        $cond = ($aa == $this->year) && ($mm == $this->month);
                     }
-                    if($tab[$columns["transac-runcae"]] > 0) {
-                        $nrArray[$idn] += $tab[$columns["transac-runcae"]];
+                    else {
+                        $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]);
+                    }
+                    if($cond) {
+                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
+                        if(!array_key_exists($id, $loopArray)) {
+                            $loopArray[$id] = ['Smu' => 0];
+                        }
+                        $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
+                        
+                        $idn = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
+                        if(!array_key_exists($idn, $nrArray)) {
+                            $nrArray[$idn] = 0;
+                        }
+                        if($tab[$columns["transac-runcae"]] > 0) {
+                            $nrArray[$idn] += $tab[$columns["transac-runcae"]];
+                        }
                     }
                 }
             }

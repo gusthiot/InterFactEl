@@ -710,10 +710,12 @@ abstract class Report
      */
     function totalCsvLink(string $csvKey, string $notBeNull): string
     {
-        $totalCsv = $this->csvHeader($this->totalCsvData["dimensions"], $this->totalCsvData["operations"]);
+        $first = array_key_first($this->totalCsvData["results"]);
+        $withMonths = array_key_exists("mois", $this->totalCsvData["results"][$first]);
+        $totalCsv = $this->csvHeader($this->totalCsvData["dimensions"], $this->totalCsvData["operations"], $withMonths);
         foreach($this->totalCsvData["results"] as $line) {
             if(floatval($line[$notBeNull]) > 0) {
-                $totalCsv .= "\n".$this->csvLine($this->totalCsvData["dimensions"], $this->totalCsvData["operations"], $line);
+                $totalCsv .= "\n".$this->csvLine($this->totalCsvData["dimensions"], $this->totalCsvData["operations"], $line, $withMonths);
             }
         }
         return '<div class="total"><a href="data:text/plain;base64,'.base64_encode($totalCsv).'" download="'.$csvKey.'.csv"><button type="button" id="'.$csvKey.'" class="btn but-line">Download Csv</button></a></div>';

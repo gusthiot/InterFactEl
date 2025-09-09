@@ -25,6 +25,11 @@ class ReportPropres extends Report
         $this->totalM = 0.0;
         $this->reportKey = 'consopltf';
         $this->reportColumns = ["proj-id", "item-id", "valuation-net"];
+        $this->totalCsvData = [
+            "dimensions" => array_merge($this::PROJET_DIM, $this::PRESTATION_DIM, $this::MACHINE_DIM, ["item-extra"]),
+            "operations" => ["valuation-net"],
+            "results" => []
+        ];
         $this->tabs = [
             "par-article" => [
                 "title" => "Par article",
@@ -79,24 +84,26 @@ class ReportPropres extends Report
         $lines = Csv::extract($this->getFileNameInBS('T3'));
         for($i=1;$i<count($lines);$i++) {
             $tab = explode(";", $lines[$i]);
-            if(floatval($this->factel) < 9) {
-                $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI");
-            }
-            elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
-                $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                $parts = explode("-", $datetime[0]);
-                $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI");
-            }
-            else {
-                $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI") && ($tab[$columns["transac-valid"]] != 2);
-
-            }                
-            if($cond) {
-                $id = $tab[$columns["proj-id"]]."--".$tab[$columns["item-id"]];
-                if(!array_key_exists($id, $loopArray)) {
-                    $loopArray[$id] = 0;
+            if(($tab[$columns["flow-type"]] == "lvr") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["item-flag-conso"]] == "OUI")) {
+                if(floatval($this->factel) < 9) {
+                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]);
                 }
-                $loopArray[$id] += $tab[$columns["valuation-net"]];
+                elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
+                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                    $parts = explode("-", $datetime[0]);
+                    $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2);
+                }
+                else {
+                    $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["transac-valid"]] != 2);
+
+                }                
+                if($cond) {
+                    $id = $tab[$columns["proj-id"]]."--".$tab[$columns["item-id"]];
+                    if(!array_key_exists($id, $loopArray)) {
+                        $loopArray[$id] = 0;
+                    }
+                    $loopArray[$id] += $tab[$columns["valuation-net"]];
+                }
             }
         }
         $pltfArray = [];
@@ -123,17 +130,20 @@ class ReportPropres extends Report
             $ids = [
                 "par-article"=>$line[1], 
                 "par-projet"=>$line[0], 
-                "par-projet-machine"=>$line[0]."-".$prestation["mach-id"]
+                "par-projet-machine"=>$line[0]."-".$prestation["mach-id"],
+                "for-csv"=>$line[0]."-".$line[1]."-".$prestation["mach-id"]
             ];
             $extends = [
                 "par-article"=>[$prestation],
                 "par-projet"=>[$compte],
-                "par-projet-machine"=>[$compte, $prestation]
+                "par-projet-machine"=>[$compte, $prestation],
+                "for-csv"=>[$compte, $prestation]
             ];
             $dimensions = [
                 "par-article"=>[array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM, ["item-extra"])],
                 "par-projet"=>[$this::PROJET_DIM],
-                "par-projet-machine"=>[$this::PROJET_DIM, array_merge($this::MACHINE_DIM, ["item-extra"])]
+                "par-projet-machine"=>[$this::PROJET_DIM, array_merge($this::MACHINE_DIM, ["item-extra"])],
+                "for-csv"=>[$this::PROJET_DIM, array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM, ["item-extra"])]
             ];
 
             foreach($this->tabs as $tab=>$data) {
@@ -170,6 +180,17 @@ class ReportPropres extends Report
                     $this->tabs[$tab]["results"][$ids[$tab]]["valuation-net"] += $line[2];
                 }
             }
+            // total csv
+            if(!array_key_exists($ids["for-csv"], $this->totalCsvData["results"])) {
+                $this->totalCsvData["results"][$ids["for-csv"]] = ["valuation-net" => 0];            
+                foreach($dimensions["for-csv"] as $pos=>$dimension) {
+                    foreach($dimension as $d) {
+                        $this->totalCsvData["results"][$ids["for-csv"]][$d] = $extends["for-csv"][$pos][$d];
+                    }
+                }
+            }
+            $this->totalCsvData["results"][$ids["for-csv"]]["valuation-net"] += $line[2];
+
             $this->totalM += $line[2];
         }
     }
@@ -183,7 +204,8 @@ class ReportPropres extends Report
     function display(): void
     {
         $title = '<div class="total">Total des consommations propres sur la période (CHF) : '.$this->period().' </div>';
-        $title .= '<div class="subtotal">'.$this->format($this->totalM).'</div>';
+        $title .= '<div class="subtotal">'.$this->format($this->totalM).'</div>';        
+        $title .= $this->totalCsvLink("total-propres", "valuation-net");
         echo $this->templateDisplay($title);
     }
 

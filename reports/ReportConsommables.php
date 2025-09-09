@@ -73,20 +73,22 @@ class ReportConsommables extends Report
                 $lines = Csv::extract($this->getFileNameInBS('T3'));
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
-                    if(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                    $parts = explode("-", $datetime[0]);
-                        $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr");
-                    }
-                    else {
-                        $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr");
-                    }
-                    if($cond) {
-                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
-                        if(!array_key_exists($id, $loopArray)) {
-                            $loopArray[$id] = 0;
+                    if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr")) {
+                        if(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
+                            $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                            $parts = explode("-", $datetime[0]);
+                            $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month);
                         }
-                        $loopArray[$id] += $tab[$columns["transac-quantity"]];
+                        else {
+                            $cond = true;
+                        }
+                        if($cond) {
+                            $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
+                            if(!array_key_exists($id, $loopArray)) {
+                                $loopArray[$id] = 0;
+                            }
+                            $loopArray[$id] += $tab[$columns["transac-quantity"]];
+                        }
                     }
                 }
             }

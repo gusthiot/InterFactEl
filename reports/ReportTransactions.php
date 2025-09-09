@@ -137,7 +137,7 @@ class ReportTransactions extends Report
                         if($tab[$columns["Toper"]] > 0) {
                             $n++;
                         }
-                        if((intval($this->year) > 2019) && (intval(this->month) > 6) && ($n > 0)) {
+                        if((intval($this->year) > 2019) && (intval($this->month) > 6) && ($n > 0)) {
                             $n ++;
                         }
                     }
@@ -161,23 +161,25 @@ class ReportTransactions extends Report
             $lines = Csv::extract($this->getFileNameInBS('T3'));
             for($i=1;$i<count($lines);$i++) {
                 $tab = explode(";", $lines[$i]);
-                if($this->factel >= 7 && floatval($this->factel) < 9) {
-                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);
-                }
-                elseif($this->factel >= 9 && floatval($this->factel) < 10) {
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                    $parts = explode("-", $datetime[0]);
-                    $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($tab[$columns["transac-valid"]] != 2) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);
-                }
-                else {
-                    $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["transac-valid"]] != 2) && ($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]);
-                }    
-                if($cond) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["flow-type"]];
-                    if(!array_key_exists($id, $loopArray)) {
-                        $loopArray[$id] = 0;
+                if($tab[$columns["client-code"]] != $tab[$columns["platf-code"]]) {
+                    if($this->factel >= 7 && floatval($this->factel) < 9) {
+                        $cond = ($this->plateforme == $tab[$columns["platf-code"]]);
                     }
-                    $loopArray[$id] ++;
+                    elseif($this->factel >= 9 && floatval($this->factel) < 10) {
+                        $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                        $parts = explode("-", $datetime[0]);
+                        $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($tab[$columns["transac-valid"]] != 2);
+                    }
+                    else {
+                        $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["transac-valid"]] != 2);
+                    }    
+                    if($cond) {
+                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["flow-type"]];
+                        if(!array_key_exists($id, $loopArray)) {
+                            $loopArray[$id] = 0;
+                        }
+                        $loopArray[$id] ++;
+                    }
                 }
             }
         }
