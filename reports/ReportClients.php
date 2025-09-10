@@ -118,12 +118,15 @@ class ReportClients extends Report
                     if($flux == 'cae') {
                         $machId = $tab[$columns["mach-id"]];
                         $plateId = $this->getPlateformeFromMachine($machId);
+                        $somme = $tab[$columns["Tmach-HP"]] + $tab[$columns["Tmach-HC"]] + $tab[$columns["Toper"]];
+                        $cond = $somme > 0;
                     }
                     else {
                         $itemId = $tab[$columns["item-id"]];
                         $plateId = $this->prestations[$itemId]["platf-code"];
+                        $cond = true; 
                     }
-                    if($plateId && ($plateId == $this->plateforme) && ($code != $plateId)) {
+                    if($plateId && ($plateId == $this->plateforme) && ($code != $plateId) && $cond) {
                         $datetime = explode(" ", $tab[$columns["transac-date"]]);
                         $id = $code."--".$tab[$columns["user-id"]]."--".$datetime[0];
                         $clcl = $this->clientsClasses[$code]['client-class'];

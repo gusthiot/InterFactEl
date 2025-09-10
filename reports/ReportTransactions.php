@@ -137,8 +137,8 @@ class ReportTransactions extends Report
                         if($tab[$columns["Toper"]] > 0) {
                             $n++;
                         }
-                        if((intval($this->year) > 2019) && (intval($this->month) > 6) && ($n > 0)) {
-                            $n ++;
+                        if((((intval($this->year) == 2020) && (intval($this->month) > 6)) || (intval($this->year) > 2020)) && ($n > 0)) {
+                            $n++;
                         }
                     }
                     else {
