@@ -188,7 +188,6 @@ class ReportClients extends Report
                 "client-classe"=>$line[1],
                 "user-client"=>$line[0]
             ];
-
             $extends = [
                 "user-jour"=>[$datetb],
                 "user-mois"=>[$datetb],
@@ -238,8 +237,9 @@ class ReportClients extends Report
                     }
                 }
                 if($tab == "user-jour") {
-                    if(!in_array($line[2], $this->tabs[$tab]["weeks"][$date->format('W')])) {
-                        $this->tabs[$tab]["weeks"][$date->format('W')][] = $line[2];
+                    $weekYear = $this->weekYear($date);
+                    if(!in_array($line[2], $this->tabs[$tab]["weeks"][$weekYear][$date->format('W')])) {
+                        $this->tabs[$tab]["weeks"][$weekYear][$date->format('W')][] = $line[2];
                     }
                 }
                 if($tab == "user-mois") {
@@ -278,8 +278,12 @@ class ReportClients extends Report
         }
 
         if($tab == "user-jour") {
-            if(!array_key_exists($date->format('W'), $this->tabs[$tab]["weeks"])) {
-                $this->tabs[$tab]["weeks"][$date->format('W')] = [];
+            $weekYear = $this->weekYear($date);
+            if(!array_key_exists($weekYear, $this->tabs[$tab]["weeks"])) {
+                $this->tabs[$tab]["weeks"][$weekYear] = [];
+            }
+            if(!array_key_exists($date->format('W'), $this->tabs[$tab]["weeks"][$weekYear])) {
+                $this->tabs[$tab]["weeks"][$weekYear][$date->format('W')] = [];
             }
         }
 
@@ -384,6 +388,18 @@ class ReportClients extends Report
         }
     }
 
+    function weekYear(DateTimeImmutable $date): string
+    {          
+        $year = $date->format('Y');
+        if((intval($date->format('W')) == 1) && (intval($date->format('m')) == 12)) {
+            return State::addToString($year, 1);
+        }
+        if((intval($date->format('W')) > 50) && (intval($date->format('m')) == 1)) {
+            return State::addToString($year, -1);
+        }
+        return $year;
+    }
+
     /**
      * displays title and tabs
      *
@@ -434,10 +450,13 @@ class ReportClients extends Report
                 $this->putInFrom($i, "user-mois", "users", $line[2]);
                 $this->putInFrom($i, "client-mois", "clients", $line[0]);
                 if($i == 1) {
-                    $dateTI = new DateTimeImmutable($line[3]);
-                    if(array_key_exists($dateTI->format('W'), $this->tabs["user-jour"]["weeks"])) {
-                        if(!in_array($line[2], $this->tabs["user-jour"]["weeks"][$dateTI->format('W')])) {
-                            $this->tabs["user-jour"]["weeks"][$dateTI->format('W')][] = $line[2];
+                    $dateTI = new DateTimeImmutable($line[3]);            
+                    $weekYear = $this->weekYear($dateTI);
+                    if(array_key_exists($weekYear, $this->tabs["user-jour"]["weeks"])) {
+                        if(array_key_exists($dateTI->format('W'), $this->tabs["user-jour"]["weeks"][$weekYear])) {
+                            if(!in_array($line[2], $this->tabs["user-jour"]["weeks"][$weekYear][$dateTI->format('W')])) {
+                                $this->tabs["user-jour"]["weeks"][$weekYear][$dateTI->format('W')][] = $line[2];
+                            }
                         }
                     }
                 }
@@ -449,7 +468,7 @@ class ReportClients extends Report
             $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-d"] = count($data["users"]);
                 $dateTI = new DateTimeImmutable($jour);
                 if($dateTI->format('w') == 0) {
-                    $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = count($this->tabs["user-jour"]["weeks"][$dateTI->format('W')]);
+                    $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = count($this->tabs["user-jour"]["weeks"][$dateTI->format('Y')][$dateTI->format('W')]);
                 }
                 else {
                     $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = "";
