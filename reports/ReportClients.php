@@ -238,10 +238,8 @@ class ReportClients extends Report
                     }
                 }
                 if($tab == "user-jour") {
-                    if(array_key_exists($date->format('W'), $this->tabs[$tab]["weeks"])) {
-                        if(!in_array($line[2], $this->tabs[$tab]["weeks"][$date->format('W')])) {
-                            $this->tabs[$tab]["weeks"][$date->format('W')][] = $line[2];
-                        }
+                    if(!in_array($line[2], $this->tabs[$tab]["weeks"][$date->format('W')])) {
+                        $this->tabs[$tab]["weeks"][$date->format('W')][] = $line[2];
                     }
                 }
                 if($tab == "user-mois") {
@@ -280,7 +278,7 @@ class ReportClients extends Report
         }
 
         if($tab == "user-jour") {
-            if($date->format('w') == 1) {
+            if(!array_key_exists($date->format('W'), $this->tabs[$tab]["weeks"])) {
                 $this->tabs[$tab]["weeks"][$date->format('W')] = [];
             }
         }
@@ -435,17 +433,23 @@ class ReportClients extends Report
             foreach($monthArray as $id=>$line) {
                 $this->putInFrom($i, "user-mois", "users", $line[2]);
                 $this->putInFrom($i, "client-mois", "clients", $line[0]);
+                if($i == 1) {
+                    $dateTI = new DateTimeImmutable($line[3]);
+                    if(array_key_exists($dateTI->format('W'), $this->tabs["user-jour"]["weeks"])) {
+                        if(!in_array($line[2], $this->tabs["user-jour"]["weeks"][$dateTI->format('W')])) {
+                            $this->tabs["user-jour"]["weeks"][$dateTI->format('W')][] = $line[2];
+                        }
+                    }
+                }
             }            
         }
 
         ksort($this->tabs["user-jour"]["results"]);
         foreach($this->tabs["user-jour"]["results"] as $jour=>$data) {
             $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-d"] = count($data["users"]);
-                $date = new DateTimeImmutable($jour);
-                if($date->format('w') == 0) {
-                    if(array_key_exists($date->format('W'), $this->tabs["user-jour"]["weeks"])) {
-                        $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = count($this->tabs["user-jour"]["weeks"][$date->format('W')]);
-                    }
+                $dateTI = new DateTimeImmutable($jour);
+                if($dateTI->format('w') == 0) {
+                    $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = count($this->tabs["user-jour"]["weeks"][$dateTI->format('W')]);
                 }
                 else {
                     $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = "";
