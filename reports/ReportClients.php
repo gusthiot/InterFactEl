@@ -468,7 +468,9 @@ class ReportClients extends Report
             $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-d"] = count($data["users"]);
                 $dateTI = new DateTimeImmutable($jour);
                 if($dateTI->format('w') == 0) {
-                    $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = count($this->tabs["user-jour"]["weeks"][$dateTI->format('Y')][$dateTI->format('W')]);
+                    if(array_key_exists($dateTI->format('W'), $this->tabs["user-jour"]["weeks"][$dateTI->format('Y')])) {
+                        $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = count($this->tabs["user-jour"]["weeks"][$dateTI->format('Y')][$dateTI->format('W')]);
+                    }
                 }
                 else {
                     $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = "";
