@@ -165,7 +165,7 @@ class ReportPlateforme extends Report
                 $machId = $tab[$columns["mach-id"]];
                 $expl = $cptExplArray[$tab[$columns["proj-id"]]];
                 $plateId = $this->getPlateformeFromMachine($machId);
-                if($plateId && ($plateId == $this->plateforme) && ($tab[$columns["client-code"]] == $plateId) && ($expl == "FALSE")) {
+                if($plateId && ($plateId == $this->plateforme) && ($tab[$columns["client-code"]] == $plateId) && ($expl["proj-expl"] == "FALSE")) {
                     $mu1 = ($tab[$columns["Tmach-HP"]]+$tab[$columns["Tmach-HC"]]) / 60;
                     $mu2 = $tab[$columns["Toper"]] / 60;
                     $id = $tab[$columns["proj-id"]]."--".$tab[$columns["mach-id"]];
@@ -303,7 +303,7 @@ class ReportPlateforme extends Report
      * @return void
      */
     function mappingPltf(array $pltfArray): void
-    {   
+    {
         foreach($pltfArray as $line) {
             $projet = $this->comptes[$line[0]];
             $groupe = $this->groupes[$line[1]];

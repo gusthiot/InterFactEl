@@ -802,53 +802,54 @@ abstract class Report
         $show = "show active";
         foreach($this->tabs as $tab=>$data) {
             $first = array_key_first($data["results"]);
+            $withMonths = false;
             if($first) {
                 $withMonths = array_key_exists("mois", $data["results"][$first]);
-                $html .= '<div class="tab-pane fade '.$show.'" id="'.$tab.'" role="tabpanel" aria-labelledby="'.$tab.'-tab">
-                            <div class="over report-large"><table class="table report-table" id="'.$tab.'-table"><thead><tr>';
-                $show = "";
-                $csv = $this->csvHeader($data["dimensions"], $data["operations"], $withMonths);
-                foreach($data["columns"] as $name) {
-                    $html .= "<th";
-                    if(!in_array($tab, $sort)) {
-                        $html .= " class='sort-text'";
-                    }
-                    $html .= ">".$this->paramtext->getParam($name)."</th>";
-                }   
-                foreach($data["operations"] as $operation) {   
-                    $html .= "<th class='right";
-                    if(!in_array($tab, $sort)) {
-                        $html .= " sort-number";
-                    }
-                    $html .= "'>".$this->paramtext->getParam($operation)."</th>";
-                }
-                $html .= "</tr></thead><tbody>";
-                foreach($data["results"] as $line) {
-                    $notNull = true;
-                    if(!$null) {
-                        $notNull = false;
-                        foreach($data["operations"] as $operation) {
-                            if(floatval($line[$operation]) > 0) {
-                                $notNull = true;
-                                break;
-                            }
-                        }
-                    }
-                    if($notNull) {
-                        $html .= "<tr>";
-                        foreach($data["columns"] as $name) {
-                            $html .= "<td>".$line[$name]."</td>";
-                        }
-                        foreach($data["operations"] as $pos=>$operation) {
-                            $html .= "<td class='right'>".$this->format($line[$operation], $data["formats"][$pos])."</td>";
-                        }
-                        $html .= "</tr>";
-                        $csv .= "\n".$this->csvLine($data["dimensions"], $data["operations"], $line, $withMonths);
-                    }
-                }
-                $html .= "</tbody></table></div>";
-                $html .= '<a href="data:text/plain;base64,'.base64_encode($csv).'" download="'.$tab.'.csv"><button type="button" id="'.$tab.'-dl"  class="btn but-line">Download Csv</button></a></div>';
             }
+            $html .= '<div class="tab-pane fade '.$show.'" id="'.$tab.'" role="tabpanel" aria-labelledby="'.$tab.'-tab">
+                        <div class="over report-large"><table class="table report-table" id="'.$tab.'-table"><thead><tr>';
+            $show = "";
+            $csv = $this->csvHeader($data["dimensions"], $data["operations"], $withMonths);
+            foreach($data["columns"] as $name) {
+                $html .= "<th";
+                if(!in_array($tab, $sort)) {
+                    $html .= " class='sort-text'";
+                }
+                $html .= ">".$this->paramtext->getParam($name)."</th>";
+            }   
+            foreach($data["operations"] as $operation) {   
+                $html .= "<th class='right";
+                if(!in_array($tab, $sort)) {
+                    $html .= " sort-number";
+                }
+                $html .= "'>".$this->paramtext->getParam($operation)."</th>";
+            }
+            $html .= "</tr></thead><tbody>";
+            foreach($data["results"] as $line) {
+                $notNull = true;
+                if(!$null) {
+                    $notNull = false;
+                    foreach($data["operations"] as $operation) {
+                        if(floatval($line[$operation]) > 0) {
+                            $notNull = true;
+                            break;
+                        }
+                    }
+                }
+                if($notNull) {
+                    $html .= "<tr>";
+                    foreach($data["columns"] as $name) {
+                        $html .= "<td>".$line[$name]."</td>";
+                    }
+                    foreach($data["operations"] as $pos=>$operation) {
+                        $html .= "<td class='right'>".$this->format($line[$operation], $data["formats"][$pos])."</td>";
+                    }
+                    $html .= "</tr>";
+                    $csv .= "\n".$this->csvLine($data["dimensions"], $data["operations"], $line, $withMonths);
+                }
+            }
+            $html .= "</tbody></table></div>";
+            $html .= '<a href="data:text/plain;base64,'.base64_encode($csv).'" download="'.$tab.'.csv"><button type="button" id="'.$tab.'-dl"  class="btn but-line">Download Csv</button></a></div>';
         }
         return $html;
     }
