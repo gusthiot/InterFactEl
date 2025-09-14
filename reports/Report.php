@@ -18,7 +18,7 @@ abstract class Report
     const USER_DIM = ["user-sciper", "user-name", "user-first", "user-email"];
     const CODEK_DIM = ["item-codeK", "item-textK"];
     const SERVICE_DIM = ["item-text2K", "oper-note"];
-    const PROJET_DIM = ["proj-id", "proj-nbr", "proj-name", "proj-expl"];
+    const PROJET_DIM = ["proj-id", "proj-nbr", "proj-name"];
     const OPER_DIM = ["oper-sciper", "oper-name", "oper-first", "date", "flow-type"];
     const DATE_DIM = ["year", "month"];
 

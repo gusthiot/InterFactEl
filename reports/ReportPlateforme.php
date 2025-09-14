@@ -306,6 +306,9 @@ class ReportPlateforme extends Report
     {
         foreach($pltfArray as $line) {
             $projet = $this->comptes[$line[0]];
+            if(floatval($this->factel) < 7) {
+                $projet["proj-nbr"] = ""; 
+            }
             $groupe = $this->groupes[$line[1]];
             $itemId = $groupe["item-id-".$line[2]];
             $categorie = $this->categories[$itemId];

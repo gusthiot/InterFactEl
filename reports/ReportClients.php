@@ -204,7 +204,7 @@ class ReportClients extends Report
             ];
 
             foreach($this->tabs as $tab=>$data) {
-                if(in_array($tab, ["user-jour", "user-mois", "user-client"])) {
+                if(in_array($tab, ["user-jour", "user-mois"])) {
                     if($line[2] == 0) {
                         continue;
                     }

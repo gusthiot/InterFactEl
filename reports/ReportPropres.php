@@ -26,7 +26,7 @@ class ReportPropres extends Report
         $this->reportKey = 'consopltf';
         $this->reportColumns = ["proj-id", "item-id", "valuation-net"];
         $this->totalCsvData = [
-            "dimensions" => array_merge($this::PROJET_DIM, $this::PRESTATION_DIM, $this::MACHINE_DIM, ["item-extra"]),
+            "dimensions" => array_merge($this::PROJET_DIM, ["proj-expl"], $this::PRESTATION_DIM, $this::MACHINE_DIM, ["item-extra"]),
             "operations" => ["valuation-net"],
             "results" => []
         ];
@@ -42,7 +42,7 @@ class ReportPropres extends Report
             "par-projet" => [
                 "title" => "Par projet",
                 "columns" => ["proj-nbr", "proj-name"],
-                "dimensions" => $this::PROJET_DIM,
+                "dimensions" => array_merge($this::PROJET_DIM, ["proj-expl"]),
                 "operations" => ["valuation-net"],
                 "formats" => ["fin"],
                 "results" => []
@@ -50,7 +50,7 @@ class ReportPropres extends Report
             "par-projet-machine" => [
                 "title" => "Par projet & machine",
                 "columns" => ["proj-nbr", "proj-name", "mach-id", "mach-name"],
-                "dimensions" => array_merge($this::PROJET_DIM, $this::MACHINE_DIM, ["item-extra"]),
+                "dimensions" => array_merge($this::PROJET_DIM, ["proj-expl"], $this::MACHINE_DIM, ["item-extra"]),
                 "operations" => ["conso-propre-march-expl", "conso-propre-extra-expl", "conso-propre-march-proj", "conso-propre-extra-proj"],
                 "formats" => ["fin", "fin", "fin", "fin"],
                 "results" => []
@@ -141,9 +141,9 @@ class ReportPropres extends Report
             ];
             $dimensions = [
                 "par-article"=>[array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM, ["item-extra"])],
-                "par-projet"=>[$this::PROJET_DIM],
-                "par-projet-machine"=>[$this::PROJET_DIM, array_merge($this::MACHINE_DIM, ["item-extra"])],
-                "for-csv"=>[$this::PROJET_DIM, array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM, ["item-extra"])]
+                "par-projet"=>[array_merge($this::PROJET_DIM, ["proj-expl"])],
+                "par-projet-machine"=>[array_merge($this::PROJET_DIM, ["proj-expl"]), array_merge($this::MACHINE_DIM, ["item-extra"])],
+                "for-csv"=>[array_merge($this::PROJET_DIM, ["proj-expl"]), array_merge($this::PRESTATION_DIM, $this::MACHINE_DIM, ["item-extra"])]
             ];
 
             foreach($this->tabs as $tab=>$data) {
