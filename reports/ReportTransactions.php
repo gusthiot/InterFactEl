@@ -281,7 +281,7 @@ class ReportTransactions extends Report
                 }
             }
             else {
-                $this->changeClients[$client] = [$line[1]];
+                $this->changeClients[$line[0]] = [$line[1]];
             }
         }
     }
