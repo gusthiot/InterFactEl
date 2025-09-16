@@ -244,6 +244,11 @@ class ReportClients extends Report
                         $this->init($tab, $ids[$tab], $dimensions, $extends[$tab], $date);
                     }
                 }
+                if($tab == "user-client") {
+                    if($line[2] == 0) {
+                        continue;
+                    }
+                }
                 if(in_array($tab, ["user-jour", "user-mois", "user-client"])) {
                     if(!in_array($line[2], $this->tabs[$tab]["results"][$ids[$tab]]["users"])) {
                         $this->tabs[$tab]["results"][$ids[$tab]]["users"][] = $line[2];

@@ -689,7 +689,10 @@ abstract class Report
     function totalCsvLink(string $csvKey, string $notBeNull): string
     {
         $first = array_key_first($this->totalCsvData["results"]);
-        $withMonths = array_key_exists("mois", $this->totalCsvData["results"][$first]);
+        $withMonths = false;
+        if($first) {
+            $withMonths = array_key_exists("mois", $this->totalCsvData["results"][$first]);
+        }
         $totalCsv = $this->csvHeader($this->totalCsvData["dimensions"], $this->totalCsvData["operations"], $withMonths);
         foreach($this->totalCsvData["results"] as $line) {
             if(floatval($line[$notBeNull]) > 0) {
