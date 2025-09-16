@@ -18,7 +18,23 @@ class ReportClients extends Report
      * @var array
      */
     private array $totalU;
+
+    private array $weeks;
         
+    /**
+     * total clients classes changes
+     *
+     * @var array
+     */
+    private array $totalChange;
+
+    /**
+     * clients classes
+     *
+     * @var array
+     */
+    private array $changeClients;
+
     /**
      * Class constructor
      *
@@ -31,6 +47,9 @@ class ReportClients extends Report
         parent::__construct($plateforme, $to, $from);
         $this->totalC = [];
         $this->totalU = [];
+        $this->weeks = [];
+        $this->totalChange = [];
+        $this->changeClients = [];
         $this->reportKey = 'statdate';
         $this->reportColumns = ["client-code", "client-class", "user-sciper", "date"];
         $this->tabs = [
@@ -40,8 +59,7 @@ class ReportClients extends Report
                 "dimensions" => array_merge($this::DATE_DIM, ["day", "week-nbr"]),
                 "operations" => ["stat-nbuser-d", "stat-nbuser-w"],
                 "formats" => ["int", "int"],
-                "results" => [],
-                "weeks" => []
+                "results" => []
             ],
             "user-mois" => [
                 "title" => "nbre utilisateurs par mois",
@@ -236,24 +254,33 @@ class ReportClients extends Report
                         $this->tabs[$tab]["results"][$ids[$tab]]["clients"][] = $line[0];
                     }
                 }
-                if($tab == "user-jour") {
-                    $weekYear = $this->weekYear($date);
-                    if(!in_array($line[2], $this->tabs[$tab]["weeks"][$weekYear][$date->format('W')])) {
-                        $this->tabs[$tab]["weeks"][$weekYear][$date->format('W')][] = $line[2];
-                    }
-                }
-                if($tab == "user-mois") {
-                    $this->putInNext($tab, $ids[$tab], "users", $line[2]);
-                }
-                if($tab == "client-mois") {
-                    $this->putInNext($tab, $ids[$tab], "clients", $line[0]);
-                }
             }
+
+            $weekYear = $this->weekYear($date);
+            if(!in_array($line[2], $this->weeks[$weekYear][$date->format('W')])) {
+                $this->weeks[$weekYear][$date->format('W')][] = $line[2];
+            }
+
+            $this->putInNext("user-mois", $date->format('Y-m'), "users", $line[2]);
+            $this->putInNext("client-mois", $date->format('Y-m'), "clients", $line[0]);
+
             if($line[2] != 0 && !in_array($line[2], $this->totalU)) {
                 $this->totalU[] = $line[2];
             }
             if(!in_array($line[0], $this->totalC)) {
                 $this->totalC[] = $line[0];
+            }
+
+            if(array_key_exists($line[0], $this->changeClients)) {
+                if(!in_array($line[1], $this->changeClients[$line[0]])) {
+                    $this->changeClients[$line[0]][] = $line[1];
+                    if(!in_array($line[0], $this->totalChange)) {
+                        $this->totalChange[] = $line[0];
+                    }
+                }
+            }
+            else {
+                $this->changeClients[$line[0]] = [$line[1]];
             }
         }
     }
@@ -279,11 +306,11 @@ class ReportClients extends Report
 
         if($tab == "user-jour") {
             $weekYear = $this->weekYear($date);
-            if(!array_key_exists($weekYear, $this->tabs[$tab]["weeks"])) {
-                $this->tabs[$tab]["weeks"][$weekYear] = [];
+            if(!array_key_exists($weekYear, $this->weeks)) {
+                $this->weeks[$weekYear] = [];
             }
-            if(!array_key_exists($date->format('W'), $this->tabs[$tab]["weeks"][$weekYear])) {
-                $this->tabs[$tab]["weeks"][$weekYear][$date->format('W')] = [];
+            if(!array_key_exists($date->format('W'), $this->weeks[$weekYear])) {
+                $this->weeks[$weekYear][$date->format('W')] = [];
             }
         }
 
@@ -436,8 +463,7 @@ class ReportClients extends Report
                     mkdir($dirRun."/REPORT/");
                 }
                 $monthArray = $this->generate();
-                $columns = $this->reportColumns;
-                Csv::write($reportFile, array_merge($this->getColumnsNames($columns), $monthArray));
+                Csv::write($reportFile, array_merge($this->getColumnsNames(), $monthArray));
 
             }
             else {
@@ -452,10 +478,10 @@ class ReportClients extends Report
                 if($i == 1) {
                     $dateTI = new DateTimeImmutable($line[3]);            
                     $weekYear = $this->weekYear($dateTI);
-                    if(array_key_exists($weekYear, $this->tabs["user-jour"]["weeks"])) {
-                        if(array_key_exists($dateTI->format('W'), $this->tabs["user-jour"]["weeks"][$weekYear])) {
-                            if(!in_array($line[2], $this->tabs["user-jour"]["weeks"][$weekYear][$dateTI->format('W')])) {
-                                $this->tabs["user-jour"]["weeks"][$weekYear][$dateTI->format('W')][] = $line[2];
+                    if(array_key_exists($weekYear, $this->weeks)) {
+                        if(array_key_exists($dateTI->format('W'), $this->weeks[$weekYear])) {
+                            if(!in_array($line[2], $this->weeks[$weekYear][$dateTI->format('W')])) {
+                                $this->weeks[$weekYear][$dateTI->format('W')][] = $line[2];
                             }
                         }
                     }
@@ -468,8 +494,8 @@ class ReportClients extends Report
             $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-d"] = count($data["users"]);
                 $dateTI = new DateTimeImmutable($jour);
                 if($dateTI->format('w') == 0) {
-                    if(array_key_exists($dateTI->format('W'), $this->tabs["user-jour"]["weeks"][$dateTI->format('Y')])) {
-                        $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = count($this->tabs["user-jour"]["weeks"][$dateTI->format('Y')][$dateTI->format('W')]);
+                    if(array_key_exists($dateTI->format('W'), $this->weeks[$dateTI->format('Y')])) {
+                        $this->tabs["user-jour"]["results"][$jour]["stat-nbuser-w"] = count($this->weeks[$dateTI->format('Y')][$dateTI->format('W')]);
                     }
                 }
                 else {
@@ -504,6 +530,25 @@ class ReportClients extends Report
         $title = '<div class="total">Statistiques nombre utilisateurs et clients : '.$this->period().' </div>';
         $title .= '<div class="subtotal">Nombre de clients = '.$this->format(count($this->totalC), "int").'</div>';
         $title .= '<div class="subtotal">Nombre d\'utilisateurs = '.$this->format(count($this->totalU), "int").'</div>';
+        $change = count($this->totalChange);
+        if($change > 0) {
+            if($change == 1) {
+                $sentence = "1 client a changé de classe";
+            }
+            else {
+                $sentence = $change." clients ont changé de classes";
+            }
+            $title .= '<div>
+                            <svg class="icon red" aria-hidden="true">
+                                <use xlink:href="#alert-triangle"></use>
+                            </svg>
+                            '.$sentence.' sur la période
+                            <svg class="icon red" aria-hidden="true">
+                                <use xlink:href="#alert-triangle"></use>
+                            </svg>
+                        
+                        </div>';
+        }
         echo $this->templateDisplay($title, true, ["user-jour", "user-mois", "client-mois"]);
     }
 

@@ -123,7 +123,7 @@ class ReportRabais extends Report
     /**
      * maps report data for tabs tables and csv 
      *
-     * @param array $montantsArray report data
+     * @param array $rabaisArray report data
      * @return void
      */
     function mapping(array $rabaisArray): void

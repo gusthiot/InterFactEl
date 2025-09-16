@@ -144,7 +144,7 @@ class ReportRuns extends Report
     /**
      * maps report data for tabs tables and csv 
      *
-     * @param array $montantsArray report data
+     * @param array $runsArray report data
      * @return void
      */
     function mapping(array $runsArray): void

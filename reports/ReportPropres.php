@@ -114,11 +114,10 @@ class ReportPropres extends Report
         return $pltfArray;
     }
 
-
     /**
      * maps report data for tabs tables and csv 
      *
-     * @param array $montantsArray report data
+     * @param array $pltfArray report data
      * @return void
      */
     function mapping(array $pltfArray): void 

@@ -19,7 +19,7 @@ abstract class Report
     const CODEK_DIM = ["item-codeK", "item-textK"];
     const SERVICE_DIM = ["item-text2K", "oper-note"];
     const PROJET_DIM = ["proj-id", "proj-nbr", "proj-name"];
-    const OPER_DIM = ["oper-sciper", "oper-name", "oper-first", "date", "flow-type"];
+    const OPER_DIM = ["oper-sciper", "oper-name", "oper-first"];
     const DATE_DIM = ["year", "month"];
 
     /**
@@ -75,9 +75,9 @@ abstract class Report
     /**
      * report file prefix name(s)
      *
-     * @var mixed
+     * @var string
      */
-    protected mixed $reportKey;
+    protected string $reportKey;
 
     /**
      * report file columns
@@ -434,34 +434,14 @@ abstract class Report
      */
     function processReportFile(): void
     {
-        if(is_array($this->reportKey)) {
-            foreach($this->reportKey as $key) {
-                $this->processOneReport($key, true);
-            }
-        }
-        else {
-            $this->processOneReport($this->reportKey);
-        }
-    }
-
-    /**
-     * processes one simplified report file, if not existing
-     *
-     * @param string $key report key name
-     * @param boolean $multiple if it's one report among more or not
-     * @return void
-     */
-    function processOneReport(string $key, bool $multiple=false): void
-    {
         $monthArray = [];
-        $reportFile = $this->report->getCsvUrl($this->dirRun, $this->factel, $key);
+        $reportFile = $this->report->getCsvUrl($this->dirRun, $this->factel, $this->reportKey);
         if(!file_exists($reportFile)) {
             if(!file_exists($this->dirRun."/REPORT/")) {
                 mkdir($this->dirRun."/REPORT/");
             }
-            $multiple ? $monthArray = $this->generate($key) : $monthArray = $this->generate();
-            $multiple ? $columns = $this->reportColumns[$key] : $columns = $this->reportColumns;
-            Csv::write($reportFile, array_merge($this->getColumnsNames($columns), $monthArray));
+            $monthArray = $this->generate();
+            Csv::write($reportFile, array_merge($this->getColumnsNames(), $monthArray));
 
         }
         else {
@@ -470,21 +450,19 @@ abstract class Report
                 $monthArray[] = explode(";", $lines[$i]);
             }
         }
-
-        $multiple ? $this->mapping($monthArray, $key) : $this->mapping($monthArray);
+        $this->mapping($monthArray);
 
     }
 
     /**
      * returns the columns names from their keys
      *
-     * @param array $columns columns keys
      * @return array
      */
-    function getColumnsNames(array $columns): array 
+    function getColumnsNames(): array 
     {
         $names = [];
-        foreach($columns as $column) {
+        foreach($this->reportColumns as $column) {
             $names[] = $this->paramtext->getParam($column);
         }
         return [$names];

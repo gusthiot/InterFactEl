@@ -13,6 +13,20 @@ class ReportTransactions extends Report
     private int $totalT;
     
     /**
+     * total clients classes changes
+     *
+     * @var array
+     */
+    private array $totalChange;
+
+    /**
+     * clients classes
+     *
+     * @var array
+     */
+    private array $changeClients;
+
+    /**
      * Class constructor
      *
      * @param string $plateforme reports for this given plateform
@@ -23,6 +37,8 @@ class ReportTransactions extends Report
     { 
         parent::__construct($plateforme, $to, $from);
         $this->totalT = 0;
+        $this->totalChange = [];
+        $this->changeClients = [];
         $this->reportKey = 'stattran';
         $this->reportColumns = ["client-code", "user-sciper", "flow-type", "transac-nbr"];
         $this->tabs = [
@@ -193,7 +209,7 @@ class ReportTransactions extends Report
     /**
      * maps report data for tabs tables and csv 
      *
-     * @param array $montantsArray report data
+     * @param array $transArray report data
      * @return void
      */
     function mapping(array $transArray): void
@@ -256,6 +272,17 @@ class ReportTransactions extends Report
                 $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $line[4];
             }
             $this->totalT += $line[4];
+            if(array_key_exists($line[0], $this->changeClients)) {
+                if(!in_array($line[1], $this->changeClients[$line[0]])) {
+                    $this->changeClients[$line[0]][] = $line[1];
+                    if(!in_array($line[0], $this->totalChange)) {
+                        $this->totalChange[] = $line[0];
+                    }
+                }
+            }
+            else {
+                $this->changeClients[$client] = [$line[1]];
+            }
         }
     }
 
@@ -282,6 +309,25 @@ class ReportTransactions extends Report
         $title .= '<div class="subtotal">Nombre total de transactions = '.$this->format($this->totalT, "int").'</div>';
         $title .= '<div class="subtotal">Nombre de clients = '.$this->format($nbClients, "int").'</div>';
         $title .= '<div class="subtotal">Nombre d’utilisateurs = '.$this->format($nbUsers, "int").'</div>';
+        $change = count($this->totalChange);
+        if($change > 0) {
+            if($change == 1) {
+                $sentence = "1 client a changé de classe";
+            }
+            else {
+                $sentence = $change." clients ont changé de classes";
+            }
+            $title .= '<div>
+                            <svg class="icon red" aria-hidden="true">
+                                <use xlink:href="#alert-triangle"></use>
+                            </svg>
+                            '.$sentence.' sur la période
+                            <svg class="icon red" aria-hidden="true">
+                                <use xlink:href="#alert-triangle"></use>
+                            </svg>
+                        
+                        </div>';
+        }
         echo $this->templateDisplay($title, true);
     }
 

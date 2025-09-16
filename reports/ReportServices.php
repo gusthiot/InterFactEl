@@ -72,11 +72,10 @@ class ReportServices extends Report
         return $servicesArray;
     }
 
-
     /**
      * maps report data for tabs tables and csv 
      *
-     * @param array $montantsArray report data
+     * @param array $servicesArray report data
      * @return void
      */
     function mapping(array $servicesArray): void

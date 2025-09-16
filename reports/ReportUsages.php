@@ -294,7 +294,7 @@ class ReportUsages extends Report
     /**
      * maps report data for tabs tables and csv 
      *
-     * @param array $montantsArray report data
+     * @param array $usagesArray report data
      * @return void
      */
     function mapping(array $usagesArray): void
