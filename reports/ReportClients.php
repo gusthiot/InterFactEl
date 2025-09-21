@@ -260,13 +260,16 @@ class ReportClients extends Report
                     }
                 }
             }
+            
+            if($line[2] != 0) {
+                $weekYear = $this->weekYear($date);
+                if(!in_array($line[2], $this->weeks[$weekYear][$date->format('W')])) {
+                    $this->weeks[$weekYear][$date->format('W')][] = $line[2];
+                }
 
-            $weekYear = $this->weekYear($date);
-            if(!in_array($line[2], $this->weeks[$weekYear][$date->format('W')])) {
-                $this->weeks[$weekYear][$date->format('W')][] = $line[2];
+                $this->putInNext("user-mois", $date->format('Y-m'), "users", $line[2]);
             }
-
-            $this->putInNext("user-mois", $date->format('Y-m'), "users", $line[2]);
+            
             $this->putInNext("client-mois", $date->format('Y-m'), "clients", $line[0]);
 
             if($line[2] != 0 && !in_array($line[2], $this->totalU)) {
