@@ -377,16 +377,16 @@ class ReportUsages extends Report
                     if(!array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
                         $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
                     }
-                    if($line[3] == "K1") {
-                        $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-runcae"];
-                    }
+
                     if(in_array($tab, ["use-machine-categorie", "use-categorie"])) {
                         $this->tabs[$tab]["results"][$ids[$tab]]["transac-usage"] += $values["transac-usage"];
+                        $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-usage"];
                     }
                     else {
                         if($line[3] == "K1") {
                             $this->tabs[$tab]["results"][$ids[$tab]]["stat-hmach"] += $values["transac-usage"];
                             $this->tabs[$tab]["results"][$ids[$tab]]["stat-run"] += $values["transac-runcae"];
+                            $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-runcae"];
                         }
                         if($line[3] == "K2" && $tab == "par-machine") {
                             $this->tabs[$tab]["results"][$ids[$tab]]["stat-hoper"] += $values["transac-usage"];

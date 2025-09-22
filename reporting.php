@@ -54,20 +54,23 @@ include("includes/lock.php");
             <div id="report-tiles">
             <?php
             $tiles = [
-                ["concatenation", "Concaténer", "one"],
-                ["montants", "Montants facturés", "one"],
+            //    ["concatenation", "Concaténer", "one"],
+                ["montants", "Facturation", "one"],
                 ["rabais", "Rabais & Subsides", "one"],
-                ["consommations", "Montants <br/> Consommations <br/> plateforme", "three"],
-                ["runs", "Statistiques <br/> durées runs machines", "three"],
-                ["usages", "Statistiques <br/> d’utilisation machines", "three"],
+                ["clients", "Nombre Clients <br/> & Utilisateurs", "two"],
+                ["transactions", "Statistiques <br/> Transactions", "two"],
+                
+                ["usages", "Statistiques <br/> Utilisation machines", "three"],
                 ["consommables", "Statistiques <br/> Consommables", "two"],
                 ["services", "Statistiques <br/> Services", "two"],
                 ["penalites", "Statistiques <br/> Pénalités", "two"],
-                ["transactions", "Statistiques <br/> Transactions", "two"],
-                ["operateur", "Statistiques <br/> Heures opérateurs", "two"],
-                ["plateforme", "Statistiques <br/> projets plateforme", "two"],
-                ["clients", "Nombre clients <br/> et utilisateurs", "two"],
+                
                 ["propres", "Consommations <br/> propres Plateforme", "two"],
+                ["operateur", "Statistiques <br/> Heures opérateurs", "two"],
+                ["plateforme", "Statistiques <br/> Projets plateforme", "two"],
+                ["runs", "Statistiques <br/> Runs machines", "two"],
+
+                //["consommations", "Montants <br/> Consommations <br/> plateforme", "three"],
                 ["t1", "Extrait T1 Facturation (facture)", "three"],
                 ["t2", "Extrait T2 Facturation (annexe)", "three"],
                 ["t3f", "Extrait T3 Facturation (détails)", "three"],
