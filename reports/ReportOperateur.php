@@ -52,6 +52,10 @@ class ReportOperateur extends Report
      */
     function prepare(): void
     {
+        $this->loadCategories();
+        $this->loadGroupes();
+        $this->prepareMachines();
+        $this->loadMachinesGroupes();
         $this->prepareUsers();
 
         $this->processReportFile();

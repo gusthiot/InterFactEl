@@ -429,7 +429,11 @@ table#tarifs td:nth-child(1) { width: 20%; }
 
 #report-tiles {
   padding: 20px;
-  text-align: center;
+}
+
+.report-chapter {
+  margin: 10px;
+  clear: both;
 }
 
 table.report-table th {

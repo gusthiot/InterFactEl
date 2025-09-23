@@ -45,7 +45,7 @@ include("includes/lock.php");
                 ?>
                 
                 <div class="index-primary">
-                    <h3 class="">Supervision</h3>
+                    <h3>Supervision</h3>
                     <div class="tiles">
                         <div type="button" id="download-config" class="tile center-one">
                             <p>Download CONFIG files</p>
@@ -69,12 +69,12 @@ include("includes/lock.php");
                 if(DATA_GEST) {
                     ?>             
                     <div class="index-primary">                  
-                        <h3 class="">Gestion</h3>
+                        <h3>Gestion</h3>
                         <?php
                         if(!empty(DATA_GEST['facturation'])) {
                             ?>   
                             <div class="index-secondary">  
-                                <h5 class="">Facturation</h5>
+                                <h5>Facturation</h5>
                                 <div class="tiles">
                                 <?php
                                 foreach(DATA_GEST['facturation'] as $plateforme => $name) {
@@ -95,7 +95,7 @@ include("includes/lock.php");
                         if(!empty(DATA_GEST['tarifs'])) {
                             ?>      
                             <div class="index-secondary">                
-                                <h5 class="">Tarifs</h5>
+                                <h5>Tarifs</h5>
                                 <div class="tiles">
                                 <?php
                                 foreach(DATA_GEST['tarifs'] as $plateforme => $name) {
@@ -135,7 +135,7 @@ include("includes/lock.php");
                         if(!empty(DATA_GEST['reporting'])) {
                             ?>      
                             <div class="index-secondary">  
-                                <h5 class="">Reporting</h5>
+                                <h5>Reporting</h5>
                                 <div class="tiles">
                                 <?php
                                 foreach(DATA_GEST['reporting'] as $plateforme => $name) {
@@ -159,7 +159,7 @@ include("includes/lock.php");
                 }
             ?>
             <div class="index-primary">
-                <h3 class="">Outils</h3>
+                <h3>Outils</h3>
                 <div class="tiles">
                     <label class="tile center-one">
                         <form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >

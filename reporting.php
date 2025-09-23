@@ -22,6 +22,18 @@ $dir = DATA.$plateforme;
 
 include("includes/lock.php");
 
+function displayTile($tiles) 
+{
+    foreach($tiles as $tile) {
+    echo '<div type="button" id="'.$tile[0].'" class="select-period tile center-'.$tile[2].'">
+            <p class="title">'.$tile[1].'</p>
+            <svg class="icon feather icon-tile" aria-hidden="true">
+                <use xlink:href="#anchor"></use>
+            </svg>
+        </div>';
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -52,41 +64,64 @@ include("includes/lock.php");
             <?php }
             ?>
             <div id="report-tiles">
-            <?php
-            $tiles = [
-            //    ["concatenation", "Concaténer", "one"],
-                ["montants", "Facturation", "one"],
-                ["rabais", "Rabais & Subsides", "one"],
-                ["clients", "Nombre Clients <br/> & Utilisateurs", "two"],
-                ["transactions", "Statistiques <br/> Transactions", "two"],
-                
-                ["usages", "Statistiques <br/> Utilisation machines", "three"],
-                ["consommables", "Statistiques <br/> Consommables", "two"],
-                ["services", "Statistiques <br/> Services", "two"],
-                ["penalites", "Statistiques <br/> Pénalités", "two"],
-                
-                ["propres", "Consommations <br/> propres Plateforme", "two"],
-                ["operateur", "Statistiques <br/> Heures opérateurs", "two"],
-                ["plateforme", "Statistiques <br/> Projets plateforme", "two"],
-                ["runs", "Statistiques <br/> Runs machines", "two"],
-
-                //["consommations", "Montants <br/> Consommations <br/> plateforme", "three"],
-                ["t1", "Extrait T1 Facturation (facture)", "three"],
-                ["t2", "Extrait T2 Facturation (annexe)", "three"],
-                ["t3f", "Extrait T3 Facturation (détails)", "three"],
-                ["t3s", "Extrait T3 Statistiques (détails)", "three"]
-            ];
-            foreach($tiles as $tile) {
-            ?>
-                <div type="button" id="<?= $tile[0] ?>" class="select-period tile center-<?= $tile[2] ?>">
-                    <p class="title"><?= $tile[1] ?></p>
-                    <svg class="icon feather icon-tile" aria-hidden="true">
-                        <use xlink:href="#anchor"></use>
-                    </svg>
+                <div class="report-chapter">
+                    <h5>Clients & Utilisateurs</h5>
+                    <div class="tiles">
+                    <?php
+                        $tiles = [
+                        //    ["concatenation", "Concaténer", "one"],
+                            ["montants", "Facturation", "one"],
+                            ["rabais", "Rabais & Subsides", "one"],
+                            ["clients", "Nombre Clients <br/> & Utilisateurs", "two"],
+                            ["transactions", "Statistiques <br/> Transactions", "two"]
+                        ];
+                        displayTile($tiles);
+                    ?>
+                    </div>
                 </div>
-            <?php
-            }
-            ?>
+                <div class="report-chapter">
+                    <h5>Prestations</h5>
+                    <div class="tiles">
+                    <?php
+                        $tiles = [
+                            ["usages", "Statistiques <br/> Utilisation machines", "three"],
+                            ["consommables", "Statistiques <br/> Consommables", "two"],
+                            ["services", "Statistiques <br/> Services", "two"],
+                            ["penalites", "Statistiques <br/> Pénalités", "two"]
+                        ];
+                        displayTile($tiles);
+                    ?>
+                    </div>
+                </div>
+                <div class="report-chapter">
+                    <h5>Plateforme</h5>
+                    <div class="tiles">
+                    <?php
+                        $tiles = [           
+                            ["propres", "Consommations <br/> propres Plateforme", "two"],
+                            ["operateur", "Statistiques <br/> Heures opérateurs", "two"],
+                            ["plateforme", "Statistiques <br/> Projets plateforme", "two"],
+                            ["runs", "Statistiques <br/> Runs machines", "two"]
+                            //["consommations", "Montants <br/> Consommations <br/> plateforme", "three"]
+                        ];
+                        displayTile($tiles);
+                    ?>
+                    </div>
+                </div>
+                <div class="report-chapter">
+                    <h5>Extraits</h5>
+                    <div class="tiles">
+                    <?php
+                        $tiles = [
+                            ["t1", "Extrait T1 Facturation (facture)", "three"],
+                            ["t2", "Extrait T2 Facturation (annexe)", "three"],
+                            ["t3f", "Extrait T3 Facturation (détails)", "three"],
+                            ["t3s", "Extrait T3 Statistiques (détails)", "three"]
+                        ];
+                        displayTile($tiles);
+                    ?>
+                    </div>
+                </div>
             </div>
             <div id="back"><a href="#">
                 <svg class="icon feather" aria-hidden="true">

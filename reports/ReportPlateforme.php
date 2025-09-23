@@ -82,8 +82,12 @@ class ReportPlateforme extends Report
             foreach($loopArray as $id=>$mu) {
                 $ids = explode("--", $id);
                 $itemGrp = $this->machinesGroupes[$ids[1]]["item-grp"];
-                $pltfArray[] = [$ids[0], $itemGrp, "K1", $mu[0]];
-                $pltfArray[] = [$ids[0], $itemGrp, "K2", $mu[1]];
+                if($mu[0] > 0) {
+                    $pltfArray[] = [$ids[0], $itemGrp, "K1", $mu[0]];
+                }
+                if($mu[1] > 0) {
+                    $pltfArray[] = [$ids[0], $itemGrp, "K2", $mu[1]];
+                }
             }
         }
         else {
@@ -162,7 +166,9 @@ class ReportPlateforme extends Report
         foreach($pltfArray as $line) {
             $projet = $this->comptes[$line[0]];
             if(floatval($this->factel) < 7) {
-                $projet["proj-nbr"] = ""; 
+                if(!array_key_exists("proj-nbr", $projet)) {
+                    $projet["proj-nbr"] = "";
+                }
             }
             $groupe = $this->groupes[$line[1]];
             $itemId = $groupe["item-id-".$line[2]];
@@ -170,19 +176,20 @@ class ReportPlateforme extends Report
             $codeK = ["item-codeK"=>$line[2], "item-textK"=>$this->paramtext->getParam("item-".$line[2])];
             $extends = [$projet, $groupe, $categorie, $codeK];
             $dimensions = [$this::PROJET_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM];
+            $id = $line[0]."-".$line[2]; 
 
-            if(!array_key_exists($line[0], $this->tabs["par-projet"]["results"])) {
-                $this->tabs["par-projet"]["results"][$line[0]] = [];
+            if(!array_key_exists($id, $this->tabs["par-projet"]["results"])) {
+                $this->tabs["par-projet"]["results"][$id] = [];
                 foreach($dimensions as $pos=>$dimension) {
                     foreach($dimension as $d) {
-                        $this->tabs["par-projet"]["results"][$line[0]][$d] = $extends[$pos][$d];
+                        $this->tabs["par-projet"]["results"][$id][$d] = $extends[$pos][$d];
                     }
                 }
                 foreach($this->tabs["par-projet"]["operations"] as $operation) {
-                    $this->tabs["par-projet"]["results"][$line[0]][$operation] = 0;
+                    $this->tabs["par-projet"]["results"][$id][$operation] = 0;
                 }
             }
-            $this->tabs["par-projet"]["results"][$line[0]]["transac-usage"] += $line[3];
+            $this->tabs["par-projet"]["results"][$id]["transac-usage"] += $line[3];
         }
     }
 
