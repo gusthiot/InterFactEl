@@ -35,9 +35,6 @@ if(isset($_POST["from"]) && isset($_POST["to"]) && isset($_POST["plate"]) && iss
         case "rabais":
             $report = new ReportRabais($plateforme, $_POST["to"], $_POST["from"]);
             break;
-        case "consommations":
-            $report = new ReportConsommations($plateforme, $_POST["to"], $_POST["from"]);
-            break;
         case "runs":
             $report = new ReportRuns($plateforme, $_POST["to"], $_POST["from"]);
             break;

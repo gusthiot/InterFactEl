@@ -14,8 +14,9 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
     $choices = [];
     $html = "";
     switch($_POST["type"]) {
-        case "consommations":
         case "penalites":
+        case "t3f":
+        case "t3s":
             $vMin = 7.0;
             break;
         case "propres":
@@ -23,9 +24,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
             break;
         case "t1":
         case "t2":
-        case "t3f":
-        case "t3s":
-            $vMin = 9.1;
+            $vMin = 9.0;
             break;
         case "services":
             $vMin = 11.0;

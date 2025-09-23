@@ -28,7 +28,7 @@ function displayTile($tiles)
     echo '<div type="button" id="'.$tile[0].'" class="select-period tile center-'.$tile[2].'">
             <p class="title">'.$tile[1].'</p>
             <svg class="icon feather icon-tile" aria-hidden="true">
-                <use xlink:href="#anchor"></use>
+                <use xlink:href="'.$tile[3].'"></use>
             </svg>
         </div>';
     }
@@ -69,11 +69,10 @@ function displayTile($tiles)
                     <div class="tiles">
                     <?php
                         $tiles = [
-                        //    ["concatenation", "Concaténer", "one"],
-                            ["montants", "Facturation", "one"],
-                            ["rabais", "Rabais & Subsides", "one"],
-                            ["clients", "Nombre Clients <br/> & Utilisateurs", "two"],
-                            ["transactions", "Statistiques <br/> Transactions", "two"]
+                            ["montants", "Facturation", "one", "#dollar-sign"],
+                            ["rabais", "Rabais & Subsides", "one", "#gift"],
+                            ["clients", "Nombre Clients <br/> & Utilisateurs", "two", "#users"],
+                            ["transactions", "Statistiques <br/> Transactions", "two", "#trending-up"]
                         ];
                         displayTile($tiles);
                     ?>
@@ -84,10 +83,10 @@ function displayTile($tiles)
                     <div class="tiles">
                     <?php
                         $tiles = [
-                            ["usages", "Statistiques <br/> Utilisation machines", "three"],
-                            ["consommables", "Statistiques <br/> Consommables", "two"],
-                            ["services", "Statistiques <br/> Services", "two"],
-                            ["penalites", "Statistiques <br/> Pénalités", "two"]
+                            ["usages", "Statistiques <br/> Utilisation machines", "three", "#trending-up"],
+                            ["consommables", "Statistiques <br/> Consommables", "two", "#trending-up"],
+                            ["services", "Statistiques <br/> Services", "two", "#trending-up"],
+                            ["penalites", "Statistiques <br/> Pénalités", "two", "#trending-up"]
                         ];
                         displayTile($tiles);
                     ?>
@@ -98,11 +97,10 @@ function displayTile($tiles)
                     <div class="tiles">
                     <?php
                         $tiles = [           
-                            ["propres", "Consommations <br/> propres Plateforme", "two"],
-                            ["operateur", "Statistiques <br/> Heures opérateurs", "two"],
-                            ["plateforme", "Statistiques <br/> Projets plateforme", "two"],
-                            ["runs", "Statistiques <br/> Runs machines", "two"]
-                            //["consommations", "Montants <br/> Consommations <br/> plateforme", "three"]
+                            ["propres", "Consommations <br/> propres Plateforme", "two", "#shopping-cart"],
+                            ["operateur", "Statistiques <br/> Heures opérateurs", "two", "#clock"],
+                            ["plateforme", "Statistiques <br/> Projets plateforme", "two", "#star"],
+                            ["runs", "Statistiques <br/> Runs machines", "two", "#anchor"]
                         ];
                         displayTile($tiles);
                     ?>
@@ -113,10 +111,10 @@ function displayTile($tiles)
                     <div class="tiles">
                     <?php
                         $tiles = [
-                            ["t1", "Extrait T1 Facturation (facture)", "three"],
-                            ["t2", "Extrait T2 Facturation (annexe)", "three"],
-                            ["t3f", "Extrait T3 Facturation (détails)", "three"],
-                            ["t3s", "Extrait T3 Statistiques (détails)", "three"]
+                            ["t1", "Extrait T1 Facturation (facture)", "three", "#filter"],
+                            ["t2", "Extrait T2 Facturation (annexe)", "three", "#filter"],
+                            ["t3f", "Extrait T3 Facturation (détails)", "three", "#filter"],
+                            ["t3s", "Extrait T3 Statistiques (détails)", "three", "#filter"]
                         ];
                         displayTile($tiles);
                     ?>

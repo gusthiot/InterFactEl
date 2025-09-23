@@ -25,12 +25,6 @@ class ConcatT
             "discount-bonus", "subsid-bonus"]
     ];
 
-    const NAMES = [
-        "t1" => "Transaction1",
-        "t2" => "Transaction2",
-        "t3" => "Transaction3"
-    ];
-
     const KEYS = [
         "t1" => "T1",
         "t2" => "T2",
@@ -46,16 +40,13 @@ class ConcatT
 
     static function run($from, $to, $plateforme, $type)
     {
-        $abrev = DATA_GEST['reporting'][$plateforme];
         $bilansStats = new BSFile("../bilans-stats.json", "Bilans_Stats");
         if(strlen($type) == 2) {
             $columns = self::COLUMNS[$type];
-            $nom = self::NAMES[$type];
             $key = self::KEYS[$type];
         }
         else {
             $columns = self::COLUMNS["t3"];
-            $nom = self::NAMES["t3"];
             $key = self::KEYS["t3"];
         }
         $date = $from;
@@ -69,7 +60,7 @@ class ConcatT
                 foreach($columns as $label) {
                     $line[] = $paramtext->getParam($label);
                 }
-                $content[] = $line;
+                $content[] = Csv::formatLine($line);
             }
             $month = substr($date, 4, 2);
             $year = substr($date, 0, 4);
@@ -90,23 +81,37 @@ class ConcatT
                     }
                 }
             }
-
-            $suf = "_".$abrev."_".$year."_".$month."_".basename($dirVersion).".csv";
             
-            $path = $dirRun."/Bilans_Stats/".$nom.$suf;
-            $csv = Csv::extract($path);
+            $infos = Info::load($dirRun);
+            $factel = $infos["FactEl"][2];
+            $name = $bilansStats->findCsvUrl($dirRun, $factel, $key);
+            $csv = Csv::extract($name);
             if(!empty($csv)) {
-                $infos = Info::load($dirRun);
-                $factel = $infos["FactEl"][2];
                 $positions = $bilansStats->getColumns($factel, $key);
                 for($i=1;$i<count($csv);$i++) {
                     $tab = explode(";", $csv[$i]);
                     $cond = true;
-                    if(($type == "t3f") && !(($tab[$positions["invoice-year"]] == $tab[$positions["editing-year"]]) && ($tab[$positions["invoice-month"]] == $tab[$positions["editing-month"]]))) {
-                        $cond = false;
-                    }
-                    if(($type == "t3s") && !(($tab[$positions["year"]] == $tab[$positions["editing-year"]]) && ($tab[$positions["month"]] == $tab[$positions["editing-month"]]))) {
-                        $cond = false;
+                    if(in_array($type, ["t3f", "t3s"])) {
+                        if($factel <= 9) {
+                            $eY = $year;
+                            $eM = $month;
+                            $datetime = explode(" ", $tab[$positions["transac-date"]]);
+                            $parts = explode("-", $datetime[0]);
+                            $tY = $parts[0];
+                            $tM = $parts[1];
+                        }
+                        else {
+                            $eY = $tab[$positions["editing-year"]];
+                            $eM = $tab[$positions["editing-month"]];
+                            $tY = $tab[$positions["year"]];
+                            $tM = $tab[$positions["month"]];
+                        }
+                        if(($type == "t3f") && !(($tab[$positions["invoice-year"]] == $eY) && ($tab[$positions["invoice-month"]] == $eM))) {
+                            $cond = false;
+                        }
+                        if(($type == "t3s") && !(($tY == $eY) && ($tM == $eM))) {
+                            $cond = false;
+                        }
                     }
                     if($cond) {
                         $line = [];
@@ -114,11 +119,29 @@ class ConcatT
                             if(array_key_exists($column, $positions)) {
                                 $line[] = $tab[$positions[$column]];
                             }
-                            else {
-                                $line[] = "";
+                            else {   
+                                switch($column) {
+                                    case "editing-year":
+                                        $line[] = $eY;
+                                        break;
+                                    case "editing-month":
+                                        $line[] = $eM;
+                                        break;
+                                    case "year":
+                                        $line[] = $tY;
+                                        break;
+                                    case "month":
+                                        $line[] = $tM;
+                                        break;
+                                    case "transac-valid":
+                                        $line[] = "1";
+                                        break;
+                                    default:
+                                        $line[] = "";
+                                }
                             }
                         }
-                        $content[] = $line;
+                        $content[] = Csv::formatLine($line);
                     }                   
                 }
             }
