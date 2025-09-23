@@ -9,7 +9,6 @@ require_once("../reports/BSFile.php");
 require_once("../reports/Report.php");
 require_once("../reports/ReportMontants.php");
 require_once("../reports/ReportRabais.php");
-require_once("../reports/ReportConsommations.php");
 require_once("../reports/ReportRuns.php");
 require_once("../reports/ReportUsages.php");
 require_once("../reports/ReportConsommables.php");

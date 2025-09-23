@@ -176,7 +176,7 @@ class ReportPlateforme extends Report
             $codeK = ["item-codeK"=>$line[2], "item-textK"=>$this->paramtext->getParam("item-".$line[2])];
             $extends = [$projet, $groupe, $categorie, $codeK];
             $dimensions = [$this::PROJET_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM];
-            $id = $line[0]."-".$line[2]; 
+            $id = $line[0]."-".$line[2]."-".$itemId; 
 
             if(!array_key_exists($id, $this->tabs["par-projet"]["results"])) {
                 $this->tabs["par-projet"]["results"][$id] = [];
