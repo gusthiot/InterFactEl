@@ -17,11 +17,16 @@ class ReportPlateforme extends Report
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'statpltf';
         $this->reportColumns = ["proj-id", "item-grp", "item-codeK", "transac-usage"];
+        $this->totalCsvData = [
+            "dimensions" => array_merge($this::PROJET_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM),
+            "operations" => ["transac-usage"],
+            "results" => []
+        ];
         $this->tabs = [
             "par-projet" => [
                 "title" => "Stats par Projet",
-                "columns" => ["proj-nbr", "proj-name", "item-name", "item-textK"],
-                "dimensions" => array_merge($this::PROJET_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM),
+                "columns" => ["proj-nbr", "proj-name", "item-name"],
+                "dimensions" => array_merge($this::PROJET_DIM, $this::CATEGORIE_DIM),
                 "operations" => ["transac-usage"],
                 "formats" => ["float"],
                 "results" => []
@@ -174,9 +179,12 @@ class ReportPlateforme extends Report
             $itemId = $groupe["item-id-".$line[2]];
             $categorie = $this->categories[$itemId];
             $codeK = ["item-codeK"=>$line[2], "item-textK"=>$this->paramtext->getParam("item-".$line[2])];
-            $extends = [$projet, $groupe, $categorie, $codeK];
-            $dimensions = [$this::PROJET_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM];
-            $id = $line[0]."-".$line[2]."-".$line[1]."-".$itemId; 
+            $extends = [$projet, $categorie];
+            $dimensions = [$this::PROJET_DIM, $this::CATEGORIE_DIM];
+            $extends_glob = [$projet, $groupe, $categorie, $codeK];
+            $dimensions_glob = [$this::PROJET_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM];
+            $id = $line[0]."-".$line[2]."-".$itemId; 
+            $id_glob = $line[0]."-".$line[2]."-".$line[1]."-".$itemId; 
 
             if(!array_key_exists($id, $this->tabs["par-projet"]["results"])) {
                 $this->tabs["par-projet"]["results"][$id] = [];
@@ -190,6 +198,16 @@ class ReportPlateforme extends Report
                 }
             }
             $this->tabs["par-projet"]["results"][$id]["transac-usage"] += $line[3];
+            // total csv
+            if(!array_key_exists($id_glob, $this->totalCsvData["results"])) {
+                $this->totalCsvData["results"][$id_glob] = ["transac-usage" => 0];            
+                foreach($dimensions_glob as $pos=>$dimension) {
+                    foreach($dimension as $d) {
+                        $this->totalCsvData["results"][$id_glob][$d] = $extends_glob[$pos][$d];
+                    }
+                }
+            }
+            $this->totalCsvData["results"][$id_glob]["transac-usage"] += $line[3];
         }
     }
 
@@ -201,6 +219,7 @@ class ReportPlateforme extends Report
     function display(): void
     {
         $title = '<div class="total">Statistiques plateforme : '.$this->period().' </div>';
+        $title .= $this->totalCsvLink("total-plateforme", "transac-usage");
         echo $this->templateDisplay($title);
     }
 
