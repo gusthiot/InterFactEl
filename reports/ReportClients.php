@@ -517,6 +517,9 @@ class ReportClients extends Report
                 if(array_key_exists("users-".$before."m", $this->tabs["user-mois"]["results"][$mois])) {
                     $this->tabs["user-mois"]["results"][$mois]["stat-nbuser-".$before."m"] = count($this->tabs["user-mois"]["results"][$mois]["users-".$before."m"]);
                 }
+                else {
+                    $this->tabs["user-mois"]["results"][$mois]["stat-nbuser-".$before."m"] = "";
+                }
             }
         }
         ksort($this->tabs["client-mois"]["results"]);
@@ -525,6 +528,9 @@ class ReportClients extends Report
             foreach([3, 6, 12] as $before) {
                 if(array_key_exists("clients-".$before."m", $this->tabs["client-mois"]["results"][$mois])) {
                     $this->tabs["client-mois"]["results"][$mois]["stat-nbclient-".$before."m"] = count($this->tabs["client-mois"]["results"][$mois]["clients-".$before."m"]);
+                }
+                else {
+                    $this->tabs["client-mois"]["results"][$mois]["stat-nbclient-".$before."m"] = "";
                 }
             }
         }

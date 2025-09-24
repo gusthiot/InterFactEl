@@ -711,6 +711,9 @@ abstract class Report
      */
     function format(mixed $val, string $format="fin"): string
     {
+        if($val == "") {
+            return "";
+        }
         switch($format) {
             case "int": 
                 return number_format(intval($val), 0, ".", "'");
