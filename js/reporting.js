@@ -76,7 +76,13 @@ $('#download-generated').on('click', function () {
 } );
 
 $(document).on("click", ".sort-text", function() {
-    sortTable(this, "text");
+    if($(this).text().includes("Operator") && ($(this).closest('table').attr('id') == "par-staff-date-table")) {
+        sortTable2(this, "text", 2, "desc");
+        sortTable(this, "text");
+    }
+    else {
+        sortTable(this, "text");
+    }
 });
 
 $(document).on("click", ".sort-number", function() {
@@ -85,8 +91,6 @@ $(document).on("click", ".sort-number", function() {
 
 function sortTable(th, type) {
     const columnIndex = $(th).parent().children().index($(th));
-    const tabId = $(th).closest('table').attr('id');
-    const table = document.getElementById(tabId);
     let dir = "asc";
     if($(th).hasClass('asc')) {
         $(th).removeClass('asc');
@@ -95,17 +99,23 @@ function sortTable(th, type) {
     else {
         $(th).addClass('asc');
     }
+    sortTable2(th, type, columnIndex, dir);
+}
+
+function sortTable2(th, type, columnIndex, dir) {
+    const tabId = $(th).closest('table').attr('id');
+    const table = document.getElementById(tabId);
     var rows = Array.prototype.slice.call(table.querySelectorAll("tbody > tr"));
 
     if(dir == "asc") {
         if(type == "number") {
             rows.sort(function(rowA, rowB) {
-                return getNum(rowA,columnIndex) - getNum(rowB,columnIndex);
+                return getNum(rowA, columnIndex) - getNum(rowB, columnIndex);
             });
         }
         else {
             rows.sort(function(rowA, rowB) {
-                return getTxt(rowA,columnIndex) < getTxt(rowB, columnIndex) ? -1 : 1;
+                return getTxt(rowA, columnIndex) < getTxt(rowB, columnIndex) ? -1 : 1;
             });
         }
         dir = "desc";
@@ -113,12 +123,12 @@ function sortTable(th, type) {
     else {
         if(type == "number") {
             rows.sort(function(rowA, rowB) {
-                return getNum(rowB,columnIndex) - getNum(rowA,columnIndex);
+                return getNum(rowB, columnIndex) - getNum(rowA, columnIndex);
             });
         }
         else {
             rows.sort(function(rowA, rowB) {
-                return getTxt(rowB,columnIndex) < getTxt(rowA, columnIndex) ? -1 : 1;
+                return getTxt(rowB, columnIndex) < getTxt(rowA, columnIndex) ? -1 : 1;
             });
         }
         dir = "asc";
