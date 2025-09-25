@@ -77,7 +77,13 @@ $('#download-generated').on('click', function () {
 
 $(document).on("click", ".sort-text", function() {
     if($(this).text().includes("Operator") && ($(this).closest('table').attr('id') == "par-staff-date-table")) {
-        sortTable2(this, "text", 2, "desc");
+        sortTable2(this, "text", 2, "asc");
+        if($(this).parent().children().index($(this)) == 0) {
+            sortTable2(this, "text", 1, "desc");
+        }
+        else {
+            sortTable2(this, "text", 0, "desc");
+        }
         sortTable(this, "text");
     }
     else {
