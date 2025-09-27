@@ -41,7 +41,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         foreach(globReverse($dirPrevMonth) as $dirPrevVersion) {
                 if (file_exists($dirPrevVersion."/".Lock::FILES['version'])) {
                     $sep = strrpos($dirPrevVersion, "/");
-                    $prevVersion = substr($dir, $sep+1);
+                    $prevVersion = substr($dirPrevVersion, $sep+1);
                     break;
                 }
         }

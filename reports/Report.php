@@ -437,12 +437,17 @@ abstract class Report
         $monthArray = [];
         $reportFile = $this->report->getCsvUrl($this->dirRun, $this->factel, $this->reportKey);
         if(!file_exists($reportFile)) {
-            if(!file_exists($this->dirRun."/REPORT/")) {
-                mkdir($this->dirRun."/REPORT/");
-            }
-            $monthArray = $this->generate();
-            Csv::write($reportFile, array_merge($this->getColumnsNames(), $monthArray));
+            if(floatval($this->factel) < 11.02) {
+                if(!file_exists($this->dirRun."/REPORT/")) {
 
+                    mkdir($this->dirRun."/REPORT/");
+                }
+                $monthArray = $this->generate();
+                Csv::write($reportFile, array_merge($this->getColumnsNames(), $monthArray));
+            }
+            else {
+                exit("le fichier ".$this->reportKey.".csv du mois ".$this->month."/".$this->year." n’a pas été créé en Python ");
+            }
         }
         else {
             $lines = Csv::extract($reportFile); 
