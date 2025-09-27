@@ -99,6 +99,11 @@ class ConcatT
                             $parts = explode("-", $datetime[0]);
                             $tY = $parts[0];
                             $tM = $parts[1];
+                            if($factel < 9) {
+                                if($plateforme != $tab[$positions["platf-code"]]) {
+                                    $cond = false;
+                                }
+                            }
                         }
                         else {
                             $eY = $tab[$positions["editing-year"]];
