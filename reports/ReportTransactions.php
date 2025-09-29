@@ -40,7 +40,7 @@ class ReportTransactions extends Report
         $this->totalChange = [];
         $this->changeClients = [];
         $this->reportKey = 'stattran';
-        $this->reportColumns = ["client-code", "user-sciper", "flow-type", "transac-nbr"];
+        $this->reportColumns = ["client-code", "client-class", "user-sciper", "flow-type", "transac-nbr"];
         $this->tabs = [
             "par-user" => [
                 "title" => "par Utilisateur",
