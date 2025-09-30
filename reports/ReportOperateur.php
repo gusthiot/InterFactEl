@@ -77,7 +77,7 @@ class ReportOperateur extends Report
                 $tab = explode(";", $lines[$i]);
                 $machId = $tab[$columns["mach-id"]];
                 $plateId = $this->getPlateformeFromMachine($machId);
-                if($plateId && ($plateId == $this->plateforme)) {
+                if($plateId && ($plateId == $this->plateforme) && $tab[$columns["Toper"]] > 0) {
                     $mu2 = $tab[$columns["Toper"]] / 60;
                     $datetime = explode(" ", $tab[$columns["transac-date"]]);
                     $id = $tab[$columns["oper-id"]]."--".$datetime[0]."--cae";
