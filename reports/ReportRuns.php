@@ -26,6 +26,10 @@ class ReportRuns extends Report
      */
     private bool $first;
 
+    private array $firstGroupes;
+    private array $firstMachinesGroupes;
+    private array $firstCategories;
+
     /**
      * Class constructor
      *
@@ -38,6 +42,9 @@ class ReportRuns extends Report
         parent::__construct($plateforme, $to, $from);
         $this->totalM = 0.0;
         $this->totalN = 0;
+        $this->firstMachinesGroupes = [];
+        $this->firstGroupes = [];
+        $this->firstCategories = [];
         $this->first = true;
         $this->reportKey = 'statmach';
         $this->reportColumns = ["mach-id", "transac-runtime", "runtime-N", "runtime-avg", "runtime-stddev"];
@@ -70,10 +77,18 @@ class ReportRuns extends Report
     function prepare(): void 
     {
         $this->prepareMachines();
+        $this->loadCategories();
+        $this->loadGroupes();
+        $this->loadMachinesGroupes();
         if($this->first) {
-            $this->loadCategories();
-            $this->loadGroupes();
-            $this->loadMachinesGroupes();
+            self::mergeInCsv('categorie', $this->firstCategories, self::CATEGORIE_KEY);
+            self::mergeInCsv('groupe', $this->firstGroupes, self::GROUPE_KEY);
+            if(floatval($this->factel) < 7) {
+                self::mergeInCsv('machgrp', $this->firstMachinesGroupes, self::MACHINE_KEY);
+            }
+            else {
+                self::mergeInCsv('machine', $this->firstMachinesGroupes, self::MACHINE_KEY);
+            }
             $this->first = false;
         }
 
@@ -141,6 +156,18 @@ class ReportRuns extends Report
         return $runsArray;
     }
 
+    function getFirstCategorieFromMachine(string $machId, string $itemK): array
+    {
+        $itemGrp = $this->firstMachinesGroupes[$machId]["item-grp"];
+        if($itemGrp != "0") {
+            $itemId = $this->firstGroupes[$itemGrp]["item-id-".$itemK];
+            if($itemId != "0") {
+                return $this->firstCategories[$itemId];
+            }
+        }
+        return [];
+    }
+
     /**
      * maps report data for tabs tables and csv 
      *
@@ -153,9 +180,9 @@ class ReportRuns extends Report
             $machine = $this->machines[$line[0]];
             $items = ["item-nbr"=>"0", "item-name"=>"0", "item-unit"=>"0"];
             $itemGrp = "0";
-            if(array_key_exists($line[0], $this->machinesGroupes)) {
-                $itemGrp = $this->machinesGroupes[$line[0]]["item-grp"];
-                $categorie = $this->getCategorieFromMachine($line[0], "K1");
+            if(array_key_exists($line[0], $this->firstMachinesGroupes)) {
+                $itemGrp = $this->firstMachinesGroupes[$line[0]]["item-grp"];
+                $categorie = $this->getFirstCategorieFromMachine($line[0], "K1");
                 if(!empty($categorie)) {
                     $items = ["item-nbr"=>$categorie["item-nbr"], "item-name"=>$categorie["item-name"], "item-unit"=>$categorie["item-unit"]];
                 }

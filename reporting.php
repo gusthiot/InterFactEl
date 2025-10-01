@@ -111,10 +111,10 @@ function displayTile($tiles)
                     <div class="tiles">
                     <?php
                         $tiles = [
-                            ["t1", "Extrait T1 Facturation (facture)", "three", "#filter"],
-                            ["t2", "Extrait T2 Facturation (annexe)", "three", "#filter"],
-                            ["t3f", "Extrait T3 Facturation (détails)", "three", "#filter"],
-                            ["t3s", "Extrait T3 Statistiques (détails)", "three", "#filter"]
+                            ["t1", "Extrait T1 Facturation <br/> (facture)", "three", "#filter"],
+                            ["t2", "Extrait T2 Facturation <br/> (annexe)", "three", "#filter"],
+                            ["t3f", "Extrait T3 Facturation <br/> (détails)", "three", "#filter"],
+                            ["t3s", "Extrait T3 Statistiques <br/> (détails)", "three", "#filter"]
                         ];
                         displayTile($tiles);
                     ?>
