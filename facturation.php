@@ -98,7 +98,7 @@ include("includes/lock.php");
                                     <?php } 
                                 }     
                                 if(IS_SUPER && TEST_MODE == "TEST") {   
-                                    echo uploader("Charger des archives", "ARCHIVE", $disabled);    
+                                    //echo uploader("Charger des archives", "ARCHIVE", $disabled);    
                                     $choices = [];
                                     if($first) {
                                         $title = "Charger une période";

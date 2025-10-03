@@ -27,7 +27,7 @@ if(isset($_POST['type'])) {
         checkPlateforme("facturation", $_POST["plate"]);
         $plateforme = $_POST['plate'];
     }
-
+/*
     if($type == "ARCHIVE") {
         if(!IS_SUPER || TEST_MODE != "TEST") {  
             $_SESSION['alert-danger'] = "wrong place, wrong user";
@@ -35,8 +35,8 @@ if(isset($_POST['type'])) {
             exit;
         }
     }
-
-    if($type != "ARCHIVE") {
+*/
+//    if($type != "ARCHIVE") {
         $lockProcess = Lock::load("../", "process");
         if(!is_null($lockProcess)) {
             $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';
@@ -49,7 +49,7 @@ if(isset($_POST['type'])) {
                 exit;
             }
         }
-    }
+//    }
  
     if(isset($_FILES[$type])) {
         if($_FILES[$type]["error"] == 0) {
@@ -64,11 +64,11 @@ if(isset($_POST['type'])) {
                         $msg = Zip::unzip($tmpFile, $tmpDir);
                         unlink($tmpFile);
                         if(empty($msg)) {
-                            if($type == "ARCHIVE") {
+                            /*if($type == "ARCHIVE") {
                                 State::recurseCopy($tmpDir, DATA.$plateforme);
                                 $_SESSION['alert-success'] = "Archive correctement chargée";
-                            }
-                            else { 
+                            }*/
+                            //else { 
                                 $messages = new Message();  
                                 if(!copy(CONFIG.ParamText::NAME, $tmpDir.ParamText::NAME)) {
                                     $msg .= "erreur de copie de ".ParamText::NAME;
@@ -153,7 +153,7 @@ if(isset($_POST['type'])) {
                                 else {
                                     $_SESSION['alert-danger'] = $msg;
                                 }
-                            }
+                            //}
                         }
                         else {
                             $_SESSION['alert-danger'] = $msg;
