@@ -91,9 +91,9 @@ ksort($clients);
                         <div id="reference"><?=$client['ref']?></div>
                             <div class="line">
                                 <table class="tableau">
-                                    <tr>
-                                        <td> Description </td>
-                                        <td> Net amount <br /> [CHF] </td>
+                                    <thead><tr>
+                                        <th> Description </th>
+                                        <th> Net amount <br /> [CHF] </th>
                                     </tr>
                                 <?php
                                 foreach($client['articles'] as $article) {
@@ -101,30 +101,30 @@ ksort($clients);
                                     <tr>
                                         <td> <?=$article['descr']?> <br /> <?=$article['texte']?> </td>
                                         <td id="toright"> <?=$article['net']?> </td>
-                                    </tr>
+                                    </tr></thead><tbody>
                                 <?php }
                                 ?>
                                     <tr>
                                         <td id="toright">Total [CHF] : </td>
                                         <td id="toright"><?=$client['total']?></td>
                                     </tr>
-                                </table> 
+                                </tbody></table>
                             </div>                                
-                            <div class="line">
+                            <div class="over">
                                 <table class="tableau">
-                                    <tr>
-                                        <td> N° facture </td>
+                                    <thead><tr>
+                                        <th> N° facture </th>
                                         <?php 
                                             $first = array_key_first($client['factures']);
                                             $cols = 1;
                                             if(array_key_exists("projet", $client['factures'][$first])) { 
                                                 $cols = 3;
                                         ?>
-                                            <td> N° compte - projet </td>
-                                            <td> Intitulé </td>
+                                            <th> N° compte - projet </th>
+                                            <th> Intitulé </th>
                                         <?php } ?>
-                                        <td> Net amount <br /> [CHF] </td>
-                                    </tr>
+                                        <th> Net amount <br /> [CHF] </th>
+                                    </tr></thead><tbody>
                                 <?php
                                 foreach($client['factures'] as $id => $facture) {
                                 ?>
@@ -142,7 +142,7 @@ ksort($clients);
                                         <td colspan="<?= $cols ?>" id="toright">Total [CHF] : </td>
                                         <td id="toright"><?=$client['total']?></td>
                                     </tr>
-                                </table> 
+                                </tbody></table>
                             </div>
                             <?php
                             if(array_key_exists("nom_zip", $client)) {
@@ -170,12 +170,12 @@ ksort($clients);
                             <?=$facture['ref']?> <br />
                         </div><br />
                         <table class="tableau">
-                            <tr>
-                                <td>N° Poste </td>
-                                <td> Name </td>
-                                <td> Description </td>
-                                <td> Net amount <br /> [CHF] </td>
-                            </tr> 
+                            <thead><tr>
+                                <th>N° Poste </th>
+                                <th> Name </th>
+                                <th> Description </th>
+                                <th> Net amount <br /> [CHF] </th>
+                            </tr></thead><tbody>
                             <?php
                             foreach($facture['postes'] as $poste) {
                             ?>
@@ -191,7 +191,7 @@ ksort($clients);
                                 <td colspan="3" id="toright">Total [CHF] : </td>
                                 <td id="toright"><?=$facture['total']?></td>
                             </tr>
-                        </table> 
+                        </tbody></table>
                         <?php
                         if(array_key_exists("nom_pdf", $facture)) {
                         ?>
