@@ -6,26 +6,29 @@
 class ReportRuns extends Report
 {
     /**
-     * total of hours
+     * Total of hours
      *
      * @var float
      */
     private float $totalM;
 
     /**
-     * total of runs
+     * Total of runs
      *
      * @var integer
      */
     private int $totalN;
 
     /**
-     * to load dimensions only from the last month
+     * To load dimensions only from the last month
      *
      * @var boolean
      */
     private bool $first;
 
+    /**
+     * Dimensions only from the last month
+     */
     private array $firstGroupes;
     private array $firstMachinesGroupes;
     private array $firstCategories;
@@ -70,7 +73,7 @@ class ReportRuns extends Report
     }
 
     /**
-     * prepares dimensions, generates report file if not exists and extracts its data
+     * Prepares dimensions, generates report file if not exists and extracts its data
      *
      * @return void
      */
@@ -96,7 +99,7 @@ class ReportRuns extends Report
     }
 
     /**
-     * generates report file and returns its data
+     * Generates report file and returns its data
      *
      * @return array
      */
@@ -156,6 +159,13 @@ class ReportRuns extends Report
         return $runsArray;
     }
 
+    /**
+     * Returns the categorie concerned by a grouped machine for an item K or empty array for the last month
+     *
+     * @param string $machId machine id
+     * @param string $itemK item K
+     * @return array
+     */
     function getFirstCategorieFromMachine(string $machId, string $itemK): array
     {
         $itemGrp = $this->firstMachinesGroupes[$machId]["item-grp"];
@@ -169,7 +179,7 @@ class ReportRuns extends Report
     }
 
     /**
-     * maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv 
      *
      * @param array $runsArray report data
      * @return void
@@ -226,7 +236,7 @@ class ReportRuns extends Report
     }
 
     /**
-     * returns average for the month
+     * Returns average for the month
      *
      * @param float $sum hours sum for the month
      * @param integer $num runs number for the month
@@ -241,7 +251,7 @@ class ReportRuns extends Report
     }
 
     /**
-     * returns standard deviation for the month
+     * Returns standard deviation for the month
      *
      * @param array $values values array for the month
      * @param float $avg average value for the month
@@ -261,7 +271,7 @@ class ReportRuns extends Report
     }
 
     /**
-     * returns average for the period
+     * Returns average for the period
      *
      * @param array $nums array of months runs numbers
      * @param array $avgs array of months average values
@@ -282,7 +292,7 @@ class ReportRuns extends Report
     }
 
     /**
-     * returns standard deviation for the period
+     * Returns standard deviation for the period
      *
      * @param array $nums array of months runs numbers
      * @param array $avgs array of months average values
@@ -305,7 +315,7 @@ class ReportRuns extends Report
     }
 
     /**
-     * displays title and tabs
+     * Displays title and tabs
      *
      * @return void
      */

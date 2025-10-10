@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ReportPlateforme class allows to generate reports about projects and staff
+ * ReportPlateforme class allows to generate reports about projects
  */
 class ReportPlateforme extends Report
 {
@@ -35,7 +35,7 @@ class ReportPlateforme extends Report
     }
 
     /**
-     * prepares dimensions, generates report file if not exists and extracts its data
+     * Prepares dimensions, generates report file if not exists and extracts its data
      *
      * @return void
      */
@@ -51,7 +51,7 @@ class ReportPlateforme extends Report
     }
 
     /**
-     * generates report file and returns its data
+     * Generates report file and returns its data
      *
      * @return array
      */
@@ -161,7 +161,7 @@ class ReportPlateforme extends Report
     }
 
     /**
-     * maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv 
      *
      * @param array $pltfArray report data
      * @return void
@@ -212,7 +212,7 @@ class ReportPlateforme extends Report
     }
 
     /**
-     * displays title and tabs
+     * Displays title and tabs
      *
      * @return void
      */

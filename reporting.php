@@ -22,7 +22,13 @@ $dir = DATA.$plateforme;
 
 include("includes/lock.php");
 
-function displayTile($tiles) 
+/**
+ * Displays html tiles from parameters
+ *
+ * @param array $tiles tiles parameters
+ * @return void
+ */
+function displayTile(array $tiles): void 
 {
     foreach($tiles as $tile) {
     echo '<div type="button" id="'.$tile[0].'" class="select-period tile center-'.$tile[2].'">

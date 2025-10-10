@@ -73,35 +73,35 @@ abstract class Report
     protected BSFile $report;
 
     /**
-     * report file prefix name(s)
+     * Report file prefix name(s)
      *
      * @var string
      */
     protected string $reportKey;
 
     /**
-     * report file columns
+     * Report file columns
      *
      * @var array
      */
     protected array $reportColumns;
 
     /**
-     * processed plateform
+     * Processed plateform
      *
      * @var string
      */
     protected string $plateforme;
 
     /**
-     * last month of the period
+     * Last month of the period
      *
      * @var string
      */
     protected string $to;
 
     /**
-     * first month of the period
+     * First month of the period
      *
      * @var string
      */
@@ -115,63 +115,63 @@ abstract class Report
     protected ParamText $paramtext;
 
     /**
-     * unclosed month if exists
+     * Unclosed month if exists
      *
      * @var string
      */
     protected string $open;
 
     /**
-     * processed month
+     * Processed month
      *
      * @var string
      */
     protected string $month;
 
     /**
-     * processed year
+     * Processed year
      *
      * @var string
      */
     protected string $year;
 
     /**
-     * processed run directory
+     * Processed run directory
      *
      * @var string
      */
     protected string $dirRun;
 
     /**
-     * processed facturation version
+     * Processed facturation version
      *
      * @var string
      */
     protected string $factel;
 
     /**
-     * processed "year-month"
+     * Processed "year-month"
      *
      * @var string
      */
     protected string $monthly;
 
     /**
-     * list of "year-month" for the period
+     * List of "year-month" for the period
      *
      * @var array
      */
     protected array $monthList;
 
     /**
-     * total csv data if needed
+     * Total csv data if needed
      *
      * @var array
      */
     protected array $totalCsvData;
 
     /**
-     * tabs data for tables and csv
+     * Tabs data for tables and csv
      *
      * @var array
      */
@@ -219,7 +219,7 @@ abstract class Report
      */
 
     /**
-     * merges clients on period
+     * Merges clients on period
      *
      * @return void
      */
@@ -229,7 +229,7 @@ abstract class Report
     }
 
     /**
-     * merges clients classes on period
+     * Merges clients classes on period
      *
      * @return void
      */
@@ -239,7 +239,7 @@ abstract class Report
     }
 
     /**
-     * merges clientclasse bridge on period, for V < 7
+     * Merges clientclasse bridge on period, for V < 7
      *
      * @return void
      */
@@ -251,7 +251,7 @@ abstract class Report
     }
 
     /**
-     * merges SAP articles on period
+     * Merges SAP articles on period
      *
      * @return void
      */
@@ -276,7 +276,7 @@ abstract class Report
     }
 
     /**
-     * merges users on period
+     * Merges users on period
      *
      * @return void
      */
@@ -300,7 +300,7 @@ abstract class Report
     }
 
     /**
-     * merges projects on period
+     * Merges projects on period
      *
      * @return void
      */
@@ -310,7 +310,7 @@ abstract class Report
     }
 
     /**
-     * merges prestations on period
+     * Merges prestations on period
      *
      * @return void
      */
@@ -364,7 +364,7 @@ abstract class Report
     }
 
     /**
-     * merges machines on period
+     * Merges machines on period
      *
      * @return void
      */
@@ -378,7 +378,7 @@ abstract class Report
      */
 
     /**
-     * loads groups for the month
+     * Loads groups for the month
      *
      * @return void
      */
@@ -389,7 +389,7 @@ abstract class Report
     }
 
     /**
-     * loads categories for the month
+     * Loads categories for the month
      *
      * @return void
      */
@@ -400,7 +400,7 @@ abstract class Report
     }
 
     /**
-     * loads machines groups for the month
+     * Loads machines groups for the month
      *
      * @return void
      */
@@ -417,7 +417,7 @@ abstract class Report
     }
 
     /**
-     * loads prestations for the month
+     * Loads prestations for the month
      *
      * @return void
      */
@@ -428,7 +428,7 @@ abstract class Report
     }
 
     /**
-     * processes simplified reports csv file
+     * Processes simplified reports csv file
      *
      * @return void
      */
@@ -460,7 +460,7 @@ abstract class Report
     }
 
     /**
-     * returns the columns names from their keys
+     * Returns the columns names from their keys
      *
      * @return array
      */
@@ -474,7 +474,7 @@ abstract class Report
     }
 
     /**
-     * returns the plateform concerned by a machine or false
+     * Returns the plateform concerned by a machine or false
      *
      * @param string $machId machine id
      * @return string
@@ -491,7 +491,7 @@ abstract class Report
     }
 
     /**
-     * returns the categorie concerned by a grouped machine for an item K or empty array
+     * Returns the categorie concerned by a grouped machine for an item K or empty array
      *
      * @param string $machId machine id
      * @param string $itemK item K
@@ -510,7 +510,7 @@ abstract class Report
     }
 
     /**
-     * returns user sciper from its id, 0 if id = 0
+     * Returns user sciper from its id, 0 if id = 0
      *
      * @param string $id user id
      * @return string
@@ -524,7 +524,7 @@ abstract class Report
     }
 
     /**
-     * maps sciper->id user
+     * Maps sciper->id user
      *
      * @return array
      */
@@ -538,7 +538,7 @@ abstract class Report
     }
 
     /**
-     * loops on all the period, one month after another, from the last to the first
+     * Loops on all the period, one month after another, from the last to the first
      *
      * @return void
      */
@@ -591,7 +591,7 @@ abstract class Report
     }
 
     /**
-     * finds complete filename for a Bilans&Stats file
+     * Finds complete filename for a Bilans&Stats file
      *
      * @param string $fileKey key to obtain the name prefix in json file
      * @return string complete filename or empty string
@@ -602,7 +602,7 @@ abstract class Report
     }
 
     /**
-     * adds data from csv file to array if not already exists
+     * Adds data from csv file to array if not already exists
      *
      * @param string $fileKey file key to get data from Json file
      * @param array $array array to merge in
@@ -627,7 +627,7 @@ abstract class Report
     }
     
     /**
-     * generates csv header
+     * Generates csv header
      *
      * @param array $dimensions dimensions columns keys
      * @param array $operations operations columns keys
@@ -654,7 +654,7 @@ abstract class Report
     }
     
     /**
-     * generates csv line
+     * Generates csv line
      *
      * @param array $dimensions dimensions columns keys
      * @param array $operations operations columns keys
@@ -685,7 +685,7 @@ abstract class Report
     }
 
     /**
-     * returns link for all data csv file
+     * Returns link for all data csv file
      *
      * @param string $csvKey csv link id
      * @param string $notBeNull the data, usually a final total, that should not be null if we want to generate the file
@@ -708,7 +708,7 @@ abstract class Report
     }
 
     /**
-     * returns formatted number
+     * Returns formatted number
      *
      * @param mixed $val number value in indetermined format
      * @param string $format expected format (int, fin(ancial) or float)
@@ -732,7 +732,7 @@ abstract class Report
     }
 
     /**
-     * returns period as text
+     * Returns period as text
      *
      * @return string
      */
@@ -742,7 +742,7 @@ abstract class Report
     }
 
     /**
-     * displays title and tabs with tables and csv links
+     * Displays title and tabs with tables and csv links
      *
      * @param string $mainTitle content of the title part
      * @param boolean $null if we accepts results = 0 or not
@@ -779,7 +779,7 @@ abstract class Report
     }
 
     /**
-     * generates tabs with tables and csv links
+     * Generates tabs with tables and csv links
      *
      * @param boolean $null if we accepts results = 0 or not
      * @param array $sort titles not allwed to be sorted

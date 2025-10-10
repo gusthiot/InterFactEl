@@ -6,21 +6,21 @@
 class ReportTransactions extends Report
 {
     /**
-     * total of transactions
+     * Total of transactions
      *
      * @var integer
      */
     private int $totalT;
     
     /**
-     * total clients classes changes
+     * Total clients classes changes
      *
      * @var array
      */
     private array $totalChange;
 
     /**
-     * clients classes
+     * Clients classes
      *
      * @var array
      */
@@ -103,7 +103,7 @@ class ReportTransactions extends Report
     }
 
     /**
-     * prepares dimensions, generates report file if not exists and extracts its data
+     * Prepares dimensions, generates report file if not exists and extracts its data
      *
      * @return void
      */
@@ -123,7 +123,7 @@ class ReportTransactions extends Report
     }
 
     /**
-     * generates report file and returns its data
+     * Generates report file and returns its data
      *
      * @return array
      */
@@ -207,7 +207,7 @@ class ReportTransactions extends Report
     }
 
     /**
-     * maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv 
      *
      * @param array $transArray report data
      * @return void
@@ -287,7 +287,7 @@ class ReportTransactions extends Report
     }
 
     /**
-     * displays title and tabs
+     * Displays title and tabs
      *
      * @return void
      */

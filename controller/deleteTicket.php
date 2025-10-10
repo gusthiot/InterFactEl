@@ -16,7 +16,13 @@ else {
 }
 header('Location: ../index.php');
 
-function delete($unique) 
+/**
+ * Deletes temporary ticket data
+ *
+ * @param string $unique unique temporary id
+ * @return void
+ */
+function delete(string $unique): void 
 {
     State::delDir(TEMP.$unique.'/');
     $_SESSION['alert-info'] = "Les données ont été effacées";

@@ -6,30 +6,35 @@
 class ReportClients extends Report
 {
     /**
-     * total number of clients
+     * Total number of clients
      *
      * @var array
      */
     private array $totalC;
 
     /**
-     * total number of users
+     * Total number of users
      *
      * @var array
      */
     private array $totalU;
 
+    /**
+     * Users by weeks
+     *
+     * @var array
+     */
     private array $weeks;
         
     /**
-     * total clients classes changes
+     * Total clients classes changes
      *
      * @var array
      */
     private array $totalChange;
 
     /**
-     * clients classes
+     * Clients classes
      *
      * @var array
      */
@@ -98,7 +103,7 @@ class ReportClients extends Report
     }
 
     /**
-     * prepares dimensions, generates report file if not exists and extracts its data
+     * Prepares dimensions, generates report file if not exists and extracts its data
      *
      * @return void
      */
@@ -118,7 +123,7 @@ class ReportClients extends Report
     }
 
     /**
-     * generates report file and returns its data
+     * Generates report file and returns its data
      *
      * @return array
      */
@@ -186,7 +191,7 @@ class ReportClients extends Report
     }
 
     /**
-     * maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv 
      *
      * @param array $clientArray report data
      * @return void
@@ -293,7 +298,18 @@ class ReportClients extends Report
         }
     }
 
-    function init($tab, $id, $dimensions, $extend, $date)
+
+    /**
+     * Initializes map for a new id
+     *
+     * @param string $tab given tab
+     * @param string $id new id
+     * @param array $dimensions dimensions
+     * @param array $extend extended data to fill dimensions
+     * @param DateTimeImmutable $date transaction date
+     * @return void
+     */
+    function init(string $tab, string $id, array $dimensions, array $extend, DateTimeImmutable $date): void
     {
         $this->tabs[$tab]["results"][$id] = [];            
         foreach($dimensions[$tab] as $pos=>$dimension) {
@@ -340,7 +356,16 @@ class ReportClients extends Report
         }
     }
 
-    function putInNext($tab, $date, $type, $value)
+    /**
+     * Completes dates coming after the transaction
+     *
+     * @param string $tab given tab
+     * @param string $date transaction date
+     * @param string $type users or clients
+     * @param string $value user or client id
+     * @return void
+     */
+    function putInNext(string $tab, string $date, string $type, string $value): void
     {
         foreach([3, 6, 12] as $before) {
             $ms = $date;
@@ -357,7 +382,16 @@ class ReportClients extends Report
         }
     }
 
-    function putInFrom($ecart, $tab, $type, $value)
+    /**
+     * Completes period dates with dates coming before the selected period if exist
+     *
+     * @param integer $ecart number of months before
+     * @param string $tab given tab
+     * @param string $type users or clients
+     * @param string $value user or client id
+     * @return void
+     */
+    function putInFrom(int $ecart, string $tab, string $type, string $value): void
     {
         $ms = substr($this->from, 0, 4)."-".substr($this->from, 4, 2);
         while(true) {
@@ -388,6 +422,12 @@ class ReportClients extends Report
         }
     }
 
+    /**
+     * Returns the next month as yyy-mm
+     *
+     * @param string $date current month
+     * @return string
+     */
     function nextDate(string $date): string
     {
         $tb = explode("-", $date);
@@ -396,7 +436,12 @@ class ReportClients extends Report
         return $y."-".$m;
     }
 
-
+    /**
+     * Returns the previous month as yyyy-mm
+     *
+     * @param string $date current month
+     * @return string
+     */
     function previousDate(string $date): string
     {
         $tb = explode("-", $date);
@@ -405,6 +450,12 @@ class ReportClients extends Report
         return $y."-".$m;
     }
 
+    /**
+     * Is given date later than last month of the period
+     *
+     * @param string $date given date
+     * @return boolean
+     */
     function isLater(string $date): bool
     {
         $tb = explode("-", $date);
@@ -423,6 +474,12 @@ class ReportClients extends Report
         }
     }
 
+    /**
+     * Returns the year given the week number
+     *
+     * @param DateTimeImmutable $date given date
+     * @return string
+     */
     function weekYear(DateTimeImmutable $date): string
     {          
         $year = $date->format('Y');
@@ -436,7 +493,7 @@ class ReportClients extends Report
     }
 
     /**
-     * displays title and tabs
+     * Displays title and tabs
      *
      * @return void
      */

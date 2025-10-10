@@ -1,7 +1,13 @@
 <?php
 
+/**
+ * ConcaT class allows to generate concatenation of Transactions csv files
+ */
 class ConcatT
 {
+    /**
+     * Columns extracted from the different Transactions csv files
+     */
     const COLUMNS = [
         "t1" => ["invoice-year", "invoice-month", "invoice-id", "invoice-ref", "invoice-type",
             "client-code", "client-sap", "client-name", "client-idclass", "client-class",
@@ -25,12 +31,18 @@ class ConcatT
             "discount-bonus", "subsid-bonus"]
     ];
 
+    /**
+     * File key for the different Transactions csv files
+     */
     const KEYS = [
         "t1" => "T1",
         "t2" => "T2",
         "t3" => "T3"
     ];
 
+    /**
+     * Save file name for the different Transactions csv files
+     */
     const SAVES = [
         "t1" => "T1.csv",
         "t2" => "T2.csv",
@@ -38,7 +50,16 @@ class ConcatT
         "t3s" => "T3stat.csv"
     ];
 
-    static function run($from, $to, $plateforme, $type)
+    /**
+     * Runs the concatenation
+     *
+     * @param string $from first month of the period
+     * @param string $to last month of the period
+     * @param string $plateforme concatenation for this given plateform
+     * @param string $type give type in : t1, t2, t3f, t3s
+     * @return void
+     */
+    static function run(string $from, string $to, string $plateforme, string $type): void
     {
         $bilansStats = new BSFile("../bilans-stats.json", "Bilans_Stats");
         if(strlen($type) == 2) {

@@ -30,7 +30,7 @@ class ReportServices extends Report
     }
 
     /**
-     * prepares dimensions, generates report file if not exists and extracts its data
+     * Prepares dimensions, generates report file if not exists and extracts its data
      *
      * @return void
      */
@@ -44,7 +44,7 @@ class ReportServices extends Report
     }
 
     /**
-     * generates report file and returns its data
+     * Generates report file and returns its data
      *
      * @return array
      */
@@ -73,7 +73,7 @@ class ReportServices extends Report
     }
 
     /**
-     * maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv 
      *
      * @param array $servicesArray report data
      * @return void
@@ -120,7 +120,7 @@ class ReportServices extends Report
     }
 
     /**
-     * displays title and tabs
+     * Displays title and tabs
      *
      * @return void
      */

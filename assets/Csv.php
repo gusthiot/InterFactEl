@@ -75,7 +75,13 @@ class Csv
         }
     } 
 
-    static function formatLine($row)
+    /**
+     * Formats row characters
+     *
+     * @param array|string $row given row
+     * @return array|string
+     */
+    static function formatLine(array|string $row): array|string
     {
         $row = str_replace('"', '', $row);
         if(mb_check_encoding($row, 'UTF-8')) {

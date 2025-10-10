@@ -6,7 +6,7 @@
 class ReportRabais extends Report
 {
     /**
-     * total amount
+     * Total amount
      *
      * @var float
      */
@@ -51,7 +51,7 @@ class ReportRabais extends Report
     }
 
     /**
-     * prepares dimensions, generates report file if not exists and extracts its data
+     * Prepares dimensions, generates report file if not exists and extracts its data
      *
      * @return void
      */
@@ -66,7 +66,7 @@ class ReportRabais extends Report
     }
     
     /**
-     * generates report file and returns its data
+     * Generates report file and returns its data
      *
      * @return array
      */
@@ -121,7 +121,7 @@ class ReportRabais extends Report
     }
 
     /**
-     * maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv 
      *
      * @param array $rabaisArray report data
      * @return void
@@ -214,7 +214,7 @@ class ReportRabais extends Report
     }
 
     /**
-     * displays title and tabs
+     * Displays title and tabs
      *
      * @return void
      */

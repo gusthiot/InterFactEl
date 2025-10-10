@@ -6,28 +6,28 @@
 class ReportUsages extends Report
 {
     /**
-     * total of hours
+     * Total of hours
      *
      * @var float
      */
     private float $totalM;
 
     /**
-     * total of runs
+     * Total of runs
      *
      * @var integer
      */
     private int $totalN;
 
     /**
-     * total machines categories changes
+     * Total machines categories changes
      *
      * @var array
      */
     private array $totalChange;
 
     /**
-     * machines categories
+     * Machines categories
      *
      * @var array
      */
@@ -106,12 +106,20 @@ class ReportUsages extends Report
                 "operations" => ["transac-usage"],
                 "formats" => ["float", "int"],
                 "results" => []
+            ], 
+            "use-categorie-classe"=>[
+                "title" => "Utilisation par Catégorie par Classe",
+                "columns" => ["item-nbr", "item-name", "item-unit", "item-textK", "client-labelclass"],
+                "dimensions" => array_merge($this::CATEGORIE_DIM, $this::CODEK_DIM, $this::CLASSE_DIM),
+                "operations" => ["transac-usage"],
+                "formats" => ["float", "int"],
+                "results" => []
             ]
         ];
     }
 
     /**
-     * prepares dimensions, generates report file if not exists and extracts its data
+     * Prepares dimensions, generates report file if not exists and extracts its data
      *
      * @return void
      */
@@ -129,7 +137,7 @@ class ReportUsages extends Report
     }
 
     /**
-     * generates report file and returns its data
+     * Generates report file and returns its data
      *
      * @return array
      */
@@ -276,7 +284,7 @@ class ReportUsages extends Report
     }
 
     /**
-     * returns categories data for a machine and an item K
+     * Returns categories data for a machine and an item K
      *
      * @param string $machId machine id
      * @param string $itemK item K
@@ -292,7 +300,7 @@ class ReportUsages extends Report
     }
 
     /**
-     * maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv 
      *
      * @param array $usagesArray report data
      * @return void
@@ -324,7 +332,8 @@ class ReportUsages extends Report
                 "par-client-user" => $line[0]."-".$line[2], 
                 "par-client-classe" => $line[0]."-".$line[1],
                 "use-machine-categorie" => $line[4]."-".$line[3]."-".$line[5]."-".$catName."-".$line[7],
-                "use-categorie"=> $line[5]."-".$catName."-".$line[7]
+                "use-categorie"=> $line[5]."-".$catName."-".$line[7],
+                "use-categorie-classe"=> $line[5]."-".$catName."-".$line[7]."-".$line[1]
             ];
             $extends = [
                 "par-machine"=>[$machine],
@@ -333,7 +342,8 @@ class ReportUsages extends Report
                 "par-client-user" => [$client, $user], 
                 "par-client-classe" => [$client, $classe], 
                 "use-machine-categorie" => [$machine, $codeK, $categorie], 
-                "use-categorie"=>[$categorie, $codeK]
+                "use-categorie"=>[$categorie, $codeK], 
+                "use-categorie-classe"=>[$categorie, $codeK, $classe]
             ];
             $dimensions = [
                 "par-machine"=>[$this::MACHINE_DIM], 
@@ -342,11 +352,12 @@ class ReportUsages extends Report
                 "par-client-user" => [$this::CLIENT_DIM, $this::USER_DIM], 
                 "par-client-classe" => [$this::CLIENT_DIM, $this::CLASSE_DIM], 
                 "use-machine-categorie" => [$this::MACHINE_DIM, $this::CODEK_DIM, $this::CATEGORIE_DIM], 
-                "use-categorie"=>[$this::CATEGORIE_DIM, $this::CODEK_DIM]
+                "use-categorie"=>[$this::CATEGORIE_DIM, $this::CODEK_DIM], 
+                "use-categorie-classe"=>[$this::CATEGORIE_DIM, $this::CODEK_DIM, $this::CLASSE_DIM]
             ];
 
             foreach($this->tabs as $tab=>$data) {
-                if(in_array($tab, ["use-machine-categorie", "use-categorie"]) || $line[3] == "K1" || ($tab == "par-machine" && ($line[3] == "K2" || $line[3] == "K3"))) {
+                if(in_array($tab, ["use-machine-categorie", "use-categorie", "use-categorie-classe"]) || $line[3] == "K1" || ($tab == "par-machine" && ($line[3] == "K2" || $line[3] == "K3"))) {
                     if($tab == "par-machine" && $line[3] == "K1") {
                         $this->totalM += $values["transac-usage"];
                         $this->totalN += $values["transac-runcae"];
@@ -378,7 +389,7 @@ class ReportUsages extends Report
                         $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
                     }
 
-                    if(in_array($tab, ["use-machine-categorie", "use-categorie"])) {
+                    if(in_array($tab, ["use-machine-categorie", "use-categorie", "use-categorie-classe"])) {
                         $this->tabs[$tab]["results"][$ids[$tab]]["transac-usage"] += $values["transac-usage"];
                         $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] += $values["transac-usage"];
                     }
@@ -410,7 +421,7 @@ class ReportUsages extends Report
     }
 
     /**
-     * displays title and tabs
+     * Displays title and tabs
      *
      * @return void
      */

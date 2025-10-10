@@ -1,32 +1,82 @@
 <?php
 
+/**
+ * BSFile class allows to manipulates a json file from a run directory
+ */
 class BSFile
 {
-    protected $structure;
-    protected $subDir;
+    /**
+     * Content of the file
+     *
+     * @var array
+     */
+    protected array $structure;
 
+    /** 
+     * Run sub-directory
+     *
+     * @var string
+     */
+    protected string $subDir;
+
+    /**
+     * Class constructor
+     *
+     * @param string $url Json file relative url
+     * @param string $subDir run sub-directory
+     */
     function __construct(string $url, string $subDir) 
     {
         $this->structure = self::getJsonStructure($url);
         $this->subDir = $subDir;
     }
 
-    function getPrefix($factel, $fileKey)
+    /**
+     * Returns file prefix
+     *
+     * @param string $factel processed facturation version
+     * @param string $fileKey key for a given file
+     * @return string
+     */
+    function getPrefix(string $factel, string $fileKey): string
     {
         return $this->structure[$factel][$fileKey]['prefix'];
     }
 
-    function getColumns($factel, $fileKey)
+    /**
+     * Returns array of file columns positions
+     *
+     * @param string $factel processed facturation version
+     * @param string $fileKey key for a given file
+     * @return array
+     */
+    function getColumns(string $factel, string $fileKey): array
     {
         return $this->structure[$factel][$fileKey]['columns'];
     }
 
-    function getCsvUrl($dirRun, $factel, $fileKey)
+    /**
+     * Returns csv file url
+     *
+     * @param string $dirRun run directory
+     * @param string $factel processed facturation version
+     * @param string $fileKey key for a given file
+     * @return string
+     */
+    function getCsvUrl(string $dirRun, string $factel, string $fileKey): string
     {
         return $dirRun."/".$this->subDir."/".$this->getPrefix($factel, $fileKey).".csv";
     }
 
-    function findCsvUrl($dirRun, $factel, string $fileKey): string
+    /**
+     * Finds csv file url when the name is more complex
+     *
+     * @param string $dirRun run directory
+     * @param string $factel processed facturation version
+     * @param string $fileKey key for a given file
+     * @return string
+     */
+    function findCsvUrl(string $dirRun, string $factel, string $fileKey): string
     {
         $files = scandir($dirRun."/".$this->subDir."/");
         $prefix = $this->getPrefix($factel, $fileKey);
@@ -38,7 +88,7 @@ class BSFile
         return "";
     }
     /**
-     * extracts content from Json structure file
+     * Extracts content from Json structure file
      *
      * @param string $url Json file relative url
      * @return array content or empty array

@@ -6,7 +6,7 @@
 class ReportMontants extends Report
 {
     /**
-     * total amount
+     * Total amount
      *
      * @var float
      */
@@ -88,7 +88,7 @@ class ReportMontants extends Report
     }
 
     /**
-     * prepares dimensions, generates report file if not exists and extracts its data
+     * Prepares dimensions, generates report file if not exists and extracts its data
      *
      * @return void
      */
@@ -103,7 +103,7 @@ class ReportMontants extends Report
     }
 
     /**
-     * generates report file and returns its data
+     * Generates report file and returns its data
      *
      * @return array
      */
@@ -202,7 +202,7 @@ class ReportMontants extends Report
     }
 
     /**
-     * generates amounts line
+     * Generates amounts line
      *
      * @param array $montantsArray array containing lines for the report
      * @param float $montant total amount
@@ -231,7 +231,7 @@ class ReportMontants extends Report
     }
 
     /**
-     * maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv 
      *
      * @param array $montantsArray report data
      * @return void
@@ -305,7 +305,7 @@ class ReportMontants extends Report
     }
 
     /**
-     * displays title and tabs
+     * Displays title and tabs
      *
      * @return void
      */
