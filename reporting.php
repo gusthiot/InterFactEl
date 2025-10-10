@@ -50,7 +50,8 @@ function displayTile(array $tiles): void
 
     <body>
         <div class="container-fluid">
-            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />        
+            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
+            <input type="hidden" name="disabled" id="disabled" value="<?= $disabled ?>" />
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>

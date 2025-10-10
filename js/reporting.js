@@ -1,18 +1,20 @@
 let report = "";
 
 $('.select-period').on('click', function () {
-    $('.tile').removeClass('selected-tile');
-    $($(this).attr('id')).addClass('selected-tile');
-    report = $(this).attr('id');
-    const title = $('.title', this).text();
-    $.post("controller/selectPeriod.php", {plate: $('#plate').val(), type: report}, function (data) {
-        $('#report-tiles').hide();
-        $('#report-period').html(data);
-        $('#report-period').show();
-        $('#report-title').html('<div id="date-title">'+title+'</div>');
-        $('#report-title').show();
-        $('#back').show();
-    });
+    if($('#disabled').val() == "") {
+        $('.tile').removeClass('selected-tile');
+        $($(this).attr('id')).addClass('selected-tile');
+        report = $(this).attr('id');
+        const title = $('.title', this).text();
+        $.post("controller/selectPeriod.php", {plate: $('#plate').val(), type: report}, function (data) {
+            $('#report-tiles').hide();
+            $('#report-period').html(data);
+            $('#report-period').show();
+            $('#report-title').html('<div id="date-title">'+title+'</div>');
+            $('#report-title').show();
+            $('#back').show();
+        });
+    }
 } );
 
 $(document).on("change", "#from", function() {
@@ -57,7 +59,7 @@ $(document).on("click", "#generate", function() {
     $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
     $(".lockable").prop('disabled', true);
     $('#back').hide();
-    if(["concatenation", "t1", "t2", "t3f", "t3s"].includes(report)) {
+    if(["t1", "t2", "t3f", "t3s"].includes(report)) {
         window.location.href = "controller/generateConcatenation.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val()+"&type="+report;
     }
     else {

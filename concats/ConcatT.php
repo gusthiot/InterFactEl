@@ -44,10 +44,10 @@ class ConcatT
      * Save file name for the different Transactions csv files
      */
     const SAVES = [
-        "t1" => "T1.csv",
-        "t2" => "T2.csv",
-        "t3f" => "T3fact.csv",
-        "t3s" => "T3stat.csv"
+        "t1" => "T1",
+        "t2" => "T2",
+        "t3f" => "T3fact",
+        "t3s" => "T3stat"
     ];
 
     /**
@@ -72,6 +72,7 @@ class ConcatT
         }
         $date = $from;
         $first = true;
+        $tmpFile = TEMP.USER."-".self::SAVES[$type]."-".time().".csv";
         while(true) {
             $content = [];
             if($first) {
@@ -172,7 +173,7 @@ class ConcatT
                 }
             }
 
-            Csv::append(TEMP.self::SAVES[$type], $content);
+            Csv::append($tmpFile, $content);
 
             if($date == $to) {
                 break;
@@ -185,6 +186,6 @@ class ConcatT
                 $date++;
             }
         }
-        Lock::saveByName("../".USER.".lock", TEMP.self::SAVES[$type]);
+        Lock::saveByName("../".USER.".lock", $tmpFile);
     }
 }
