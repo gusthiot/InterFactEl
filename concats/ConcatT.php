@@ -82,7 +82,7 @@ class ConcatT
                 foreach($columns as $label) {
                     $line[] = $paramtext->getParam($label);
                 }
-                $content[] = Csv::formatLine($line);
+                $_SESSION['encoding'] == 'UTF-8' ? $content[] = $line : $content[] = Csv::formatLine($line);
             }
             $month = substr($date, 4, 2);
             $year = substr($date, 0, 4);
@@ -168,7 +168,7 @@ class ConcatT
                                 }
                             }
                         }
-                        $content[] = Csv::formatLine($line);
+                        $_SESSION['encoding'] == 'UTF-8' ? $content[] = $line : $content[] = Csv::formatLine($line);
                     }                   
                 }
             }

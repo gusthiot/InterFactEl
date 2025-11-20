@@ -636,21 +636,22 @@ abstract class Report
      */
     function csvHeader(array $dimensions, array $operations, bool $withMonths = true): string 
     {
+        $_SESSION['separator'] == "pv" ? $sep = ';' : $sep = ',';
         $header = "";
         $first = true;
         foreach($dimensions as $dimension) {
-                $first ? $first = false : $header .= ";";
+                $first ? $first = false : $header .= $sep;
                 $header .= $this->paramtext->getParam($dimension);
         }
         foreach($operations as $operation) {
-            $header .= ";".$this->paramtext->getParam($operation);
+            $header .= $sep.$this->paramtext->getParam($operation);
         }
         if($withMonths) {
             foreach($this->monthList as $monthly) {
-                $header .= ";".$monthly;
+                $header .= $sep.$monthly;
             }
         }
-        return Csv::formatLine($header);
+        return $_SESSION['encoding'] == 'UTF-8' ? $header : Csv::formatLine($header);
     }
     
     /**
@@ -664,24 +665,25 @@ abstract class Report
      */
     function csvLine(array $dimensions, array $operations, array $line, bool $withMonths = true): string 
     {
+        $_SESSION['separator'] == "pv" ? $sep = ';' : $sep = ',';
         $data = "";
         $first = true;
         foreach($dimensions as $dimension) {
-            $first ? $first = false : $data .= ";";
+            $first ? $first = false : $data .= $sep;
             $data .= $line[$dimension];
         }
         foreach($operations as $operation) {
-            $data .= ";".$line[$operation];
+            $data .= $sep.$line[$operation];
         }
         if($withMonths) {
             foreach($this->monthList as $monthly) {
-                $data .= ";";
+                $data .= $sep;
                 if(array_key_exists($monthly, $line["mois"])) {
                     $data .= $line["mois"][$monthly];
                 }
             }
         }
-        return Csv::formatLine($data);
+        return $_SESSION['encoding'] == 'UTF-8' ? $data : Csv::formatLine($data);
     }
 
     /**

@@ -47,7 +47,6 @@ function displayTile(array $tiles): void
     <head>
         <?php include("includes/header.php");?> 
     </head>
-
     <body>
         <div class="container-fluid">
             <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
@@ -70,6 +69,57 @@ function displayTile(array $tiles): void
                 <div class="text-center"><?= $dlTxt ?></div>
             <?php }
             ?>
+            <div id="report-parameters">
+                <svg class="icon feather icon-parameters" aria-hidden="true">
+                    <use xlink:href="#settings"></use>
+                </svg>
+                <div id="report-inputs" >
+                    <div class="custom-controls-inline">
+                        Séparateur : &nbsp; <div class="custom-control custom-radio">
+                            <input type="radio" value="pv" id="pv" name="separator" class="custom-control-input"
+                        <?php
+                                if($_SESSION['separator'] == "pv") {
+                                    echo "checked";
+                                }
+                        ?>
+                            >
+                            <label class="custom-control-label" for="pv">Point-virgule</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" value="v" id="v" name="separator" class="custom-control-input"
+                        <?php
+                                if($_SESSION['separator'] == "v") {
+                                    echo "checked";
+                                }
+                        ?>
+                            >
+                            <label class="custom-control-label" for="v">Virgule</label>
+                        </div>
+                    </div>
+                    <div class="custom-controls-inline">
+                        Encodage : &nbsp;  <div class="custom-control custom-radio">
+                            <input type="radio" value="Windows-1252" id="win" name="encoding" class="custom-control-input"
+                        <?php 
+                                if($_SESSION['encoding'] == "Windows-1252") {
+                                    echo "checked";
+                                }
+                        ?>
+                            >
+                            <label class="custom-control-label" for="win">Windows-1252</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" value="UTF-8" id="utf" name="encoding" class="custom-control-input"
+                        <?php
+                                if($_SESSION['encoding'] == "UTF-8") {
+                                    echo "checked";
+                                }
+                        ?>                    
+                            >
+                            <label class="custom-control-label" for="utf">UTF-8</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="report-tiles">
                 <div class="report-chapter">
                     <h5>Clients & Utilisateurs</h5>

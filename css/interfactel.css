@@ -508,3 +508,24 @@ table.report-table th {
 #last {
   margin-top: 20px;
 }
+
+.icon-parameters {
+  text-align: left;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.icon-parameters:hover {
+  color: var(--gris-300);
+}
+
+#report-parameters {
+  padding: 20px;
+  margin-left: 20px;
+}
+
+#report-inputs {
+  padding: 20px;
+  margin-left: 20px;
+  display: none;
+}

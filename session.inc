@@ -26,6 +26,14 @@ else {
     define( 'USER', $_SESSION["claims"]->gaspar );
 }
 
+if (!isset($_SESSION['encoding'])) {
+    $_SESSION['encoding'] = 'Windows-1252';
+}
+
+if (!isset($_SESSION['separator'])) {
+    $_SESSION['separator'] = 'pv';
+}
+
 /**
  * Managing user rights
  */
