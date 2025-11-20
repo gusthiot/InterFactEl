@@ -13,13 +13,11 @@ $(".icon-parameters").on("click", function() {
 
 $("input[name='encoding']").on("change", function () {
     $.post("controller/changeReportParameter.php", {plate: $('#plate').val(), type: "encoding", value: $("input[name='encoding']:checked").val()}, function () {
-        alert("ok");
     });
  });
 
 $("input[name='separator']").on("change", function () {
     $.post("controller/changeReportParameter.php", {plate: $('#plate').val(), type: "separator", value: $("input[name='separator']:checked").val()}, function () {
-        alert("ok");
     });
  });
 

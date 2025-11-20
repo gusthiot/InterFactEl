@@ -47,6 +47,7 @@ function displayTile(array $tiles): void
     <head>
         <?php include("includes/header.php");?> 
     </head>
+
     <body>
         <div class="container-fluid">
             <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
