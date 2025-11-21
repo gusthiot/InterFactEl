@@ -213,7 +213,7 @@ ksort($clients);
             </div>
         </div>
         <?php 
-        include("includes/footer.php");?> 
+        include("includes/footer.inc");?> 
         <script src="reveal.js/dist/reveal.js"></script>
         <script src="js/ticket.js"></script>
 	</body>

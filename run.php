@@ -37,7 +37,7 @@ $lockVersion = Lock::load(DATA.$plateforme."/".$year."/".$month."/".$version, "v
 
 $archive = file_exists(DATA.$plateforme."/".$year."/".$month."/archive.csv");
 
-include("includes/lock.php");
+include("includes/lock.inc");
 
 ?>
 
@@ -45,7 +45,7 @@ include("includes/lock.php");
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/header.php");?> 
+        <?php include("includes/header.inc");?> 
     </head>
 
     <body>
@@ -108,7 +108,7 @@ include("includes/lock.php");
                 ?>
             </div>
 
-            <?php include("includes/message.php");
+            <?php include("includes/message.inc");
 
                 if(!empty($lockProcess)) {
                     $other = "";
@@ -125,7 +125,7 @@ include("includes/lock.php");
             <div class="text-center" id="prefa-content"></div>
 
         </div>
-        <?php include("includes/footer.php");?> 
+        <?php include("includes/footer.inc");?> 
         <script src="js/run.js"></script>
 	</body>
 </html>

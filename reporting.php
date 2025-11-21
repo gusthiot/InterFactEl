@@ -20,7 +20,7 @@ checkPlateforme("reporting", $plateforme);
 $name = DATA_GEST['reporting'][$plateforme];
 $dir = DATA.$plateforme;
 
-include("includes/lock.php");
+include("includes/lock.inc");
 
 /**
  * Displays html tiles from parameters
@@ -45,7 +45,7 @@ function displayTile(array $tiles): void
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/header.php");?> 
+        <?php include("includes/header.inc");?> 
     </head>
 
     <body>
@@ -65,7 +65,7 @@ function displayTile(array $tiles): void
                 <h1 class="text-center p-1"><?= $name ?></h1>
             </div>
             <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />        
-            <?php include("includes/message.php");
+            <?php include("includes/message.inc");
             if(!empty($lockUser)) { ?>
                 <div class="text-center"><?= $dlTxt ?></div>
             <?php }
@@ -189,7 +189,7 @@ function displayTile(array $tiles): void
             <div id="report-period"></div>
             <div id="report-content"></div>
         </div>
-        <?php include("includes/footer.php");?> 
+        <?php include("includes/footer.inc");?> 
         <script src="js/jquery-ui.min.js"></script>
         <link rel="stylesheet" href="css/jquery-ui.min.css">
         <script src="js/reporting.js"></script>

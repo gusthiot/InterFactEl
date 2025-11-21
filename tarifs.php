@@ -42,7 +42,7 @@ if(!$available) {
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/header.php");?> 
+        <?php include("includes/header.inc");?> 
     </head>
 
     <body>
@@ -73,7 +73,7 @@ if(!$available) {
                 </form>
             </div>
 
-            <?php include("includes/message.php"); ?>
+            <?php include("includes/message.inc"); ?>
             <div class="text-center" id="tarifs-content">
                 <input type="hidden" id="last-month" value="<?= $state->getLastMonth() ?>" />
                 <input type="hidden" id="last-year" value="<?= $state->getLastYear() ?>" />
@@ -149,7 +149,7 @@ if(!$available) {
                 ?></table>
             </div>
         </div>
-        <?php include("includes/footer.php");?> 
+        <?php include("includes/footer.inc");?> 
         <script src="js/jquery-ui.min.js"></script>
         <link rel="stylesheet" href="css/jquery-ui.min.css">
         <script src="js/tarifs.js"></script>

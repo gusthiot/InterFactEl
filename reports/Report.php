@@ -208,9 +208,9 @@ abstract class Report
 
         $this->monthList = [];
 
-        $this->bilansStats = new BSFile("../bilans-stats.json", "Bilans_Stats");
-        $this->in = new BSFile("../in.json", "IN");
-        $this->report = new BSFile("../report.json", "REPORT");        
+        $this->bilansStats = new BSFile("bilans-stats.json", "Bilans_Stats");
+        $this->in = new BSFile("in.json", "IN");
+        $this->report = new BSFile("report.json", "REPORT");        
     }
 
     /**

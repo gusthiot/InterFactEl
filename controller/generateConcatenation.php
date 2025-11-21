@@ -6,7 +6,7 @@ require_once("../assets/Csv.php");
 require_once("../assets/ParamText.php");
 require_once("../assets/Message.php");
 require_once("../reports/BSFile.php");
-require_once("../concats/ConcatT.php");
+require_once("../reports/ConcatT.php");
 require_once("../session.inc");
 
 /**

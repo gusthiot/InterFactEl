@@ -4,7 +4,7 @@ require_once("assets/Lock.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
-include("includes/lock.php");
+include("includes/lock.inc");
 
 /**
  * Main page
@@ -15,7 +15,7 @@ include("includes/lock.php");
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/header.php");?> 
+        <?php include("includes/header.inc");?> 
     </head>
 
     <body>
@@ -33,7 +33,7 @@ include("includes/lock.php");
                 <h1 class="text-center p-1">Interface de facturation</h1>
                 <h6 class="text-center">Welcome <i><?= USER ?></i></h6>
             </div>
-            <?php include("includes/message.php"); 
+            <?php include("includes/message.inc"); 
             if(!empty($lockUser)) { ?>
                 <div class="text-center"><?= $dlTxt ?></div>
             <?php }
@@ -183,7 +183,7 @@ include("includes/lock.php");
                 </div>
             </div>
         </div>
-        <?php include("includes/footer.php");?> 
+        <?php include("includes/footer.inc");?> 
         <script src="js/index.js"></script>
   
 	</body>
