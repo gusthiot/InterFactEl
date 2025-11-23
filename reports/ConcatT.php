@@ -61,7 +61,7 @@ class ConcatT
      */
     static function run(string $from, string $to, string $plateforme, string $type): void
     {
-        $bilansStats = new BSFile("../bilans-stats.json", "Bilans_Stats");
+        $bilansStats = new BSFile("../reports/bilans-stats.json", "Bilans_Stats");
         if(strlen($type) == 2) {
             $columns = self::COLUMNS[$type];
             $key = self::KEYS[$type];

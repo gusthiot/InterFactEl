@@ -208,9 +208,9 @@ abstract class Report
 
         $this->monthList = [];
 
-        $this->bilansStats = new BSFile("bilans-stats.json", "Bilans_Stats");
-        $this->in = new BSFile("in.json", "IN");
-        $this->report = new BSFile("report.json", "REPORT");        
+        $this->bilansStats = new BSFile("../reports/bilans-stats.json", "Bilans_Stats");
+        $this->in = new BSFile("../reports/in.json", "IN");
+        $this->report = new BSFile("../reports/report.json", "REPORT");        
     }
 
     /**
@@ -769,11 +769,13 @@ abstract class Report
         }
         $html .= '<ul class="nav nav-tabs" role="tablist">';
         $active = "active";
+        $aria = "true";
         foreach($this->tabs as $tab => $data) { 
             $html .= '<li class="nav-item">
-                        <a class="nav-link '.$active.'" id="'.$tab.'-tab" data-toggle="tab" href="#'.$tab.'" role="tab" aria-controls="'.$tab.'" aria-selected="true">'.$data["title"].'</a>
+                        <a class="nav-link '.$active.'" id="'.$tab.'-tab" data-toggle="tab" href="#'.$tab.'" role="tab" aria-controls="'.$tab.'" aria-selected="'.$aria.'">'.$data["title"].'</a>
                     </li>';
             $active = "";
+            $aria = "false";
         }
         $html .= '</ul>
                 <div class="tab-content p-3">'.$this->generateTablesAndCsv($null, $sort).'</div>';
