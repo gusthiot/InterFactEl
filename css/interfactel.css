@@ -529,3 +529,9 @@ table.report-table th {
   margin-left: 20px;
   display: none;
 }
+
+#tarifs-content {
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}

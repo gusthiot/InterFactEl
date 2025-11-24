@@ -17,7 +17,8 @@ class Tarifs
      * The names of the authorized and needed parameters files
      */
     const FILES = ["articlesap.csv", "categorie.csv", "categprix.csv", "classeclient.csv", "classeprestation.csv", "coeffprestation.csv", 
-        "groupe.csv", "overhead.csv", "paramfact.csv", "paramtext.csv", "partenaire.csv", "plateforme.csv", "logo.pdf", "grille.pdf"];
+        "groupe.csv", "overhead.csv", "paramfact.csv", "paramtext.csv", "partenaire.csv", "plateforme.csv", "logo.pdf", "grille.pdf",
+        "base.csv", "basecateg.csv", "categkitem.csv"];
 
     /**
      * Saves the first parameters archive, when it's the first finalized facturation

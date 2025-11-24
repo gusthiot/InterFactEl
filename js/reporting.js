@@ -1,5 +1,7 @@
 
 let hidden = true;
+let plateforme = $('#plate').val();
+
 $(".icon-parameters").on("click", function() {
     if(hidden) {
         hidden = false;
@@ -12,12 +14,12 @@ $(".icon-parameters").on("click", function() {
 });
 
 $("input[name='encoding']").on("change", function () {
-    $.post("controller/changeReportParameter.php", {plate: $('#plate').val(), type: "encoding", value: $("input[name='encoding']:checked").val()}, function () {
+    $.post("controller/changeReportParameter.php", {plate: plateforme, type: "encoding", value: $("input[name='encoding']:checked").val()}, function () {
     });
  });
 
 $("input[name='separator']").on("change", function () {
-    $.post("controller/changeReportParameter.php", {plate: $('#plate').val(), type: "separator", value: $("input[name='separator']:checked").val()}, function () {
+    $.post("controller/changeReportParameter.php", {plate: plateforme, type: "separator", value: $("input[name='separator']:checked").val()}, function () {
     });
  });
 
@@ -29,7 +31,7 @@ $('.select-period').on('click', function () {
         $($(this).attr('id')).addClass('selected-tile');
         report = $(this).attr('id');
         const title = $('.title', this).text();
-        $.post("controller/selectPeriod.php", {plate: $('#plate').val(), type: report}, function (data) {
+        $.post("controller/selectPeriod.php", {plate: plateforme, type: report}, function (data) {
             $('#report-tiles').hide();
             $('#report-period').html(data);
             $('#report-period').show();
@@ -83,10 +85,10 @@ $(document).on("click", "#generate", function() {
     $(".lockable").prop('disabled', true);
     $('#back').hide();
     if(["t1", "t2", "t3f", "t3s"].includes(report)) {
-        window.location.href = "controller/generateConcatenation.php?plate="+$('#plate').val()+"&from="+$('#from').val()+"&to="+$('#to').val()+"&type="+report;
+        window.location.href = "controller/generateConcatenation.php?plate="+plateforme+"&from="+$('#from').val()+"&to="+$('#to').val()+"&type="+report;
     }
     else {
-        $.post("controller/generateReport.php", {type: report, plate: $('#plate').val(), from: $('#from').val(), to: $('#to').val()}, function (data) {
+        $.post("controller/generateReport.php", {type: report, plate: plateforme, from: $('#from').val(), to: $('#to').val()}, function (data) {
             $('#report-period').hide();
             $('#report-content').show();
             $('#message').html("");
