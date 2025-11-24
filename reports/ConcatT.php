@@ -80,7 +80,7 @@ class ConcatT
                 $line = [];
                 $paramtext = new ParamText();
                 foreach($columns as $label) {
-                    $line[] = $paramtext->getParam($label);
+                    $line[] = Csv::enclose($paramtext->getParam($label));
                 }
                 $_SESSION['encoding'] == 'UTF-8' ? $content[] = $line : $content[] = Csv::formatLine($line);
             }
@@ -144,7 +144,7 @@ class ConcatT
                         $line = [];
                         foreach($columns as $column) {
                             if(array_key_exists($column, $positions)) {
-                                $line[] = $tab[$positions[$column]];
+                                $line[] = Csv::enclose($tab[$positions[$column]]);
                             }
                             else {
                                 switch($column) {

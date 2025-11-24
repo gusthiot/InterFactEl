@@ -67,6 +67,7 @@ class Csv
         if (($open = fopen($file, $mode)) !== false) {
             foreach($array as $row) {
                 self::formatLine($row);
+                $row = str_replace('"', '', $row);
                 if(!fputcsv($open, $row,';')) {
                     break;
                 }
@@ -83,11 +84,26 @@ class Csv
      */
     static function formatLine(array|string $row): array|string
     {
-        $row = str_replace('"', '', $row);
         if(mb_check_encoding($row, 'UTF-8')) {
             $row = mb_convert_encoding($row, 'Windows-1252', 'UTF-8');
         }
         return $row;
+    }
+
+    /**
+     * Checks if text need to be enclosed and enclosed it
+     *
+     * @param string $text given text
+     * @return string
+     */
+    static function enclose(string $text): string
+    {
+        foreach([' ', ',', ';', '\n', '\r', ':'] as $ch) {
+            if(str_contains($text, $ch)) {
+                return "\"".$text."\"";
+            }
+        }
+        return $text;
     }
 
 }

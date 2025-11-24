@@ -641,14 +641,14 @@ abstract class Report
         $first = true;
         foreach($dimensions as $dimension) {
                 $first ? $first = false : $header .= $sep;
-                $header .= $this->paramtext->getParam($dimension);
+                $header .= Csv::enclose($this->paramtext->getParam($dimension));
         }
         foreach($operations as $operation) {
-            $header .= $sep.$this->paramtext->getParam($operation);
+            $header .= $sep.Csv::enclose($this->paramtext->getParam($operation));
         }
         if($withMonths) {
             foreach($this->monthList as $monthly) {
-                $header .= $sep.$monthly;
+                $header .= $sep.Csv::enclose($monthly);
             }
         }
         return $_SESSION['encoding'] == 'UTF-8' ? $header : Csv::formatLine($header);
@@ -670,16 +670,16 @@ abstract class Report
         $first = true;
         foreach($dimensions as $dimension) {
             $first ? $first = false : $data .= $sep;
-            $data .= $line[$dimension];
+            $data .= Csv::enclose($line[$dimension]);
         }
         foreach($operations as $operation) {
-            $data .= $sep.$line[$operation];
+            $data .= $sep.Csv::enclose($line[$operation]);
         }
         if($withMonths) {
             foreach($this->monthList as $monthly) {
                 $data .= $sep;
                 if(array_key_exists($monthly, $line["mois"])) {
-                    $data .= $line["mois"][$monthly];
+                    $data .= Csv::enclose($line["mois"][$monthly]);
                 }
             }
         }
