@@ -52,7 +52,7 @@ class State
      *
      * @param string $pathPlate path to plateform directory
      */
-    function __construct(string $pathPlate) 
+    function __construct(string $pathPlate)
     {
         $this->lastState($pathPlate);
     }
@@ -63,7 +63,7 @@ class State
      * @param string $pathPlate path to plateform directory
      * @return void
      */
-    private function lastState(string $pathPlate): void         
+    private function lastState(string $pathPlate): void
     {
         $this->last = "";
         $this->last_y = "";
@@ -90,7 +90,7 @@ class State
                 }
             }
         }
-    } 
+    }
 
     /**
      * Determines which is the current facturation, for a plateform, if there is one
@@ -98,7 +98,7 @@ class State
      * @param string $pathPlate path to plateform directory
      * @return string current facturation as a string title
      */
-    static function currentState(string $pathPlate): string         
+    static function currentState(string $pathPlate): string
     {
         if(file_exists($pathPlate)) {
             foreach(globReverse($pathPlate) as $dirYear) {
@@ -118,7 +118,7 @@ class State
         }
         return "";
     }
-    
+
     /**
      * Getter for $last string variable
      *
@@ -186,7 +186,7 @@ class State
      */
     function getNextYear(): string
     {
-        return $this->last_m == "12" ? self::addToString($this->last_y, 1) : $this->last_y; 
+        return $this->last_m == "12" ? self::addToString($this->last_y, 1) : $this->last_y;
     }
 
     /**
@@ -267,7 +267,7 @@ class State
      * @param integer $num integer to add
      * @return string
      */
-    static function addToString(string $txt, int $num): string 
+    static function addToString(string $txt, int $num): string
     {
         return strval(intval($txt) + $num);
     }
@@ -279,7 +279,7 @@ class State
      * @param integer $num integer to add
      * @return string
      */
-    static function addToMonth(string $month, int $num): string 
+    static function addToMonth(string $month, int $num): string
     {
         $m = intval($month) + $num;
         return $m < 10 ? "0".strval($m) : strval($m);
@@ -291,7 +291,7 @@ class State
      * @param string $dir directory to remove
      * @return void
      */
-    static function delDir(string $dir): bool 
+    static function delDir(string $dir): bool
     {
         if (file_exists($dir) && is_dir($dir)) {
             exec(sprintf("rm -rf %s", escapeshellarg($dir)));

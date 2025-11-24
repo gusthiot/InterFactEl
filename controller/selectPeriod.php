@@ -7,7 +7,7 @@ require_once("../session.inc");
 /**
  * Called to display a selector to choose a period for a report
  */
-if(isset($_POST["plate"]) && isset($_POST["type"])) { 
+if(isset($_POST["plate"]) && isset($_POST["type"])) {
     $plateforme = $_POST["plate"];
     checkPlateforme("reporting", $plateforme);
     $dir = DATA.$plateforme;

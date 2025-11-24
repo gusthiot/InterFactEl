@@ -5,7 +5,7 @@ require_once("Csv.php");
 /**
  * Modif class represents a csv file with last version actions
  */
-class Modif extends Csv 
+class Modif extends Csv
 {
 
     /**
@@ -14,7 +14,7 @@ class Modif extends Csv
      * @param string $csv name of the csv file
      * @return array
      */
-    static function load(string $csv): array 
+    static function load(string $csv): array
     {
         $modifs = [];
         $lines = self::extract($csv);
@@ -23,5 +23,5 @@ class Modif extends Csv
         }
         return $modifs;
     }
-    
+
 }

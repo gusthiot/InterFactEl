@@ -28,7 +28,7 @@ include("includes/lock.inc");
  * @param array $tiles tiles parameters
  * @return void
  */
-function displayTile(array $tiles): void 
+function displayTile(array $tiles): void
 {
     foreach($tiles as $tile) {
     echo '<div type="button" id="'.$tile[0].'" class="select-period tile center-'.$tile[2].'">
@@ -45,7 +45,7 @@ function displayTile(array $tiles): void
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/header.inc");?> 
+        <?php include("includes/header.inc");?>
     </head>
 
     <body>
@@ -60,11 +60,11 @@ function displayTile(array $tiles): void
                     <p class="title"><a href="index.php">Accueil</a> > Reporting <?= $name ?></p>
                     <p class="title"><a href="logout.php">Logout</a></p>
                 </div>
-            </div>	
+            </div>
             <div class="title <?php if(TEST_MODE) echo "test";?>">
                 <h1 class="text-center p-1"><?= $name ?></h1>
             </div>
-            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />        
+            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
             <?php include("includes/message.inc");
             if(!empty($lockUser)) { ?>
                 <div class="text-center"><?= $dlTxt ?></div>
@@ -100,7 +100,7 @@ function displayTile(array $tiles): void
                     <div class="custom-controls-inline">
                         Encodage : &nbsp;  <div class="custom-control custom-radio">
                             <input type="radio" value="Windows-1252" id="win" name="encoding" class="custom-control-input"
-                        <?php 
+                        <?php
                                 if($_SESSION['encoding'] == "Windows-1252") {
                                     echo "checked";
                                 }
@@ -114,7 +114,7 @@ function displayTile(array $tiles): void
                                 if($_SESSION['encoding'] == "UTF-8") {
                                     echo "checked";
                                 }
-                        ?>                    
+                        ?>
                             >
                             <label class="custom-control-label" for="utf">UTF-8</label>
                         </div>
@@ -154,7 +154,7 @@ function displayTile(array $tiles): void
                     <h5>Plateforme</h5>
                     <div class="tiles">
                     <?php
-                        $tiles = [           
+                        $tiles = [
                             ["propres", "Consommations <br/> propres Plateforme", "two", "#shopping-cart"],
                             ["operateur", "Statistiques <br/> Heures opérateurs", "two", "#clock"],
                             ["plateforme", "Statistiques <br/> Projets plateforme", "two", "#star"],
@@ -189,7 +189,7 @@ function displayTile(array $tiles): void
             <div id="report-period"></div>
             <div id="report-content"></div>
         </div>
-        <?php include("includes/footer.inc");?> 
+        <?php include("includes/footer.inc");?>
         <script src="js/jquery-ui.min.js"></script>
         <link rel="stylesheet" href="css/jquery-ui.min.css">
         <script src="js/reporting.js"></script>

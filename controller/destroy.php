@@ -8,7 +8,7 @@ require_once("../session.inc");
 if(TEST_MODE) {
     if(isset($_GET["plate"])) {
         checkPlateforme("facturation", $_GET["plate"]);
-        if(IS_SUPER && TEST_MODE == "TEST") { 
+        if(IS_SUPER && TEST_MODE == "TEST") {
             exec(sprintf("rm -rf %s", escapeshellarg(DATA.$_GET["plate"])));
             $_SESSION['alert-success'] = "données de plateforme correctement effacées";
         }

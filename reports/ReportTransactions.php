@@ -11,7 +11,7 @@ class ReportTransactions extends Report
      * @var integer
      */
     private int $totalT;
-    
+
     /**
      * Total clients classes changes
      *
@@ -34,7 +34,7 @@ class ReportTransactions extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalT = 0;
         $this->totalChange = [];
@@ -107,7 +107,7 @@ class ReportTransactions extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->prepareClients();
         $this->prepareClasses();
@@ -161,7 +161,7 @@ class ReportTransactions extends Report
                         $n = 1;
                         $itemId = $tab[$columns["item-id"]];
                         $plateId = $this->prestations[$itemId]["platf-code"];
-                    }                    
+                    }
                     if($plateId && ($plateId == $this->plateforme) && ($code != $plateId)) {
                         $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$flux;
                         if(!array_key_exists($id, $loopArray)) {
@@ -188,7 +188,7 @@ class ReportTransactions extends Report
                     }
                     else {
                         $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["transac-valid"]] != 2);
-                    }    
+                    }
                     if($cond) {
                         $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["flow-type"]];
                         if(!array_key_exists($id, $loopArray)) {
@@ -207,13 +207,13 @@ class ReportTransactions extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $transArray report data
      * @return void
      */
     function mapping(array $transArray): void
-    {   
+    {
         $scipers = $this->scipers();
         foreach($transArray as $line) {
             $client = $this->clients[$line[0]];
@@ -225,12 +225,12 @@ class ReportTransactions extends Report
                 $user = ["user-sciper"=>"0", "user-name"=>"", "user-first"=>"", "user-email"=>""];
             }
             $ids = [
-                "par-client"=>$line[0], 
-                "par-classe"=>$line[1], 
-                "par-user"=>$line[2], 
-                "par-client-user"=>$line[0]."-".$line[2], 
-                "par-client-classe"=>$line[0]."-".$line[1], 
-                "par-classe-user"=>$line[1]."-".$line[2], 
+                "par-client"=>$line[0],
+                "par-classe"=>$line[1],
+                "par-user"=>$line[2],
+                "par-client-user"=>$line[0]."-".$line[2],
+                "par-client-classe"=>$line[0]."-".$line[1],
+                "par-classe-user"=>$line[1]."-".$line[2],
                 "par-client-classe-user"=>$line[0]."-".$line[1]."-".$line[2]
             ];
             $extends = [
@@ -263,7 +263,7 @@ class ReportTransactions extends Report
                     foreach($this->tabs[$tab]["operations"] as $operation) {
                         $this->tabs[$tab]["results"][$ids[$tab]][$operation] = 0;
                     }
-                }     
+                }
                 if(!array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
                     $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
                 }
@@ -325,7 +325,7 @@ class ReportTransactions extends Report
                             <svg class="icon red" aria-hidden="true">
                                 <use xlink:href="#alert-triangle"></use>
                             </svg>
-                        
+
                         </div>';
         }
         echo $this->templateDisplay($title, true);

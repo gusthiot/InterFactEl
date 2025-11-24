@@ -4,7 +4,7 @@ require_once("../assets/Sap.php");
 require_once("../includes/Tarifs.php");
 require_once("../session.inc");
 
-if(isset($_POST["plate"]) && isset($_POST["date"])) { 
+if(isset($_POST["plate"]) && isset($_POST["date"])) {
 
     $plateforme = $_POST["plate"];
     checkPlateforme("tarifs", $plateforme);

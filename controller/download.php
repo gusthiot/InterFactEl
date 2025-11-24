@@ -12,7 +12,7 @@ require_once("../session.inc");
 if(isset($_GET['type'])) {
     $type = $_GET['type'];
     $tmpFile = TEMP.$type.'_'.time().'.zip';
-   
+
     if($type==="config") {
         // config zip, only for supervisor
         if(!IS_SUPER) {
@@ -24,7 +24,7 @@ if(isset($_GET['type'])) {
     elseif($type==="generated") {
         // prefacturation, only for the user running it
         $fileName = Lock::loadByName("../".USER.".lock");
-        if(!is_null($fileName)) {   
+        if(!is_null($fileName)) {
             header('Content-disposition: attachment; filename="'.basename($fileName).'"');
             header('Content-type: application/zip');
             readfile($fileName);
@@ -39,8 +39,8 @@ if(isset($_GET['type'])) {
     else {
         if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
-            if($type==="tarifs") { 
-                // tarifs uploaded for a given month 
+            if($type==="tarifs") {
+                // tarifs uploaded for a given month
                 checkPlateforme("tarifs", $_GET['plate']);
                 $fileName = $dirMonth."/".ParamZip::NAME;
                 header('Content-disposition: attachment; filename="'.ParamZip::NAME.'"');
@@ -69,7 +69,7 @@ if(isset($_GET['type'])) {
                     }
                     elseif($type==="modif") {
                         // modification file (journal, client, modifications) of a run
-                        if(isset($_GET['pre'])) {               
+                        if(isset($_GET['pre'])) {
                             $name = DATA_GEST['facturation'][$_GET['plate']];
                             $filename = $_GET['pre']."_".$name."_".$_GET['year']."_".$_GET['month']."_".$_GET['version'];
                             readCsv($dirRun."/".$filename.".csv");
@@ -96,7 +96,7 @@ if(isset($_GET['type'])) {
                         }
                     }
                     else {
-                        if(isset($_GET['nom'])) { 
+                        if(isset($_GET['nom'])) {
                             if($type==="report") {
                                 // bills list of a send
                                 readCsv($dirRun."/".$_GET['nom']);
@@ -134,7 +134,7 @@ if(isset($_GET['type'])) {
             }
         }
         elseif(isset($_GET['unique'])) {
-            if(isset($_GET['nom'])) { 
+            if(isset($_GET['nom'])) {
                 if($type==="ticketcsv") {
                     // annexes csv of a run
                     $fileName =  TEMP.$_GET['unique']."/Annexes_CSV/".$_GET['nom'];
@@ -177,7 +177,7 @@ else {
  * @param string $fileName csv file name
  * @return void
  */
-function readCsv(string $fileName): void 
+function readCsv(string $fileName): void
 {
     if(file_exists($fileName)) {
         header('Content-Type: application/octet-stream');

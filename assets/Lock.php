@@ -5,16 +5,16 @@
  * - lockm.csv means that the month is locked, and stay empty
  * - lockv.csv means that the version is locked, and contains the last accepted run
  * - lock.csv means that the run is locked, and contains 'finalized' or 'invalidate'
- * - process.lock means that a process is running and that actions are restricted, 
+ * - process.lock means that a process is running and that actions are restricted,
  *      and contains 'send' (for sending to SAP) or 'prefa' (for running prefacuration), plateforme number and run number
  */
-class Lock 
+class Lock
 {
     /**
      * Names of the files
      */
     const FILES = ['month'=>"lockm.csv", 'version'=>"lockv.csv", 'run'=>"lock.csv", 'process'=>"process.lock"];
-    
+
     /**
      * States for the run lock
      */
@@ -27,7 +27,7 @@ class Lock
      * @param string $type the type of lock file wanted (to get the file name)
      * @return string the content, or false if type doesn't exists or loadByName returns false
      */
-    static function load(string $dir, string $type): string|null 
+    static function load(string $dir, string $type): string|null
     {
         $lock = "";
         if(array_key_exists($type, self::FILES)) {
@@ -50,13 +50,13 @@ class Lock
     static function loadByName(string $file): string|null
     {
         if ((file_exists($file)) && (filesize($file) > 0) && (($open = fopen($file, "r")) !== false)) {
-            $lock = fread($open, filesize($file));    
+            $lock = fread($open, filesize($file));
             fclose($open);
             return trim($lock);
         }
         return null;
     }
-    
+
     /**
      * Saves content to the file by its location and type
      *
@@ -65,7 +65,7 @@ class Lock
      * @param string $txt content to be saved
      * @return boolean true, or false if type doesn't exists or saveByName returns false
      */
-    static function save(string $dir, string $type, string $txt): bool 
+    static function save(string $dir, string $type, string $txt): bool
     {
         if(array_key_exists($type, self::FILES)) {
             return self::saveByName($dir."/".self::FILES[$type], $txt);
@@ -83,7 +83,7 @@ class Lock
     static function saveByName(string $file, string $txt): bool
     {
         if((($open = fopen($file, "w")) !== false)) {
-            if(fwrite($open, $txt) === false) {                
+            if(fwrite($open, $txt) === false) {
                 return false;
             }
             fclose($open);

@@ -3,7 +3,7 @@
 /**
  * Zip class kind of extends ZipArchive capacities with some useful functions
  */
-class Zip 
+class Zip
 {
 
     /**
@@ -15,7 +15,7 @@ class Zip
      * @param string $morefile file url we want to add which is not in $dirname
      * @return string empty, or error
      */
-    static function setZipDir(string $tmpFile, string $dirname, string $lessfile="", string $morefile=""): string 
+    static function setZipDir(string $tmpFile, string $dirname, string $lessfile="", string $morefile=""): string
     {
         $zip = new ZipArchive;
         $res = $zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
@@ -74,7 +74,7 @@ class Zip
      * @param string $dest directory where to save archive content
      * @return string empty, or error
      */
-    static function unzip(string $file, string $dest): string 
+    static function unzip(string $file, string $dest): string
     {
         $zip = new ZipArchive;
         $res = $zip->open($file);
@@ -99,7 +99,7 @@ class Zip
      * @param string $type archive type
      * @return boolean
      */
-    static function isAccepted(string $type): bool 
+    static function isAccepted(string $type): bool
     {
         $acceptedTypes = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed'];
         return in_array($type, $acceptedTypes);

@@ -12,7 +12,7 @@ class BSFile
      */
     protected array $structure;
 
-    /** 
+    /**
      * Run sub-directory
      *
      * @var string
@@ -25,7 +25,7 @@ class BSFile
      * @param string $url Json file relative url
      * @param string $subDir run sub-directory
      */
-    function __construct(string $url, string $subDir) 
+    function __construct(string $url, string $subDir)
     {
         $this->structure = self::getJsonStructure($url);
         $this->subDir = $subDir;
@@ -93,7 +93,7 @@ class BSFile
      * @param string $url Json file relative url
      * @return array content or empty array
      */
-    static function getJsonStructure(string $url): array 
+    static function getJsonStructure(string $url): array
     {
         $structure = [];
         if ((file_exists($url)) && (($open = fopen($url, "r")) !== false)) {
@@ -102,5 +102,5 @@ class BSFile
         }
         return $structure;
     }
-    
+
 }

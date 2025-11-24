@@ -185,13 +185,13 @@ abstract class Report
      * @param string $to last month of the period
      * @param string $from first month of the period
      */
-    function __construct(string $plateforme, string $to, string $from) 
+    function __construct(string $plateforme, string $to, string $from)
     {
         $this->plateforme = $plateforme;
         $this->to = $to;
         $this->from = $from;
         $this->paramtext = new ParamText();
-    
+
         $this->open = "";
 
         $this->clients = [];
@@ -210,7 +210,7 @@ abstract class Report
 
         $this->bilansStats = new BSFile("../reports/bilans-stats.json", "Bilans_Stats");
         $this->in = new BSFile("../reports/in.json", "IN");
-        $this->report = new BSFile("../reports/report.json", "REPORT");        
+        $this->report = new BSFile("../reports/report.json", "REPORT");
     }
 
     /**
@@ -280,7 +280,7 @@ abstract class Report
      *
      * @return void
      */
-    function prepareUsers(): void 
+    function prepareUsers(): void
     {
         if(floatval($this->factel) > 11) {
             self::mergeInCsv('user', $this->users, self::USER_KEY);
@@ -293,7 +293,7 @@ abstract class Report
                     $data = $line;
                     $data["user-email"] = "";
                     $this->users[$code] = $data;
-                }    
+                }
             }
 
         }
@@ -343,7 +343,7 @@ abstract class Report
                 else {
                     $data["mach-name"] = $machinesTemp[$line["mach-id"]]["mach-name"];
                     $data["item-extra"] = "TRUE";
-                } 
+                }
                 if(floatval($this->factel) < 8) {
                     $data["item-labelcode"] = $articlesTemp[$line["item-codeD"]]["item-labelcode"];
                 }
@@ -450,7 +450,7 @@ abstract class Report
             }
         }
         else {
-            $lines = Csv::extract($reportFile); 
+            $lines = Csv::extract($reportFile);
             for($i=1;$i<count($lines);$i++) {
                 $monthArray[] = explode(";", $lines[$i]);
             }
@@ -464,7 +464,7 @@ abstract class Report
      *
      * @return array
      */
-    function getColumnsNames(): array 
+    function getColumnsNames(): array
     {
         $names = [];
         foreach($this->reportColumns as $column) {
@@ -519,7 +519,7 @@ abstract class Report
     {
         if($id == "0") {
             return 0;
-        } 
+        }
         return $this->users[$id]['user-sciper'];
     }
 
@@ -545,7 +545,7 @@ abstract class Report
     function loopOnMonths(): void
     {
         $date = $this->to;
-        while(true) {       
+        while(true) {
             $this->month = substr($date, 4, 2);
             $this->year = substr($date, 0, 4);
             $dir = DATA.$this->plateforme."/".$this->year."/".$this->month;
@@ -579,7 +579,7 @@ abstract class Report
             if($date == $this->from) {
                 break;
             }
-    
+
             if($this->month == "01") {
                 $date -= 89;
             }
@@ -609,10 +609,10 @@ abstract class Report
      * @param string $idKey key of the targeted data
      * @return void
      */
-    function mergeInCsv(string $fileKey, array &$array, string $idKey): void 
+    function mergeInCsv(string $fileKey, array &$array, string $idKey): void
     {
         $columns = $this->in->getColumns($this->factel, $fileKey);
-        $lines = Csv::extract($this->in->getCsvUrl($this->dirRun, $this->factel, $fileKey));                
+        $lines = Csv::extract($this->in->getCsvUrl($this->dirRun, $this->factel, $fileKey));
         for($i=1;$i<count($lines);$i++) {
             $tab = explode(";", $lines[$i]);
             $code = $tab[$columns[$idKey]];
@@ -625,7 +625,7 @@ abstract class Report
             }
         }
     }
-    
+
     /**
      * Generates csv header
      *
@@ -634,7 +634,7 @@ abstract class Report
      * @param boolean $withMonths if column for each month is expected or not
      * @return string
      */
-    function csvHeader(array $dimensions, array $operations, bool $withMonths = true): string 
+    function csvHeader(array $dimensions, array $operations, bool $withMonths = true): string
     {
         $_SESSION['separator'] == "pv" ? $sep = ';' : $sep = ',';
         $header = "";
@@ -653,7 +653,7 @@ abstract class Report
         }
         return $_SESSION['encoding'] == 'UTF-8' ? $header : Csv::formatLine($header);
     }
-    
+
     /**
      * Generates csv line
      *
@@ -663,7 +663,7 @@ abstract class Report
      * @param boolean $withMonths if column for each month is expected or not
      * @return string
      */
-    function csvLine(array $dimensions, array $operations, array $line, bool $withMonths = true): string 
+    function csvLine(array $dimensions, array $operations, array $line, bool $withMonths = true): string
     {
         $_SESSION['separator'] == "pv" ? $sep = ';' : $sep = ',';
         $data = "";
@@ -722,7 +722,7 @@ abstract class Report
             return "";
         }
         switch($format) {
-            case "int": 
+            case "int":
                 return number_format(intval($val), 0, ".", "'");
                 break;
             case "fin":
@@ -764,13 +764,13 @@ abstract class Report
                         <svg class="icon red" aria-hidden="true">
                             <use xlink:href="#alert-triangle"></use>
                         </svg>
-                    
+
                     </div>';
         }
         $html .= '<ul class="nav nav-tabs" role="tablist">';
         $active = "active";
         $aria = "true";
-        foreach($this->tabs as $tab => $data) { 
+        foreach($this->tabs as $tab => $data) {
             $html .= '<li class="nav-item">
                         <a class="nav-link '.$active.'" id="'.$tab.'-tab" data-toggle="tab" href="#'.$tab.'" role="tab" aria-controls="'.$tab.'" aria-selected="'.$aria.'">'.$data["title"].'</a>
                     </li>';
@@ -789,7 +789,7 @@ abstract class Report
      * @param array $sort titles not allwed to be sorted
      * @return string
      */
-    function generateTablesAndCsv(bool $null=false, array $sort=[]): string 
+    function generateTablesAndCsv(bool $null=false, array $sort=[]): string
     {
         $html = "";
         $show = "show active";
@@ -809,8 +809,8 @@ abstract class Report
                     $html .= " class='sort-text'";
                 }
                 $html .= ">".$this->paramtext->getParam($name)."</th>";
-            }   
-            foreach($data["operations"] as $operation) {   
+            }
+            foreach($data["operations"] as $operation) {
                 $html .= "<th class='right";
                 if(!in_array($tab, $sort)) {
                     $html .= " sort-number";

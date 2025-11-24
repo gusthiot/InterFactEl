@@ -2,11 +2,11 @@
 //let lastYear = $('#last-year').val();
 //let lastMonth = $('#last-month').val();
 let plateforme = $('#plate').val();
-/*    
+/*
 $('#month-picker').datepicker({
     dateFormat: "mm yy",
     changeMonth: true,
-    changeYear: true, 
+    changeYear: true,
     showButtonPanel: true,
     minDate: new Date(lastYear, lastMonth - 1),
     maxDate: '+5Y',
@@ -112,7 +112,7 @@ $("#tarifs-import").on("change", function(e) {
             $('#tarifs-files').html(filesList);
         }, function() {
             alert("Not a valid zip file")
-        }); 
+        });
 });
 
 

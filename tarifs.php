@@ -24,7 +24,7 @@ $name = DATA_GEST['tarifs'][$plateforme];
 $dir = DATA.$plateforme;
 $available = false;
 $state = new State($dir);
-if(file_exists($dir)) { 
+if(file_exists($dir)) {
     $available = true;
     if(empty($state->getLast())) {
         $available = false;
@@ -41,7 +41,7 @@ if(!$available) {
  *
  * @param string $title button title
  * @param string $id upload input id
- * @return string 
+ * @return string
  */
 function uploader(string $title, string $id): string
 {
@@ -60,7 +60,7 @@ $verified = true;
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/header.inc");?> 
+        <?php include("includes/header.inc");?>
     </head>
 
     <body>
@@ -74,7 +74,7 @@ $verified = true;
                     <p><a href="index.php">Accueil</a> > Tarifs <?= $name ?></p>
                     <p><a href="logout.php">Logout</a></p>
                 </div>
-            </div>	
+            </div>
             <div class="title <?php if(TEST_MODE) echo "test";?>">
                 <h1 class="text-center p-1"><?= $name ?></h1>
             </div>
@@ -158,7 +158,7 @@ $verified = true;
                                                 <button id="<?= $id ?>" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-<?= $id ?>" aria-expanded="false" aria-controls="collapse-<?= $id ?>"><?= $label?></button>
                                                 <div class="collapse collapse-item collapse-item-desktop" id="collapse-<?= $id ?>">
                                                     <button type="button" id="etiquette-<?= $id ?>" class="btn but-line etiquette">Etiquette</button>
-                                                    <!--<button type="button" id="export-<?= $id ?>" class="btn but-line export">Exporter</button>-->                            
+                                                    <!--<button type="button" id="export-<?= $id ?>" class="btn but-line export">Exporter</button>-->
                                             <?php if($lastRun > 0) {
                                                 echo '<button type="button" id="all-'.$id.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'" class="btn but-line all">Exporter tout</button>';
                                             }
@@ -209,7 +209,7 @@ $verified = true;
                 </div>
             </div>
         </div>
-        <?php include("includes/footer.inc");?> 
+        <?php include("includes/footer.inc");?>
         <script src="js/jquery-ui.min.js"></script>
         <script src="js/jszip.min.js"></script>
         <link rel="stylesheet" href="css/jquery-ui.min.css">

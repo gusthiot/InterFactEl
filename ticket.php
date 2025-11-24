@@ -16,7 +16,7 @@ if(isset($_GET["unique"])) {
         exit;
     }
 }
-else { 
+else {
     if(!isset($_GET["plate"]) || !isset($_GET["year"]) || !isset($_GET["month"]) || !isset($_GET["version"]) || !isset($_GET["run"])) {
         $_SESSION['alert-danger'] = "Manque un paramètre !";
         header('Location: index.php');
@@ -109,15 +109,15 @@ ksort($clients);
                                         <td id="toright"><?=$client['total']?></td>
                                     </tr>
                                 </tbody></table>
-                            </div>                                
+                            </div>
                             <div class="over">
                                 <table class="tableau">
                                     <thead><tr>
                                         <th> N° facture </th>
-                                        <?php 
+                                        <?php
                                             $first = array_key_first($client['factures']);
                                             $cols = 1;
-                                            if(array_key_exists("projet", $client['factures'][$first])) { 
+                                            if(array_key_exists("projet", $client['factures'][$first])) {
                                                 $cols = 3;
                                         ?>
                                             <th> N° compte - projet </th>
@@ -212,8 +212,8 @@ ksort($clients);
             ?>
             </div>
         </div>
-        <?php 
-        include("includes/footer.inc");?> 
+        <?php
+        include("includes/footer.inc");?>
         <script src="reveal.js/dist/reveal.js"></script>
         <script src="js/ticket.js"></script>
 	</body>

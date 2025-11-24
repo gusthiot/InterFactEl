@@ -15,7 +15,7 @@ class ReportOperateur extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalO = 0;
         $this->reportKey = 'statoper';
@@ -95,7 +95,7 @@ class ReportOperateur extends Report
                 $tab = explode(";", $lines[$i]);
                 if(floatval($this->factel) == 7) {
                     $letterK = substr($tab[$columns["item-nbr"]], 0, 1);
-                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae") && ($letterK == "S"); // S => K2 
+                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae") && ($letterK == "S"); // S => K2
                 }
                 elseif(floatval($this->factel) >= 8 && floatval($this->factel) < 9) {
                     $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["item-codeK"]] == "K2");
@@ -130,7 +130,7 @@ class ReportOperateur extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $operArray report data
      * @return void
@@ -178,10 +178,10 @@ class ReportOperateur extends Report
                     }
                 }
                 $this->tabs[$tab]["results"][$ids[$tab]]["transac-usage"] += $line[3];
-            } 
+            }
             // total csv
             if(!array_key_exists($ids["for-csv"], $this->totalCsvData["results"])) {
-                $this->totalCsvData["results"][$ids["for-csv"]] = ["transac-usage" => 0];            
+                $this->totalCsvData["results"][$ids["for-csv"]] = ["transac-usage" => 0];
                 foreach($dimensions["for-csv"] as $pos=>$dimension) {
                     foreach($dimension as $d) {
                         $this->totalCsvData["results"][$ids["for-csv"]][$d] = $extends["for-csv"][$pos][$d];

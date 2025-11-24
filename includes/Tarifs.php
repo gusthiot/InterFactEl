@@ -16,7 +16,7 @@ class Tarifs
     /**
      * The names of the authorized and needed parameters files
      */
-    const FILES = ["articlesap.csv", "categorie.csv", "categprix.csv", "classeclient.csv", "classeprestation.csv", "coeffprestation.csv", 
+    const FILES = ["articlesap.csv", "categorie.csv", "categprix.csv", "classeclient.csv", "classeprestation.csv", "coeffprestation.csv",
         "groupe.csv", "overhead.csv", "paramfact.csv", "paramtext.csv", "partenaire.csv", "plateforme.csv", "logo.pdf", "grille.pdf",
         "base.csv", "basecateg.csv", "categkitem.csv"];
 
@@ -111,7 +111,7 @@ class Tarifs
      * @param string $dir directory containing last used parameters
      * @return string empty, or error
      */
-    static function exportLast(string $tmpFile, string $dir): string 
+    static function exportLast(string $tmpFile, string $dir): string
     {
         $zip = new ZipArchive;
         if ($zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {

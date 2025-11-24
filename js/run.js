@@ -18,7 +18,7 @@ $(document).on("click", "#save-label", function() {
     });
 } );
 
-$('#open-info').on('click', function () {  
+$('#open-info').on('click', function () {
     $.post("controller/getInfos.php", postDir, function (data) {
         $('#prefa-content').html(data);
     });
@@ -101,8 +101,8 @@ $('#resend').on('click', function () {
         $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "resend-bills"}), function (data) {
             $('#prefa-content').html(data);
         });
-        
-    } 
+
+    }
 } );
 
 $(document).on("click", "#pres", function() {

@@ -13,7 +13,7 @@ class ReportConsommables extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'statlvr';
         $this->reportColumns = ["client-code", "user-sciper", "item-id", "transac-usage"];
@@ -34,7 +34,7 @@ class ReportConsommables extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->preparePrestations();
         $this->prepareUsers();
@@ -113,7 +113,7 @@ class ReportConsommables extends Report
             }
             foreach($loopArray as $id=>$line) {
                 $ids = explode("--", $id);
-                intval($this->year.$this->month) > 202408 ? $q = $line['Smu'] : $q = $line['Q']; 
+                intval($this->year.$this->month) > 202408 ? $q = $line['Smu'] : $q = $line['Q'];
                 $consosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
             }
         }
@@ -125,7 +125,7 @@ class ReportConsommables extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $consosArray report data
      * @return void

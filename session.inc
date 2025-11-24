@@ -13,7 +13,7 @@ error_reporting(ERROR_REPORTING);
 /**
  * Authentication Entra
  */
-session_start(); 
+session_start();
 if(DEV_MODE) {
     define( 'USER', DEV_MODE );
 }
@@ -48,7 +48,7 @@ define( 'IS_SUPER', $superviseur->isSuperviseur(USER) );
 /**
  * Checks if user has managing rights
  *
- * @param string $type type of right 
+ * @param string $type type of right
  * @return void
  */
 function checkGest(string $type): void
@@ -63,7 +63,7 @@ function checkGest(string $type): void
 /**
  * Checks if user has managing rights for a given plateform
  *
- * @param string $type type of right 
+ * @param string $type type of right
  * @param string $plateforme plateform number
  * @return void
  */

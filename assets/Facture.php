@@ -3,7 +3,7 @@
 /**
  * Facture class represents a json file with one bill for one client
  */
-class Facture 
+class Facture
 {
 
     /**
@@ -16,7 +16,7 @@ class Facture
     {
         $facture = "";
         if ((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
-            $facture = fread($open, filesize($name));    
+            $facture = fread($open, filesize($name));
             fclose($open);
         }
         return $facture;

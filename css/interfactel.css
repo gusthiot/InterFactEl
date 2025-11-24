@@ -1,17 +1,17 @@
 :root {
   --rouge-suisse: #ff0000;
   --leman: #00a79f;
-  --groseille: #b51f1f; 
+  --groseille: #b51f1f;
   --canard: #007480;
 
-  --mont-rose: #f39869; 
-  --perle: #cac7c7; 
+  --mont-rose: #f39869;
+  --perle: #cac7c7;
   --vert-eau: #c2ddb0;
   --rose: #ed6e9c;
   --acier: #4f8fcc;
   --soufre: #fbee66;
-  --carotte: #ec6608; 
-  --zinzolin: #5c2483; 
+  --carotte: #ec6608;
+  --zinzolin: #5c2483;
   --chartreuse: #c8d300;
   --marron: #5b3428;
   --ardoise: #453a4c;
@@ -186,7 +186,7 @@ input[type="file"] {
 /** head **/
 
 #logo {
-  width: 100px; 
+  width: 100px;
 }
 
 #head {
@@ -209,8 +209,8 @@ input[type="file"] {
 }
 
 #div-path a {
-  color: inherit; 
-  text-decoration: inherit; 
+  color: inherit;
+  text-decoration: inherit;
 }
 
 #div-path a:hover {
@@ -298,7 +298,7 @@ input[type="file"] {
 }
 
 .loader {
-  border: 16px solid var(--perle); 
+  border: 16px solid var(--perle);
   border-top: 16px solid var(--acier);
   border-radius: 50%;
   width: 50px;
@@ -306,7 +306,7 @@ input[type="file"] {
   animation: spin 2s linear infinite;
   margin: auto;
 }
-  
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

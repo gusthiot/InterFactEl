@@ -22,7 +22,7 @@ header('Location: ../index.php');
  * @param string $unique unique temporary id
  * @return void
  */
-function delete(string $unique): void 
+function delete(string $unique): void
 {
     State::delDir(TEMP.$unique.'/');
     $_SESSION['alert-info'] = "Les données ont été effacées";

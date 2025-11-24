@@ -5,7 +5,7 @@ require_once("Csv.php");
 /**
  * Superviseur class represents a csv file with users with supervisor rights
  */
-class Superviseur extends Csv 
+class Superviseur extends Csv
 {
 
     /**
@@ -23,7 +23,7 @@ class Superviseur extends Csv
     /**
      * Class constructor
      */
-    function __construct() 
+    function __construct()
     {
         $this->superviseurs = [];
         $lines = self::extract(CONFIG.self::NAME);
@@ -31,14 +31,14 @@ class Superviseur extends Csv
             $this->superviseurs[] = $line;
         }
     }
-    
+
     /**
      * Checks is a user has supervisor rights
      *
      * @param string $login user by its login surname
      * @return boolean
      */
-    function isSuperviseur(string $login): bool 
+    function isSuperviseur(string $login): bool
     {
         if (in_array($login, $this->superviseurs)) {
             return true;

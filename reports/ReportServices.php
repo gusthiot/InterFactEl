@@ -13,7 +13,7 @@ class ReportServices extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'statsrv';
         $this->reportColumns = ["client-code", "client-class", "item-text2K", "oper-note", "item-grp", "item-codeK", "transac-quantity", "transac-usage"];
@@ -34,12 +34,12 @@ class ReportServices extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->loadCategories();
         $this->loadGroupes();
         $this->loadMachinesGroupes();
-        
+
         $this->processReportFile();
     }
 
@@ -73,13 +73,13 @@ class ReportServices extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $servicesArray report data
      * @return void
      */
     function mapping(array $servicesArray): void
-    {   
+    {
         foreach($servicesArray as $line) {
             $groupe = $this->groupes[$line[4]];
             $itemId = $groupe["item-id-".$line[5]];

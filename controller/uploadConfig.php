@@ -25,7 +25,7 @@ if(IS_SUPER) {
                     else {
                         $_SESSION['alert-danger'] = $msg;
                     }
-            
+
                 }
                 else {
                     $_SESSION['alert-danger'] = "copy error";

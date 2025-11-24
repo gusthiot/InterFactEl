@@ -25,7 +25,7 @@ class ReportClients extends Report
      * @var array
      */
     private array $weeks;
-        
+
     /**
      * Total clients classes changes
      *
@@ -48,7 +48,7 @@ class ReportClients extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalC = [];
         $this->totalU = [];
@@ -107,7 +107,7 @@ class ReportClients extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->prepareMachines();
         $this->loadCategories();
@@ -128,7 +128,7 @@ class ReportClients extends Report
      * @return array
      */
     function generate(): array
-    {        
+    {
         $clientArray = [];
 
         if(floatval($this->factel) < 7) {
@@ -147,7 +147,7 @@ class ReportClients extends Report
                     else {
                         $itemId = $tab[$columns["item-id"]];
                         $plateId = $this->prestations[$itemId]["platf-code"];
-                        $cond = true; 
+                        $cond = true;
                     }
                     if($plateId && ($plateId == $this->plateforme) && ($code != $plateId) && $cond) {
                         $datetime = explode(" ", $tab[$columns["transac-date"]]);
@@ -191,7 +191,7 @@ class ReportClients extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $clientArray report data
      * @return void
@@ -265,7 +265,7 @@ class ReportClients extends Report
                     }
                 }
             }
-            
+
             if($line[2] != 0) {
                 $weekYear = $this->weekYear($date);
                 if(!in_array($line[2], $this->weeks[$weekYear][$date->format('W')])) {
@@ -274,7 +274,7 @@ class ReportClients extends Report
 
                 $this->putInNext("user-mois", $date->format('Y-m'), "users", $line[2]);
             }
-            
+
             $this->putInNext("client-mois", $date->format('Y-m'), "clients", $line[0]);
 
             if($line[2] != 0 && !in_array($line[2], $this->totalU)) {
@@ -311,7 +311,7 @@ class ReportClients extends Report
      */
     function init(string $tab, string $id, array $dimensions, array $extend, DateTimeImmutable $date): void
     {
-        $this->tabs[$tab]["results"][$id] = [];            
+        $this->tabs[$tab]["results"][$id] = [];
         foreach($dimensions[$tab] as $pos=>$dimension) {
             foreach($dimension as $d) {
                 $this->tabs[$tab]["results"][$id][$d] = $extend[$pos][$d];
@@ -481,7 +481,7 @@ class ReportClients extends Report
      * @return string
      */
     function weekYear(DateTimeImmutable $date): string
-    {          
+    {
         $year = $date->format('Y');
         if((intval($date->format('W')) == 1) && (intval($date->format('m')) == 12)) {
             return State::addToString($year, 1);
@@ -541,7 +541,7 @@ class ReportClients extends Report
                 $this->putInFrom($i, "user-mois", "users", $line[2]);
                 $this->putInFrom($i, "client-mois", "clients", $line[0]);
                 if($i == 1) {
-                    $dateTI = new DateTimeImmutable($line[3]);            
+                    $dateTI = new DateTimeImmutable($line[3]);
                     $weekYear = $this->weekYear($dateTI);
                     if(array_key_exists($weekYear, $this->weeks)) {
                         if(array_key_exists($dateTI->format('W'), $this->weeks[$weekYear])) {
@@ -551,7 +551,7 @@ class ReportClients extends Report
                         }
                     }
                 }
-            }            
+            }
         }
 
         ksort($this->tabs["user-jour"]["results"]);
@@ -617,7 +617,7 @@ class ReportClients extends Report
                             <svg class="icon red" aria-hidden="true">
                                 <use xlink:href="#alert-triangle"></use>
                             </svg>
-                        
+
                         </div>';
         }
         echo $this->templateDisplay($title, true, ["user-jour", "user-mois", "client-mois"]);

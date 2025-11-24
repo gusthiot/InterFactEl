@@ -45,11 +45,11 @@ include("includes/lock.inc");
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/header.inc");?> 
+        <?php include("includes/header.inc");?>
     </head>
 
     <body>
-        <div class="container-fluid">	
+        <div class="container-fluid">
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
@@ -67,30 +67,30 @@ include("includes/lock.inc");
             <input type="hidden" id="month" value="<?= $month ?>" />
             <input type="hidden" id="version" value="<?= $version ?>" />
             <input type="hidden" id="run" value="<?= $run ?>" />
-            
+
             <div id="actions" class="text-center">
                 <button type="button" id="open-label" class="btn but-line">Etiqueter</button>
                 <button type="button" id="open-info" class="btn but-line">Afficher les infos</button>
-                <?php 
-                if(!$archive) { 
+                <?php
+                if(!$archive) {
                 ?>
                     <button type="button" id="open-bills" class="btn but-line">Afficher la liste des factures</button>
                     <button type="button" id="open-ticket" class="btn but-line">Contrôler le ticket</button>
                     <button type="button" id="open-changes" class="btn but-line">Afficher les modifications</button>
-                <?php 
+                <?php
                     if(($status < 4) && is_null($lockRun)) {
                         echo '<button type="button" id="invalidate" '.$disabled.' class="btn but-line lockable">Invalider</button>';
-                    } 
+                    }
                 }
                 if(in_array($status, [0, 1, 4, 5, 6, 7]) && !is_null($lockVersion) && ($lockVersion == $run)) { ?>
                     <button type="button" id="bilans" class="btn but-line">Exporter Bilans & Stats</button>
-                    <?php if(!$archive) { ?> 
+                    <?php if(!$archive) { ?>
                         <button type="button" id="annexes" class="btn but-line">Exporter Annexes csv</button>
                 <?php }
-                } 
+                }
                 ?>
                 <button type="button" id="all" class="btn but-line">Exporter Tout</button>
-                <?php 
+                <?php
                 if(!$archive && in_array($status, [1, 2, 3, 5, 6, 7]) && is_null($lockRun)) {
                     echo '<button type="button" id="send" '.$disabled.' class="btn but-line-green lockable">Envoi SAP</button>';
                 }
@@ -125,7 +125,7 @@ include("includes/lock.inc");
             <div class="text-center" id="prefa-content"></div>
 
         </div>
-        <?php include("includes/footer.inc");?> 
+        <?php include("includes/footer.inc");?>
         <script src="js/run.js"></script>
 	</body>
 </html>

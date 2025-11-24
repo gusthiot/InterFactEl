@@ -20,7 +20,7 @@ class ReportRabais extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalR = 0.0;
         $this->reportKey = 'rabaisbonus';
@@ -38,7 +38,7 @@ class ReportRabais extends Report
                 "operations" => ["discount-bonus", "subsid-bonus", "total-subsid"],
                 "formats" => ["fin", "fin", "fin"],
                 "results" => []
-            ], 
+            ],
             "subsid" => [
                 "title" => "Rabais et subsides par client",
                 "columns" => ["client-name"],
@@ -55,7 +55,7 @@ class ReportRabais extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->prepareClients();
         $this->prepareClasses();
@@ -64,7 +64,7 @@ class ReportRabais extends Report
 
         $this->processReportFile();
     }
-    
+
     /**
      * Generates report file and returns its data
      *
@@ -121,7 +121,7 @@ class ReportRabais extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $rabaisArray report data
      * @return void
@@ -154,10 +154,10 @@ class ReportRabais extends Report
                 "subsid"=>[$this::CLIENT_DIM],
                 "for-csv"=>[$this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM]
             ];
-            
+
             foreach($this->tabs as $tab=>$data) {
                 if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
-                    $this->tabs[$tab]["results"][$ids[$tab]] = ["total-subsid" => 0, "mois" => []];            
+                    $this->tabs[$tab]["results"][$ids[$tab]] = ["total-subsid" => 0, "mois" => []];
                     foreach($dimensions[$tab] as $pos=>$dimension) {
                         foreach($dimension as $d) {
                             $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
@@ -169,7 +169,7 @@ class ReportRabais extends Report
                         }
                     }
                 }
-                    
+
                 if(!array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
                     $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
                 }
@@ -185,7 +185,7 @@ class ReportRabais extends Report
             }
             // total csv
             if(!array_key_exists($ids["for-csv"], $this->totalCsvData["results"])) {
-                $this->totalCsvData["results"][$ids["for-csv"]] = ["total-subsid" => 0, "mois" => []];            
+                $this->totalCsvData["results"][$ids["for-csv"]] = ["total-subsid" => 0, "mois" => []];
                 foreach($dimensions["for-csv"] as $pos=>$dimension) {
                     foreach($dimension as $d) {
                         $this->totalCsvData["results"][$ids["for-csv"]][$d] = $extends["for-csv"][$pos][$d];
@@ -197,7 +197,7 @@ class ReportRabais extends Report
                     }
                 }
             }
-                
+
             if(!array_key_exists($this->monthly, $this->totalCsvData["results"][$ids["for-csv"]]["mois"])) {
                 $this->totalCsvData["results"][$ids["for-csv"]]["mois"][$this->monthly] = 0;
             }
@@ -210,7 +210,7 @@ class ReportRabais extends Report
             }
             $this->totalCsvData["results"][$ids["for-csv"]]["total-subsid"] += $total;
             $this->totalCsvData["results"][$ids["for-csv"]]["mois"][$this->monthly] += $total;
-        }   
+        }
     }
 
     /**

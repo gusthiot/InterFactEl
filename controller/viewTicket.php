@@ -13,7 +13,7 @@ if($_FILES['zip_file']) {
         $source = $_FILES["zip_file"]["tmp_name"];
         if(Zip::isAccepted($_FILES["zip_file"]["type"])) {
             $tmpFile = TEMP.time().'_'.$fileName;
-            if(copy($source, $tmpFile)) {    
+            if(copy($source, $tmpFile)) {
                 $unique = 'tickets_'.time();
                 $tmpDir = TEMP.$unique.'/';
                 if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
@@ -33,7 +33,7 @@ if($_FILES['zip_file']) {
                     State::delDir($tmpDir);
                     $_SESSION['alert-danger'] = $msg;
                 }
-        
+
             }
             else {
                 $_SESSION['alert-danger'] = "copy error";

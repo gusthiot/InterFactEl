@@ -3,7 +3,7 @@
 /**
  * Csv class is a base class to extract and write csv files
  */
-class Csv 
+class Csv
 {
 
     /**
@@ -12,7 +12,7 @@ class Csv
      * @param string $file the csv file name
      * @return array
      */
-    static function extract(string $file): array 
+    static function extract(string $file): array
     {
         $result = [];
         if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
@@ -37,11 +37,11 @@ class Csv
      * @param array $array array of lines, each line as an array of fields
      * @return void
      */
-    static function write(string $file, array $array): void 
+    static function write(string $file, array $array): void
     {
         self::put($file, $array, "w");
     }
-    
+
     /**
      * Writes lines as array in a csv file in the following
      *
@@ -49,7 +49,7 @@ class Csv
      * @param array $array array of lines, each line as an array of fields
      * @return void
      */
-    static function append(string $file, array $array): void 
+    static function append(string $file, array $array): void
     {
         self::put($file, $array, "a");
     }
@@ -73,7 +73,7 @@ class Csv
             }
             fclose($open);
         }
-    } 
+    }
 
     /**
      * Formats row characters
@@ -89,5 +89,5 @@ class Csv
         }
         return $row;
     }
-    
+
 }

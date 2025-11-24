@@ -39,7 +39,7 @@ $name = DATA_GEST['facturation'][$plateforme];
  * @param string $title button title
  * @param string $id upload input id
  * @param string $disabled if button is disabled, when a process is running
- * @return string 
+ * @return string
  */
 function uploader(string $title, string $id, string $disabled): string
 {
@@ -58,11 +58,11 @@ include("includes/lock.inc");
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/header.inc");?> 
+        <?php include("includes/header.inc");?>
     </head>
 
     <body>
-        <div class="container-fluid">	
+        <div class="container-fluid">
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
@@ -71,33 +71,33 @@ include("includes/lock.inc");
                     <p><a href="index.php">Accueil</a> > Facturation <?= $name ?></p>
                     <p><a href="logout.php">Logout</a></p>
                 </div>
-            </div>	
+            </div>
             <div class="title <?php if(TEST_MODE) echo "test";?>">
                 <h1 class="text-center p-1"><?= $name ?></h1>
-            </div>	
-            
+            </div>
+
             <form action="controller/uploadPrepa.php" method="post" id="form-fact" enctype="multipart/form-data" >
                 <div class="text-center">
                     <p>Facturation en cours : <?php echo (!empty($current)) ? $current : "aucune";  ?></p>
-                    <p>Dernière facturation : <?php echo (!empty($state->getLast())) ? $state->getLast() : "aucune";  ?></p> 
+                    <p>Dernière facturation : <?php echo (!empty($state->getLast())) ? $state->getLast() : "aucune";  ?></p>
                     <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
-                    <input type="hidden" name="type" id="type" value="SAP">   
+                    <input type="hidden" name="type" id="type" value="SAP">
                     <div class="row" id="buttons">
                         <div class="col-sm">
                             <?php
                                 if(!$first) { ?>
                                     <div><button type="button" id="open-historique" class="btn but-line">Ouvrir l'historique</button></div>
-                                    <?php 
-                                    if(empty($current)) { 
+                                    <?php
+                                    if(empty($current)) {
                                         echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $disabled);
-                                    }             
-                                    if(IS_SUPER && TEST_MODE == "TEST") {  
+                                    }
+                                    if(IS_SUPER && TEST_MODE == "TEST") {
                                         ?>
                                         <div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button>
-                                        </div>  
-                                    <?php } 
-                                }     
-                                if(IS_SUPER && TEST_MODE == "TEST") {   
+                                        </div>
+                                    <?php }
+                                }
+                                if(IS_SUPER && TEST_MODE == "TEST") {
                                     //echo uploader("Charger des archives", "ARCHIVE", $disabled);
                                     $choices = [];
                                     if($first) {
@@ -121,7 +121,7 @@ include("includes/lock.inc");
                                     </div>
                                     <div id="reinit">
                                     </div>
-                                <?php } 
+                                <?php }
                             ?>
                         </div>
                         <div class="col-sm">
@@ -129,16 +129,16 @@ include("includes/lock.inc");
                                 if($first) {
                                     if(DATA_GEST['tarifs'] && array_key_exists($plateforme, DATA_GEST['tarifs'])) {
                                         echo uploader("Préparer 1ère facturation", "FIRST", $disabled);
-                                    } 
+                                    }
                                 }
                                 else {
                                     if(empty($current)) {
                                         echo uploader("Refaire factures : ".$state->getLastMonth()."/".$state->getLastYear(), "REDO", $disabled);
                                         echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $disabled);
                                     }
-                                } 
+                                }
                             ?>
-                        </div>    
+                        </div>
                     </div>
                     <div class="row hidden" id="historique-div">
                         <div><button type="button" id="close-historique" class="btn but-line">Fermer l'historique</button></div>
@@ -163,7 +163,7 @@ include("includes/lock.inc");
 
             <div id="plate-content">
             <?php
-            if(file_exists($dir)) {  
+            if(file_exists($dir)) {
             ?>
                 <table class="table table-boxed">
                     <?php
@@ -222,7 +222,7 @@ include("includes/lock.inc");
                                         }
                                     }
                                     echo '</td>';
-                                    
+
                                     if($line > 0){
                                         echo '</tr>';
                                     }
@@ -237,8 +237,8 @@ include("includes/lock.inc");
             ?>
             </div>
         </div>
-        <?php include("includes/footer.inc");?> 
+        <?php include("includes/footer.inc");?>
         <script src="js/facturation.js"></script>
-  
+
 	</body>
 </html>

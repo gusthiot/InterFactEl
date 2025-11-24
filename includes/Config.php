@@ -84,7 +84,7 @@ class Config
                     $msg .= "le label ".$key." n'a rien a faire dans ".$file;
                 }
             }
-            
+
         }
 
         if(empty($msg)) {

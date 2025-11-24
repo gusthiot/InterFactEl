@@ -13,7 +13,7 @@ class ReportPlateforme extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'statpltf';
         $this->reportColumns = ["proj-id", "item-grp", "item-codeK", "transac-usage"];
@@ -61,7 +61,7 @@ class ReportPlateforme extends Report
         if(floatval($this->factel) < 7) {
             self::mergeInCsv('cptexpl', $cptExplArray, self::PROJET_KEY);
         }
-        
+
         $pltfArray = [];
         $loopArray = [];
 
@@ -116,7 +116,7 @@ class ReportPlateforme extends Report
                     if(floatval($this->factel) == 7) {
                         $letter = substr($tab[$columns["item-nbr"]], 0, 1);
                         switch($letter) {
-                            case "E": 
+                            case "E":
                                 $itemK = "K1";
                                 break;
                             case "S":
@@ -161,7 +161,7 @@ class ReportPlateforme extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $pltfArray report data
      * @return void
@@ -183,8 +183,8 @@ class ReportPlateforme extends Report
             $dimensions = [$this::PROJET_DIM, $this::CATEGORIE_DIM];
             $extends_glob = [$projet, $groupe, $categorie, $codeK];
             $dimensions_glob = [$this::PROJET_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM];
-            $id = $line[0]."-".$line[2]."-".$itemId; 
-            $id_glob = $line[0]."-".$line[2]."-".$line[1]."-".$itemId; 
+            $id = $line[0]."-".$line[2]."-".$itemId;
+            $id_glob = $line[0]."-".$line[2]."-".$line[1]."-".$itemId;
 
             if(!array_key_exists($id, $this->tabs["par-projet"]["results"])) {
                 $this->tabs["par-projet"]["results"][$id] = [];
@@ -200,7 +200,7 @@ class ReportPlateforme extends Report
             $this->tabs["par-projet"]["results"][$id]["transac-usage"] += $line[3];
             // total csv
             if(!array_key_exists($id_glob, $this->totalCsvData["results"])) {
-                $this->totalCsvData["results"][$id_glob] = ["transac-usage" => 0];            
+                $this->totalCsvData["results"][$id_glob] = ["transac-usage" => 0];
                 foreach($dimensions_glob as $pos=>$dimension) {
                     foreach($dimension as $d) {
                         $this->totalCsvData["results"][$id_glob][$d] = $extends_glob[$pos][$d];

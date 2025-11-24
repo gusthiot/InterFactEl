@@ -58,7 +58,7 @@ $(document).on("change", "#from", function () {
         start += '<option disabled selected></option>';
         $('#generate').html('');
     }
-    const last = start + next + '</select>'; 
+    const last = start + next + '</select>';
     $('#last').html(last);
 } );
 

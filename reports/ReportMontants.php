@@ -11,7 +11,7 @@ class ReportMontants extends Report
      * @var float
      */
     private float $totalM;
-    
+
     /**
      * Class constructor
      *
@@ -20,7 +20,7 @@ class ReportMontants extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalM = 0.0;
         $this->reportKey = 'montants';
@@ -38,7 +38,7 @@ class ReportMontants extends Report
                 "operations" => ["total-fact"],
                 "formats" => ["fin"],
                 "results" => []
-            ], 
+            ],
             "par-classe" => [
                 "title" => "Par Classe",
                 "columns" => ["client-labelclass"],
@@ -47,7 +47,7 @@ class ReportMontants extends Report
                 "formats" => ["fin"],
                 "results" => []
 
-            ], 
+            ],
             "par-article" =>[
                 "title" => "Par Article",
                 "columns" => ["item-labelcode"],
@@ -56,7 +56,7 @@ class ReportMontants extends Report
                 "formats" => ["fin"],
                 "results" => []
 
-            ], 
+            ],
             "par-client-classe" => [
                 "title" => "Par Client & Classe",
                 "columns" => ["client-name", "client-labelclass"],
@@ -64,8 +64,8 @@ class ReportMontants extends Report
                 "operations" => ["total-fact"],
                 "formats" => ["fin"],
                 "results" => []
-                
-            ], 
+
+            ],
             "par-client-article" => [
                 "title" => "Par Client & Article",
                 "columns" => ["client-name", "item-labelcode"],
@@ -74,7 +74,7 @@ class ReportMontants extends Report
                 "formats" => ["fin"],
                 "results" => []
 
-            ], 
+            ],
             "par-article-classe" => [
                 "title" => "Par Article & Classe",
                 "columns" => ["item-labelcode", "client-labelclass"],
@@ -92,7 +92,7 @@ class ReportMontants extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->prepareClients();
         $this->prepareClasses();
@@ -113,7 +113,7 @@ class ReportMontants extends Report
         if(floatval($this->factel) == 6) {
             $crpFileName = $this->getFileNameInBS('Bilancrp-f');
             if($crpFileName) {
-                $lines = Csv::extract($crpFileName);        
+                $lines = Csv::extract($crpFileName);
                 $columns = $this->bilansStats->getColumns($this->factel, 'Bilancrp-f');
                 for($i=1;$i<count($lines);$i++) {
                     $tab = explode(";", $lines[$i]);
@@ -181,10 +181,10 @@ class ReportMontants extends Report
                                 - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
                         if(!empty($crpArray) && array_key_exists($code, $crpArray)) {
                             $this->facts($montantsArray, $montant, $tab, $columns, $clcl, $crpArray[$code]["dM"], $crpArray[$code]["dMontants"]);
-                        } 
+                        }
                         else {
                             $this->facts($montantsArray, $montant, $tab, $columns, $clcl);
-                        }        
+                        }
                     }
                     elseif(floatval($this->factel) == 7 || floatval($this->factel) == 8) {
                         if($tab[$columns["platf-code"]] == $this->plateforme) {
@@ -231,7 +231,7 @@ class ReportMontants extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $montantsArray report data
      * @return void
@@ -259,7 +259,7 @@ class ReportMontants extends Report
                 "par-article"=>[$article],
                 "par-client-classe"=>[$client, $classe],
                 "par-client-article"=>[$client, $article],
-                "par-article-classe"=>[$article, $classe], 
+                "par-article-classe"=>[$article, $classe],
                 "for-csv"=>[$client, $classe, $article]
             ];
             $dimensions = [

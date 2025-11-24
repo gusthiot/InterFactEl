@@ -15,11 +15,11 @@ include("includes/lock.inc");
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/header.inc");?> 
+        <?php include("includes/header.inc");?>
     </head>
 
     <body>
-        <div class="container-fluid">	
+        <div class="container-fluid">
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
@@ -28,12 +28,12 @@ include("includes/lock.inc");
                     <p>Accueil</p>
                     <p><a href="logout.php">Logout</a></p>
                 </div>
-            </div>	
+            </div>
             <div class="title <?php if(TEST_MODE) echo "test";?>">
                 <h1 class="text-center p-1">Interface de facturation</h1>
                 <h6 class="text-center">Welcome <i><?= USER ?></i></h6>
             </div>
-            <?php include("includes/message.inc"); 
+            <?php include("includes/message.inc");
             if(!empty($lockUser)) { ?>
                 <div class="text-center"><?= $dlTxt ?></div>
             <?php }
@@ -43,7 +43,7 @@ include("includes/lock.inc");
                 if(IS_SUPER) {
                     // Only supervisor can upload/download config files
                 ?>
-                
+
                 <div class="index-primary">
                     <h3>Supervision</h3>
                     <div class="tiles">
@@ -67,13 +67,13 @@ include("includes/lock.inc");
             <?php
                 }
                 if(DATA_GEST) {
-                    ?>             
-                    <div class="index-primary">                  
+                    ?>
+                    <div class="index-primary">
                         <h3>Gestion</h3>
                         <?php
                         if(!empty(DATA_GEST['facturation'])) {
-                            ?>   
-                            <div class="index-secondary">  
+                            ?>
+                            <div class="index-secondary">
                                 <h5>Facturation</h5>
                                 <div class="tiles">
                                 <?php
@@ -81,7 +81,7 @@ include("includes/lock.inc");
                                 ?>
                                     <div class="facturation tile center-two">
                                         <input type="hidden" id="plate-fact" value="<?= $plateforme ?>" />
-                                        <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>  
+                                        <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
                                         <svg class="icon feather icon-tile" aria-hidden="true">
                                             <use xlink:href="#dollar-sign"></use>
                                         </svg>
@@ -93,21 +93,21 @@ include("includes/lock.inc");
                         <?php
                         }
                         if(!empty(DATA_GEST['tarifs'])) {
-                            ?>      
-                            <div class="index-secondary">                
+                            ?>
+                            <div class="index-secondary">
                                 <h5>Tarifs</h5>
                                 <div class="tiles">
                                 <?php
                                 foreach(DATA_GEST['tarifs'] as $plateforme => $name) {
                                     $available = false;
-                                    if(file_exists(DATA.$plateforme)) { 
+                                    if(file_exists(DATA.$plateforme)) {
                                         $available = true;
                                         $state = new State(DATA.$plateforme);
                                         if(empty($state->getLast())) {
                                             $available = false;
                                         }
                                     }
-                                    if($available) {   
+                                    if($available) {
                                     ?>
                                         <div class="tarifs tile center-two">
                                             <input type="hidden" id="plate-tarifs" value="<?= $plateforme ?>" />
@@ -117,24 +117,24 @@ include("includes/lock.inc");
                                             </svg>
                                         </div>
                                     <?php }
-                                    else {  
+                                    else {
                                     ?>
                                         <div class="desactived-tile center-two">
                                             <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
                                             <svg class="icon feather icon-tile" aria-hidden="true">
                                             </svg>
                                         </div>
-                                    <?php 
+                                    <?php
                                     }
                                 }
                                 ?>
-                                </div>  
-                            </div>   
+                                </div>
+                            </div>
                         <?php
                         }
                         if(!empty(DATA_GEST['reporting'])) {
-                            ?>      
-                            <div class="index-secondary">  
+                            ?>
+                            <div class="index-secondary">
                                 <h5>Reporting</h5>
                                 <div class="tiles">
                                 <?php
@@ -142,7 +142,7 @@ include("includes/lock.inc");
                                 ?>
                                     <div class="reporting tile center-two">
                                         <input type="hidden" id="plate-report" value="<?= $plateforme ?>" />
-                                        <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>  
+                                        <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
                                         <svg class="icon feather icon-tile" aria-hidden="true">
                                             <use xlink:href="#book"></use>
                                         </svg>
@@ -150,7 +150,7 @@ include("includes/lock.inc");
                                 <?php }
                                 ?>
                                 </div>
-                            </div> 
+                            </div>
                         <?php
                         }
                         ?>
@@ -172,7 +172,7 @@ include("includes/lock.inc");
                     </label>
                     <label class="simulation tile center-one">
                         <form action="controller/uploadPrepa.php" method="post" class="form-simu" enctype="multipart/form-data" >
-                            <input type="hidden" name="type" id="type" value="SIMU">   
+                            <input type="hidden" name="type" id="type" value="SIMU">
                             <input id="SIMU" type="file" name="SIMU" <?= $disabled ?> class="zip-simu lockable" accept=".zip">
                         </form>
                         <p>Simulation</p>
@@ -183,8 +183,8 @@ include("includes/lock.inc");
                 </div>
             </div>
         </div>
-        <?php include("includes/footer.inc");?> 
+        <?php include("includes/footer.inc");?>
         <script src="js/index.js"></script>
-  
+
 	</body>
 </html>

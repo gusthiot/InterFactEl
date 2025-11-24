@@ -81,7 +81,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                         if(!empty($infos)) {
                             if(!empty($res->E_RESULT->item->IS_ERROR)) {
                                 if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
-                                    if($type == "send-bills") { 
+                                    if($type == "send-bills") {
                                         $sap_cont[$bill][3] = "ERROR";
                                         $sap_cont[$bill][4] = "-";
                                         $sap_cont[$bill][5] = $res->E_RESULT->item->LOG->item->MESSAGE;
@@ -156,7 +156,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                 }
                 else {
                     foreach($redo as $rd) {
-                        if($type == "send-bills") { 
+                        if($type == "send-bills") {
                             $sap_cont[$rd][4] = "-";
                             $sap_cont[$rd][5] = "Problème de connexion au serveur SAP";
                             $archive[$rd][3] = "READY";
@@ -177,7 +177,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
         }
     }
     catch(Exception $e) {
-        $error .= $e->getMessage(); 
+        $error .= $e->getMessage();
     }
     unlink("../".Lock::FILES['process']);
 
@@ -188,7 +188,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
             $msg = Tarifs::saveFirst($dir, $dirTarifs);
             if(!empty($msg)) {
                 $res .= $msg;
-            }  
+            }
         }
 
         Lock::save($dir, 'run', Lock::STATES['finalized']);

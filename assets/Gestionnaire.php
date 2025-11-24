@@ -5,7 +5,7 @@ require_once("Csv.php");
 /**
  * Gestionnaire class represents a csv file with users having rights to manage the billing
  */
-class Gestionnaire extends Csv 
+class Gestionnaire extends Csv
 {
 
     /**
@@ -28,7 +28,7 @@ class Gestionnaire extends Csv
     /**
      * Class constructor
      */
-    function __construct() 
+    function __construct()
     {
         $this->gestionnaires = [];
         $lines = self::extract(CONFIG.self::NAME);
@@ -59,8 +59,8 @@ class Gestionnaire extends Csv
     static function hasRight(int $right, int $pos) : bool
     {
         return $right & (1 << $pos);
-    } 
-    
+    }
+
     /**
      * Gets the rights for a determined user
      *

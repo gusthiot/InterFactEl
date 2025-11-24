@@ -48,12 +48,12 @@ function table(array $modifs, string $id, string $title, string $class, array $p
             $html .= "<tr>";
             foreach($line as $col=>$cell) {
                 $color = "";
-                // display the differencies in yellow 
+                // display the differencies in yellow
                 if(($class != "modifs") && ($key>0) && ($key%2 == 0) && ($col != 2) && ($cell != $prev[$col])) {
                     $color = ' class="yellow"';
                 }
-                // check for financial format, for month column, and for titles line  
-                in_array($col, $prices) ? $case = number_format(floatval($cell), 2, ".", "'") : 
+                // check for financial format, for month column, and for titles line
+                in_array($col, $prices) ? $case = number_format(floatval($cell), 2, ".", "'") :
                     (($col==1) ? $case = ((intval($cell) < 10) ? "0".$cell : $cell) : $case = $cell);
                 ($key==0) ? $html .= "<th>".$cell."</th>" : $html .= "<td".$color.">".$case."</td>";
             }

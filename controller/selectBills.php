@@ -51,13 +51,13 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         }
 
         $html .= '</div><div id="over-bills"><table class="table" id="bills">';
-    
+
         foreach($choices as $choice) {
             $html .= $choice;
         }
         $html .= "</table></div>";
     }
-    
+
     echo $html;
 }
 
@@ -68,7 +68,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
  * @param array $line bill data as array
  * @return string
  */
-function choice(int $i, array $line): string 
+function choice(int $i, array $line): string
 {
     return '<tr>
                 <td>

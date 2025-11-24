@@ -20,7 +20,7 @@ $( document ).ready(function() {
         getDir = "&unique="+$('#unique').val();
     }
     else {
-        getDir = "&plate="+$('#plate').val()+"&year="+$('#year').val()+"&month="+$('#month').val()+"&version="+$('#version').val()+"&run="+$('#run').val();        
+        getDir = "&plate="+$('#plate').val()+"&year="+$('#year').val()+"&month="+$('#month').val()+"&version="+$('#version').val()+"&run="+$('#run').val();
     }
     let click = false;
     $('.pdf').on('click', function () {

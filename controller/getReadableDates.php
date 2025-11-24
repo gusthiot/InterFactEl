@@ -5,7 +5,7 @@ require_once("../assets/Lock.php");
 require_once("../includes/State.php");
 require_once("../session.inc");
 
-if(isset($_POST["plate"])) { 
+if(isset($_POST["plate"])) {
 
     $plateforme = $_POST["plate"];
     checkPlateforme("tarifs", $plateforme);

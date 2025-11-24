@@ -3,7 +3,7 @@
 /**
  * Ticket class represents a json file with all billing data
  */
-class Ticket 
+class Ticket
 {
 
     /**

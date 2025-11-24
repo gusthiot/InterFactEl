@@ -21,7 +21,7 @@ if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"]) && isset(
     $messages = new Message();
     $_SESSION['alert-success'] = $messages->getMessage('msg2');
     header('Location: ../reporting.php?plateforme='.$plateforme);
-} 
+}
 else {
     $_SESSION['alert-danger'] = "post_data_missing";
     header('Location: ../index.php');

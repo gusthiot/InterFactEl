@@ -18,7 +18,7 @@ class ReportPenalites extends Report
      * @var float
      */
     private float $total6;
-    
+
     /**
      * Class constructor
      *
@@ -27,7 +27,7 @@ class ReportPenalites extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->total5 = 0.0;
         $this->total6 = 0.0;
@@ -147,13 +147,13 @@ class ReportPenalites extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $penosArray report data
      * @return void
      */
     function mapping(array $penosArray): void
-    {   
+    {
         $scipers = $this->scipers();
         foreach($penosArray as $line) {
             $client = $this->clients[$line[0]];
@@ -162,9 +162,9 @@ class ReportPenalites extends Report
             $codeK = ["item-codeK"=>$line[2], "item-textK"=>$this->paramtext->getParam("item-".$line[2])];
             $value = $line[4];
             $ids = [
-                "par-machine"=>$line[3], 
-                "par-client"=>$line[0], 
-                "par-user"=>$line[1], 
+                "par-machine"=>$line[3],
+                "par-client"=>$line[0],
+                "par-user"=>$line[1],
                 "par-client-user"=>$line[0]."-".$line[1],
                 "par-machine-user"=>$line[3]."-".$line[2]."-".$line[1]
             ];
@@ -176,7 +176,7 @@ class ReportPenalites extends Report
                 "par-machine-user"=>[$machine, $codeK, $user]
             ];
             $dimensions = [
-                "par-machine"=>[$this::MACHINE_DIM], 
+                "par-machine"=>[$this::MACHINE_DIM],
                 "par-client"=>[$this::CLIENT_DIM],
                 "par-user"=>[$this::USER_DIM],
                 "par-client-user"=>[$this::CLIENT_DIM, $this::USER_DIM],

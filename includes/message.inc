@@ -13,7 +13,7 @@ foreach($alerts as $alert) {
             </button>
         </div>
     <?php
-        unset($_SESSION[$alert]); 
+        unset($_SESSION[$alert]);
     }
 }
 ?>

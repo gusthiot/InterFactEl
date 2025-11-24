@@ -5,8 +5,8 @@ require_once("Csv.php");
 /**
  * ParamEdit class represents a csv file with edition parameters
  */
-class ParamEdit extends Csv 
-{ 
+class ParamEdit extends Csv
+{
 
     /**
      * The csv files names
@@ -25,7 +25,7 @@ class ParamEdit extends Csv
      *
      * @param string $dir directory where to find the csv file
      */
-    function __construct(string $dir) 
+    function __construct(string $dir)
     {
         $this->params = [];
         $lines = self::extract($dir.self::NAME);
@@ -34,14 +34,14 @@ class ParamEdit extends Csv
             $this->params[$tab[0]] = $tab[1];
         }
     }
-    
+
     /**
      * Gets the parameter for a specific key
      *
      * @param string $key specific key
      * @return string
      */
-    function getParam(string $key): string 
+    function getParam(string $key): string
     {
         if(array_key_exists($key, $this->params)) {
             return $this->params[$key];

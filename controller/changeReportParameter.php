@@ -8,5 +8,5 @@ if(isset($_POST["type"]) && isset($_POST["value"]) && isset($_POST["plate"])) {
     if(in_array($_POST["type"], ["encoding", "separator"])) {
         $_SESSION[$_POST["type"]] = $_POST["value"];
     }
-    
+
 }
