@@ -11,23 +11,23 @@ class ConcatT
     const COLUMNS = [
         "t1" => ["invoice-year", "invoice-month", "invoice-id", "invoice-ref", "invoice-type",
             "client-code", "client-sap", "client-name", "client-idclass", "client-class",
-            "client-labelclass", "proj-id", "proj-nbr", "proj-name", "item-idsap", "item-codeD", 
+            "client-labelclass", "proj-id", "proj-nbr", "proj-name", "item-idsap", "item-codeD",
             "item-order", "item-labelcode", "total-fact"],
         "t2" => ["invoice-year", "invoice-month", "invoice-id", "invoice-type", "platf-name",
-            "client-code", "client-sap", "client-name", "client-idclass", "client-class", 
-            "client-labelclass", "proj-id", "proj-nbr", "proj-name", "user-id", "user-name-f", 
-            "date-start-y", "date-start-m", "date-end-y", "date-end-m", "item-idsap", 
-            "item-codeD", "item-order", "item-labelcode", "item-id", "item-nbr", "item-name", 
+            "client-code", "client-sap", "client-name", "client-idclass", "client-class",
+            "client-labelclass", "proj-id", "proj-nbr", "proj-name", "user-id", "user-name-f",
+            "date-start-y", "date-start-m", "date-end-y", "date-end-m", "item-idsap",
+            "item-codeD", "item-order", "item-labelcode", "item-id", "item-nbr", "item-name",
             "transac-quantity", "item-unit", "valuation-price", "sum-deduct", "total-fact"],
         "t3" => ["editing-year", "editing-month", "year", "month", "invoice-year", "invoice-month",
-            "client-code", "client-sap", "client-name", "client-class", "client-labelclass", 
+            "client-code", "client-sap", "client-name", "client-class", "client-labelclass",
             "oper-id", "oper-name", "oper-note", "staff-note", "mach-id", "mach-name", "mach-extra",
             "user-id", "user-sciper", "user-name", "user-first", "proj-id", "proj-nbr", "proj-name",
             "proj-expl", "flow-type", "item-grp", "item-id", "item-codeK", "item-textK",
-            "item-text2K", "item-nbr", "item-name", "item-unit", "item-codeD", "item-labelcode", 
-            "item-extra", "transac-date", "transac-valid", "transac-quantity", "transac-usage", 
+            "item-text2K", "item-nbr", "item-name", "item-unit", "item-codeD", "item-labelcode",
+            "item-extra", "transac-date", "transac-valid", "transac-quantity", "transac-usage",
             "transac-runtime", "valuation-price", "valuation-brut", "discount-type", "discount-CHF",
-            "valuation-net", "subsid-ok", "deduct-CHF", "subsid-deduct", "total-fact", 
+            "valuation-net", "subsid-ok", "deduct-CHF", "subsid-deduct", "total-fact",
             "discount-bonus", "subsid-bonus"]
     ];
 
@@ -80,7 +80,7 @@ class ConcatT
                 $line = [];
                 $paramtext = new ParamText();
                 foreach($columns as $label) {
-                    $line[] = $paramtext->getParam($label);
+                    $line[] = Csv::enclose($paramtext->getParam($label));
                 }
                 $_SESSION['encoding'] == 'UTF-8' ? $content[] = $line : $content[] = Csv::formatLine($line);
             }
@@ -103,7 +103,7 @@ class ConcatT
                     }
                 }
             }
-            
+
             $infos = Info::load($dirRun);
             $factel = $infos["FactEl"][2];
             $name = $bilansStats->findCsvUrl($dirRun, $factel, $key);
@@ -144,9 +144,9 @@ class ConcatT
                         $line = [];
                         foreach($columns as $column) {
                             if(array_key_exists($column, $positions)) {
-                                $line[] = $tab[$positions[$column]];
+                                $line[] = Csv::enclose($tab[$positions[$column]]);
                             }
-                            else {   
+                            else {
                                 switch($column) {
                                     case "editing-year":
                                         $line[] = $eY;
@@ -169,7 +169,7 @@ class ConcatT
                             }
                         }
                         $_SESSION['encoding'] == 'UTF-8' ? $content[] = $line : $content[] = Csv::formatLine($line);
-                    }                   
+                    }
                 }
             }
 

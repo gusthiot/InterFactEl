@@ -3,7 +3,7 @@
 /**
  * Csv class is a base class to extract and write csv files
  */
-class Csv 
+class Csv
 {
 
     /**
@@ -12,7 +12,7 @@ class Csv
      * @param string $file the csv file name
      * @return array
      */
-    static function extract(string $file): array 
+    static function extract(string $file): array
     {
         $result = [];
         if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
@@ -37,11 +37,11 @@ class Csv
      * @param array $array array of lines, each line as an array of fields
      * @return void
      */
-    static function write(string $file, array $array): void 
+    static function write(string $file, array $array): void
     {
         self::put($file, $array, "w");
     }
-    
+
     /**
      * Writes lines as array in a csv file in the following
      *
@@ -49,7 +49,7 @@ class Csv
      * @param array $array array of lines, each line as an array of fields
      * @return void
      */
-    static function append(string $file, array $array): void 
+    static function append(string $file, array $array): void
     {
         self::put($file, $array, "a");
     }
@@ -67,13 +67,14 @@ class Csv
         if (($open = fopen($file, $mode)) !== false) {
             foreach($array as $row) {
                 self::formatLine($row);
+                $row = str_replace('"', '', $row);
                 if(!fputcsv($open, $row,';')) {
                     break;
                 }
             }
             fclose($open);
         }
-    } 
+    }
 
     /**
      * Formats row characters
@@ -83,11 +84,26 @@ class Csv
      */
     static function formatLine(array|string $row): array|string
     {
-        $row = str_replace('"', '', $row);
         if(mb_check_encoding($row, 'UTF-8')) {
             $row = mb_convert_encoding($row, 'Windows-1252', 'UTF-8');
         }
         return $row;
     }
-    
+
+    /**
+     * Checks if text need to be enclosed and enclosed it
+     *
+     * @param string $text given text
+     * @return string
+     */
+    static function enclose(string $text): string
+    {
+        foreach([' ', ',', ';', '\n', '\r', ':'] as $ch) {
+            if(str_contains($text, $ch)) {
+                return "\"".$text."\"";
+            }
+        }
+        return $text;
+    }
+
 }
