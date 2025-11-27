@@ -1787,5 +1787,104 @@
                 "client-code": 4
             }
         }
+    },
+    "11.03": {
+        "client": {
+            "prefix": "client",
+            "columns": {
+                "client-code": 0,
+                "client-sap": 1,
+                "client-name": 2,
+                "client-name2": 3
+            }
+        },
+        "classeclient": {
+            "prefix": "classeclient",
+            "columns": {
+                "client-class": 1,
+                "client-labelclass": 2
+            }
+        },
+        "articlesap": {
+            "prefix": "articlesap",
+            "columns": {
+                "item-idsap": 0,
+                "item-codeD": 1,
+                "item-order": 2,
+                "item-labelcode": 3
+            }
+        },
+        "user": {
+            "prefix": "user",
+            "columns": {
+                "user-id": 0,
+                "user-sciper": 1,
+                "user-name": 2,
+                "user-first": 3,
+                "user-email": 4
+            }
+        },
+        "machine": {
+            "prefix": "machine",
+            "columns": {
+                "mach-id": 2,
+                "mach-name": 3,
+                "item-grp": 4
+            }
+        },
+        "groupe": {
+            "prefix": "groupe",
+            "columns": {
+                "item-grp": 0,
+                "item-cae": 1,
+                "item-id-K1": 2,
+                "item-id-K2": 3,
+                "item-id-K3": 4,
+                "item-id-K4": 5,
+                "item-id-K5": 6,
+                "item-id-K6": 7,
+                "item-id-K7": 8
+            }
+        },
+        "categorie": {
+            "prefix": "categorie",
+            "columns": {
+                "item-id": 0,
+                "item-nbr": 1,
+                "item-name": 2,
+                "item-unit": 3,
+                "item-nbdeci": 4,
+                "platf-code": 5
+            }
+        },
+        "prestation": {
+            "prefix": "prestation",
+            "columns": {
+                "item-id": 2,
+                "item-nbr": 3,
+                "item-name": 4,
+                "item-idclass": 5,
+                "item-unit": 6,
+                "mach-id": 9,
+                "platf-code": 8
+            }
+        },
+        "classeprestation": {
+            "prefix": "classeprestation",
+            "columns": {
+                "item-idclass": 0,
+                "item-idsap": 1
+            }
+        },
+        "compte": {
+            "prefix": "compte",
+            "columns": {
+                "proj-id": 0,
+                "proj-nbr": 1,
+                "proj-name": 2,
+                "proj-expl": 3,
+                "client-code": 4
+            }
+        }
     }
 }

@@ -2142,6 +2142,129 @@
                 "valuation-net": 2
             }
         }
+    },
+    "11.03": {
+        "montants": {
+            "prefix": "montants",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "total-fact": 3
+            }
+        },
+        "rabaisbonus": {
+            "prefix": "rabaisbonus",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-codeD": 2,
+                "deduct-CHF": 3,
+                "subsid-deduct": 4,
+                "discount-bonus": 5,
+                "subsid-bonus": 6
+            }
+        },
+        "statmach": {
+            "prefix": "statmach",
+            "columns": {
+                "mach-id": 0,
+                "transac-runtime": 1,
+                "runtime-N": 2,
+                "runtime-avg": 3,
+                "runtime-stddev": 4
+            }
+        },
+        "statcae": {
+            "prefix": "statcae",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "user-sciper": 2,
+                "item-codeK": 3,
+                "mach-id": 4,
+                "transac-usage": 5,
+                "transac-runcae": 6
+            }
+        },
+        "statlvr": {
+            "prefix": "statlvr",
+            "columns": {
+                "client-code": 0,
+                "user-sciper": 1,
+                "item-codeD": 2,
+                "item-id": 3,
+                "item-nbr": 4,
+                "mach-id": 5,
+                "transac-usage": 6
+            }
+        },
+        "statsrv": {
+            "prefix": "statsrv",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "item-text2K": 2,
+                "oper-note": 3,
+                "item-grp": 4,
+                "item-codeK": 5,
+                "transac-quantity": 6,
+                "transac-usage": 7
+            }
+        },
+        "statnoshow": {
+            "prefix": "statnoshow",
+            "columns": {
+                "client-code": 0,
+                "user-sciper": 1,
+                "item-codeK": 2,
+                "mach-id": 3,
+                "transac-quantity": 4
+            }
+        },
+        "statpltf": {
+            "prefix": "statpltf",
+            "columns": {
+                "proj-id": 0,
+                "item-grp": 1,
+                "item-codeK": 2,
+                "transac-usage": 3
+            }
+        },
+        "statoper": {
+            "prefix": "statoper",
+            "columns": {
+                "oper-sciper": 0,
+                "date": 1,
+                "flow-type": 2,
+                "transac-usage": 3
+            }
+        },
+        "stattran": {
+            "prefix": "stattran",
+            "columns": {
+                "client-code": 0,
+                "user-sciper": 1,
+                "flow-type": 2,
+                "transac-nbr": 3
+            }
+        },
+        "statdate": {
+            "prefix": "statdate",
+            "columns": {
+                "client-code": 0,
+                "client-class": 1,
+                "user-sciper": 2,
+                "date": 3
+            }
+        },
+        "consopltf": {
+            "prefix": "consopltf",
+            "columns": {
+                "proj-id": 0,
+                "item-id": 1,
+                "valuation-net": 2
+            }
+        }
     }
 }
-
