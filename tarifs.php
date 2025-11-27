@@ -197,7 +197,7 @@ $verified = true;
                             if($verified) {
                             ?>
                             <button type="button" id="tarifs-load" class="btn but-line">Charger</button>
-                            <button type="button" id="tarifs-correct" class="btn but-line">Corriger</button>
+                            <button type="button" id="tarifs-correct" class="btn but-line">Corriger : <?= $state->getLastMonth() ?>/<?= $state->getLastYear() ?></button>
                             <?php
                             }
                             ?>

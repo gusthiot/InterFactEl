@@ -82,52 +82,134 @@ $(document).on("click", "#save-label", function() {
     });
 } );
 
+let type = "";
 $("#tarifs-read").on("click", function() {
-    $.post("controller/getReadableDates.php", {plate: plateforme}, function (data) {
+    type = "read";
+    reset();
+    setDates();
+});
+
+$("#tarifs-control").on("click", function() {
+    type = "control";
+    reset();
+    setDates();
+});
+
+function setDates() {
+    $.post("controller/getTarifsDates.php", {plate: plateforme, type: type}, function (data) {
         $('#tarifs-select').html(data);
+    });
+}
+
+$("#tarifs-load").on("click", function() {
+    type = "load";
+    setDates();
+});
+
+$("#tarifs-check").on("click", function() {
+    $('#tarifs-files').html("alles gut");
+    $('#tarifs-correct').css('display', 'inline-block');
+    $('#tarifs-load').css('display', 'inline-block');
+});
+
+$("#tarifs-correct").on("click", function() {
+        type = "correct";
+        applyTarifs("");
+});
+
+async function blobToBase64(blob) {
+  return new Promise((resolve, _) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+    reader.readAsDataURL(blob);
+  });
+}
+
+let files = [];
+$("#tarifs-import").on("change", function(e) {
+    reset();
+    JSZip.loadAsync(e.target.files[0]).then(function(zip) {
+        const promises = Object.keys(zip.files).map(function (fileName) {
+            const file = zip.files[fileName];
+            return file.async("blob").then(function (blob) {
+                return blobToBase64(blob).then(function (result) {
+                    return [
+                        fileName,
+                        result
+                    ];
+                });
+            });
+        });
+        return Promise.all(promises);
+    }).then(function (results) {
+        let json = " {";
+        first = 1;
+        results.forEach(function(result) {
+            if(first == 1) {
+                first = 0;
+            }
+            else {
+                json += ",";
+            }
+            json += '"'+result[0]+'":"'+result[1]+'"';
+        });
+        json += "}";
+        files = JSON.parse(json);
+        displayFiles();
     });
 });
 
-$("#tarifs-load").on("click", function() {
-
-});
-$("#tarifs-check").on("click", function() {
-
-});
-$("#tarifs-correct").on("click", function() {
-
-});
-
-$("#tarifs-import").on("change", function(e) {
-    const zip = new JSZip();
-    zip.loadAsync( this.files[0])
-        .then(function(zip) {
-            console.log(zip);
-            const files = zip.files;
-            $('#tarifs-select').html("");
-            let filesList = "";
-            Object.keys(files).forEach(function(key) {
-                filesList += key + "<br />";
-            });
-            $('#tarifs-files').html(filesList);
-        }, function() {
-            alert("Not a valid zip file")
-        });
-});
-
-
 $(document).on("change", "#tarifs-month", function() {
-    $('#tarifs-open').html('<button type="button" class="btn but-line lockable">Ouvrir</button>');
+    if(type == "load") {
+        $('#tarifs-apply').html('<button type="button" class="btn but-line lockable">Appliquer</button>');
+    }
+    else {
+        $('#tarifs-open').html('<button type="button" class="btn but-line lockable">Ouvrir</button>');
+    }
 });
+
+function reset() {
+    files = {};
+    $('#tarifs-files').html("");
+    $('#tarifs-correct').css('display', 'none');
+    $('#tarifs-load').css('display', 'none');
+    $('#tarifs-save').css('display', 'none');
+}
+
+function displayFiles() {
+    let filesList = "";
+    Object.keys(files).forEach(function(key) {
+        filesList += key + "<br />";
+    });
+    $('#tarifs-files').html(filesList);
+    $('#tarifs-save').css('display', 'inline-block');
+    $('#tarifs-check').css('display', 'inline-block');
+}
 
 $(document).on("click", "#tarifs-open", function() {
-    $.post("controller/openParameters.php", {plate: plateforme, date: $('#tarifs-dates').val()}, function (data) {
-        const files = JSON.parse(data);
+    $.post("controller/openTarifs.php", {plate: plateforme, type: type, date: $('#tarifs-dates').val()}, function (data) {
+        files = JSON.parse(data);
         $('#tarifs-select').html("");
-        let filesList = "";
-        Object.keys(files).forEach(function(key) {
-            filesList += key + "<br />";
-        });
-        $('#tarifs-files').html(filesList);
+        displayFiles();
+    });
+});
+
+$(document).on("click", "#tarifs-apply", function() {
+        applyTarifs($('#tarifs-dates').val());
+        $('#tarifs-select').html("");
+});
+
+function applyTarifs(date) {
+    const enc_files = JSON.stringify(files);
+    $.post("controller/applyTarifs.php", {plate: plateforme, type: type, date: date, files: enc_files}, function (data) {
+        $('#tarifs-files').html(data);
+    });
+}
+
+$(document).on("click", "#tarifs-save", function() {
+    const enc_files = JSON.stringify(files);
+    $.post("controller/saveTarifs.php", {plate: plateforme, files: enc_files}, function (data) {
+        window.location.href = "controller/download.php?type=js-tarifs&name="+data+"&plate="+plateforme;
+        $('#tarifs-save').css('display', 'none');
     });
 });

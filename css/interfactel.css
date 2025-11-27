@@ -535,3 +535,19 @@ table.report-table th {
   padding: 20px;
   text-align: center;
 }
+
+#tarifs-save {
+  display: none;
+}
+
+#tarifs-load {
+  display: none;
+}
+
+#tarifs-correct {
+  display: none;
+}
+
+#tarifs-check {
+  display: none;
+}

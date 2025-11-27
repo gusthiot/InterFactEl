@@ -5,7 +5,7 @@ require_once("../assets/Lock.php");
 require_once("../includes/State.php");
 require_once("../session.inc");
 
-if(isset($_POST["plate"])) {
+if(isset($_POST["plate"]) && isset($_POST["type"])) {
 
     $plateforme = $_POST["plate"];
     checkPlateforme("tarifs", $plateforme);
@@ -14,6 +14,7 @@ if(isset($_POST["plate"])) {
     $state = new State($dir);
     $choices = [];
     $html = "";
+    $type = $_POST["type"];
 
     foreach(globReverse($dir) as $dirYear) {
         $year = basename($dirYear);
@@ -21,9 +22,20 @@ if(isset($_POST["plate"])) {
             $month = basename($dirMonth);
             if (file_exists($dirMonth."/".ParamZip::NAME)) {
                 if($state->isLater($month, $year)) {
-                    continue;
+                    if(in_array($type, ["control", "load"])) {
+                       $choices[$year.$month] = [$year, $month];
+                    }
                 }
-                $choices[$year.$month] = [$year, $month];
+                else {
+                    if($state->isSame($month, $year)) {
+                        if($type == "control") {
+                        $choices[$year.$month] = [$year, $month];
+                        }
+                    }
+                    if($type == "read") {
+                        $choices[$year.$month] = [$year, $month];
+                    }
+                }
             }
         }
     }
@@ -36,9 +48,13 @@ if(isset($_POST["plate"])) {
         foreach($choices as $key=>$choice) {
             $html .= '<option value="'.$key.'">'.$choice[1]." ".$choice[0].'</option>';
         }
+        $word = "open";
+        if($type == "load") {
+            $word = "apply";
+        }
         $html .=        '</select>
                     </div>
-                    <div id="tarifs-open">
+                    <div id="tarifs-'.$word.'">
                     </div>
                 </div>';
         echo $html;

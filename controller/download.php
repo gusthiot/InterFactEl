@@ -36,6 +36,20 @@ if(isset($_GET['type'])) {
             header('Location: ../index.php');
         }
     }
+    elseif($type==="js-tarifs") {
+        if(isset($_GET['plate']) && isset($_GET['name'])) {
+            checkPlateforme("tarifs", $_GET['plate']);
+            header('Content-disposition: attachment; filename="'.ParamZip::NAME.'"');
+            header('Content-type: application/zip');
+            readfile($_GET['name']);
+            ignore_user_abort(true);
+            unlink($_GET['name']);
+        }
+        else {
+            $_SESSION['alert-danger'] = "erreur download";
+            header('Location: ../index.php');
+        }
+    }
     else {
         if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
@@ -215,4 +229,3 @@ function readZip(string $name, string $tmpFile, string $dir): void
         header('Location: ../index.php');
     }
 }
-
