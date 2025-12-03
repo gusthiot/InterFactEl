@@ -77,7 +77,7 @@ class State
                     $month = basename($dirMonth);
                     foreach(globReverse($dirMonth) as $dirVersion) {
                         $version = basename($dirVersion);
-                        if (file_exists($dirVersion."/".Lock::FILES['version'])) {
+                        if(file_exists($dirVersion."/".Lock::FILES['version'])) {
                             $this->last_y = $year;
                             $this->last_m = $month;
                             $this->last_v = $version;
@@ -90,6 +90,28 @@ class State
                 }
             }
         }
+    }
+
+    static function lastRun(string $pathPlate): array
+    {
+        if(file_exists($pathPlate)) {
+            foreach(globReverse($pathPlate) as $dirYear) {
+                $year = basename($dirYear);
+                foreach(globReverse($dirYear) as $dirMonth) {
+                    $month = basename($dirMonth);
+                    foreach(globReverse($dirMonth) as $dirVersion) {
+                        $version = basename($dirVersion);
+                        foreach(globReverse($dirVersion) as $dirRun) {
+                            $sap = new Sap($dirRun);
+                            if($sap->status() > 1) {
+                                return ['month' => $month, 'year' => $year];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return ['month' => "", 'year' => ""];
     }
 
     /**
@@ -208,11 +230,16 @@ class State
      */
     function isLater(string $month, string $year): bool
     {
-        if($this->last_y == $year) {
-            return (intval($month) > (intval($this->last_m)));
+        return self::isLaterThan($month, $year, $this->last_m, $this->last_y);
+    }
+
+    static function isLaterThan(string $month, string $year, string $m, string $y): bool
+    {
+        if($y == $year) {
+            return (intval($month) > (intval($m)));
         }
         else {
-            if($year < $this->last_y) {
+            if($year < $y) {
                 return false;
             }
             else {
@@ -230,7 +257,12 @@ class State
      */
     function isSame(string $month, string $year): bool
     {
-        if(intval($this->last_m) == intval($month) && $this->last_y == $year) {
+        return self::isSameAs($month, $year, $this->last_m, $this->last_y);
+    }
+
+    static function isSameAs(string $month, string $year, string $m, string $y): bool
+    {
+        if(intval($m) == intval($month) && $y == $year) {
             return true;
         }
         return false;
@@ -309,7 +341,7 @@ class State
      * @param string $y year as reference
      * @return boolean
      */
-    static function isNext(string $month, string $year, string $m, string $y): bool
+    static function isNextTo(string $month, string $year, string $m, string $y): bool
     {
         if($year == $y) {
             return (intval($m) == (intval($month)+1));
@@ -333,13 +365,13 @@ class State
      * @param string $y year as reference
      * @return boolean
      */
-    static function isNextOrSame(string $month, string $year, string $m, string $y): bool
+    static function isNextToOrSameAs(string $month, string $year, string $m, string $y): bool
     {
         if(intval($month) == intval($m) && $year == $y) {
             return true;
         }
         else {
-            return self::isNext($month, $year, $m, $y);
+            return self::isNextTo($month, $year, $m, $y);
         }
     }
 

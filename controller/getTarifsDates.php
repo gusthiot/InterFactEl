@@ -1,7 +1,9 @@
 <?php
 
+require_once("../assets/Sap.php");
 require_once("../assets/ParamZip.php");
 require_once("../assets/Lock.php");
+require_once("../assets/Info.php");
 require_once("../includes/State.php");
 require_once("../session.inc");
 
@@ -11,7 +13,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
     checkPlateforme("tarifs", $plateforme);
 
     $dir = DATA.$plateforme;
-    $state = new State($dir);
+    $mp = State::lastRun($dir);
     $choices = [];
     $html = "";
     $type = $_POST["type"];
@@ -20,20 +22,25 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
         $year = basename($dirYear);
         foreach(globReverse($dirYear) as $dirMonth) {
             $month = basename($dirMonth);
-            if (file_exists($dirMonth."/".ParamZip::NAME)) {
-                if($state->isLater($month, $year)) {
-                    if(in_array($type, ["control", "load"])) {
+            if (file_exists($dirMonth."/".ParamZip::NAME) && ($type == "control")) {
+                if(State::isLaterThan($month, $year, $mp['month'], $mp['year']) || State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                    if($type == "control") {
                        $choices[$year.$month] = [$year, $month];
                     }
                 }
-                else {
-                    if($state->isSame($month, $year)) {
-                        if($type == "control") {
-                        $choices[$year.$month] = [$year, $month];
+            }
+            if($type == "read") {
+                $lastRun = 0;
+                $lastVersion = 0;
+                foreach(globReverse($dirMonth) as $dirVersion) {
+                    foreach(globReverse($dirVersion) as $dirRun) {
+                        $sap = new Sap($dirRun);
+                        $infos = Info::load($dirRun);
+                        $factel = $infos["FactEl"][2];
+                        if((floatval($factel) > 11.02) && (file_exists($dirRun."/lock.csv") || $sap->status() > 1)) {
+                            $choices[$year.$month] = [$year.$month, $factel];
+                            break;
                         }
-                    }
-                    if($type == "read") {
-                        $choices[$year.$month] = [$year, $month];
                     }
                 }
             }
@@ -48,13 +55,9 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
         foreach($choices as $key=>$choice) {
             $html .= '<option value="'.$key.'">'.$choice[1]." ".$choice[0].'</option>';
         }
-        $word = "open";
-        if($type == "load") {
-            $word = "apply";
-        }
         $html .=        '</select>
                     </div>
-                    <div id="tarifs-'.$word.'">
+                    <div id="tarifs-open">
                     </div>
                 </div>';
         echo $html;

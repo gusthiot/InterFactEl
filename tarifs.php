@@ -4,6 +4,7 @@ require_once("assets/ParamZip.php");
 require_once("assets/Lock.php");
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
+require_once("assets/Message.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
@@ -30,11 +31,13 @@ if(file_exists($dir)) {
         $available = false;
     }
 }
+$mp = State::lastRun($dir);
 if(!$available) {
     $_SESSION['alert-danger'] = "Les tarifs de cette plateforme ne peuvent pas être modifiés !";
     header('Location: index.php');
     exit;
 }
+$messages = new Message();
 
 /**
  * Customized button to upload prepa
@@ -94,8 +97,9 @@ $verified = true;
 
             <?php include("includes/message.inc"); ?>
             <div id="tarifs-content">
-                <!--<input type="hidden" id="last-month" value="<?= $state->getLastMonth() ?>" />
-                <input type="hidden" id="last-year" value="<?= $state->getLastYear() ?>" />-->
+                <input type="hidden" id="mp-month" value="<?= $mp['month'] ?>" />
+                <input type="hidden" id="mp-year" value="<?= $mp['year'] ?>" />
+                <input type="hidden" id="msg" value="<?= $messages->getMessage('msg8') ?>" />
                 <nav class="nav-tabs-light-wrapper">
                     <ul class="nav nav-tabs-light" role="tablist">
                         <li class="nav-item">
@@ -152,7 +156,22 @@ $verified = true;
                                                 <svg class="icon" aria-hidden="true">
                                                     <use xlink:href="#lock"></use>
                                                 </svg>
-                                            <?php } ?>
+                                            <?php }
+                                            if (file_exists($dirMonth."/unused.csv")) {
+                                                if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
+                                                    <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover"
+                                                        data-content="<?= $messages->getMessage('msg9') ?>">
+                                                        <svg class="icon icon-selectable red" aria-hidden="true">
+                                                            <use xlink:href="#alert-triangle"></use>
+                                                        </svg>
+                                                    </button>
+                                            <?php }
+                                                else { ?>
+                                                    <svg class="icon" aria-hidden="true">
+                                                        <use xlink:href="#alert-triangle"></use>
+                                                    </svg>
+                                            <?php }
+                                            } ?>
                                             </td>
                                             <td>
                                                 <button id="<?= $id ?>" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-<?= $id ?>" aria-expanded="false" aria-controls="collapse-<?= $id ?>"><?= $label?></button>
@@ -173,7 +192,7 @@ $verified = true;
                                                     Corriger</label>
                                             <?php }
                                             */
-                                            if($state->isLater($month, $year)) {
+                                            if(State::isLaterThan($month, $year, $mp['month'], $mp['year'])) {
                                                 echo '<button type="button" id="suppress-'.$id.'" class="btn but-line suppress">Supprimer</button>';
                                             } ?>
                                             <div id="label-<?= $id ?>"></div>
@@ -197,7 +216,7 @@ $verified = true;
                             if($verified) {
                             ?>
                             <button type="button" id="tarifs-load" class="btn but-line">Charger</button>
-                            <button type="button" id="tarifs-correct" class="btn but-line">Corriger : <?= $state->getLastMonth() ?>/<?= $state->getLastYear() ?></button>
+                            <button type="button" id="tarifs-correct" class="btn but-line">Corriger : <?= $mp['month'] ?>/<?= $mp['year'] ?></button>
                             <?php
                             }
                             ?>

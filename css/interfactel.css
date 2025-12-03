@@ -34,14 +34,33 @@ h1 {
   margin: 1rem !important;
 }
 
+.back-grey {
+  background-color: var(--gris-100);
+}
+
 .lockable[disabled]+label {
   cursor: not-allowed;
   pointer-events:none;
   opacity: 0.6;
 }
 
+.icon-selectable:hover {
+  color: var(--rose);
+}
+
 .btn {
   margin: 1px;
+}
+
+.btn-invisible {
+  border: 0;
+  background-color: white;
+  margin: 0;
+  padding: 0;
+}
+
+.btn-invisible:focus {
+  outline: 0 !important;
 }
 
 .but-line {
@@ -425,6 +444,28 @@ table#tarifs td:nth-child(1) { width: 20%; }
   width: 1500px;
 }
 
+#tarifs-content {
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+#tarifs-save {
+  display: none;
+}
+
+#tarifs-load {
+  display: none;
+}
+
+#tarifs-correct {
+  display: none;
+}
+
+#tarifs-check {
+  display: none;
+}
+
 /** reporting **/
 
 #report-tiles {
@@ -515,10 +556,6 @@ table.report-table th {
   cursor: pointer;
 }
 
-.icon-parameters:hover {
-  color: var(--gris-300);
-}
-
 #report-parameters {
   padding: 20px;
   margin-left: 20px;
@@ -527,27 +564,5 @@ table.report-table th {
 #report-inputs {
   padding: 20px;
   margin-left: 20px;
-  display: none;
-}
-
-#tarifs-content {
-  margin: auto;
-  padding: 20px;
-  text-align: center;
-}
-
-#tarifs-save {
-  display: none;
-}
-
-#tarifs-load {
-  display: none;
-}
-
-#tarifs-correct {
-  display: none;
-}
-
-#tarifs-check {
   display: none;
 }

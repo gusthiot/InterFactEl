@@ -83,7 +83,7 @@ if(isset($_POST['type'])) {
                                     elseif($plateforme !== $result->getParam('Platform')) {
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
                                     }
-                                    elseif(!State::isNextOrSame($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
+                                    elseif(!State::isNextToOrSameAs($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
                                     }
                                 }
@@ -96,7 +96,7 @@ if(isset($_POST['type'])) {
                                     elseif($paramedit->getParam('Platform') !== $result->getParam('Platform')) {
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
                                     }
-                                    elseif(!State::isNextOrSame($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
+                                    elseif(!State::isNextToOrSameAs($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
                                         $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
                                     }
                                     $plateforme = $paramedit->getParam('Platform');
@@ -216,7 +216,7 @@ function runPrefa(string $tmpDir, string $path, ParamEdit $paramedit, string $pl
     if(DEV_MODE) {
         $dev = " -n";
     }
-    $cmd = '/usr/bin/python3.10 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -s -d '.TEMP.' -u'.$unique.' -l '.USER;
+    $cmd = '/usr/bin/python3 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -s -d '.TEMP.' -u'.$unique.' -l '.USER;
     $res = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($res, 0, 2) === "OK") {

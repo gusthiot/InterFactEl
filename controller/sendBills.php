@@ -101,6 +101,10 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                                     $infos["Sent"][3] = USER;
 
                                     Info::save($dir, $infos);
+
+                                    if (file_exists($dirTarifs."/unused.csv")) {
+                                        unlink($dirTarifs."/unused.csv");
+                                    }
                                 }
                                 if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
                                     foreach(globReverse($dirPrevMonth) as $dirPrevVersion) {

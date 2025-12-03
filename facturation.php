@@ -3,6 +3,7 @@
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");
+require_once("assets/Message.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
@@ -32,6 +33,8 @@ if(file_exists($dir)) {
     }
 }
 $name = DATA_GEST['facturation'][$plateforme];
+$messages = new Message();
+$mp = State::lastRun($dir);
 
 /**
  * Customized button to upload prepa
@@ -134,7 +137,9 @@ include("includes/lock.inc");
                                 else {
                                     if(empty($current)) {
                                         echo uploader("Refaire factures : ".$state->getLastMonth()."/".$state->getLastYear(), "REDO", $disabled);
-                                        echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $disabled);
+                                        if (!file_exists($dir."/".$state->getLastYear()."/".$state->getLastMonth()."/unused.csv")) {
+                                            echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $disabled);
+                                        }
                                     }
                                 }
                             ?>
@@ -187,6 +192,14 @@ include("includes/lock.inc");
                                     <svg class="icon" aria-hidden="true">
                                         <use xlink:href="#lock"></use>
                                     </svg>
+                                <?php }
+                                if (file_exists($dirMonth."/unused.csv") && State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
+                                    <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover"
+                                        data-content="<?= $messages->getMessage('msg10') ?>">
+                                        <svg class="icon icon-selectable red" aria-hidden="true">
+                                            <use xlink:href="#alert-triangle"></use>
+                                        </svg>
+                                    </button>
                                 <?php }
                                 echo '</td>';
                                 $line = 0;

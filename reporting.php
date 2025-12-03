@@ -71,7 +71,7 @@ function displayTile(array $tiles): void
             <?php }
             ?>
             <div id="report-parameters">
-                <svg class="icon feather icon-parameters" aria-hidden="true">
+                <svg class="icon feather icon-parameters icon-selectable" aria-hidden="true">
                     <use xlink:href="#settings"></use>
                 </svg>
                 <div id="report-inputs" >

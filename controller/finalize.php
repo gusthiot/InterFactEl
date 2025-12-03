@@ -23,8 +23,8 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $dirPrevMonth = DATA.$plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
 
     $state = new State(DATA.$plateforme);
+    $dirTarifs = DATA.$plateforme."/".$year."/".$month;
     if(empty($state->getLast())) {
-        $dirTarifs = DATA.$plateforme."/".$year."/".$month;
         $msg = Tarifs::saveFirst($dir, $dirTarifs);
         if(!empty($msg)) {
             $_SESSION['alert-danger'] = $msg;
@@ -57,6 +57,11 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     else {
         $_SESSION['alert-warning'] = "info vide ? ";
     }
+
+    if (file_exists($dirTarifs."/unused.csv")) {
+        unlink($dirTarifs."/unused.csv");
+    }
+
     $txt = date('Y-m-d H:i:s')." | ".USER." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;
     Logfile::write(DATA.$plateforme, $txt);
     $_SESSION['alert-success'] = "finalisé";

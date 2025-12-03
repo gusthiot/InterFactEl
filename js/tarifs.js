@@ -1,23 +1,9 @@
 
-//let lastYear = $('#last-year').val();
-//let lastMonth = $('#last-month').val();
+let mpYear = $('#mp-year').val();
+let mpMonth = $('#mp-month').val();
 let plateforme = $('#plate').val();
+
 /*
-$('#month-picker').datepicker({
-    dateFormat: "mm yy",
-    changeMonth: true,
-    changeYear: true,
-    showButtonPanel: true,
-    minDate: new Date(lastYear, lastMonth - 1),
-    maxDate: '+5Y',
-    onClose: function(e){
-        var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-        var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-        $(this).datepicker("setDate",new Date(year,month));
-    }
-})
-.datepicker("setDate",new Date(lastYear,lastMonth - 1));
-*/
 $(document).on("change", "#zip-tarifs", function () {
     const file = $('#zip-tarifs').val();
     if(file.indexOf('.zip') > -1) {
@@ -49,7 +35,7 @@ $(document).on("change", "#zip-correct", function () {
                             '</div>');
     }
 } );
-/*
+
 $(document).on("click", ".export", function() {
     const tab = $(this).attr('id').split("-");
     window.location.href = "controller/download.php?type=tarifs&plate="+plateforme+"&year="+tab[1]+"&month="+tab[2];
@@ -85,17 +71,16 @@ $(document).on("click", "#save-label", function() {
 let type = "";
 $("#tarifs-read").on("click", function() {
     type = "read";
-    reset();
     setDates();
 });
 
 $("#tarifs-control").on("click", function() {
     type = "control";
-    reset();
     setDates();
 });
 
 function setDates() {
+    reset();
     $.post("controller/getTarifsDates.php", {plate: plateforme, type: type}, function (data) {
         $('#tarifs-select').html(data);
     });
@@ -103,7 +88,22 @@ function setDates() {
 
 $("#tarifs-load").on("click", function() {
     type = "load";
-    setDates();
+    $('#tarifs-select').html('<input name="month-picker" id="month-picker" class="date-picker"/>'+
+                            '<div id="tarifs-apply"><button type="button" class="btn but-line lockable">Appliquer</button></div>');
+    $('#month-picker').datepicker({
+        dateFormat: "mm yy",
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        minDate: new Date(mpYear, mpMonth),
+        maxDate: '+5Y',
+        onClose: function(e){
+            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+            $(this).datepicker("setDate",new Date(year,month));
+        }
+    })
+    .datepicker("setDate",new Date(mpYear,mpMonth));
 });
 
 $("#tarifs-check").on("click", function() {
@@ -114,7 +114,9 @@ $("#tarifs-check").on("click", function() {
 
 $("#tarifs-correct").on("click", function() {
         type = "correct";
-        applyTarifs("");
+        if(confirm($('#msg').val())) {
+            applyTarifs(mpMonth+" "+mpYear);
+        }
 });
 
 async function blobToBase64(blob) {
@@ -160,12 +162,7 @@ $("#tarifs-import").on("change", function(e) {
 });
 
 $(document).on("change", "#tarifs-month", function() {
-    if(type == "load") {
-        $('#tarifs-apply').html('<button type="button" class="btn but-line lockable">Appliquer</button>');
-    }
-    else {
-        $('#tarifs-open').html('<button type="button" class="btn but-line lockable">Ouvrir</button>');
-    }
+    $('#tarifs-open').html('<button type="button" class="btn but-line lockable">Ouvrir</button>');
 });
 
 function reset() {
@@ -195,7 +192,7 @@ $(document).on("click", "#tarifs-open", function() {
 });
 
 $(document).on("click", "#tarifs-apply", function() {
-        applyTarifs($('#tarifs-dates').val());
+        applyTarifs($('#month-picker').val());
         $('#tarifs-select').html("");
 });
 
