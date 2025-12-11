@@ -231,6 +231,7 @@ $verified = true;
         <?php include("includes/footer.inc");?>
         <script src="js/jquery-ui.min.js"></script>
         <script src="js/jszip.min.js"></script>
+        <script src="js/papaparse.min.js"></script>
         <link rel="stylesheet" href="css/jquery-ui.min.css">
         <script src="js/tarifs.js"></script>
 	</body>
