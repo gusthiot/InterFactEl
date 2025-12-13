@@ -113,7 +113,7 @@ $("#tarifs-check").on("click", function() {
     if(runCheck(reCheck())) {
         return;
     }
-    if(runCheck(checkColumns())) {
+    if(runCheck(checkColumns(true))) {
         return;
     }
     $('#tarifs-files').html("alles gut");
@@ -174,7 +174,13 @@ $("#tarifs-import").on("change", function(e) {
         });
         json += "}";
         files = JSON.parse(json);
-        displayFiles();
+        extract();
+        if(runCheck(checkColumns(false))) {
+            files = {};
+        }
+        else {
+            displayFiles();
+        }
     });
 });
 
@@ -203,6 +209,7 @@ function displayFiles() {
 $(document).on("click", "#tarifs-open", function() {
     $.post("controller/openTarifs.php", {plate: plateforme, type: type, date: $('#tarifs-dates').val()}, function (data) {
         files = JSON.parse(data);
+        extract();
         $('#tarifs-select').html("");
         displayFiles();
     });
@@ -230,8 +237,12 @@ $(document).on("click", "#tarifs-save", function() {
 
 /************************ */
 
+let contents = {};
+let ids = {};
+
 const mandatoryCsvs = { "paramfact.csv": {
-                            columns: 4
+                            columns: 4,
+                            labels: ["code_int", "code_ext", "devise", "modes"]
                         },
                         "articlesap.csv": {
                             columns: 8,
@@ -265,13 +276,14 @@ const mandatoryCsvs = { "paramfact.csv": {
                             ]
                         },
                         "plateforme.csv": {
-                            columns: 3
+                            columns: 3,
+                            labels: ["Id-Plateforme", "Code_P", "CF", "Fonds", "Admin", "Abrev-Plateforme", "Intitulé-Plateforme", "Grille-Plateforme"]
                         },
                         "partenaire.csv": {
                             columns: 3,
                             uniqueId: [0, 1],
                             tests: [
-                            //    {type: "ref", col: 0, origin: "plateforme.csv", zero: false},
+                                {type: "plateforme", col: 0},
                                 {type: "ref", col: 2, origin: "classeclient.csv", zero: false}
                             ]
                         },
@@ -290,7 +302,8 @@ const mandatoryCsvs = { "paramfact.csv": {
                             columns: 8,
                             uniqueId: [0],
                             tests: [
-                            //    {type: "ref", col: 5, origin: "plateforme.csv", zero: false},
+                                {type: "plateforme", col: 5},
+                                {type: "num", col: 4, neg: false, zero: true, int: true, max: 8},
                                 {type: "ref", col: 6, origin: "classeprestation.csv", zero: false, special: true},
                                 {type: "in", col: 7, array: ["K1", "K2", "K3", "K4", "K5", "K6", "K7"]}
                             ]
@@ -324,13 +337,22 @@ const mandatoryCsvs = { "paramfact.csv": {
                             shouldExist: ["base.csv", "categorie.csv"],
                             tests: [
                                 {type: "ref", col: 0, origin: "base.csv", zero: false},
-                                {type: "ref", col: 1, origin: "categorie.csv", zero: false}
+                                {type: "ref", col: 1, origin: "categorie.csv", zero: false},
+                                {type: "num", col: 2, neg: false, zero: true, int: true}
                             ]
                         },
                     };
 const optionalCsvs = ["categprix.csv"];
 const mandatoryPdfs = ["logo.pdf"];
 const optionalPdfs = ["grille.pdf"];
+
+function extract() {
+    Object.keys(mandatoryCsvs).forEach(function(filename) {
+        if(Object.keys(files).includes(filename)) {
+            contents[filename] = Papa.parse(atob(files[filename]), {delimiter: ";", skipEmptyLines: true}).data;
+        }
+    });
+}
 
 function check() {
     let missing = [];
@@ -372,12 +394,11 @@ function reCheck() {
     return "";
 }
 
-let contents = {};
-let ids = {};
-function checkColumns() {
+let plateforme_id = "";
+let has_grille = "";
+function checkColumns(complete) {
     let result = "";
     Object.keys(mandatoryCsvs).forEach(function(filename) {
-        contents[filename] = Papa.parse(atob(files[filename]), {delimiter: ";", skipEmptyLines: true}).data;
         const number = mandatoryCsvs[filename].columns;
         let i = 1;
         contents[filename].forEach( function(line) {
@@ -394,6 +415,9 @@ function checkColumns() {
         let header = true;
         let arrayIds = {};
         let i = 1;
+        if(mandatoryCsvs[filename].labels) {
+            header = false;
+        }
         contents[filename].forEach(function(line) {
             if(!header) {
                 if(mandatoryCsvs[filename].uniqueId) {
@@ -404,9 +428,30 @@ function checkColumns() {
                         }
                         id += line[col];
                     });
-                    arrayIds[id] = i-1;
+                    if(Object.keys(arrayIds).includes(id)) {
+                        result += "l'id " + id + " du fichier " + filename + " n'est pas unique<br />";
+                    }
+                    else {
+                        arrayIds[id] = i-1;
+                    }
                 }
-                if(mandatoryCsvs[filename].tests) {
+                if(mandatoryCsvs[filename].labels) {
+                    if(filename == "plateforme.csv") {
+                        if(line[0] == mandatoryCsvs[filename].labels[0]) {
+                            plateforme_id = line[2];
+                        }
+                        if(line[0] == mandatoryCsvs[filename].labels[7]) {
+                            has_grille = line[2];
+                        }
+                    }
+                    if(Object.keys(arrayIds).includes(line[0])) {
+                        result += "l'étiquette " + line[col] + " du fichier " + filename + " n'est pas unique<br />";
+                    }
+                    else {
+                        arrayIds[line[0]] = i-1;
+                    }
+                }
+                if(complete && mandatoryCsvs[filename].tests) {
                     mandatoryCsvs[filename].tests.forEach(function(test) {
                         switch(test.type) {
                             case "in":
@@ -440,9 +485,23 @@ function checkColumns() {
                                 if(!test.zero && (line[test.col] == 0)) {
                                     result += pref + " ne peut être nulle<br />";
                                 }
+                                if(test.max && (line[test.col] > test.max)) {
+                                    result += pref + " ne peut être plus grand que " + test.max + " <br />";
+                                }
                                 break;
+                            case "plateforme":
+                                if(line[test.col] != plateforme_id) {
+                                    result += "l'id " + line[test.col] + " de la ligne " + i + " du fichier " + filename + " n'existe pas dans les ids de plateforme.csv <br />";
+                                }
                         }
                     });
+                    if((filename == "basecateg.csv") && (line[2] > 0)) {
+                        const prestLine = ids["categorie.csv"][line[1]];
+                        const nd = contents["categorie.csv"][prestLine][4];
+                        if((Math.floor(Math.log10(line[2])) + 1) > (9 - nd)) {
+                            result += "le prix unitaire " + line[2] + " de la ligne " + i + " du fichier " + filename + " contient trop de décimales <br />";
+                        }
+                    }
                 }
             }
             else {
@@ -450,24 +509,41 @@ function checkColumns() {
             }
             i++;
         });
-        if(mandatoryCsvs[filename].shouldExist) {
-            Object.keys(ids[mandatoryCsvs[filename].shouldExist[0]]).forEach(function(id0) {
-                Object.keys(ids[mandatoryCsvs[filename].shouldExist[1]]).forEach(function(id1) {
-                    const id = id0 + "_" + id1;
-                    if(filename == "coeffprestation.csv") {
-                        const contentLine = contents["classeprestation.csv"][ids["classeprestation.csv"][id1]];
-                        if(contentLine[2] == "NON") {
-                            return;
-                        }
-                    }
-                    if(!(Object.keys(arrayIds).includes(id))) {
-                        result += "Le couple id classe prestation '" + id0 + "' et id classe client '" + id1 + "' n'existe pas dans " + filename + "<br />";
+        if(complete) {
+            if(filename == "plateforme.csv") {
+                if(plateforme_id != plateforme) {
+                    result += "l'id plateforme du fichier " + filename + " ne correspond pas à la plateforme de travail <br />";
+                }
+                if(has_grille == "OUI" && !Object.keys(files).includes("grille.pdf")) {
+                    result += "il manque la grille de tarifs mentiennée dans le fichier " + filename + " <br />";
+                }
+            }
+            if(mandatoryCsvs[filename].labels) {
+                mandatoryCsvs[filename].labels.forEach(function(label) {
+                    if(!Object.keys(arrayIds).includes(label)) {
+                        result += "l'étiquette " + label + " est manquante dans le fichier " + filename + " <br />";
                     }
                 });
-            });
-        }
-        if(mandatoryCsvs[filename].uniqueId) {
-            ids[filename] = arrayIds;
+            }
+            if(mandatoryCsvs[filename].shouldExist) {
+                Object.keys(ids[mandatoryCsvs[filename].shouldExist[0]]).forEach(function(id0) {
+                    Object.keys(ids[mandatoryCsvs[filename].shouldExist[1]]).forEach(function(id1) {
+                        const id = id0 + "_" + id1;
+                        if(filename == "coeffprestation.csv") {
+                            const contentLine = contents["classeprestation.csv"][ids["classeprestation.csv"][id1]];
+                            if(contentLine[2] == "NON") {
+                                return;
+                            }
+                        }
+                        if(!(Object.keys(arrayIds).includes(id))) {
+                            result += "Le couple id classe prestation '" + id0 + "' et id classe client '" + id1 + "' n'existe pas dans " + filename + " <br />";
+                        }
+                    });
+                });
+            }
+            if(mandatoryCsvs[filename].uniqueId) {
+                ids[filename] = arrayIds;
+            }
         }
     });
     return result;
