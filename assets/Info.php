@@ -3,9 +3,9 @@
 require_once("Csv.php");
 
 /**
- * Info class represents a csv file with metadata about a run 
+ * Info class represents a csv file with metadata about a run
  */
-class Info extends Csv 
+class Info extends Csv
 {
 
     /**
@@ -19,13 +19,12 @@ class Info extends Csv
      * @param string $dir directory where to find the csv file
      * @return array
      */
-    static function load(string $dir): array 
+    static function load(string $dir): array
     {
         $infos = [];
         $lines = self::extract($dir."/".self::NAME);
         foreach($lines as $line) {
-            $tab = explode(";", $line);
-            $infos[$tab[0]] = $tab;
+            $infos[$line[0]] = $line;
         }
         return $infos;
     }
@@ -37,7 +36,7 @@ class Info extends Csv
      * @param array $content content to be saved
      * @return void
      */
-    static function save(string $dir, array $content): void 
+    static function save(string $dir, array $content): void
     {
         $data = [];
         foreach($content as $line) {

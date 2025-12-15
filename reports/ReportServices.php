@@ -13,7 +13,7 @@ class ReportServices extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'statsrv';
         $this->reportColumns = ["client-code", "client-class", "item-text2K", "oper-note", "item-grp", "item-codeK", "transac-quantity", "transac-usage"];
@@ -34,12 +34,12 @@ class ReportServices extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->loadCategories();
         $this->loadGroupes();
         $this->loadMachinesGroupes();
-        
+
         $this->processReportFile();
     }
 
@@ -52,16 +52,15 @@ class ReportServices extends Report
     {
         $loopArray = [];
         $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-        $lines = Csv::extract($this->getFileNameInBS('T3'));
-        for($i=1;$i<count($lines);$i++) {
-            $tab = explode(";", $lines[$i]);
-            if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "srv")) {
-                $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["item-text2K"]]."--".$tab[$columns["oper-note"]]."--".$tab[$columns["item-grp"]]."--".$tab[$columns["item-codeK"]];
+        $lines = Csv::extract($this->getFileNameInBS('T3'), true);
+        foreach($lines as $line) {
+            if(($line[$columns["year"]] == $line[$columns["editing-year"]]) && ($line[$columns["month"]] == $line[$columns["editing-month"]]) && ($line[$columns["flow-type"]] == "srv")) {
+                $id = $line[$columns["client-code"]]."--".$line[$columns["client-class"]]."--".$line[$columns["item-text2K"]]."--".$line[$columns["oper-note"]]."--".$line[$columns["item-grp"]]."--".$line[$columns["item-codeK"]];
                 if(!array_key_exists($id, $loopArray)) {
                     $loopArray[$id] = ['Smu' => 0, 'Q' => 0];
                 }
-                $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
-                $loopArray[$id]['Q'] += $tab[$columns["transac-quantity"]];
+                $loopArray[$id]['Smu'] += $line[$columns["transac-usage"]];
+                $loopArray[$id]['Q'] += $line[$columns["transac-quantity"]];
             }
         }
         $servicesArray = [];
@@ -73,13 +72,13 @@ class ReportServices extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $servicesArray report data
      * @return void
      */
     function mapping(array $servicesArray): void
-    {   
+    {
         foreach($servicesArray as $line) {
             $groupe = $this->groupes[$line[4]];
             $itemId = $groupe["item-id-".$line[5]];

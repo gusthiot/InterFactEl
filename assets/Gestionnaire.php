@@ -5,7 +5,7 @@ require_once("Csv.php");
 /**
  * Gestionnaire class represents a csv file with users having rights to manage the billing
  */
-class Gestionnaire extends Csv 
+class Gestionnaire extends Csv
 {
 
     /**
@@ -28,22 +28,20 @@ class Gestionnaire extends Csv
     /**
      * Class constructor
      */
-    function __construct() 
+    function __construct()
     {
         $this->gestionnaires = [];
         $lines = self::extract(CONFIG.self::NAME);
         foreach($lines as $line) {
-            $tab = explode(";", $line);
-
-            if(!array_key_exists($tab[0], $this->gestionnaires)) {
+            if(!array_key_exists($line[0], $this->gestionnaires)) {
                 foreach(self::RIGHTS as $name=>$pos) {
-                    $this->gestionnaires[$tab[0]][$name] = [];
+                    $this->gestionnaires[$line[0]][$name] = [];
                 }
             }
 
             foreach(self::RIGHTS as $name=>$pos) {
-                if(self::hasRight($tab[3], $pos)) {
-                    $this->gestionnaires[$tab[0]][$name][$tab[1]] = $tab[2];
+                if(self::hasRight($line[3], $pos)) {
+                    $this->gestionnaires[$line[0]][$name][$line[1]] = $line[2];
                 }
             }
         }
@@ -59,8 +57,8 @@ class Gestionnaire extends Csv
     static function hasRight(int $right, int $pos) : bool
     {
         return $right & (1 << $pos);
-    } 
-    
+    }
+
     /**
      * Gets the rights for a determined user
      *

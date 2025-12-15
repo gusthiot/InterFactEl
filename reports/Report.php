@@ -450,10 +450,7 @@ abstract class Report
             }
         }
         else {
-            $lines = Csv::extract($reportFile);
-            for($i=1;$i<count($lines);$i++) {
-                $monthArray[] = explode(";", $lines[$i]);
-            }
+            $monthArray = Csv::extract($reportFile, true);
         }
         $this->mapping($monthArray);
 
@@ -612,14 +609,13 @@ abstract class Report
     function mergeInCsv(string $fileKey, array &$array, string $idKey): void
     {
         $columns = $this->in->getColumns($this->factel, $fileKey);
-        $lines = Csv::extract($this->in->getCsvUrl($this->dirRun, $this->factel, $fileKey));
-        for($i=1;$i<count($lines);$i++) {
-            $tab = explode(";", $lines[$i]);
-            $code = $tab[$columns[$idKey]];
+        $lines = Csv::extract($this->in->getCsvUrl($this->dirRun, $this->factel, $fileKey), true);
+        foreach($lines as $line) {
+            $code = $line[$columns[$idKey]];
             if(!array_key_exists($code, $array)) {
                 $data = [];
                 foreach(array_keys($columns) as $key) {
-                    $data[$key] = str_replace('"', '', $tab[$columns[$key]]);
+                    $data[$key] = str_replace('"', '', $line[$columns[$key]]);
                 }
                 $array[$code] = $data;
             }

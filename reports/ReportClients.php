@@ -25,7 +25,7 @@ class ReportClients extends Report
      * @var array
      */
     private array $weeks;
-        
+
     /**
      * Total clients classes changes
      *
@@ -48,7 +48,7 @@ class ReportClients extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalC = [];
         $this->totalU = [];
@@ -107,7 +107,7 @@ class ReportClients extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->prepareMachines();
         $this->loadCategories();
@@ -128,32 +128,31 @@ class ReportClients extends Report
      * @return array
      */
     function generate(): array
-    {        
+    {
         $clientArray = [];
 
         if(floatval($this->factel) < 7) {
             foreach(['cae', 'lvr'] as $flux) {
                 $columns = $this->bilansStats->getColumns($this->factel, $flux);
-                $lines = Csv::extract($this->getFileNameInBS($flux));
-                for($i=1;$i<count($lines);$i++) {
-                    $tab = explode(";", $lines[$i]);
-                    $code = $tab[$columns["client-code"]];
+                $lines = Csv::extract($this->getFileNameInBS($flux), true);
+                foreach($lines as $line) {
+                    $code = $line[$columns["client-code"]];
                     if($flux == 'cae') {
-                        $machId = $tab[$columns["mach-id"]];
+                        $machId = $line[$columns["mach-id"]];
                         $plateId = $this->getPlateformeFromMachine($machId);
-                        $somme = $tab[$columns["Tmach-HP"]] + $tab[$columns["Tmach-HC"]] + $tab[$columns["Toper"]];
+                        $somme = $line[$columns["Tmach-HP"]] + $line[$columns["Tmach-HC"]] + $line[$columns["Toper"]];
                         $cond = $somme > 0;
                     }
                     else {
-                        $itemId = $tab[$columns["item-id"]];
+                        $itemId = $line[$columns["item-id"]];
                         $plateId = $this->prestations[$itemId]["platf-code"];
-                        $cond = true; 
+                        $cond = true;
                     }
                     if($plateId && ($plateId == $this->plateforme) && ($code != $plateId) && $cond) {
-                        $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                        $id = $code."--".$tab[$columns["user-id"]]."--".$datetime[0];
+                        $datetime = explode(" ", $line[$columns["transac-date"]]);
+                        $id = $code."--".$line[$columns["user-id"]]."--".$datetime[0];
                         $clcl = $this->clientsClasses[$code]['client-class'];
-                        $sciper = $this->sciper($tab[$columns["user-id"]]);
+                        $sciper = $this->sciper($line[$columns["user-id"]]);
                         $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
                     }
                 }
@@ -161,27 +160,26 @@ class ReportClients extends Report
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $code = $tab[$columns["client-code"]];
-                $clcl = $tab[$columns["client-class"]];
-                if($tab[$columns["platf-code"]] != $code) {
+            $lines = Csv::extract($this->getFileNameInBS('T3'), true);
+            foreach($lines as $line) {
+                $code = $line[$columns["client-code"]];
+                $clcl = $line[$columns["client-class"]];
+                if($line[$columns["platf-code"]] != $code) {
                     if(floatval($this->factel) >= 7 && floatval($this->factel) < 9) {
-                        $cond = ($this->plateforme == $tab[$columns["platf-code"]]);
+                        $cond = ($this->plateforme == $line[$columns["platf-code"]]);
                     }
                     elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
-                        $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                        $datetime = explode(" ", $line[$columns["transac-date"]]);
                         $parts = explode("-", $datetime[0]);
-                        $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["transac-valid"]] != 2);
+                        $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $line[$columns["platf-code"]]) && ($line[$columns["transac-valid"]] != 2);
                     }
                     else {
-                        $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["transac-valid"]] != 2);
+                        $cond = ($line[$columns["year"]] == $line[$columns["editing-year"]]) && ($line[$columns["month"]] == $line[$columns["editing-month"]]) && ($line[$columns["transac-valid"]] != 2);
                     }
                     if($cond) {
-                        $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                        $id = $code."--".$clcl."--".$tab[$columns["user-id"]]."--".$datetime[0];
-                        $sciper = $this->sciper($tab[$columns["user-id"]]);
+                        $datetime = explode(" ", $line[$columns["transac-date"]]);
+                        $id = $code."--".$clcl."--".$line[$columns["user-id"]]."--".$datetime[0];
+                        $sciper = $this->sciper($line[$columns["user-id"]]);
                         $clientArray[$id] = [$code, $clcl, $sciper, $datetime[0]];
                     }
                 }
@@ -191,7 +189,7 @@ class ReportClients extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $clientArray report data
      * @return void
@@ -265,7 +263,7 @@ class ReportClients extends Report
                     }
                 }
             }
-            
+
             if($line[2] != 0) {
                 $weekYear = $this->weekYear($date);
                 if(!in_array($line[2], $this->weeks[$weekYear][$date->format('W')])) {
@@ -274,7 +272,7 @@ class ReportClients extends Report
 
                 $this->putInNext("user-mois", $date->format('Y-m'), "users", $line[2]);
             }
-            
+
             $this->putInNext("client-mois", $date->format('Y-m'), "clients", $line[0]);
 
             if($line[2] != 0 && !in_array($line[2], $this->totalU)) {
@@ -311,7 +309,7 @@ class ReportClients extends Report
      */
     function init(string $tab, string $id, array $dimensions, array $extend, DateTimeImmutable $date): void
     {
-        $this->tabs[$tab]["results"][$id] = [];            
+        $this->tabs[$tab]["results"][$id] = [];
         foreach($dimensions[$tab] as $pos=>$dimension) {
             foreach($dimension as $d) {
                 $this->tabs[$tab]["results"][$id][$d] = $extend[$pos][$d];
@@ -481,7 +479,7 @@ class ReportClients extends Report
      * @return string
      */
     function weekYear(DateTimeImmutable $date): string
-    {          
+    {
         $year = $date->format('Y');
         if((intval($date->format('W')) == 1) && (intval($date->format('m')) == 12)) {
             return State::addToString($year, 1);
@@ -532,16 +530,13 @@ class ReportClients extends Report
 
             }
             else {
-                $lines = Csv::extract($reportFile);
-                for($j=1;$j<count($lines);$j++) {
-                    $monthArray[] = explode(";", $lines[$j]);
-                }
+                $monthArray = Csv::extract($reportFile, true);
             }
             foreach($monthArray as $id=>$line) {
                 $this->putInFrom($i, "user-mois", "users", $line[2]);
                 $this->putInFrom($i, "client-mois", "clients", $line[0]);
                 if($i == 1) {
-                    $dateTI = new DateTimeImmutable($line[3]);            
+                    $dateTI = new DateTimeImmutable($line[3]);
                     $weekYear = $this->weekYear($dateTI);
                     if(array_key_exists($weekYear, $this->weeks)) {
                         if(array_key_exists($dateTI->format('W'), $this->weeks[$weekYear])) {
@@ -551,7 +546,7 @@ class ReportClients extends Report
                         }
                     }
                 }
-            }            
+            }
         }
 
         ksort($this->tabs["user-jour"]["results"]);
@@ -617,7 +612,7 @@ class ReportClients extends Report
                             <svg class="icon red" aria-hidden="true">
                                 <use xlink:href="#alert-triangle"></use>
                             </svg>
-                        
+
                         </div>';
         }
         echo $this->templateDisplay($title, true, ["user-jour", "user-mois", "client-mois"]);

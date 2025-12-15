@@ -10,19 +10,26 @@ class Csv
      * Extracts a csv file as an array of lines in UTF-8
      *
      * @param string $file the csv file name
+     * @param boolean $header if there's a header we don't want
      * @return array
      */
-    static function extract(string $file): array
+    static function extract(string $file, bool $header = false): array
     {
         $result = [];
+        $first = true;
         if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
-            while (($data = fgetcsv($open, 2000, "\n")) !== false) {
-                if(mb_check_encoding($data[0], 'UTF-8')) {
-                    $result[] = $data[0];
+            while (($data = fgetcsv($open, 2000, ";")) !== false) {
+                if($first && $header) {
+                    $first = false;
+                    continue;
+                }
+                $first = false;
+                if(mb_check_encoding($data, 'UTF-8')) {
+                    $result[] = $data;
 
                 }
                 else {
-                    $result[] = mb_convert_encoding($data[0], 'UTF-8', 'Windows-1252');
+                    $result[] = mb_convert_encoding($data, 'UTF-8', 'Windows-1252');
                 }
             }
             fclose($open);
@@ -91,19 +98,20 @@ class Csv
     }
 
     /**
-     * Checks if text need to be enclosed and enclosed it
+     * Checks if text need to be enclosed and enclosed it, usually when not using fputcsv
      *
      * @param string $text given text
      * @return string
      */
     static function enclose(string $text): string
     {
-        foreach([' ', ',', ';', '\n', '\r', ':'] as $ch) {
+        /*foreach([' ', ',', ';', '\n', '\r', ':'] as $ch) {
             if(str_contains($text, $ch)) {
                 return "\"".$text."\"";
             }
-        }
-        return $text;
+        }*/
+
+        return is_numeric($text) ? $text : "\"".$text."\"";
     }
 
 }

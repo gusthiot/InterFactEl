@@ -1,6 +1,6 @@
 <?php
 
-require_once("../assets/Modif.php");
+require_once("../assets/Csv.php");
 require_once("../session.inc");
 
 /**
@@ -12,9 +12,9 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $name = DATA_GEST['facturation'][$_POST['plate']];
     $suf = "_".$name."_".$_POST['year']."_".$_POST['month']."_".$_POST['version'];
     $html = "";
-    $html .= table(Modif::load($dir."/Modif-factures".$suf.".csv"), "get-modif", "Factures-modifs", "modifs", [7, 8]);
-    $html .= table(Modif::load($dir."/Journal-corrections".$suf.".csv"), "get-journal", "Journal-modifs", "journal", []);
-    $html .= table(Modif::load($dir."/Clients-modifs".$suf.".csv"), "get-client", "Client-modifs", "client", []);
+    $html .= table(Csv::extract($dir."/Modif-factures".$suf.".csv"), "get-modif", "Factures-modifs", "modifs", [7, 8]);
+    $html .= table(Csv::extract($dir."/Journal-corrections".$suf.".csv"), "get-journal", "Journal-modifs", "journal", []);
+    $html .= table(Csv::extract($dir."/Clients-modifs".$suf.".csv"), "get-client", "Client-modifs", "client", []);
 
     if($html == "") {
         $html = "<p>Aucune modification</p>";
@@ -48,12 +48,12 @@ function table(array $modifs, string $id, string $title, string $class, array $p
             $html .= "<tr>";
             foreach($line as $col=>$cell) {
                 $color = "";
-                // display the differencies in yellow 
+                // display the differencies in yellow
                 if(($class != "modifs") && ($key>0) && ($key%2 == 0) && ($col != 2) && ($cell != $prev[$col])) {
                     $color = ' class="yellow"';
                 }
-                // check for financial format, for month column, and for titles line  
-                in_array($col, $prices) ? $case = number_format(floatval($cell), 2, ".", "'") : 
+                // check for financial format, for month column, and for titles line
+                in_array($col, $prices) ? $case = number_format(floatval($cell), 2, ".", "'") :
                     (($col==1) ? $case = ((intval($cell) < 10) ? "0".$cell : $cell) : $case = $cell);
                 ($key==0) ? $html .= "<th>".$cell."</th>" : $html .= "<td".$color.">".$case."</td>";
             }

@@ -13,7 +13,7 @@ class ReportPlateforme extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->reportKey = 'statpltf';
         $this->reportColumns = ["proj-id", "item-grp", "item-codeK", "transac-usage"];
@@ -61,22 +61,21 @@ class ReportPlateforme extends Report
         if(floatval($this->factel) < 7) {
             self::mergeInCsv('cptexpl', $cptExplArray, self::PROJET_KEY);
         }
-        
+
         $pltfArray = [];
         $loopArray = [];
 
         if(floatval($this->factel) < 7) {
             $columns = $this->bilansStats->getColumns($this->factel, 'cae');
-            $lines = Csv::extract($this->getFileNameInBS('cae'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $machId = $tab[$columns["mach-id"]];
-                $expl = $cptExplArray[$tab[$columns["proj-id"]]];
+            $lines = Csv::extract($this->getFileNameInBS('cae'), true);
+            foreach($lines as $line) {
+                $machId = $line[$columns["mach-id"]];
+                $expl = $cptExplArray[$line[$columns["proj-id"]]];
                 $plateId = $this->getPlateformeFromMachine($machId);
-                if($plateId && ($plateId == $this->plateforme) && ($tab[$columns["client-code"]] == $plateId) && ($expl["proj-expl"] == "FALSE")) {
-                    $mu1 = ($tab[$columns["Tmach-HP"]]+$tab[$columns["Tmach-HC"]]) / 60;
-                    $mu2 = $tab[$columns["Toper"]] / 60;
-                    $id = $tab[$columns["proj-id"]]."--".$tab[$columns["mach-id"]];
+                if($plateId && ($plateId == $this->plateforme) && ($line[$columns["client-code"]] == $plateId) && ($expl["proj-expl"] == "FALSE")) {
+                    $mu1 = ($line[$columns["Tmach-HP"]]+$line[$columns["Tmach-HC"]]) / 60;
+                    $mu2 = $line[$columns["Toper"]] / 60;
+                    $id = $line[$columns["proj-id"]]."--".$line[$columns["mach-id"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = [0, 0];
                     }
@@ -97,26 +96,25 @@ class ReportPlateforme extends Report
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $fceCond = ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["client-code"]] == $tab[$columns["platf-code"]]) && ($tab[$columns["proj-expl"] == "FALSE"]);
+            $lines = Csv::extract($this->getFileNameInBS('T3'), true);
+            foreach($lines as $line) {
+                $fceCond = ($line[$columns["flow-type"]] == "cae") && ($line[$columns["client-code"]] == $line[$columns["platf-code"]]) && ($line[$columns["proj-expl"] == "FALSE"]);
                 if(floatval($this->factel) < 9) {
-                    $cond = ($tab[$columns["platf-code"]] == $this->plateforme) && $fceCond;
+                    $cond = ($line[$columns["platf-code"]] == $this->plateforme) && $fceCond;
                 }
                 elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
-                $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                $datetime = explode(" ", $line[$columns["transac-date"]]);
                 $parts = explode("-", $datetime[0]);
-                    $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($tab[$columns["platf-code"]] == $this->plateforme) && $fceCond;
+                    $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($line[$columns["platf-code"]] == $this->plateforme) && $fceCond;
                 }
                 else {
-                    $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && $fceCond;
+                    $cond = ($line[$columns["year"]] == $line[$columns["editing-year"]]) && ($line[$columns["month"]] == $line[$columns["editing-month"]]) && $fceCond;
                 }
                 if($cond) {
                     if(floatval($this->factel) == 7) {
-                        $letter = substr($tab[$columns["item-nbr"]], 0, 1);
+                        $letter = substr($line[$columns["item-nbr"]], 0, 1);
                         switch($letter) {
-                            case "E": 
+                            case "E":
                                 $itemK = "K1";
                                 break;
                             case "S":
@@ -131,10 +129,10 @@ class ReportPlateforme extends Report
                         }
                     }
                     else {
-                        $itemK = $tab[$columns["item-codeK"]];
+                        $itemK = $line[$columns["item-codeK"]];
                     }
                     if(floatval($this->factel) < 11) {
-                        $machId = $tab[$columns["mach-id"]];
+                        $machId = $line[$columns["mach-id"]];
                         if(array_key_exists($machId, $this->machinesGroupes)) {
                             $itemGrp = $this->machinesGroupes[$machId]["item-grp"];
                         }
@@ -143,13 +141,13 @@ class ReportPlateforme extends Report
                         }
                     }
                     else {
-                        $itemGrp = $tab[$columns["item-grp"]];
+                        $itemGrp = $line[$columns["item-grp"]];
                     }
-                    $id = $tab[$columns["proj-id"]]."--".$itemGrp."--".$itemK;
+                    $id = $line[$columns["proj-id"]]."--".$itemGrp."--".$itemK;
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;
                     }
-                    $loopArray[$id] += $tab[$columns["transac-usage"]];
+                    $loopArray[$id] += $line[$columns["transac-usage"]];
                 }
             }
             foreach($loopArray as $id=>$mu) {
@@ -161,7 +159,7 @@ class ReportPlateforme extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $pltfArray report data
      * @return void
@@ -183,8 +181,8 @@ class ReportPlateforme extends Report
             $dimensions = [$this::PROJET_DIM, $this::CATEGORIE_DIM];
             $extends_glob = [$projet, $groupe, $categorie, $codeK];
             $dimensions_glob = [$this::PROJET_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM, $this::CODEK_DIM];
-            $id = $line[0]."-".$line[2]."-".$itemId; 
-            $id_glob = $line[0]."-".$line[2]."-".$line[1]."-".$itemId; 
+            $id = $line[0]."-".$line[2]."-".$itemId;
+            $id_glob = $line[0]."-".$line[2]."-".$line[1]."-".$itemId;
 
             if(!array_key_exists($id, $this->tabs["par-projet"]["results"])) {
                 $this->tabs["par-projet"]["results"][$id] = [];
@@ -200,7 +198,7 @@ class ReportPlateforme extends Report
             $this->tabs["par-projet"]["results"][$id]["transac-usage"] += $line[3];
             // total csv
             if(!array_key_exists($id_glob, $this->totalCsvData["results"])) {
-                $this->totalCsvData["results"][$id_glob] = ["transac-usage" => 0];            
+                $this->totalCsvData["results"][$id_glob] = ["transac-usage" => 0];
                 foreach($dimensions_glob as $pos=>$dimension) {
                     foreach($dimension as $d) {
                         $this->totalCsvData["results"][$id_glob][$d] = $extends_glob[$pos][$d];

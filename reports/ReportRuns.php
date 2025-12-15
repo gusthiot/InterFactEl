@@ -41,7 +41,7 @@ class ReportRuns extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalM = 0.0;
         $this->totalN = 0;
@@ -60,7 +60,7 @@ class ReportRuns extends Report
                 "formats" => ["float", "int", "float", "float"],
                 "results" => []
 
-            ], 
+            ],
             "par-categorie"=>[
                 "title" => "Stats par Catégorie",
                 "columns" => ["item-name"],
@@ -77,7 +77,7 @@ class ReportRuns extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->prepareMachines();
         $this->loadCategories();
@@ -108,23 +108,22 @@ class ReportRuns extends Report
         $runsArray = [];
         if(floatval($this->factel) < 8) {
             $columns = $this->bilansStats->getColumns($this->factel, 'cae');
-            $lines = Csv::extract($this->getFileNameInBS('cae'));
+            $lines = Csv::extract($this->getFileNameInBS('cae'), true);
             $stats = [];
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $machId = $tab[$columns["mach-id"]];
+            foreach($lines as $line) {
+                $machId = $line[$columns["mach-id"]];
                 $plateId = $this->getPlateformeFromMachine($machId);
                 if($plateId && ($plateId == $this->plateforme)) {
-                    $mu = ($tab[$columns["Tmach-HP"]] + $tab[$columns["Tmach-HC"]]) / 60;
+                    $mu = ($line[$columns["Tmach-HP"]] + $line[$columns["Tmach-HC"]]) / 60;
                     $specials = ["mach022", "mach023", "mach036", "mach145"];
                     if(in_array($machId, $specials)) {
                         $mr = $mu;
                     }
                     else {
-                        if(!empty($tab[$columns["staff-note"]]) && str_contains($tab[$columns["staff-note"]], "Before cap")) {
-                            $from = strpos($tab[$columns["staff-note"]], "cap:") + 5;
-                            $to = strpos($tab[$columns["staff-note"]], "min)") - 1;
-                            $mr = floatval(substr($tab[$columns["staff-note"]], $from, $to-$from)) / 60;
+                        if(!empty($line[$columns["staff-note"]]) && str_contains($line[$columns["staff-note"]], "Before cap")) {
+                            $from = strpos($line[$columns["staff-note"]], "cap:") + 5;
+                            $to = strpos($line[$columns["staff-note"]], "min)") - 1;
+                            $mr = floatval(substr($line[$columns["staff-note"]], $from, $to-$from)) / 60;
                         }
                         else {
                             $mr = $mu;
@@ -148,11 +147,10 @@ class ReportRuns extends Report
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'Stat-m');
-            $lines = Csv::extract($this->getFileNameInBS('Stat-m'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if($tab[$columns["flow-type"]] == "cae" && $tab[$columns["transac-runtime"]] > 0 && $tab[$columns["item-codeK"]] == "K1") {
-                    $runsArray[] = [$tab[$columns["mach-id"]], round($tab[$columns["transac-runtime"]], 3), $tab[$columns["runtime-N"]], round($tab[$columns["runtime-avg"]], 3), round($tab[$columns["runtime-stddev"]], 3)]; 
+            $lines = Csv::extract($this->getFileNameInBS('Stat-m'), true);
+            foreach($lines as $line) {
+                if($line[$columns["flow-type"]] == "cae" && $line[$columns["transac-runtime"]] > 0 && $line[$columns["item-codeK"]] == "K1") {
+                    $runsArray[] = [$line[$columns["mach-id"]], round($line[$columns["transac-runtime"]], 3), $line[$columns["runtime-N"]], round($line[$columns["runtime-avg"]], 3), round($line[$columns["runtime-stddev"]], 3)];
                 }
             }
         }
@@ -179,7 +177,7 @@ class ReportRuns extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $runsArray report data
      * @return void
@@ -198,13 +196,13 @@ class ReportRuns extends Report
                 }
             }
             $values = [
-                "transac-runtime"=>$line[1], 
-                "runtime-N"=>$line[2], 
-                "runtime-avg"=>$line[3], 
+                "transac-runtime"=>$line[1],
+                "runtime-N"=>$line[2],
+                "runtime-avg"=>$line[3],
                 "runtime-stddev"=>$line[4]
             ];
             $ids = [
-                "par-machine"=>$line[0], 
+                "par-machine"=>$line[0],
                 "par-categorie"=>$itemGrp
             ];
             $extends = [
@@ -212,13 +210,13 @@ class ReportRuns extends Report
                 "par-categorie"=>[["item-grp"=>$itemGrp], $items]
             ];
             $dimensions = [
-                "par-machine"=>[$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM], 
+                "par-machine"=>[$this::MACHINE_DIM, $this::GROUPE_DIM, $this::CATEGORIE_DIM],
                 "par-categorie"=>[$this::GROUPE_DIM, $this::CATEGORIE_DIM]
             ];
 
             foreach($this->tabs as $tab=>$data) {
                 if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
-                    $this->tabs[$tab]["results"][$ids[$tab]] = [];            
+                    $this->tabs[$tab]["results"][$ids[$tab]] = [];
                     foreach($dimensions[$tab] as $pos=>$dimension) {
                         foreach($dimension as $d) {
                             $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
@@ -351,12 +349,12 @@ class ReportRuns extends Report
                         <svg class="icon red" aria-hidden="true">
                             <use xlink:href="#alert-triangle"></use>
                         </svg>
-                        Les catégories de machines, et la répartition de machines dans les catégories sont définies 
+                        Les catégories de machines, et la répartition de machines dans les catégories sont définies
                         par le dernier mois de la période : '.substr($this->to, 4, 2)."/".substr($this->to, 0, 4).'
                         <svg class="icon red" aria-hidden="true">
                             <use xlink:href="#alert-triangle"></use>
                         </svg>
-                    
+
                     </div>';
         echo $this->templateDisplay($title);
     }

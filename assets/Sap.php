@@ -5,7 +5,7 @@ require_once("Csv.php");
 /**
  * Sap class represents a csv file with the bills list
  */
-class Sap extends Csv 
+class Sap extends Csv
 {
     /**
      * The csv files names
@@ -32,7 +32,7 @@ class Sap extends Csv
      * @param string $dir directory where to find the csv file
      * @param string $name file name for reports
      */
-    function __construct(string $dir, string $name="") 
+    function __construct(string $dir, string $name="")
     {
         $this->bills = [];
         if(empty($name)) {
@@ -41,13 +41,12 @@ class Sap extends Csv
         $lines = self::extract($dir."/".$name);
         $first = true;
         foreach($lines as $line) {
-            $tab = explode(";", $line);
             if($first) {
                 $first = false;
-                $this->title = $tab;
+                $this->title = $line;
             }
             else {
-                $this->bills[$tab[1]] = $tab; 
+                $this->bills[$line[1]] = $line;
             }
         }
     }
@@ -85,7 +84,7 @@ class Sap extends Csv
         }
         return $status['READY'] + 2*$status['ERROR'] + 4*$status['SENT'];
     }
-    
+
     /**
      * Returns a string with number of SENT/ERROR/READY bills
      *
@@ -107,7 +106,7 @@ class Sap extends Csv
      * @param array $content content to be saved
      * @return void
      */
-    function save(string $dir, array $content): void 
+    function save(string $dir, array $content): void
     {
         $this->bills = $content;
         $data = [$this->title];
@@ -125,7 +124,7 @@ class Sap extends Csv
      * @param array $content lines of result to be saved
      * @return void
      */
-    function generateArchive(string $dir, string $user, array $content): void 
+    function generateArchive(string $dir, string $user, array $content): void
     {
         $data = [$this->title];
         foreach($content as $line) {
@@ -176,7 +175,7 @@ class Sap extends Csv
      * @param string $lock locked run status
      * @return string
      */
-    static function color(int $status, string $lock): string 
+    static function color(int $status, string $lock): string
     {
         switch($status) {
             case 0:

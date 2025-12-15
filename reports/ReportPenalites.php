@@ -18,7 +18,7 @@ class ReportPenalites extends Report
      * @var float
      */
     private float $total6;
-    
+
     /**
      * Class constructor
      *
@@ -27,7 +27,7 @@ class ReportPenalites extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->total5 = 0.0;
         $this->total6 = 0.0;
@@ -100,41 +100,40 @@ class ReportPenalites extends Report
     {
         $loopArray = [];
         $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-        $lines = Csv::extract($this->getFileNameInBS('T3'));
-        for($i=1;$i<count($lines);$i++) {
-            $tab = explode(";", $lines[$i]);
+        $lines = Csv::extract($this->getFileNameInBS('T3'), true);
+        foreach($lines as $line) {
             if(floatval($this->factel) < 8) {
-                if(($tab[$columns["platf-code"]] == $this->plateforme) && ($tab[$columns["flow-type"]] == "noshow") && ($tab[$columns["platf-code"]] != $tab[$columns["client-code"]])) {
-                    $itemN = $tab[$columns["item-nbr"]];
+                if(($line[$columns["platf-code"]] == $this->plateforme) && ($line[$columns["flow-type"]] == "noshow") && ($line[$columns["platf-code"]] != $line[$columns["client-code"]])) {
+                    $itemN = $line[$columns["item-nbr"]];
                     if(substr($itemN, 0, 1) == "P") {
                         $itemK = "K5";
                     }
                     else {
                         $itemK = "K6";
                     }
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$itemK;
+                    $id = $line[$columns["client-code"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]]."--".$itemK;
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;
                     }
-                    $loopArray[$id] += $tab[$columns["transac-quantity"]];
+                    $loopArray[$id] += $line[$columns["transac-quantity"]];
                 }
             }
             elseif(floatval($this->factel) >= 8 && floatval($this->factel) < 10) {
-                if(($tab[$columns["platf-code"]] == $this->plateforme) && ($tab[$columns["flow-type"]] == "noshow") && ($tab[$columns["platf-code"]] != $tab[$columns["client-code"]])) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
+                if(($line[$columns["platf-code"]] == $this->plateforme) && ($line[$columns["flow-type"]] == "noshow") && ($line[$columns["platf-code"]] != $line[$columns["client-code"]])) {
+                    $id = $line[$columns["client-code"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]]."--".$line[$columns["item-codeK"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;
                     }
-                    $loopArray[$id] += $tab[$columns["transac-quantity"]];
+                    $loopArray[$id] += $line[$columns["transac-quantity"]];
                 }
             }
             else {
-                if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "noshow") && ($tab[$columns["platf-code"]] != $tab[$columns["client-code"]])) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
+                if(($line[$columns["year"]] == $line[$columns["editing-year"]]) && ($line[$columns["month"]] == $line[$columns["editing-month"]]) && ($line[$columns["flow-type"]] == "noshow") && ($line[$columns["platf-code"]] != $line[$columns["client-code"]])) {
+                    $id = $line[$columns["client-code"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]]."--".$line[$columns["item-codeK"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;
                     }
-                    $loopArray[$id] += $tab[$columns["transac-quantity"]];
+                    $loopArray[$id] += $line[$columns["transac-quantity"]];
                 }
             }
         }
@@ -147,13 +146,13 @@ class ReportPenalites extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $penosArray report data
      * @return void
      */
     function mapping(array $penosArray): void
-    {   
+    {
         $scipers = $this->scipers();
         foreach($penosArray as $line) {
             $client = $this->clients[$line[0]];
@@ -162,9 +161,9 @@ class ReportPenalites extends Report
             $codeK = ["item-codeK"=>$line[2], "item-textK"=>$this->paramtext->getParam("item-".$line[2])];
             $value = $line[4];
             $ids = [
-                "par-machine"=>$line[3], 
-                "par-client"=>$line[0], 
-                "par-user"=>$line[1], 
+                "par-machine"=>$line[3],
+                "par-client"=>$line[0],
+                "par-user"=>$line[1],
                 "par-client-user"=>$line[0]."-".$line[1],
                 "par-machine-user"=>$line[3]."-".$line[2]."-".$line[1]
             ];
@@ -176,7 +175,7 @@ class ReportPenalites extends Report
                 "par-machine-user"=>[$machine, $codeK, $user]
             ];
             $dimensions = [
-                "par-machine"=>[$this::MACHINE_DIM], 
+                "par-machine"=>[$this::MACHINE_DIM],
                 "par-client"=>[$this::CLIENT_DIM],
                 "par-user"=>[$this::USER_DIM],
                 "par-client-user"=>[$this::CLIENT_DIM, $this::USER_DIM],

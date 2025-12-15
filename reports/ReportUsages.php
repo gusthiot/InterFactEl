@@ -41,7 +41,7 @@ class ReportUsages extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalM = 0;
         $this->totalN = 0;
@@ -58,7 +58,7 @@ class ReportUsages extends Report
                 "formats" => ["float", "float", "int", "int", "int", "int"],
                 "results" => []
 
-            ], 
+            ],
             "par-client"=>[
                 "title" => "Stats par Client",
                 "columns" => ["client-name"],
@@ -66,7 +66,7 @@ class ReportUsages extends Report
                 "operations" => ["stat-hmach", "stat-run"],
                 "formats" => ["float", "int"],
                 "results" => []
-            ], 
+            ],
             "par-user"=>[
                 "title" => "Stats par Utilisateur",
                 "columns" => ["user-sciper", "user-name", "user-first"],
@@ -74,7 +74,7 @@ class ReportUsages extends Report
                 "operations" => ["stat-hmach", "stat-run"],
                 "formats" => ["float", "int"],
                 "results" => []
-            ], 
+            ],
             "par-client-user"=>[
                 "title" => "Stats par Client par Utilisateur",
                 "columns" => ["client-name", "user-sciper", "user-name", "user-first"],
@@ -82,7 +82,7 @@ class ReportUsages extends Report
                 "operations" => ["stat-hmach", "stat-run"],
                 "formats" => ["float", "int"],
                 "results" => []
-            ], 
+            ],
             "par-client-classe"=>[
                 "title" => "Stats par Client par Classe client",
                 "columns" => ["client-name", "client-labelclass"],
@@ -90,7 +90,7 @@ class ReportUsages extends Report
                 "operations" => ["stat-hmach", "stat-run"],
                 "formats" => ["float", "int"],
                 "results" => []
-            ], 
+            ],
             "use-machine-categorie"=>[
                 "title" => "Utilisation par Machine par Catégorie",
                 "columns" => ["mach-name", "item-textK", "item-nbr", "item-name", "item-unit"],
@@ -98,7 +98,7 @@ class ReportUsages extends Report
                 "operations" => ["transac-usage"],
                 "formats" => ["float"],
                 "results" => []
-            ], 
+            ],
             "use-categorie"=>[
                 "title" => "Utilisation par Catégorie",
                 "columns" => ["item-nbr", "item-name", "item-unit", "item-textK"],
@@ -106,7 +106,7 @@ class ReportUsages extends Report
                 "operations" => ["transac-usage"],
                 "formats" => ["float", "int"],
                 "results" => []
-            ], 
+            ],
             "use-categorie-classe"=>[
                 "title" => "Utilisation par Catégorie par Classe",
                 "columns" => ["item-nbr", "item-name", "item-unit", "item-textK", "client-labelclass"],
@@ -123,7 +123,7 @@ class ReportUsages extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->prepareClients();
         $this->prepareClasses();
@@ -147,20 +147,19 @@ class ReportUsages extends Report
         $loopArray = [];
         if(floatval($this->factel) < 7) {
             $columns = $this->bilansStats->getColumns($this->factel, 'cae');
-            $lines = Csv::extract($this->getFileNameInBS('cae'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $machId = $tab[$columns["mach-id"]];
+            $lines = Csv::extract($this->getFileNameInBS('cae'), true);
+            foreach($lines as $line) {
+                $machId = $line[$columns["mach-id"]];
                 $plateId = $this->getPlateformeFromMachine($machId);
                 if($plateId && ($plateId == $this->plateforme)) {
-                    $mu1 = ($tab[$columns["Tmach-HP"]] + $tab[$columns["Tmach-HC"]]) / 60;
-                    $mu2 = $tab[$columns["Toper"]]  / 60;
+                    $mu1 = ($line[$columns["Tmach-HP"]] + $line[$columns["Tmach-HC"]]) / 60;
+                    $mu2 = $line[$columns["Toper"]]  / 60;
                     $nr1 = 1;
                     $nr3 = 0;
-                    if($tab[$columns["client-code"]] != $this->plateforme) {
+                    if($line[$columns["client-code"]] != $this->plateforme) {
                         $nr3 = 1;
                     }
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
+                    $id = $line[$columns["client-code"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu1' => 0, 'Smu2' => 0, 'Snr1' => 0, 'Snr3' => 0];
                     }
@@ -193,13 +192,12 @@ class ReportUsages extends Report
         }
         elseif(floatval($this->factel) == 7) {
             $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae")) {
-                    $letter = substr($tab[$columns["item-nbr"]], 0, 1);
+            $lines = Csv::extract($this->getFileNameInBS('T3'), true);
+            foreach($lines as $line) {
+                if(($this->plateforme == $line[$columns["platf-code"]]) && ($line[$columns["flow-type"]] == "cae")) {
+                    $letter = substr($line[$columns["item-nbr"]], 0, 1);
                     switch($letter) {
-                        case "E": 
+                        case "E":
                             $itemK = "K1";
                             break;
                         case "S":
@@ -213,15 +211,15 @@ class ReportUsages extends Report
                             break;
                     }
                     $nr = 0;
-                    if(($itemK == "K1") && ($tab[$columns["proj-expl"]] == "FALSE")) {
+                    if(($itemK == "K1") && ($line[$columns["proj-expl"]] == "FALSE")) {
                         $nr = 1;
                     }
 
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$itemK;
+                    $id = $line[$columns["client-code"]]."--".$line[$columns["client-class"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]]."--".$itemK;
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu' => 0, 'Snr' => 0];
                     }
-                    $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
+                    $loopArray[$id]['Smu'] += $line[$columns["transac-usage"]];
                     $loopArray[$id]['Snr'] += $nr;
                 }
             }
@@ -235,37 +233,36 @@ class ReportUsages extends Report
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            $lines = Csv::extract($this->getFileNameInBS('T3'), true);
             $nrArray = [];
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if($tab[$columns["flow-type"]] == "cae") {
+            foreach($lines as $line) {
+                if($line[$columns["flow-type"]] == "cae") {
                     if(floatval($this->factel) == 8) {
-                        $cond = ($this->plateforme == $tab[$columns["platf-code"]]);
+                        $cond = ($this->plateforme == $line[$columns["platf-code"]]);
                     }
                     elseif(floatval($this->factel) == 9) {
-                        $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                        $datetime = explode(" ", $line[$columns["transac-date"]]);
                         $date = explode("-", $datetime[0]);
                         $aa = $date[0];
                         $mm = $date[1];
                         $cond = ($aa == $this->year) && ($mm == $this->month);
                     }
                     else {
-                        $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]);
+                        $cond = ($line[$columns["year"]] == $line[$columns["editing-year"]]) && ($line[$columns["month"]] == $line[$columns["editing-month"]]);
                     }
                     if($cond) {
-                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
+                        $id = $line[$columns["client-code"]]."--".$line[$columns["client-class"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]]."--".$line[$columns["item-codeK"]];
                         if(!array_key_exists($id, $loopArray)) {
                             $loopArray[$id] = ['Smu' => 0];
                         }
-                        $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
-                        
-                        $idn = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
+                        $loopArray[$id]['Smu'] += $line[$columns["transac-usage"]];
+
+                        $idn = $line[$columns["client-code"]]."--".$line[$columns["client-class"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]];
                         if(!array_key_exists($idn, $nrArray)) {
                             $nrArray[$idn] = 0;
                         }
-                        if($tab[$columns["transac-runcae"]] > 0) {
-                            $nrArray[$idn] += $tab[$columns["transac-runcae"]];
+                        if($line[$columns["transac-runcae"]] > 0) {
+                            $nrArray[$idn] += $line[$columns["transac-runcae"]];
                         }
                     }
                 }
@@ -300,7 +297,7 @@ class ReportUsages extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $usagesArray report data
      * @return void
@@ -322,14 +319,14 @@ class ReportUsages extends Report
             $catName = str_replace('"', '', $line[6]);
             $categorie = ["item-nbr"=>$line[5], "item-name"=>$catName, "item-unit"=>$line[7]];
             $values = [
-                "transac-usage"=>$line[8], 
+                "transac-usage"=>$line[8],
                 "transac-runcae"=>$line[9]
             ];
             $ids = [
-                "par-machine" => $line[4], 
-                "par-client" => $line[0], 
-                "par-user" => $line[2], 
-                "par-client-user" => $line[0]."-".$line[2], 
+                "par-machine" => $line[4],
+                "par-client" => $line[0],
+                "par-user" => $line[2],
+                "par-client-user" => $line[0]."-".$line[2],
                 "par-client-classe" => $line[0]."-".$line[1],
                 "use-machine-categorie" => $line[4]."-".$line[3]."-".$line[5]."-".$catName."-".$line[7],
                 "use-categorie"=> $line[5]."-".$catName."-".$line[7],
@@ -337,22 +334,22 @@ class ReportUsages extends Report
             ];
             $extends = [
                 "par-machine"=>[$machine],
-                "par-client" => [$client], 
-                "par-user" => [$user], 
-                "par-client-user" => [$client, $user], 
-                "par-client-classe" => [$client, $classe], 
-                "use-machine-categorie" => [$machine, $codeK, $categorie], 
-                "use-categorie"=>[$categorie, $codeK], 
+                "par-client" => [$client],
+                "par-user" => [$user],
+                "par-client-user" => [$client, $user],
+                "par-client-classe" => [$client, $classe],
+                "use-machine-categorie" => [$machine, $codeK, $categorie],
+                "use-categorie"=>[$categorie, $codeK],
                 "use-categorie-classe"=>[$categorie, $codeK, $classe]
             ];
             $dimensions = [
-                "par-machine"=>[$this::MACHINE_DIM], 
-                "par-client" => [$this::CLIENT_DIM], 
-                "par-user" => [$this::USER_DIM], 
-                "par-client-user" => [$this::CLIENT_DIM, $this::USER_DIM], 
-                "par-client-classe" => [$this::CLIENT_DIM, $this::CLASSE_DIM], 
-                "use-machine-categorie" => [$this::MACHINE_DIM, $this::CODEK_DIM, $this::CATEGORIE_DIM], 
-                "use-categorie"=>[$this::CATEGORIE_DIM, $this::CODEK_DIM], 
+                "par-machine"=>[$this::MACHINE_DIM],
+                "par-client" => [$this::CLIENT_DIM],
+                "par-user" => [$this::USER_DIM],
+                "par-client-user" => [$this::CLIENT_DIM, $this::USER_DIM],
+                "par-client-classe" => [$this::CLIENT_DIM, $this::CLASSE_DIM],
+                "use-machine-categorie" => [$this::MACHINE_DIM, $this::CODEK_DIM, $this::CATEGORIE_DIM],
+                "use-categorie"=>[$this::CATEGORIE_DIM, $this::CODEK_DIM],
                 "use-categorie-classe"=>[$this::CATEGORIE_DIM, $this::CODEK_DIM, $this::CLASSE_DIM]
             ];
 
@@ -366,7 +363,7 @@ class ReportUsages extends Report
                         continue;
                     }
                     if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
-                        $this->tabs[$tab]["results"][$ids[$tab]] = ["mois"=>[]]; 
+                        $this->tabs[$tab]["results"][$ids[$tab]] = ["mois"=>[]];
                         foreach($dimensions[$tab] as $pos=>$dimension) {
                             foreach($dimension as $d) {
                                 if($extends[$tab][$pos] != "") {
@@ -416,7 +413,7 @@ class ReportUsages extends Report
                         }
                     }
                 }
-            } 
+            }
         }
     }
 
@@ -466,10 +463,10 @@ class ReportUsages extends Report
                             <svg class="icon red" aria-hidden="true">
                                 <use xlink:href="#alert-triangle"></use>
                             </svg>
-                        
+
                         </div>';
         }
-        
+
         echo $this->templateDisplay($title);
     }
 }

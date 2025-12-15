@@ -20,7 +20,7 @@ class ReportRabais extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalR = 0.0;
         $this->reportKey = 'rabaisbonus';
@@ -38,7 +38,7 @@ class ReportRabais extends Report
                 "operations" => ["discount-bonus", "subsid-bonus", "total-subsid"],
                 "formats" => ["fin", "fin", "fin"],
                 "results" => []
-            ], 
+            ],
             "subsid" => [
                 "title" => "Rabais et subsides par client",
                 "columns" => ["client-name"],
@@ -55,7 +55,7 @@ class ReportRabais extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->prepareClients();
         $this->prepareClasses();
@@ -64,7 +64,7 @@ class ReportRabais extends Report
 
         $this->processReportFile();
     }
-    
+
     /**
      * Generates report file and returns its data
      *
@@ -75,32 +75,30 @@ class ReportRabais extends Report
         $rabaisArray = [];
         if(floatval($this->factel) == 7 || floatval($this->factel) == 8) {
             $columns = $this->bilansStats->getColumns($this->factel, 'Bilan-f');
-            $lines = Csv::extract($this->getFileNameInBS('Bilan-f'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($tab[$columns["platf-code"]] == $this->plateforme) && ($tab[$columns['client-code']] != $this->plateforme )) {
-                    $rabaisArray[] = [$tab[$columns['client-code']], $tab[$columns['client-class']], $tab[$columns["item-codeD"]], round($tab[$columns["deduct-CHF"]], 3),
-                                        round($tab[$columns["subsid-deduct"]], 3), round($tab[$columns["discount-bonus"]], 3), round($tab[$columns["subsid-bonus"]], 3)];
+            $lines = Csv::extract($this->getFileNameInBS('Bilan-f'), true);
+            foreach($lines as $line) {
+                if(($line[$columns["platf-code"]] == $this->plateforme) && ($line[$columns['client-code']] != $this->plateforme )) {
+                    $rabaisArray[] = [$line[$columns['client-code']], $line[$columns['client-class']], $line[$columns["item-codeD"]], round($line[$columns["deduct-CHF"]], 3),
+                                        round($line[$columns["subsid-deduct"]], 3), round($line[$columns["discount-bonus"]], 3), round($line[$columns["subsid-bonus"]], 3)];
                 }
             }
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'Bilan-s');
-            $lines = Csv::extract($this->getFileNameInBS('Bilan-s'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $code = $tab[$columns['client-code']];
+            $lines = Csv::extract($this->getFileNameInBS('Bilan-s'), true);
+            foreach($lines as $line) {
+                $code = $line[$columns['client-code']];
                 if($code != $this->plateforme) {
                     if(floatval($this->factel) < 7) {
                         if(floatval($this->factel) == 6) {
-                            $msm = $tab[$columns["subsides-m"]];
+                            $msm = $line[$columns["subsides-m"]];
                         }
                         else {
-                            $msm = $tab[$columns["subsides-a"]] + $tab[$columns["subsides-o"]];
+                            $msm = $line[$columns["subsides-a"]] + $line[$columns["subsides-o"]];
                         }
                         $clcl = $this->clientsClasses[$code]['client-class'];
-                        $mbm = $tab[$columns["bonus-m"]];
-                        $msc = $tab[$columns["subsides-c"]];
+                        $mbm = $line[$columns["bonus-m"]];
+                        $msc = $line[$columns["subsides-c"]];
                         if($mbm > 0 || $msm > 0) {
                             $rabaisArray[] = [$code, $clcl, "M", 0, 0, round($mbm, 3), round($msm, 3)];
                         }
@@ -110,8 +108,8 @@ class ReportRabais extends Report
                     }
                     else {
                         if($code != $this->plateforme) {
-                            $rabaisArray[] = [$code, $tab[$columns['client-class']], $tab[$columns["item-codeD"]], round($tab[$columns["deduct-CHF"]], 3),
-                                                round($tab[$columns["subsid-deduct"]], 3), round($tab[$columns["discount-bonus"]], 3), round($tab[$columns["subsid-bonus"]], 3)];
+                            $rabaisArray[] = [$code, $line[$columns['client-class']], $line[$columns["item-codeD"]], round($line[$columns["deduct-CHF"]], 3),
+                                                round($line[$columns["subsid-deduct"]], 3), round($line[$columns["discount-bonus"]], 3), round($line[$columns["subsid-bonus"]], 3)];
                         }
                     }
                 }
@@ -121,7 +119,7 @@ class ReportRabais extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $rabaisArray report data
      * @return void
@@ -154,10 +152,10 @@ class ReportRabais extends Report
                 "subsid"=>[$this::CLIENT_DIM],
                 "for-csv"=>[$this::CLIENT_DIM, $this::CLASSE_DIM, $this::ARTICLE_DIM]
             ];
-            
+
             foreach($this->tabs as $tab=>$data) {
                 if(!array_key_exists($ids[$tab], $this->tabs[$tab]["results"])) {
-                    $this->tabs[$tab]["results"][$ids[$tab]] = ["total-subsid" => 0, "mois" => []];            
+                    $this->tabs[$tab]["results"][$ids[$tab]] = ["total-subsid" => 0, "mois" => []];
                     foreach($dimensions[$tab] as $pos=>$dimension) {
                         foreach($dimension as $d) {
                             $this->tabs[$tab]["results"][$ids[$tab]][$d] = $extends[$tab][$pos][$d];
@@ -169,7 +167,7 @@ class ReportRabais extends Report
                         }
                     }
                 }
-                    
+
                 if(!array_key_exists($this->monthly, $this->tabs[$tab]["results"][$ids[$tab]]["mois"])) {
                     $this->tabs[$tab]["results"][$ids[$tab]]["mois"][$this->monthly] = 0;
                 }
@@ -185,7 +183,7 @@ class ReportRabais extends Report
             }
             // total csv
             if(!array_key_exists($ids["for-csv"], $this->totalCsvData["results"])) {
-                $this->totalCsvData["results"][$ids["for-csv"]] = ["total-subsid" => 0, "mois" => []];            
+                $this->totalCsvData["results"][$ids["for-csv"]] = ["total-subsid" => 0, "mois" => []];
                 foreach($dimensions["for-csv"] as $pos=>$dimension) {
                     foreach($dimension as $d) {
                         $this->totalCsvData["results"][$ids["for-csv"]][$d] = $extends["for-csv"][$pos][$d];
@@ -197,7 +195,7 @@ class ReportRabais extends Report
                     }
                 }
             }
-                
+
             if(!array_key_exists($this->monthly, $this->totalCsvData["results"][$ids["for-csv"]]["mois"])) {
                 $this->totalCsvData["results"][$ids["for-csv"]]["mois"][$this->monthly] = 0;
             }
@@ -210,7 +208,7 @@ class ReportRabais extends Report
             }
             $this->totalCsvData["results"][$ids["for-csv"]]["total-subsid"] += $total;
             $this->totalCsvData["results"][$ids["for-csv"]]["mois"][$this->monthly] += $total;
-        }   
+        }
     }
 
     /**

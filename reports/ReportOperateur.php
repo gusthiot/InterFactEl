@@ -15,7 +15,7 @@ class ReportOperateur extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalO = 0;
         $this->reportKey = 'statoper';
@@ -72,15 +72,14 @@ class ReportOperateur extends Report
 
         if(floatval($this->factel) < 7) {
             $columns = $this->bilansStats->getColumns($this->factel, 'cae');
-            $lines = Csv::extract($this->getFileNameInBS('cae'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $machId = $tab[$columns["mach-id"]];
+            $lines = Csv::extract($this->getFileNameInBS('cae'), true);
+            foreach($lines as $line) {
+                $machId = $line[$columns["mach-id"]];
                 $plateId = $this->getPlateformeFromMachine($machId);
-                if($plateId && ($plateId == $this->plateforme) && $tab[$columns["Toper"]] > 0) {
-                    $mu2 = $tab[$columns["Toper"]] / 60;
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                    $id = $tab[$columns["oper-id"]]."--".$datetime[0]."--cae";
+                if($plateId && ($plateId == $this->plateforme) && $line[$columns["Toper"]] > 0) {
+                    $mu2 = $line[$columns["Toper"]] / 60;
+                    $datetime = explode(" ", $line[$columns["transac-date"]]);
+                    $id = $line[$columns["oper-id"]]."--".$datetime[0]."--cae";
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;
                     }
@@ -90,34 +89,33 @@ class ReportOperateur extends Report
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
+            $lines = Csv::extract($this->getFileNameInBS('T3'), true);
+            foreach($lines as $line) {
                 if(floatval($this->factel) == 7) {
-                    $letterK = substr($tab[$columns["item-nbr"]], 0, 1);
-                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae") && ($letterK == "S"); // S => K2 
+                    $letterK = substr($line[$columns["item-nbr"]], 0, 1);
+                    $cond = ($this->plateforme == $line[$columns["platf-code"]]) && ($line[$columns["flow-type"]] == "cae") && ($letterK == "S"); // S => K2
                 }
                 elseif(floatval($this->factel) >= 8 && floatval($this->factel) < 9) {
-                    $cond = ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["item-codeK"]] == "K2");
+                    $cond = ($this->plateforme == $line[$columns["platf-code"]]) && ($line[$columns["flow-type"]] == "cae") && ($line[$columns["item-codeK"]] == "K2");
                 }
                 elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                    $datetime = explode(" ", $line[$columns["transac-date"]]);
                     $parts = explode("-", $datetime[0]);
-                    $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["item-codeK"]] == "K2");
+                    $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($this->plateforme == $line[$columns["platf-code"]]) && ($line[$columns["flow-type"]] == "cae") && ($line[$columns["item-codeK"]] == "K2");
                 }
                 elseif(floatval($this->factel) == 10) {
-                    $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "cae") && ($tab[$columns["item-codeK"]] == "K2");
+                    $cond = ($line[$columns["year"]] == $line[$columns["editing-year"]]) && ($line[$columns["month"]] == $line[$columns["editing-month"]]) && ($line[$columns["flow-type"]] == "cae") && ($line[$columns["item-codeK"]] == "K2");
                 }
                 else {
-                    $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && (in_array($tab[$columns["flow-type"]], ["cae", "srv"])) && ($tab[$columns["item-codeK"]] == "K2");
+                    $cond = ($line[$columns["year"]] == $line[$columns["editing-year"]]) && ($line[$columns["month"]] == $line[$columns["editing-month"]]) && (in_array($line[$columns["flow-type"]], ["cae", "srv"])) && ($line[$columns["item-codeK"]] == "K2");
                 }
                 if($cond) {
-                    $datetime = explode(" ", $tab[$columns["transac-date"]]);
-                    $id = $tab[$columns["oper-id"]]."--".$datetime[0]."--".$tab[$columns["flow-type"]];
+                    $datetime = explode(" ", $line[$columns["transac-date"]]);
+                    $id = $line[$columns["oper-id"]]."--".$datetime[0]."--".$line[$columns["flow-type"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = 0;
                     }
-                    $loopArray[$id] += $tab[$columns["transac-usage"]];
+                    $loopArray[$id] += $line[$columns["transac-usage"]];
                 }
             }
         }
@@ -130,7 +128,7 @@ class ReportOperateur extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $operArray report data
      * @return void
@@ -178,10 +176,10 @@ class ReportOperateur extends Report
                     }
                 }
                 $this->tabs[$tab]["results"][$ids[$tab]]["transac-usage"] += $line[3];
-            } 
+            }
             // total csv
             if(!array_key_exists($ids["for-csv"], $this->totalCsvData["results"])) {
-                $this->totalCsvData["results"][$ids["for-csv"]] = ["transac-usage" => 0];            
+                $this->totalCsvData["results"][$ids["for-csv"]] = ["transac-usage" => 0];
                 foreach($dimensions["for-csv"] as $pos=>$dimension) {
                     foreach($dimension as $d) {
                         $this->totalCsvData["results"][$ids["for-csv"]][$d] = $extends["for-csv"][$pos][$d];

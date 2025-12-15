@@ -11,7 +11,7 @@ class ReportMontants extends Report
      * @var float
      */
     private float $totalM;
-    
+
     /**
      * Class constructor
      *
@@ -20,7 +20,7 @@ class ReportMontants extends Report
      * @param string $from first month of the period
      */
     function __construct(string $plateforme, string $to, string $from)
-    { 
+    {
         parent::__construct($plateforme, $to, $from);
         $this->totalM = 0.0;
         $this->reportKey = 'montants';
@@ -38,7 +38,7 @@ class ReportMontants extends Report
                 "operations" => ["total-fact"],
                 "formats" => ["fin"],
                 "results" => []
-            ], 
+            ],
             "par-classe" => [
                 "title" => "Par Classe",
                 "columns" => ["client-labelclass"],
@@ -47,7 +47,7 @@ class ReportMontants extends Report
                 "formats" => ["fin"],
                 "results" => []
 
-            ], 
+            ],
             "par-article" =>[
                 "title" => "Par Article",
                 "columns" => ["item-labelcode"],
@@ -56,7 +56,7 @@ class ReportMontants extends Report
                 "formats" => ["fin"],
                 "results" => []
 
-            ], 
+            ],
             "par-client-classe" => [
                 "title" => "Par Client & Classe",
                 "columns" => ["client-name", "client-labelclass"],
@@ -64,8 +64,8 @@ class ReportMontants extends Report
                 "operations" => ["total-fact"],
                 "formats" => ["fin"],
                 "results" => []
-                
-            ], 
+
+            ],
             "par-client-article" => [
                 "title" => "Par Client & Article",
                 "columns" => ["client-name", "item-labelcode"],
@@ -74,7 +74,7 @@ class ReportMontants extends Report
                 "formats" => ["fin"],
                 "results" => []
 
-            ], 
+            ],
             "par-article-classe" => [
                 "title" => "Par Article & Classe",
                 "columns" => ["item-labelcode", "client-labelclass"],
@@ -92,7 +92,7 @@ class ReportMontants extends Report
      *
      * @return void
      */
-    function prepare(): void 
+    function prepare(): void
     {
         $this->prepareClients();
         $this->prepareClasses();
@@ -113,13 +113,12 @@ class ReportMontants extends Report
         if(floatval($this->factel) == 6) {
             $crpFileName = $this->getFileNameInBS('Bilancrp-f');
             if($crpFileName) {
-                $lines = Csv::extract($crpFileName);        
+                $lines = Csv::extract($crpFileName, true);
                 $columns = $this->bilansStats->getColumns($this->factel, 'Bilancrp-f');
-                for($i=1;$i<count($lines);$i++) {
-                    $tab = explode(";", $lines[$i]);
-                    $code = $tab[$columns['client-code']];
-                    $dM = $tab[$columns["total-fact"]]-$tab[$columns["total-fact-l"]]-$tab[$columns["total-fact-c"]]-$tab[$columns["total-fact-w"]]-$tab[$columns["total-fact-x"]]-$tab[$columns["total-fact-r"]];
-                    $crpArray[$code] = ["dM" => $dM, "dMontants"=>[$tab[$columns["total-fact-l"]], $tab[$columns["total-fact-c"]], $tab[$columns["total-fact-w"]], $tab[$columns["total-fact-x"]], $tab[$columns["total-fact-r"]]]];
+                foreach($lines as $line) {
+                    $code = $line[$columns['client-code']];
+                    $dM = $line[$columns["total-fact"]]-$line[$columns["total-fact-l"]]-$line[$columns["total-fact-c"]]-$line[$columns["total-fact-w"]]-$line[$columns["total-fact-x"]]-$line[$columns["total-fact-r"]];
+                    $crpArray[$code] = ["dM" => $dM, "dMontants"=>[$line[$columns["total-fact-l"]], $line[$columns["total-fact-c"]], $line[$columns["total-fact-w"]], $line[$columns["total-fact-x"]], $line[$columns["total-fact-r"]]]];
                 }
             }
         }
@@ -127,13 +126,12 @@ class ReportMontants extends Report
         $montantsArray = [];
         if(floatval($this->factel) >= 9) {
             $columns = $this->bilansStats->getColumns($this->factel, 'T1');
-            $lines = Csv::extract($this->getFileNameInBS('T1'));
+            $lines = Csv::extract($this->getFileNameInBS('T1'), true);
             $t1Array = [];
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $code = $tab[$columns['client-code']];
-                $clcl = $tab[$columns['client-class']];
-                $item = $tab[$columns['item-codeD']];
+            foreach($lines as $line) {
+                $code = $line[$columns['client-code']];
+                $clcl = $line[$columns['client-class']];
+                $item = $line[$columns['item-codeD']];
                 if(!array_key_exists($code, $t1Array)) {
                     $t1Array[$code] = [];
                 }
@@ -143,7 +141,7 @@ class ReportMontants extends Report
                 if(!array_key_exists($item, $t1Array[$code][$clcl])) {
                     $t1Array[$code][$clcl][$item] = 0;
                 }
-                $t1Array[$code][$clcl][$item] += floatval($tab[$columns["total-fact"]]);
+                $t1Array[$code][$clcl][$item] += floatval($line[$columns["total-fact"]]);
             }
             foreach($t1Array as $code=>$pc) {
                 foreach($pc as $clcl=>$pcl) {
@@ -155,44 +153,43 @@ class ReportMontants extends Report
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'Bilan-f');
-            $lines = Csv::extract($this->getFileNameInBS('Bilan-f'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $code = $tab[$columns['client-code']];
+            $lines = Csv::extract($this->getFileNameInBS('Bilan-f'), true);
+            foreach($lines as $line) {
+                $code = $line[$columns['client-code']];
                 if($code != $this->plateforme) {
                     if(floatval($this->factel) < 7) {
                         $clcl = $this->clientsClasses[$code]['client-class'];
                     }
                     else {
-                        $clcl = $tab[$columns['client-class']];
+                        $clcl = $line[$columns['client-class']];
                     }
                     if(floatval($this->factel) == 1) {
-                        $montant = $tab[$columns["somme-t"]] + $tab[$columns["emolument-b"]] - $tab[$columns["emolument-r"]] - $tab[$columns["total-fact-l"]]
-                                - $tab[$columns["total-fact-c"]] - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]];
-                        $this->facts($montantsArray, $montant, $tab, $columns, $clcl);
+                        $montant = $line[$columns["somme-t"]] + $line[$columns["emolument-b"]] - $line[$columns["emolument-r"]] - $line[$columns["total-fact-l"]]
+                                - $line[$columns["total-fact-c"]] - $line[$columns["total-fact-w"]] - $line[$columns["total-fact-x"]];
+                        $this->facts($montantsArray, $montant, $line, $columns, $clcl);
                     }
                     elseif(floatval($this->factel) >=3 && floatval($this->factel) < 6) {
-                        $montant = $tab[$columns["total-fact"]] -$tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
-                                - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
-                        $this->facts($montantsArray, $montant, $tab, $columns, $clcl);
+                        $montant = $line[$columns["total-fact"]] -$line[$columns["total-fact-l"]] - $line[$columns["total-fact-c"]]
+                                - $line[$columns["total-fact-w"]] - $line[$columns["total-fact-x"]] - $line[$columns["total-fact-r"]];
+                        $this->facts($montantsArray, $montant, $line, $columns, $clcl);
                     }
                     elseif(floatval($this->factel) == 6) {
-                        $montant = $tab[$columns["total-fact"]] - $tab[$columns["total-fact-l"]] - $tab[$columns["total-fact-c"]]
-                                - $tab[$columns["total-fact-w"]] - $tab[$columns["total-fact-x"]] - $tab[$columns["total-fact-r"]];
+                        $montant = $line[$columns["total-fact"]] - $line[$columns["total-fact-l"]] - $line[$columns["total-fact-c"]]
+                                - $line[$columns["total-fact-w"]] - $line[$columns["total-fact-x"]] - $line[$columns["total-fact-r"]];
                         if(!empty($crpArray) && array_key_exists($code, $crpArray)) {
-                            $this->facts($montantsArray, $montant, $tab, $columns, $clcl, $crpArray[$code]["dM"], $crpArray[$code]["dMontants"]);
-                        } 
+                            $this->facts($montantsArray, $montant, $line, $columns, $clcl, $crpArray[$code]["dM"], $crpArray[$code]["dMontants"]);
+                        }
                         else {
-                            $this->facts($montantsArray, $montant, $tab, $columns, $clcl);
-                        }        
+                            $this->facts($montantsArray, $montant, $line, $columns, $clcl);
+                        }
                     }
                     elseif(floatval($this->factel) == 7 || floatval($this->factel) == 8) {
-                        if($tab[$columns["platf-code"]] == $this->plateforme) {
-                            $montant = $tab[$columns["total-fact"]];
-                            if(($tab[$columns["item-codeD"]] == "R") && ($montant < 50)) {
+                        if($line[$columns["platf-code"]] == $this->plateforme) {
+                            $montant = $line[$columns["total-fact"]];
+                            if(($line[$columns["item-codeD"]] == "R") && ($montant < 50)) {
                                 $montant = 0;
                             }
-                            $montantsArray[] = [$code, $clcl, $tab[$columns["item-codeD"]], round((2*$montant),1)/2];
+                            $montantsArray[] = [$code, $clcl, $line[$columns["item-codeD"]], round((2*$montant),1)/2];
                         }
                     }
                 }
@@ -231,7 +228,7 @@ class ReportMontants extends Report
     }
 
     /**
-     * Maps report data for tabs tables and csv 
+     * Maps report data for tabs tables and csv
      *
      * @param array $montantsArray report data
      * @return void
@@ -259,7 +256,7 @@ class ReportMontants extends Report
                 "par-article"=>[$article],
                 "par-client-classe"=>[$client, $classe],
                 "par-client-article"=>[$client, $article],
-                "par-article-classe"=>[$article, $classe], 
+                "par-article-classe"=>[$article, $classe],
                 "for-csv"=>[$client, $classe, $article]
             ];
             $dimensions = [

@@ -5,8 +5,8 @@ require_once("Csv.php");
 /**
  * Result class represents a csv file with the facturation result parameters
  */
-class Result extends Csv 
-{ 
+class Result extends Csv
+{
 
     /**
      * The csv files names
@@ -25,23 +25,22 @@ class Result extends Csv
      *
      * @param string $dir directory where to find the csv file
      */
-    function __construct(string $dir) 
+    function __construct(string $dir)
     {
         $this->params = [];
         $lines = self::extract($dir.self::NAME);
         foreach($lines as $line) {
-            $tab = explode(";", $line);
-            $this->params[$tab[0]] = $tab[2];
+            $this->params[$line[0]] = $line[2];
         }
     }
-    
+
     /**
      * Gets the parameter for a specific key
      *
      * @param string $key specific key
      * @return string
      */
-    function getParam(string $key): string 
+    function getParam(string $key): string
     {
         if(array_key_exists($key, $this->params)) {
             return $this->params[$key];
