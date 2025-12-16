@@ -290,6 +290,36 @@ input[type="file"] {
   font-size: 10px;
 }
 
+#scroll-modal-dialog {
+  max-width: 1100px;
+}
+
+.td-modal {
+  padding: 10px;
+  text-align: center;
+}
+
+.th-modal {
+  text-align: center;
+}
+
+.td-new {
+  width: 230px;
+}
+
+.input-modal {
+  width: 1000px;
+}
+
+.input-modal input {
+  width:100%;
+  display:block
+}
+
+.inline {
+  display: inline-block;
+}
+
 .scroll-message {
   display: block;
   margin: auto;
@@ -299,12 +329,15 @@ input[type="file"] {
   width: 50%;
   max-width: 640px;
   height: 60px;
+  color: var(--groseille);
+  font-weight: bold;
 }
 
 .scroll-message div {
   position: absolute;
   min-width: 100%;
 }
+
 
 .scroll-message div span,
 .scroll-message div:after {

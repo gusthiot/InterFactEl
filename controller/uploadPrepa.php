@@ -29,7 +29,7 @@ if(isset($_POST['type'])) {
     }
 /*
     if($type == "ARCHIVE") {
-        if(!IS_SUPER || TEST_MODE != "TEST") {  
+        if(!IS_SUPER || TEST_MODE != "TEST") {
             $_SESSION['alert-danger'] = "wrong place, wrong user";
             header('Location: ../facturation.php?plateforme='.$plateforme);
             exit;
@@ -50,7 +50,7 @@ if(isset($_POST['type'])) {
             }
         }
 //    }
- 
+
     if(isset($_FILES[$type])) {
         if($_FILES[$type]["error"] == 0) {
             $zip = $_FILES[$type];
@@ -68,11 +68,11 @@ if(isset($_POST['type'])) {
                                 State::recurseCopy($tmpDir, DATA.$plateforme);
                                 $_SESSION['alert-success'] = "Archive correctement chargée";
                             }*/
-                            //else { 
-                                $messages = new Message();  
+                            //else {
+                                $messages = new Message();
                                 if(!copy(CONFIG.ParamText::NAME, $tmpDir.ParamText::NAME)) {
                                     $msg .= "erreur de copie de ".ParamText::NAME;
-                                }               
+                                }
                                 if($type == "FIRST") {
                                     // if you need to upload all data, we need ton check consistancy
                                     $result = new Result($tmpDir);
@@ -130,7 +130,7 @@ if(isset($_POST['type'])) {
                                         $month = $state->getNextMonth();
                                     }
                                     $array = [["Platform", $plateforme], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
-                                    ParamEdit::write($tmpDir."/".ParamEdit::NAME, $array);
+                                    Csv::write($tmpDir."/".ParamEdit::NAME, $array);
                                     $paramedit = new ParamEdit($tmpDir);
                                     $paramFile = DATA.$plateforme."/".$year."/".$month."/".ParamZip::NAME;
                                     if(file_exists($paramFile)) {
@@ -146,7 +146,7 @@ if(isset($_POST['type'])) {
                                         runPrefa($tmpDir, $pathPlate, $paramedit, $plateforme, $unique, $messages);
                                     }
                                     catch(Exception $e) {
-                                        $msg = $e->getMessage(); 
+                                        $msg = $e->getMessage();
                                     }
                                     unlink("../".Lock::FILES['process']);
                                 }
@@ -187,7 +187,7 @@ if(isset($_POST['type'])) {
     else {
         header('Location: ../facturation.php?plateforme='.$plateforme);
     }
-        
+
 }
 else {
     $_SESSION['alert-danger'] = "post_data_missing";
@@ -205,7 +205,7 @@ else {
  * @param Message $messages config messages data
  * @return void
  */
-function runPrefa(string $tmpDir, string $path, ParamEdit $paramedit, string $plateforme, string $unique, Message $messages): void 
+function runPrefa(string $tmpDir, string $path, ParamEdit $paramedit, string $plateforme, string $unique, Message $messages): void
 {
     $month = $paramedit->getParam('Month');
     $year = $paramedit->getParam('Year');

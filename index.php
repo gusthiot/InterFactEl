@@ -38,7 +38,7 @@ include("includes/lock.inc");
                 <?php
                 $inter = " &nbsp; - &nbsp; ";
                 $msg = "";
-                foreach(Scroll::load() as $line) {
+                foreach(Csv::extract("./".Scroll::NAME) as $line) {
                     if($line[0] > 0) {
                         $msg .= $line[1];
                         $msg .= $inter;
@@ -89,24 +89,46 @@ include("includes/lock.inc");
                     </div>
                 </div>
                 <div class="modal fade" id="scroll-modal" tabindex="-1" role="dialog" aria-labelledby="scroll-modal-title" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-dialog modal-dialog-centered" id="scroll-modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="scroll-modal-title">Manage Scroll Message</h5>
+                                <h5 class="modal-title" id="scroll-modal-title">Gestion des messages défilants</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                             </div>
                             <div class="modal-body">
                             <?php
-                                foreach(Scroll::load() as $line) {
-                                    echo $line[1]."<br />";
+                                $i = 0;
+                                $lines = Csv::extract("./".Scroll::NAME);
+                                if(count($lines) > 0) {
+                                    echo "<table>";
+                                    echo '<tr><th class="th-modal">Afficher</th><th class="th-modal"></th class="th-modal"><th>Supprimer</th>';
+                                    foreach($lines as $line) {
+                                        echo "<tr>";
+                                        echo '<td class="td-modal"><input type="checkbox" id="dis-'.$i.'" ';
+                                        if($line[0] > 0) {
+                                            echo 'checked';
+                                        }
+                                        echo ' ></td><td class="td-modal input-modal"><input type="text" maxlength="200" id="msg-'.$i.'" value="'.$line[1].'" /></td>';
+                                        echo '<td class="td-modal"><input type="checkbox" id="del-'.$i.'"></td>';
+                                        echo "</tr>";
+                                        $i++;
+                                    }
+                                    echo "</table>";
                                 }
+                                echo "<table>";
+                                echo "<tr>";
+                                echo '<td class="td-modal td-new">Ajouter un nouveau message : </td>';
+                                echo '<td class="td-modal input-modal"><input type="text" maxlength="200" id="msg-new"  placeholder="maximum 200 caractères" /></td>';
+                                echo "</tr>";
+                                echo "</table>";
+                                echo '<input type="hidden" id="msg-num" value="'.$i.'"/>';
                             ?>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                                <button type="button" class="btn btn-primary" id="modal-save">Enregistrer</button>
                             </div>
                         </div>
                     </div>
