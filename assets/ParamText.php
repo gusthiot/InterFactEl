@@ -56,8 +56,7 @@ class ParamText extends Csv
         $this->params = [];
         $lines = self::extract(CONFIG.self::NAME);
         foreach($lines as $line) {
-            $tab = explode(";", $line);
-            $this->params[$tab[0]] = $tab[1];
+            $this->params[$line[0]] = $line[1];
         }
     }
 

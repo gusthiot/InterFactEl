@@ -309,6 +309,84 @@ input[type="file"] {
   font-size: 10px;
 }
 
+#scroll-modal-dialog {
+  max-width: 1100px;
+}
+
+.td-modal {
+  padding: 10px;
+  text-align: center;
+}
+
+.th-modal {
+  text-align: center;
+}
+
+.td-new {
+  width: 230px;
+}
+
+.input-modal {
+  width: 1000px;
+}
+
+.input-modal input {
+  width:100%;
+  display:block
+}
+
+.inline {
+  display: inline-block;
+}
+
+.scroll-message {
+  display: block;
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  width: 50%;
+  max-width: 640px;
+  height: 60px;
+  color: var(--groseille);
+  font-weight: bold;
+}
+
+.scroll-message div {
+  position: absolute;
+  min-width: 100%;
+}
+
+
+.scroll-message div span,
+.scroll-message div:after {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  top:0;
+}
+
+.scroll-message div span {
+  animation: defilement 10s infinite linear;
+}
+
+.scroll-message div:after {
+  position: absolute;
+  top:0; left:0;
+  content:attr(data-text);
+  animation: defilement2 10s infinite linear;
+}
+
+@keyframes defilement {
+  0% { margin-left: 0; }
+  100% { margin-left: -100%; }
+}
+
+@keyframes defilement2 {
+  0% { margin-left: 100%; }
+  100% { margin-left: 0%; }
+}
+
 /** plateforme **/
 
 #display {

@@ -33,17 +33,15 @@ class Gestionnaire extends Csv
         $this->gestionnaires = [];
         $lines = self::extract(CONFIG.self::NAME);
         foreach($lines as $line) {
-            $tab = explode(";", $line);
-
-            if(!array_key_exists($tab[0], $this->gestionnaires)) {
+            if(!array_key_exists($line[0], $this->gestionnaires)) {
                 foreach(self::RIGHTS as $name=>$pos) {
-                    $this->gestionnaires[$tab[0]][$name] = [];
+                    $this->gestionnaires[$line[0]][$name] = [];
                 }
             }
 
             foreach(self::RIGHTS as $name=>$pos) {
-                if(self::hasRight($tab[3], $pos)) {
-                    $this->gestionnaires[$tab[0]][$name][$tab[1]] = $tab[2];
+                if(self::hasRight($line[3], $pos)) {
+                    $this->gestionnaires[$line[0]][$name][$line[1]] = $line[2];
                 }
             }
         }

@@ -75,32 +75,30 @@ class ReportRabais extends Report
         $rabaisArray = [];
         if(floatval($this->factel) == 7 || floatval($this->factel) == 8) {
             $columns = $this->bilansStats->getColumns($this->factel, 'Bilan-f');
-            $lines = Csv::extract($this->getFileNameInBS('Bilan-f'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($tab[$columns["platf-code"]] == $this->plateforme) && ($tab[$columns['client-code']] != $this->plateforme )) {
-                    $rabaisArray[] = [$tab[$columns['client-code']], $tab[$columns['client-class']], $tab[$columns["item-codeD"]], round($tab[$columns["deduct-CHF"]], 3),
-                                        round($tab[$columns["subsid-deduct"]], 3), round($tab[$columns["discount-bonus"]], 3), round($tab[$columns["subsid-bonus"]], 3)];
+            $lines = Csv::extract($this->getFileNameInBS('Bilan-f'), true);
+            foreach($lines as $line) {
+                if(($line[$columns["platf-code"]] == $this->plateforme) && ($line[$columns['client-code']] != $this->plateforme )) {
+                    $rabaisArray[] = [$line[$columns['client-code']], $line[$columns['client-class']], $line[$columns["item-codeD"]], round($line[$columns["deduct-CHF"]], 3),
+                                        round($line[$columns["subsid-deduct"]], 3), round($line[$columns["discount-bonus"]], 3), round($line[$columns["subsid-bonus"]], 3)];
                 }
             }
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'Bilan-s');
-            $lines = Csv::extract($this->getFileNameInBS('Bilan-s'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $code = $tab[$columns['client-code']];
+            $lines = Csv::extract($this->getFileNameInBS('Bilan-s'), true);
+            foreach($lines as $line) {
+                $code = $line[$columns['client-code']];
                 if($code != $this->plateforme) {
                     if(floatval($this->factel) < 7) {
                         if(floatval($this->factel) == 6) {
-                            $msm = $tab[$columns["subsides-m"]];
+                            $msm = $line[$columns["subsides-m"]];
                         }
                         else {
-                            $msm = $tab[$columns["subsides-a"]] + $tab[$columns["subsides-o"]];
+                            $msm = $line[$columns["subsides-a"]] + $line[$columns["subsides-o"]];
                         }
                         $clcl = $this->clientsClasses[$code]['client-class'];
-                        $mbm = $tab[$columns["bonus-m"]];
-                        $msc = $tab[$columns["subsides-c"]];
+                        $mbm = $line[$columns["bonus-m"]];
+                        $msc = $line[$columns["subsides-c"]];
                         if($mbm > 0 || $msm > 0) {
                             $rabaisArray[] = [$code, $clcl, "M", 0, 0, round($mbm, 3), round($msm, 3)];
                         }
@@ -110,8 +108,8 @@ class ReportRabais extends Report
                     }
                     else {
                         if($code != $this->plateforme) {
-                            $rabaisArray[] = [$code, $tab[$columns['client-class']], $tab[$columns["item-codeD"]], round($tab[$columns["deduct-CHF"]], 3),
-                                                round($tab[$columns["subsid-deduct"]], 3), round($tab[$columns["discount-bonus"]], 3), round($tab[$columns["subsid-bonus"]], 3)];
+                            $rabaisArray[] = [$code, $line[$columns['client-class']], $line[$columns["item-codeD"]], round($line[$columns["deduct-CHF"]], 3),
+                                                round($line[$columns["subsid-deduct"]], 3), round($line[$columns["discount-bonus"]], 3), round($line[$columns["subsid-bonus"]], 3)];
                         }
                     }
                 }

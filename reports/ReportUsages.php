@@ -147,20 +147,19 @@ class ReportUsages extends Report
         $loopArray = [];
         if(floatval($this->factel) < 7) {
             $columns = $this->bilansStats->getColumns($this->factel, 'cae');
-            $lines = Csv::extract($this->getFileNameInBS('cae'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $machId = $tab[$columns["mach-id"]];
+            $lines = Csv::extract($this->getFileNameInBS('cae'), true);
+            foreach($lines as $line) {
+                $machId = $line[$columns["mach-id"]];
                 $plateId = $this->getPlateformeFromMachine($machId);
                 if($plateId && ($plateId == $this->plateforme)) {
-                    $mu1 = ($tab[$columns["Tmach-HP"]] + $tab[$columns["Tmach-HC"]]) / 60;
-                    $mu2 = $tab[$columns["Toper"]]  / 60;
+                    $mu1 = ($line[$columns["Tmach-HP"]] + $line[$columns["Tmach-HC"]]) / 60;
+                    $mu2 = $line[$columns["Toper"]]  / 60;
                     $nr1 = 1;
                     $nr3 = 0;
-                    if($tab[$columns["client-code"]] != $this->plateforme) {
+                    if($line[$columns["client-code"]] != $this->plateforme) {
                         $nr3 = 1;
                     }
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
+                    $id = $line[$columns["client-code"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu1' => 0, 'Smu2' => 0, 'Snr1' => 0, 'Snr3' => 0];
                     }
@@ -193,11 +192,10 @@ class ReportUsages extends Report
         }
         elseif(floatval($this->factel) == 7) {
             $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "cae")) {
-                    $letter = substr($tab[$columns["item-nbr"]], 0, 1);
+            $lines = Csv::extract($this->getFileNameInBS('T3'), true);
+            foreach($lines as $line) {
+                if(($this->plateforme == $line[$columns["platf-code"]]) && ($line[$columns["flow-type"]] == "cae")) {
+                    $letter = substr($line[$columns["item-nbr"]], 0, 1);
                     switch($letter) {
                         case "E":
                             $itemK = "K1";
@@ -213,15 +211,15 @@ class ReportUsages extends Report
                             break;
                     }
                     $nr = 0;
-                    if(($itemK == "K1") && ($tab[$columns["proj-expl"]] == "FALSE")) {
+                    if(($itemK == "K1") && ($line[$columns["proj-expl"]] == "FALSE")) {
                         $nr = 1;
                     }
 
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$itemK;
+                    $id = $line[$columns["client-code"]]."--".$line[$columns["client-class"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]]."--".$itemK;
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu' => 0, 'Snr' => 0];
                     }
-                    $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
+                    $loopArray[$id]['Smu'] += $line[$columns["transac-usage"]];
                     $loopArray[$id]['Snr'] += $nr;
                 }
             }
@@ -235,37 +233,36 @@ class ReportUsages extends Report
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
+            $lines = Csv::extract($this->getFileNameInBS('T3'), true);
             $nrArray = [];
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if($tab[$columns["flow-type"]] == "cae") {
+            foreach($lines as $line) {
+                if($line[$columns["flow-type"]] == "cae") {
                     if(floatval($this->factel) == 8) {
-                        $cond = ($this->plateforme == $tab[$columns["platf-code"]]);
+                        $cond = ($this->plateforme == $line[$columns["platf-code"]]);
                     }
                     elseif(floatval($this->factel) == 9) {
-                        $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                        $datetime = explode(" ", $line[$columns["transac-date"]]);
                         $date = explode("-", $datetime[0]);
                         $aa = $date[0];
                         $mm = $date[1];
                         $cond = ($aa == $this->year) && ($mm == $this->month);
                     }
                     else {
-                        $cond = ($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]);
+                        $cond = ($line[$columns["year"]] == $line[$columns["editing-year"]]) && ($line[$columns["month"]] == $line[$columns["editing-month"]]);
                     }
                     if($cond) {
-                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]]."--".$tab[$columns["item-codeK"]];
+                        $id = $line[$columns["client-code"]]."--".$line[$columns["client-class"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]]."--".$line[$columns["item-codeK"]];
                         if(!array_key_exists($id, $loopArray)) {
                             $loopArray[$id] = ['Smu' => 0];
                         }
-                        $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
+                        $loopArray[$id]['Smu'] += $line[$columns["transac-usage"]];
 
-                        $idn = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["mach-id"]];
+                        $idn = $line[$columns["client-code"]]."--".$line[$columns["client-class"]]."--".$line[$columns["user-id"]]."--".$line[$columns["mach-id"]];
                         if(!array_key_exists($idn, $nrArray)) {
                             $nrArray[$idn] = 0;
                         }
-                        if($tab[$columns["transac-runcae"]] > 0) {
-                            $nrArray[$idn] += $tab[$columns["transac-runcae"]];
+                        if($line[$columns["transac-runcae"]] > 0) {
+                            $nrArray[$idn] += $line[$columns["transac-runcae"]];
                         }
                     }
                 }

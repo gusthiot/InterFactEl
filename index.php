@@ -1,6 +1,7 @@
 <?php
 
 require_once("assets/Lock.php");
+require_once("assets/Scroll.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
@@ -33,6 +34,23 @@ include("includes/lock.inc");
                 <h1 class="text-center p-1">Interface de facturation</h1>
                 <h6 class="text-center">Welcome <i><?= USER ?></i></h6>
             </div>
+            <div class="scroll-message">
+                <?php
+                $inter = " &nbsp; - &nbsp; ";
+                $msg = "";
+                foreach(Csv::extract(DATA.Scroll::NAME) as $line) {
+                    if($line[0] > 0) {
+                        $msg .= $line[1];
+                        $msg .= $inter;
+                    }
+                }
+                if(!empty($msg)) {
+                ?>
+                <div data-text="<?= $msg ?>"><span><?= $msg ?></span></div>
+                <?php
+                }
+                ?>
+            </div>
             <?php include("includes/message.inc");
             if(!empty($lockUser)) { ?>
                 <div class="text-center"><?= $dlTxt ?></div>
@@ -47,21 +65,72 @@ include("includes/lock.inc");
                 <div class="index-primary">
                     <h3>Supervision</h3>
                     <div class="tiles">
-                        <div type="button" id="download-config" class="tile center-one">
-                            <p>Download CONFIG files</p>
+                        <div type="button" id="download-config" class="tile center-two">
+                            <p>Download CONFIG <br /> files</p>
                             <svg class="icon feather icon-tile" aria-hidden="true">
                                 <use xlink:href="#download-cloud"></use>
                             </svg>
                         </div>
-                        <label class="tile center-one">
+                        <label class="tile center-two">
                             <form action="controller/uploadConfig.php" method="post" id="form-config" enctype="multipart/form-data" >
                                 <input type="file" name="zip_file" id="zip-config" accept=".zip">
                             </form>
-                            <p>Upload CONFIG files</p>
+                            <p>Upload CONFIG <br > files</p>
                             <svg class="icon feather icon-tile" aria-hidden="true">
                                 <use xlink:href="#upload-cloud"></use>
                             </svg>
                         </label>
+                        <div type="button" id="manage-message" class="tile center-two" data-toggle="modal" data-target="#scroll-modal">
+                            <p>Manage Scroll <br /> Message</p>
+                            <svg class="icon feather icon-tile" aria-hidden="true">
+                                <use xlink:href="#message-square"></use>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="scroll-modal" tabindex="-1" role="dialog" aria-labelledby="scroll-modal-title" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" id="scroll-modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="scroll-modal-title">Gestion des messages défilants</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                            </div>
+                            <div class="modal-body">
+                            <?php
+                                $i = 0;
+                                $lines = Csv::extract(DATA.Scroll::NAME);
+                                if(count($lines) > 0) {
+                                    echo "<table>";
+                                    echo '<tr><th class="th-modal">Afficher</th><th class="th-modal"></th class="th-modal"><th>Supprimer</th>';
+                                    foreach($lines as $line) {
+                                        echo "<tr>";
+                                        echo '<td class="td-modal"><input type="checkbox" id="dis-'.$i.'" ';
+                                        if($line[0] > 0) {
+                                            echo 'checked';
+                                        }
+                                        echo ' ></td><td class="td-modal input-modal"><input type="text" maxlength="200" id="msg-'.$i.'" value="'.$line[1].'" /></td>';
+                                        echo '<td class="td-modal"><input type="checkbox" id="del-'.$i.'"></td>';
+                                        echo "</tr>";
+                                        $i++;
+                                    }
+                                    echo "</table>";
+                                }
+                                echo "<table>";
+                                echo "<tr>";
+                                echo '<td class="td-modal td-new">Ajouter un nouveau message : </td>';
+                                echo '<td class="td-modal input-modal"><input type="text" maxlength="200" id="msg-new"  placeholder="maximum 200 caractères" /></td>';
+                                echo "</tr>";
+                                echo "</table>";
+                                echo '<input type="hidden" id="msg-num" value="'.$i.'"/>';
+                            ?>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                                <button type="button" class="btn btn-primary" id="modal-save">Enregistrer</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             <?php

@@ -52,16 +52,15 @@ class ReportServices extends Report
     {
         $loopArray = [];
         $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-        $lines = Csv::extract($this->getFileNameInBS('T3'));
-        for($i=1;$i<count($lines);$i++) {
-            $tab = explode(";", $lines[$i]);
-            if(($tab[$columns["year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "srv")) {
-                $id = $tab[$columns["client-code"]]."--".$tab[$columns["client-class"]]."--".$tab[$columns["item-text2K"]]."--".$tab[$columns["oper-note"]]."--".$tab[$columns["item-grp"]]."--".$tab[$columns["item-codeK"]];
+        $lines = Csv::extract($this->getFileNameInBS('T3'), true);
+        foreach($lines as $line) {
+            if(($line[$columns["year"]] == $line[$columns["editing-year"]]) && ($line[$columns["month"]] == $line[$columns["editing-month"]]) && ($line[$columns["flow-type"]] == "srv")) {
+                $id = $line[$columns["client-code"]]."--".$line[$columns["client-class"]]."--".$line[$columns["item-text2K"]]."--".$line[$columns["oper-note"]]."--".$line[$columns["item-grp"]]."--".$line[$columns["item-codeK"]];
                 if(!array_key_exists($id, $loopArray)) {
                     $loopArray[$id] = ['Smu' => 0, 'Q' => 0];
                 }
-                $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
-                $loopArray[$id]['Q'] += $tab[$columns["transac-quantity"]];
+                $loopArray[$id]['Smu'] += $line[$columns["transac-usage"]];
+                $loopArray[$id]['Q'] += $line[$columns["transac-quantity"]];
             }
         }
         $servicesArray = [];

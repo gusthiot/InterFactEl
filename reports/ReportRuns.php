@@ -108,23 +108,22 @@ class ReportRuns extends Report
         $runsArray = [];
         if(floatval($this->factel) < 8) {
             $columns = $this->bilansStats->getColumns($this->factel, 'cae');
-            $lines = Csv::extract($this->getFileNameInBS('cae'));
+            $lines = Csv::extract($this->getFileNameInBS('cae'), true);
             $stats = [];
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                $machId = $tab[$columns["mach-id"]];
+            foreach($lines as $line) {
+                $machId = $line[$columns["mach-id"]];
                 $plateId = $this->getPlateformeFromMachine($machId);
                 if($plateId && ($plateId == $this->plateforme)) {
-                    $mu = ($tab[$columns["Tmach-HP"]] + $tab[$columns["Tmach-HC"]]) / 60;
+                    $mu = ($line[$columns["Tmach-HP"]] + $line[$columns["Tmach-HC"]]) / 60;
                     $specials = ["mach022", "mach023", "mach036", "mach145"];
                     if(in_array($machId, $specials)) {
                         $mr = $mu;
                     }
                     else {
-                        if(!empty($tab[$columns["staff-note"]]) && str_contains($tab[$columns["staff-note"]], "Before cap")) {
-                            $from = strpos($tab[$columns["staff-note"]], "cap:") + 5;
-                            $to = strpos($tab[$columns["staff-note"]], "min)") - 1;
-                            $mr = floatval(substr($tab[$columns["staff-note"]], $from, $to-$from)) / 60;
+                        if(!empty($line[$columns["staff-note"]]) && str_contains($line[$columns["staff-note"]], "Before cap")) {
+                            $from = strpos($line[$columns["staff-note"]], "cap:") + 5;
+                            $to = strpos($line[$columns["staff-note"]], "min)") - 1;
+                            $mr = floatval(substr($line[$columns["staff-note"]], $from, $to-$from)) / 60;
                         }
                         else {
                             $mr = $mu;
@@ -148,11 +147,10 @@ class ReportRuns extends Report
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'Stat-m');
-            $lines = Csv::extract($this->getFileNameInBS('Stat-m'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if($tab[$columns["flow-type"]] == "cae" && $tab[$columns["transac-runtime"]] > 0 && $tab[$columns["item-codeK"]] == "K1") {
-                    $runsArray[] = [$tab[$columns["mach-id"]], round($tab[$columns["transac-runtime"]], 3), $tab[$columns["runtime-N"]], round($tab[$columns["runtime-avg"]], 3), round($tab[$columns["runtime-stddev"]], 3)];
+            $lines = Csv::extract($this->getFileNameInBS('Stat-m'), true);
+            foreach($lines as $line) {
+                if($line[$columns["flow-type"]] == "cae" && $line[$columns["transac-runtime"]] > 0 && $line[$columns["item-codeK"]] == "K1") {
+                    $runsArray[] = [$line[$columns["mach-id"]], round($line[$columns["transac-runtime"]], 3), $line[$columns["runtime-N"]], round($line[$columns["runtime-avg"]], 3), round($line[$columns["runtime-stddev"]], 3)];
                 }
             }
         }

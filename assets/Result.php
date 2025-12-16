@@ -30,8 +30,7 @@ class Result extends Csv
         $this->params = [];
         $lines = self::extract($dir.self::NAME);
         foreach($lines as $line) {
-            $tab = explode(";", $line);
-            $this->params[$tab[0]] = $tab[2];
+            $this->params[$line[0]] = $line[2];
         }
     }
 

@@ -24,8 +24,7 @@ class Info extends Csv
         $infos = [];
         $lines = self::extract($dir."/".self::NAME);
         foreach($lines as $line) {
-            $tab = explode(";", $line);
-            $infos[$tab[0]] = $tab;
+            $infos[$line[0]] = $line;
         }
         return $infos;
     }

@@ -41,13 +41,12 @@ class Sap extends Csv
         $lines = self::extract($dir."/".$name);
         $first = true;
         foreach($lines as $line) {
-            $tab = explode(";", $line);
             if($first) {
                 $first = false;
-                $this->title = $tab;
+                $this->title = $line;
             }
             else {
-                $this->bills[$tab[1]] = $tab;
+                $this->bills[$line[1]] = $line;
             }
         }
     }

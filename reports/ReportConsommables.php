@@ -54,28 +54,26 @@ class ReportConsommables extends Report
         if(floatval($this->factel) < 10) {
             if(floatval($this->factel) < 7) {
                 $columns = $this->bilansStats->getColumns($this->factel, 'lvr');
-                $lines = Csv::extract($this->getFileNameInBS('lvr'));
-                for($i=1;$i<count($lines);$i++) {
-                    $tab = explode(";", $lines[$i]);
-                    $itemId = $tab[$columns["item-id"]];
+                $lines = Csv::extract($this->getFileNameInBS('lvr'), true);
+                foreach($lines as $line) {
+                    $itemId = $line[$columns["item-id"]];
                     $plateId = $this->prestations[$itemId]["platf-code"];
                     if($plateId == $this->plateforme) {
-                        $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$itemId;
+                        $id = $line[$columns["client-code"]]."--".$line[$columns["user-id"]]."--".$itemId;
                         if(!array_key_exists($id, $loopArray)) {
                             $loopArray[$id] = 0;
                         }
-                        $loopArray[$id] += $tab[$columns["transac-usage"]];
+                        $loopArray[$id] += $line[$columns["transac-usage"]];
                     }
                 }
             }
             else {
                 $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-                $lines = Csv::extract($this->getFileNameInBS('T3'));
-                for($i=1;$i<count($lines);$i++) {
-                    $tab = explode(";", $lines[$i]);
-                    if(($this->plateforme == $tab[$columns["platf-code"]]) && ($tab[$columns["flow-type"]] == "lvr")) {
+                $lines = Csv::extract($this->getFileNameInBS('T3'), true);
+                foreach($lines as $line) {
+                    if(($this->plateforme == $line[$columns["platf-code"]]) && ($line[$columns["flow-type"]] == "lvr")) {
                         if(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
-                            $datetime = explode(" ", $tab[$columns["transac-date"]]);
+                            $datetime = explode(" ", $line[$columns["transac-date"]]);
                             $parts = explode("-", $datetime[0]);
                             $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month);
                         }
@@ -83,44 +81,40 @@ class ReportConsommables extends Report
                             $cond = true;
                         }
                         if($cond) {
-                            $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
+                            $id = $line[$columns["client-code"]]."--".$line[$columns["user-id"]]."--".$line[$columns["item-id"]];
                             if(!array_key_exists($id, $loopArray)) {
                                 $loopArray[$id] = 0;
                             }
-                            $loopArray[$id] += $tab[$columns["transac-quantity"]];
+                            $loopArray[$id] += $line[$columns["transac-quantity"]];
                         }
                     }
                 }
             }
             foreach($loopArray as $id=>$q) {
                 $ids = explode("--", $id);
-                $consosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
+                $consosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], round($q, 3)];
             }
         }
         else {
             $columns = $this->bilansStats->getColumns($this->factel, 'T3');
-            $lines = Csv::extract($this->getFileNameInBS('T3'));
-            for($i=1;$i<count($lines);$i++) {
-                $tab = explode(";", $lines[$i]);
-                if(($tab[$columns["invoice-year"]] == $tab[$columns["editing-year"]]) && ($tab[$columns["invoice-month"]] == $tab[$columns["editing-month"]]) && ($tab[$columns["flow-type"]] == "lvr")) {
-                    $id = $tab[$columns["client-code"]]."--".$tab[$columns["user-id"]]."--".$tab[$columns["item-id"]];
+            $lines = Csv::extract($this->getFileNameInBS('T3'), true);
+            foreach($lines as $line) {
+                if(($line[$columns["invoice-year"]] == $line[$columns["editing-year"]]) && ($line[$columns["invoice-month"]] == $line[$columns["editing-month"]]) && ($line[$columns["flow-type"]] == "lvr")) {
+                    $id = $line[$columns["client-code"]]."--".$line[$columns["user-id"]]."--".$line[$columns["item-id"]];
                     if(!array_key_exists($id, $loopArray)) {
                         $loopArray[$id] = ['Smu' => 0, 'Q' => 0];
                     }
-                    $loopArray[$id]['Smu'] += $tab[$columns["transac-usage"]];
-                    $loopArray[$id]['Q'] += $tab[$columns["transac-quantity"]];
+                    $loopArray[$id]['Smu'] += $line[$columns["transac-usage"]];
+                    $loopArray[$id]['Q'] += $line[$columns["transac-quantity"]];
                 }
             }
             foreach($loopArray as $id=>$line) {
                 $ids = explode("--", $id);
                 intval($this->year.$this->month) > 202408 ? $q = $line['Smu'] : $q = $line['Q'];
-                $consosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], $q];
+                $consosArray[] = [$ids[0], $this->sciper($ids[1]), $ids[2], round($q, 3)];
             }
         }
 
-        for($i=0;$i<count($consosArray);$i++) {
-            $consosArray[$i][3] = round($consosArray[$i][3],3);
-        }
         return $consosArray;
     }
 

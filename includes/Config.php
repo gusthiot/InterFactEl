@@ -57,19 +57,18 @@ class Config
             $keys = [];
         }
         foreach($lines as $i=>$line) {
-            $tab = explode(";", $line);
-            if(count($tab) != $nb) {
+            if(count($line) != $nb) {
                 $msg .= "ligne ".$i." de ".$file." n'a pas le bon nombre de champs";
             }
-            if($rights && !((-1 < intval($tab[3])) && (intval($tab[3]) < 8))) {
+            if($rights && !((-1 < intval($line[3])) && (intval($line[3]) < 8))) {
                 $msg .= "les droits de la ligne ".$i." de ".$file." doivent être entre 0 et 7 inclus";
             }
             if(!empty($labels)) {
-                if(in_array($tab[0], $keys)) {
+                if(in_array($line[0], $keys)) {
                     $msg .= "le label de la ligne ".$i." de ".$file." n'est pas unique";
                 }
                 else {
-                    $keys[] = $tab[0];
+                    $keys[] = $line[0];
                 }
             }
         }

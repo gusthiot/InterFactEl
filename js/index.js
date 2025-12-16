@@ -10,11 +10,11 @@ function zipError() {
 
 $('#download-generated').on('click', function () {
     window.location.href = "controller/download.php?type=generated";
-} );
+});
 
 $('#download-config').on('click', function () {
     window.location.href = "controller/download.php?type=config";
-} );
+});
 
 $('#zip-config').on('change', function () {
     const file = $(this).val();
@@ -24,19 +24,19 @@ $('#zip-config').on('change', function () {
     }
     else {
     }
-} );
+});
 
 $('.facturation').on('click', function () {
     window.location.href = "facturation.php?plateforme="+$(this).find('#plate-fact').val();
-} );
+});
 
 $('.tarifs').on('click', function () {
     window.location.href = "tarifs.php?plateforme="+$(this).find('#plate-tarifs').val();
-} );
+});
 
 $('.reporting').on('click', function () {
     window.location.href = "reporting.php?plateforme="+$(this).find('#plate-report').val();
-} );
+});
 
 $(document).on("change", ".zip-simu", function () {
     const file = $(this).val();
@@ -59,4 +59,24 @@ $('#zip-view').on('change', function () {
     else {
         zipError();
     }
-} );
+});
+
+$('#modal-save').on('click', function () {
+    let content = [];
+    const num = $('#msg-num').val();
+    for(let i=0;i<num;i++) {
+        if(!$('#del-'+i).is(':checked')) {
+            let display = 0;
+            if($('#dis-'+i).is(':checked')) {
+                display = 1;
+            }
+            content.push([display, $('#msg-'+i).val()]);
+        }
+    }
+    if($('#msg-new').val() != "") {
+        content.push([1, $('#msg-new').val()]);
+    }
+    $.post("controller/saveMessages.php", {content: content}, function () {
+        window.location.href = "index.php";
+    });
+});

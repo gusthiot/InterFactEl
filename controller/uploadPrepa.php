@@ -132,7 +132,7 @@ if(isset($_POST['type'])) {
                                         $month = $state->getNextMonth();
                                     }
                                     $array = [["Platform", $plateforme], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
-                                    ParamEdit::write($tmpDir."/".ParamEdit::NAME, $array);
+                                    Csv::write($tmpDir."/".ParamEdit::NAME, $array);
                                     $paramedit = new ParamEdit($tmpDir);
                                     $paramFile = DATA.$plateforme."/".$year."/".$month."/".ParamZip::NAME;
                                     if(file_exists($paramFile)) {

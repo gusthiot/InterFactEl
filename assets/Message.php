@@ -30,8 +30,7 @@ class Message extends Csv
         $this->messages = [];
         $lines = self::extract(CONFIG.self::NAME);
         foreach($lines as $line) {
-            $tab = explode(";", $line);
-            $this->messages[$tab[0]] = $tab[1];
+            $this->messages[$line[0]] = $line[1];
         }
     }
 

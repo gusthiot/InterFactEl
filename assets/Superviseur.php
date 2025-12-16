@@ -28,7 +28,7 @@ class Superviseur extends Csv
         $this->superviseurs = [];
         $lines = self::extract(CONFIG.self::NAME);
         foreach($lines as $line) {
-            $this->superviseurs[] = $line;
+            $this->superviseurs[] = $line[0];
         }
     }
 
