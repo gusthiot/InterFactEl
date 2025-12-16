@@ -38,7 +38,7 @@ include("includes/lock.inc");
                 <?php
                 $inter = " &nbsp; - &nbsp; ";
                 $msg = "";
-                foreach(Csv::extract("./".Scroll::NAME) as $line) {
+                foreach(Csv::extract(DATA.Scroll::NAME) as $line) {
                     if($line[0] > 0) {
                         $msg .= $line[1];
                         $msg .= $inter;
@@ -100,7 +100,7 @@ include("includes/lock.inc");
                             <div class="modal-body">
                             <?php
                                 $i = 0;
-                                $lines = Csv::extract("./".Scroll::NAME);
+                                $lines = Csv::extract(DATA.Scroll::NAME);
                                 if(count($lines) > 0) {
                                     echo "<table>";
                                     echo '<tr><th class="th-modal">Afficher</th><th class="th-modal"></th class="th-modal"><th>Supprimer</th>';

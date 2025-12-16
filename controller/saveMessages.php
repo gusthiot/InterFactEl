@@ -8,7 +8,7 @@ require_once("../session.inc");
  */
 if(IS_SUPER && isset($_POST["content"])) {
 
-    Csv::write("../".Scroll::NAME, $_POST["content"]);
+    Csv::write(DATA.Scroll::NAME, $_POST["content"]);
     $_SESSION['alert-success'] = "Messages bien enregistrés";
 }
 else {
