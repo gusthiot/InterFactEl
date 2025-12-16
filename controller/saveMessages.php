@@ -3,7 +3,6 @@
 require_once("../assets/Scroll.php");
 require_once("../session.inc");
 
-$_SESSION['alert-info'] = $_POST["content"];
 if(IS_SUPER) {
     if(isset($_POST["content"])) {
         Csv::write(DATA.Scroll::NAME, $_POST["content"]);
