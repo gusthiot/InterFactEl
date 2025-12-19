@@ -70,6 +70,7 @@ $(document).on("click", "#save-label", function() {
 
 let type = "";
 $("#tarifs-read").on("click", function() {
+    reset();
     type = "read";
     setDates();
 });
@@ -80,7 +81,6 @@ $("#tarifs-control").on("click", function() {
 });
 
 function setDates() {
-    reset();
     $.post("controller/getTarifsDates.php", {plate: plateforme, type: type}, function (data) {
         $('#tarifs-select').html(data);
     });
@@ -191,6 +191,7 @@ $(document).on("change", "#tarifs-month", function() {
 function reset() {
     files = {};
     $('#tarifs-files').html("");
+    $('#tarifs-select').html("");
     $('#tarifs-correct').css('display', 'none');
     $('#tarifs-load').css('display', 'none');
     $('#tarifs-save').css('display', 'none');
@@ -338,7 +339,7 @@ const mandatoryCsvs = { "paramfact.csv": {
                             tests: [
                                 {type: "ref", col: 0, origin: "base.csv", zero: false},
                                 {type: "ref", col: 1, origin: "categorie.csv", zero: false},
-                                {type: "num", col: 2, neg: false, zero: true, int: true}
+                                {type: "num", col: 2, neg: false, zero: true, int: false}
                             ]
                         },
                     };
