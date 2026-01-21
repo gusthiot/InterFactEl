@@ -41,6 +41,12 @@ $(document).on("click", ".export", function() {
     window.location.href = "controller/download.php?type=tarifs&plate="+plateforme+"&year="+tab[1]+"&month="+tab[2];
 } );
 */
+
+$("#menu-list").on("click", function() {
+    window.location.href = "tarifs.php?plateforme="+plateforme;
+} );
+
+
 $(document).on("click", ".all", function() {
     const tab = $(this).attr('id').split("-");
     const run = $(this).data("run");

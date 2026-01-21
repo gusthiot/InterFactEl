@@ -103,7 +103,7 @@ $verified = true;
                 <nav class="nav-tabs-light-wrapper">
                     <ul class="nav nav-tabs-light" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#tarifs-list" data-toggle="tab"  role="tab" aria-controls="tarifs-list" aria-selected="true">Liste</a>
+                            <a class="nav-link active" href="#tarifs-list" data-toggle="tab" id="menu-list" role="tab" aria-controls="tarifs-list" aria-selected="true">Liste</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#tarifs-space" data-toggle="tab"  role="tab" aria-controls="tarifs-space" aria-selected="false">Espace</a>
@@ -159,7 +159,7 @@ $verified = true;
                                             <?php }
                                             if (file_exists($dirMonth."/unused.csv")) {
                                                 if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
-                                                    <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover"
+                                                    <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
                                                         data-content="<?= $messages->getMessage('msg9') ?>">
                                                         <svg class="icon icon-selectable red" aria-hidden="true">
                                                             <use xlink:href="#alert-triangle"></use>

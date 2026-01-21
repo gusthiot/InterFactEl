@@ -194,7 +194,7 @@ include("includes/lock.inc");
                                     </svg>
                                 <?php }
                                 if (file_exists($dirMonth."/unused.csv") && State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
-                                    <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover"
+                                    <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
                                         data-content="<?= $messages->getMessage('msg10') ?>">
                                         <svg class="icon icon-selectable red" aria-hidden="true">
                                             <use xlink:href="#alert-triangle"></use>
