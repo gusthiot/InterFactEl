@@ -104,7 +104,6 @@ if(isset($_POST['type'])) {
                                 else {
                                     // with previous internal data, consistancy should be guaranteed
                                     $state = new State(DATA.$plateforme);
-                                    /*
                                     $dirOut = $state->getLastPath()."/OUT/";
                                     foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
                                         if($file == "paramtext.csv") {
@@ -115,7 +114,7 @@ if(isset($_POST['type'])) {
                                             break;
                                         }
                                     }
-                                    */
+
                                     $wm = "";
                                     $tyfact = "SAP";
                                     if($type == "PROFORMA") {

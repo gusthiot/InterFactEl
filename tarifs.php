@@ -166,11 +166,6 @@ $verified = true;
                                                         </svg>
                                                     </button>
                                             <?php }
-                                                else { ?>
-                                                    <svg class="icon" aria-hidden="true">
-                                                        <use xlink:href="#alert-triangle"></use>
-                                                    </svg>
-                                            <?php }
                                             } ?>
                                             </td>
                                             <td>
