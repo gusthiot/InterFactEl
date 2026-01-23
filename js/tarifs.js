@@ -228,6 +228,17 @@ $(document).on("click", "#tarifs-apply", function() {
 });
 
 function applyTarifs(date) {
+    let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];
+    Object.keys(ids["classeclient.csv"]).forEach(function(ccKey) {
+        const ccLine = contents["classeclient.csv"][ids["classeclient.csv"][ccKey]];
+        const idBase = ccLine[8];
+        Object.keys(ids["categorie.csv"]).forEach(function(caKey) {
+            const idBaseCateg = idBase+"_"+caKey;
+            const bcLine = contents["basecateg.csv"][ids["basecateg.csv"][idBaseCateg]];
+            categprix.push([ccKey, caKey, bcLine[2]]);
+        });
+    });
+    files["categprix.csv"] = btoa(Papa.unparse(categprix, {delimiter: ";", skipEmptyLines: true}));
     const enc_files = JSON.stringify(files);
     $.post("controller/applyTarifs.php", {plate: plateforme, type: type, date: date, files: enc_files}, function (data) {
         $('#tarifs-files').html(data);
