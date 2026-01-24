@@ -22,7 +22,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
         $year = basename($dirYear);
         foreach(globReverse($dirYear) as $dirMonth) {
             $month = basename($dirMonth);
-            if (file_exists($dirMonth."/".ParamZip::NAME) && ($type == "control")) {
+            if (file_exists($dirMonth."/".ParamZip::NAME) && ($type == "control") && (file_exists($dirMonth."/unused.csv"))) {
                 if(State::isLaterThan($month, $year, $mp['month'], $mp['year']) || State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
                     if($type == "control") {
                        $choices[$year.$month] = [$year, $month];
