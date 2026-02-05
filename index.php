@@ -176,25 +176,19 @@ include("includes/lock.inc");
                                             $available = false;
                                         }
                                     }
-                                    if($available) {
-                                    ?>
-                                        <div class="tarifs tile center-two">
-                                            <input type="hidden" id="plate-tarifs" value="<?= $plateforme ?>" />
-                                            <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
-                                            <svg class="icon feather icon-tile" aria-hidden="true">
-                                                <use xlink:href="#settings"></use>
-                                            </svg>
-                                        </div>
-                                    <?php }
-                                    else {
-                                    ?>
-                                        <div class="desactived-tile center-two">
-                                            <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
-                                            <svg class="icon feather icon-tile" aria-hidden="true">
-                                            </svg>
-                                        </div>
-                                    <?php
+                                    $des = "";
+                                    if(!$available) {
+                                        $des = "desactived-tile";
                                     }
+                                    ?>
+                                    <div class="tarifs tile <?= $des ?> center-two">
+                                        <input type="hidden" id="plate-tarifs" value="<?= $plateforme ?>" />
+                                        <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
+                                        <svg class="icon feather icon-tile" aria-hidden="true">
+                                            <use xlink:href="#settings"></use>
+                                        </svg>
+                                    </div>
+                                <?php
                                 }
                                 ?>
                                 </div>

@@ -39,6 +39,7 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
                         $_SESSION['alert-danger'] = "copy error";
                     }
                 }
+                /*
                 else{
                     if($state->isSame($date[0], $date[1])) {
                         $_SESSION['alert-danger'] = $messages->getMessage('msg8');
@@ -47,6 +48,7 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
                         $_SESSION['alert-danger'] = $messages->getMessage('msg7');
                     }
                 }
+                    */
             }
             elseif($_POST['type'] == "correct") {
                 $dirTarifs = DATA.$plateforme."/".$state->getLastYear()."/".$state->getLastMonth()."/";

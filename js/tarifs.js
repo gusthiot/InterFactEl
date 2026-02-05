@@ -1,70 +1,28 @@
 
-let mpYear = $('#mp-year').val();
-let mpMonth = $('#mp-month').val();
+//let mpYear = $('#mp-year').val();
+//let mpMonth = $('#mp-month').val();
 let plateforme = $('#plate').val();
 
-/*
-$(document).on("change", "#zip-tarifs", function () {
-    const file = $('#zip-tarifs').val();
-    if(file.indexOf('.zip') > -1) {
-        $('#form-tarifs').submit();
-        $('#message').text('');
-    }
-    else {
-        $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-                                'Vous devez uploader une archive zip !'+
-                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-                                    '<span aria-hidden="true">&times;</span>'+
-                                '</button>'+
-                            '</div>');
-    }
-} );
 
-$(document).on("change", "#zip-correct", function () {
-    const file = $('#zip-correct').val();
-    if(file.indexOf('.zip') > -1) {
-        $('#form-correct').submit();
-        $('#message').text('');
-    }
-    else {
-        $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-                                'Vous devez uploader une archive zip !'+
-                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-                                    '<span aria-hidden="true">&times;</span>'+
-                                '</button>'+
-                            '</div>');
-    }
-} );
+/** Liste */
 
-$(document).on("click", ".export", function() {
-    const tab = $(this).attr('id').split("-");
-    window.location.href = "controller/download.php?type=tarifs&plate="+plateforme+"&year="+tab[1]+"&month="+tab[2];
-} );
-*/
-
-$("#menu-list").on("click", function() {
+$("#list-tab").on("click", function() {
     window.location.href = "tarifs.php?plateforme="+plateforme;
-} );
-
+});
 
 $(document).on("click", ".all", function() {
     const tab = $(this).attr('id').split("-");
     const run = $(this).data("run");
     const version = $(this).data("version");
     window.location.href = "controller/download.php?type=alltarifs&plate="+plateforme+"&year="+tab[1]+"&month="+tab[2]+"&version="+version+"&run="+run;
-} );
-
-$(document).on("click", ".suppress", function() {
-    const tab = $(this).attr('id').split("-");
-    window.location.href = "controller/suppressTarifs.php?plate="+plateforme+"&year="+tab[1]+"&month="+tab[2];
-} );
+});
 
 $(document).on("click", ".etiquette", function() {
     const tab = $(this).attr('id').split("-");
     $.post("controller/getLabel.php", {plate: plateforme, right: "tarifs", year: tab[1], month: tab[2]}, function (data) {
         $('#label-'+tab[1]+'-'+tab[2]).html(data);
     });
-} );
+});
 
 $(document).on("click", "#save-label", function() {
     const tab = $(this).parent().parent().attr('id').split("-");
@@ -72,74 +30,53 @@ $(document).on("click", "#save-label", function() {
     $.post("controller/saveLabel.php", {txt: txt, right: "tarifs", plate: plateforme, year: tab[1], month: tab[2]}, function () {
         window.location.href = "tarifs.php?plateforme="+plateforme;
     });
-} );
+});
 
-let type = "";
+
+/** Espace */
+
+let files = {};
+
+function reset() {
+    files = {};
+    $('#tarifs-files').html("");
+    $('#tarifs-select').html("");
+    $('#tarifs-correct').addClass('desactived-tile');
+    $('#tarifs-load').addClass('desactived-tile');
+    $('#tarifs-save').addClass('desactived-tile');
+    $('#tarifs-check').addClass('desactived-tile');
+    $('#tarifs-cancel').addClass('desactived-tile');
+}
+
+function displayFiles() {
+    let filesList = "";
+    Object.keys(files).forEach(function(key) {
+        filesList += key + "<br />";
+    });
+    $('#tarifs-files').html(filesList);
+    $('#tarifs-save').removeClass('desactived-tile');
+    $('#tarifs-check').removeClass('desactived-tile');
+}
+
+
+/** Left */
+
 $("#tarifs-read").on("click", function() {
     reset();
-    type = "read";
-    setDates();
-});
-
-$("#tarifs-control").on("click", function() {
-    type = "control";
-    setDates();
-});
-
-function setDates() {
-    $.post("controller/getTarifsDates.php", {plate: plateforme, type: type}, function (data) {
+    $.post("controller/getReadDates.php", {plate: plateforme}, function (data) {
         $('#tarifs-select').html(data);
+        $('#tarifs-cancel').removeClass('desactived-tile');
     });
-}
-
-$("#tarifs-load").on("click", function() {
-    type = "load";
-    $('#tarifs-select').html('<input name="month-picker" id="month-picker" class="date-picker"/>'+
-                            '<div id="tarifs-apply"><button type="button" class="btn but-line lockable">Appliquer</button></div>');
-    $('#month-picker').datepicker({
-        dateFormat: "mm yy",
-        changeMonth: true,
-        changeYear: true,
-        showButtonPanel: true,
-        minDate: new Date(mpYear, mpMonth),
-        maxDate: '+5Y',
-        onClose: function(e){
-            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-            $(this).datepicker("setDate",new Date(year,month));
-        }
-    })
-    .datepicker("setDate",new Date(mpYear,mpMonth));
 });
 
-$("#tarifs-check").on("click", function() {
-    if(runCheck(check())) {
-        return;
-    }
-    if(runCheck(reCheck())) {
-        return;
-    }
-    if(runCheck(checkColumns(true))) {
-        return;
-    }
-    $('#tarifs-files').html("alles gut");
-    $('#tarifs-correct').css('display', 'inline-block');
-    $('#tarifs-load').css('display', 'inline-block');
-});
-
-function runCheck(res) {
-    if(res != "") {
-        $('#tarifs-files').html(res);
-        return true;
-    }
-    return false;
-}
-
-$("#tarifs-correct").on("click", function() {
-        type = "correct";
-        if(confirm($('#msg').val())) {
-            applyTarifs(mpMonth+" "+mpYear);
-        }
+$(document).on("click", "#read-dates tr", function() {
+    const key = $(this).data('key');
+    $.post("controller/openTarifs.php", {plate: plateforme, type: key.split("-")[0], date: key.split("-")[1]}, function (data) {
+        files = JSON.parse(data);
+        extract();
+        $('#tarifs-select').html("");
+        displayFiles();
+    });
 });
 
 async function blobToBase64(blob) {
@@ -150,7 +87,6 @@ async function blobToBase64(blob) {
   });
 }
 
-let files = {};
 $("#tarifs-import").on("change", function(e) {
     reset();
     JSZip.loadAsync(e.target.files[0]).then(function(zip) {
@@ -186,45 +122,47 @@ $("#tarifs-import").on("change", function(e) {
         }
         else {
             displayFiles();
+            $('#tarifs-cancel').removeClass('desactived-tile');
         }
     });
 });
 
-$(document).on("change", "#tarifs-month", function() {
-    $('#tarifs-open').html('<button type="button" class="btn but-line lockable">Ouvrir</button>');
+
+/** Right */
+
+$("#tarifs-load").on("click", function() {
+    loadDates("load");
 });
 
-function reset() {
-    files = {};
-    $('#tarifs-files').html("");
-    $('#tarifs-select').html("");
-    $('#tarifs-correct').css('display', 'none');
-    $('#tarifs-load').css('display', 'none');
-    $('#tarifs-save').css('display', 'none');
-}
-
-function displayFiles() {
-    let filesList = "";
-    Object.keys(files).forEach(function(key) {
-        filesList += key + "<br />";
-    });
-    $('#tarifs-files').html(filesList);
-    $('#tarifs-save').css('display', 'inline-block');
-    $('#tarifs-check').css('display', 'inline-block');
-}
-
-$(document).on("click", "#tarifs-open", function() {
-    $.post("controller/openTarifs.php", {plate: plateforme, type: type, date: $('#tarifs-dates').val()}, function (data) {
-        files = JSON.parse(data);
-        extract();
-        $('#tarifs-select').html("");
-        displayFiles();
-    });
+$("#tarifs-remove").on("click", function() {
+    reset();
+    loadDates("remove");
+    $('#tarifs-cancel').removeClass('desactived-tile');
 });
 
-$(document).on("click", "#tarifs-apply", function() {
-        applyTarifs($('#month-picker').val());
-        $('#tarifs-select').html("");
+function loadDates(type) {
+    $.post("controller/getLoadDates.php", {plate: plateforme, type: type}, function (data) {
+        $('#tarifs-select').html(data);
+    });
+}
+
+$(document).on("click", "#load-dates tr", function() {
+    const key = $(this).data('key');
+    const type = key.split("-")[0];
+    const date = key.split("-")[1];
+    if(type == "remove") {
+        window.location.href = "controller/suppressTarifs.php?plate="+plateforme+"&date="+date;
+    }
+    else {
+        if(type == "replace") {
+            if(confirm("Save ?")) {
+                applyTarifs(date);
+            }
+        }
+        else {
+            applyTarifs(date);
+        }
+    }
 });
 
 function applyTarifs(date) {
@@ -240,20 +178,51 @@ function applyTarifs(date) {
     });
     files["categprix.csv"] = btoa(Papa.unparse(categprix, {delimiter: ";", skipEmptyLines: true}));
     const enc_files = JSON.stringify(files);
-    $.post("controller/applyTarifs.php", {plate: plateforme, type: type, date: date, files: enc_files}, function (data) {
+    $.post("controller/applyTarifs.php", {plate: plateforme, date: date, files: enc_files}, function (data) {
         $('#tarifs-files').html(data);
     });
+}
+
+
+/** Bottom */
+
+$("#tarifs-cancel").on("click", function() {
+    reset();
+});
+
+$("#tarifs-check").on("click", function() {
+    if(runCheck(check())) {
+        return;
+    }
+    if(runCheck(reCheck())) {
+        return;
+    }
+    if(runCheck(checkColumns(true))) {
+        return;
+    }
+    $('#tarifs-files').html("alles gut");
+    $('#tarifs-correct').removeClass('desactived-tile');
+    $('#tarifs-load').removeClass('desactived-tile');
+});
+
+function runCheck(res) {
+    if(res != "") {
+        $('#tarifs-files').html(res);
+        return true;
+    }
+    return false;
 }
 
 $(document).on("click", "#tarifs-save", function() {
     const enc_files = JSON.stringify(files);
     $.post("controller/saveTarifs.php", {plate: plateforme, files: enc_files}, function (data) {
         window.location.href = "controller/download.php?type=js-tarifs&name="+data+"&plate="+plateforme;
-        $('#tarifs-save').css('display', 'none');
+        $('#tarifs-save').addClass('desactived-tile');
     });
 });
 
-/************************ */
+
+/** files manipulation */
 
 let contents = {};
 let ids = {};

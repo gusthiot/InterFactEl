@@ -9,22 +9,16 @@ require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
 require_once("../session.inc");
 
-if(isset($_POST['plate']) && isset($_POST['type']) && isset($_POST['files']) && isset($_POST['date'])) {
+
+if(isset($_POST['plate']) && isset($_POST['files']) && isset($_POST['date'])) {
 
     $plateforme = $_POST["plate"];
     checkPlateforme("tarifs", $plateforme);
     $files = json_decode($_POST["files"]);
-    $type = $_POST["type"];
     $dir = DATA.$plateforme;
-    $date = explode(" ", $_POST['date']);
-    $month = $date[0];
-    $year = $date[1];
+    $month = substr($_POST["date"], 4, 2);
+    $year = substr($_POST["date"], 0, 4);
     $messages = new Message();
-
-    if($type == "load" && file_exists($dir.'/'.$year.'/'.$month.'/'.ParamZip::NAME)) {
-        echo $messages->getMessage('msg7');
-        exit;
-    }
 
     $dirTarifs = $dir.'/'.$year.'/'.$month.'/';
     $tmpDir = TEMP.'tarifs_'.time().'/';

@@ -12,7 +12,7 @@ if(isset($_POST['plate'])) {
     checkPlateforme("facturation", $_POST["plate"]);
     $plate = DATA.$_POST['plate'];
     $lines = explode(PHP_EOL, Logfile::load($plate));
-    $txt = "<div id='over-log'><div id='log'>";
+    $txt = "<div class='over'><div id='log'>";
     foreach($lines as $line) {
         $parts = explode("|", $line);
         if(count($parts) === 7) {

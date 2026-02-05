@@ -55,8 +55,6 @@ function uploader(string $title, string $id): string
     return $html;
 }
 
-$verified = true;
-
 ?>
 
 
@@ -97,9 +95,9 @@ $verified = true;
 
             <?php include("includes/message.inc"); ?>
             <div id="tarifs-content">
-                <input type="hidden" id="mp-month" value="<?= $mp['month'] ?>" />
-                <input type="hidden" id="mp-year" value="<?= $mp['year'] ?>" />
-                <input type="hidden" id="msg" value="<?= $messages->getMessage('msg8') ?>" />
+                <!--<input type="hidden" id="mp-month" value="<?= $mp['month'] ?>" />-->
+                <!--<input type="hidden" id="mp-year" value="<?= $mp['year'] ?>" />-->
+                <!--<input type="hidden" id="msg" value="<?= $messages->getMessage('msg8') ?>" />-->
                 <nav class="nav-tabs-light-wrapper">
                     <ul class="nav nav-tabs-light" role="tablist">
                         <li class="nav-item">
@@ -111,28 +109,20 @@ $verified = true;
                     </ul>
                 </nav>
                 <div class="tab-content p-3">
+                    <!-- Liste -->
                     <div class="tab-pane fade show active" id="tarifs-list" role="tabpanel" aria-labelledby="list-tab">
-                        <div class="over">
+                        <div id="over-tarifs">
                             <table id="tarifs" class="table table-boxed">
                                 <?php
                                 foreach(globReverse($dir) as $dirYear) {
                                     $year = basename($dirYear);
                                     foreach(globReverse($dirYear) as $dirMonth) {
                                         $month = basename($dirMonth);
-                                        if (file_exists($dirMonth."/".ParamZip::NAME)) {
+                                        if(file_exists($dirMonth."/".ParamZip::NAME)) {
                                             $label = Label::load($dirMonth);
                                             if(empty($label)) {
                                                 $label = "No label ?";
                                             }
-                                            /*
-                                            $moment = 0;
-
-                                            if($state->isSame($month, $year)) {
-                                                $moment = 1;
-                                            }
-                                            elseif($state->isLater($month, $year)) {
-                                                $moment = 2;
-                                            }*/
 
                                             $lastRun = 0;
                                             $lastVersion = 0;
@@ -152,15 +142,15 @@ $verified = true;
                                             $id = $year."-".$month;
                                             echo '<tr>';
                                             echo '<td>'.$month.' '.$year;
-                                            if (file_exists($dirMonth."/".Lock::FILES['month'])) { ?>
+                                            if(file_exists($dirMonth."/".Lock::FILES['month'])) { ?>
                                                 <svg class="icon" aria-hidden="true">
                                                     <use xlink:href="#lock"></use>
                                                 </svg>
                                             <?php }
-                                            if (file_exists($dirMonth."/unused.csv")) {
+                                            if(file_exists($dirMonth."/unused.csv")) {
                                                 if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
                                                     <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
-                                                        data-content="<?= $messages->getMessage('msg9') ?>">
+                                                        data-content="<?= $messages->getMessage('msg7') ?>">
                                                         <svg class="icon icon-selectable red" aria-hidden="true">
                                                             <use xlink:href="#alert-triangle"></use>
                                                         </svg>
@@ -176,17 +166,6 @@ $verified = true;
                                             <?php if($lastRun > 0) {
                                                 echo '<button type="button" id="all-'.$id.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'" class="btn but-line all">Exporter tout</button>';
                                             }
-                                            /*
-                                            if($moment == 1) { ?>
-                                                <label class="btn but-line">
-                                                    <form action="controller/uploadTarifs.php" method="post" id="form-correct" enctype="multipart/form-data" >
-                                                        <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
-                                                        <input type="hidden" name="type" value="correct" />
-                                                        <input type="file" id="zip-correct" name="zip_file" class="zip-file" accept=".zip">
-                                                    </form>
-                                                    Corriger</label>
-                                            <?php }
-                                            */
                                             if(State::isLaterThan($month, $year, $mp['month'], $mp['year'])) {
                                                 echo '<button type="button" id="suppress-'.$id.'" class="btn but-line suppress">Supprimer</button>';
                                             } ?>
@@ -198,27 +177,30 @@ $verified = true;
                             ?></table>
                         </div>
                     </div>
+                    <!-- Espace -->
                     <div class="tab-pane fade" id="tarifs-space" role="tabpanel" aria-labelledby="space-tab">
-                        <div id="actions" class="text-center">
-
-                            <input id="tarifs-import" type="file" name="tarifs-import" class="zip-file lockable" accept=".zip" />
-                            <label class="btn but-line" for="tarifs-import">Importer</label>
-
-                            <button type="button" id="tarifs-read" class="btn but-line">Lire</button>
-                            <button type="button" id="tarifs-save" class="btn but-line">Sauvegarder</button>
-                            <button type="button" id="tarifs-check" class="btn but-line">Vérifier</button>
-                            <?php
-                            if($verified) {
-                            ?>
-                            <button type="button" id="tarifs-load" class="btn but-line">Charger</button>
-                            <button type="button" id="tarifs-correct" class="btn but-line">Corriger : <?= $mp['month'] ?>/<?= $mp['year'] ?></button>
-                            <?php
-                            }
-                            ?>
-                            <button type="button" id="tarifs-control" class="btn but-line">Contrôler</button>
+                        <div id="tarifs-top">
+                            <div id="tarifs-left" class="tarifs-column">
+                                <label class="mini-tile for="tarifs-import">
+                                    <input id="tarifs-import" type="file" name="tarifs-import" class="zip-file lockable" accept=".zip" />
+                                    Importer
+                                </label>
+                                <div type="button" id="tarifs-read" class="mini-tile">Lire</div>
+                            </div>
+                            <div id="tarifs-center">
+                                <div id="tarifs-select"></div>
+                                <div id="tarifs-files"></div>
+                            </div>
+                            <div id="tarifs-right" class="tarifs-column">
+                                <div type="button" id="tarifs-load" class="mini-tile desactived-tile">Charger</div>
+                                <div type="button" id="tarifs-remove" class="mini-tile">Effacer</div>
+                            </div>
                         </div>
-                        <div id="tarifs-select"></div>
-                        <div id="tarifs-files"></div>
+                        <div id="tarifs-bottom">
+                            <div type="button" id="tarifs-cancel" class="mini-tile desactived-tile">Annuler</div>
+                            <div type="button" id="tarifs-save" class="mini-tile desactived-tile">Sauvegarder</div>
+                            <div type="button" id="tarifs-check" class="mini-tile desactived-tile">Vérifier</div>
+                        </div>
                     </div>
                 </div>
             </div>

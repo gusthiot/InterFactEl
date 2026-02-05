@@ -274,17 +274,6 @@ input[type="file"] {
   background-color: var(--casse);
 }
 
-.desactived-tile {
-  height: 200px;
-	width: 200px;
-  margin: 10px;
-	border-radius: 5px;
-  display: inline-block;
-  box-shadow: 1px 1px 4px 1px #aaa;
-  text-align: center;
-  opacity: 0.5;
-}
-
 .center-one {
   padding: 70px 0;
 }
@@ -295,6 +284,12 @@ input[type="file"] {
 
 .center-three {
   padding: 16px 0;
+}
+
+.desactived-tile {
+  opacity: 0.5;
+  cursor: none;
+  pointer-events: none;
 }
 
 .tile:hover {
@@ -441,14 +436,6 @@ input[type="file"] {
   margin: auto;
 }
 
-#over-log {
-  margin: 0 auto;
-  width: 90%;
-  display: block;
-  overflow-x: auto;
-  max-height: 700px;
-}
-
 /** prefacturation **/
 
 #prefa-content {
@@ -516,10 +503,20 @@ table#bills td:nth-child(2), table#bills td:nth-child(3) { text-align: right; }
 
 table#tarifs td:nth-child(1) { width: 20%; }
 
-#tarifs-content {
-  margin: auto;
-  text-align: center;
-  width: 1500px;
+table.dates-tarifs td:nth-child(1) { width: 20%; }
+table.dates-tarifs td:nth-child(2) { width: 10%; }
+
+table.dates-tarifs tr:hover {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#over-tarifs {
+  margin: 0 auto;
+  width: 80%;
+  display: block;
+  overflow-x: auto;
+  max-height: 580px;
 }
 
 #tarifs-content {
@@ -528,20 +525,45 @@ table#tarifs td:nth-child(1) { width: 20%; }
   text-align: center;
 }
 
-#tarifs-save {
-  display: none;
+#tarifs-top {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 
-#tarifs-load {
-  display: none;
+.tarifs-column {
+  padding: 5px;
+  width: 200px;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin: 5px;
 }
 
-#tarifs-correct {
-  display: none;
+#tarifs-center {
+  width: 100%;
 }
 
-#tarifs-check {
-  display: none;
+#tarifs-bottom {
+  margin: auto;
+  padding: 5px;
+  width: 600px;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.mini-tile {
+  height: 100px;
+	width: 150px;
+  margin: 10px;
+	border-radius: 5px;
+  display: inline-block;
+  box-shadow: 1px 1px 4px 1px #aaa;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.mini-tile:hover {
+  background-color: #f3f3f3;
 }
 
 /** reporting **/
