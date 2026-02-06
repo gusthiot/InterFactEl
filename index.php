@@ -65,13 +65,13 @@ include("includes/lock.inc");
                 <div class="index-primary">
                     <h3>Supervision</h3>
                     <div class="tiles">
-                        <div type="button" id="download-config" class="tile center-two">
+                        <div type="button" id="download-config" class="tile">
                             <p>Download CONFIG <br /> files</p>
                             <svg class="icon feather icon-tile" aria-hidden="true">
                                 <use xlink:href="#download-cloud"></use>
                             </svg>
                         </div>
-                        <label class="tile center-two">
+                        <label class="tile">
                             <form action="controller/uploadConfig.php" method="post" id="form-config" enctype="multipart/form-data" >
                                 <input type="file" name="zip_file" id="zip-config" accept=".zip">
                             </form>
@@ -80,7 +80,7 @@ include("includes/lock.inc");
                                 <use xlink:href="#upload-cloud"></use>
                             </svg>
                         </label>
-                        <div type="button" id="manage-message" class="tile center-two" data-toggle="modal" data-target="#scroll-modal">
+                        <div type="button" id="manage-message" class="tile" data-toggle="modal" data-target="#scroll-modal">
                             <p>Manage Scroll <br /> Message</p>
                             <svg class="icon feather icon-tile" aria-hidden="true">
                                 <use xlink:href="#message-square"></use>
@@ -148,7 +148,7 @@ include("includes/lock.inc");
                                 <?php
                                 foreach(DATA_GEST['facturation'] as $plateforme => $name) {
                                 ?>
-                                    <div class="facturation tile center-two">
+                                    <div class="facturation tile">
                                         <input type="hidden" id="plate-fact" value="<?= $plateforme ?>" />
                                         <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
                                         <svg class="icon feather icon-tile" aria-hidden="true">
@@ -181,7 +181,7 @@ include("includes/lock.inc");
                                         $des = "desactived-tile";
                                     }
                                     ?>
-                                    <div class="tarifs tile <?= $des ?> center-two">
+                                    <div class="tarifs tile <?= $des ?>">
                                         <input type="hidden" id="plate-tarifs" value="<?= $plateforme ?>" />
                                         <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
                                         <svg class="icon feather icon-tile" aria-hidden="true">
@@ -203,7 +203,7 @@ include("includes/lock.inc");
                                 <?php
                                 foreach(DATA_GEST['reporting'] as $plateforme => $name) {
                                 ?>
-                                    <div class="reporting tile center-two">
+                                    <div class="reporting tile">
                                         <input type="hidden" id="plate-report" value="<?= $plateforme ?>" />
                                         <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
                                         <svg class="icon feather icon-tile" aria-hidden="true">
@@ -224,7 +224,7 @@ include("includes/lock.inc");
             <div class="index-primary">
                 <h3>Outils</h3>
                 <div class="tiles">
-                    <label class="tile center-one">
+                    <label class="tile">
                         <form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >
                             <input type="file" name="zip_file" id="zip-view" accept=".zip">
                         </form>
@@ -233,7 +233,7 @@ include("includes/lock.inc");
                             <use xlink:href="#eye"></use>
                         </svg>
                     </label>
-                    <label class="simulation tile center-one">
+                    <label class="simulation tile">
                         <form action="controller/uploadPrepa.php" method="post" class="form-simu" enctype="multipart/form-data" >
                             <input type="hidden" name="type" id="type" value="SIMU">
                             <input id="SIMU" type="file" name="SIMU" <?= $disabled ?> class="zip-simu lockable" accept=".zip">

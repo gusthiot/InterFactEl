@@ -27,7 +27,7 @@ if(isset($_POST["plate"])) {
                     if(empty($label)) {
                         $label = "No label ?";
                     }
-                    $choices["control-".$year.$month] = [$month." ".$year, "Control", $label];
+                    $choices["control-".$year.$month] = [$month." ".$year, $label];
                 }
             }
             $lastRun = 0;
@@ -47,7 +47,7 @@ if(isset($_POST["plate"])) {
                         else {
                             $label = "<i>Idem mois précédent</i>";
                         }
-                        $choices["read-".$year.$month] = [$month." ".$year, $factel, $label];
+                        $choices["read-".$year.$month] = [$month." ".$year, $label];
                         break;
                     }
                 }
@@ -57,10 +57,10 @@ if(isset($_POST["plate"])) {
 
     $html = "";
     if(count($choices) > 0) {
-        $html = '<div id="over-tarifs">
+        $html = '<div class="over-tarifs over-dates">
                     <table id="read-dates" class="dates-tarifs table table-boxed">';
         foreach($choices as $key=>$choice) {
-            $html .= '<tr data-key="'.$key.'"><td>'.$choice[0].'</td><td>'.$choice[1].'</td><td>'.$choice[2].'</td></tr>';
+            $html .= '<tr data-key="'.$key.'"><td>'.$choice[0].'</td><td>'.$choice[1].'</td></tr>';
         }
         $html .=    '</table>
                 </div>';

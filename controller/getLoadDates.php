@@ -73,19 +73,19 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
             else {
                 $prefix = "correct";
             }
-            $choices[$prefix."-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], $prefix, $label];
+            $choices[$prefix."-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], $label];
         }
         if(($type == "remove") && (file_exists($dirMonth."/unused.csv"))) {
-            $choices["remove-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], "remove", $label];
+            $choices["remove-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], $label];
         }
     }
 
 
     if(count($choices) > 0) {
-        $html = '<div id="over-tarifs">
+        $html = '<div class="over-tarifs over-dates">
                     <table id="load-dates" class="dates-tarifs table table-boxed">';
         foreach($choices as $key=>$choice) {
-            $html .= '<tr data-key="'.$key.'"><td>'.$choice[0].'</td><td>'.$choice[1].'</td><td>'.$choice[2].'</td></tr>';
+            $html .= '<tr data-key="'.$key.'"><td>'.$choice[0].'</td><td>'.$choice[1].'</td></tr>';
         }
         $html .=    '</table>
                 </div>';

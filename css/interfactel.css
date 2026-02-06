@@ -234,7 +234,7 @@ input[type="file"] {
 
 #div-path a:hover {
   text-decoration: underline;
-  text-decoration-color: red;
+  text-decoration-color: var(--rouge-suisse);
 }
 
 /** index **/
@@ -254,36 +254,34 @@ input[type="file"] {
 }
 
 .tiles {
-	float: left;
+  display: flex;
+  flex-wrap: wrap;
   margin-top: 10px;
   margin-bottom: 20px;
 }
 
 .tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   cursor: pointer;
   height: 200px;
 	width: 200px;
   margin: 10px;
 	border-radius: 5px;
-  display: inline-block;
-  box-shadow: 1px 1px 4px 1px #aaa;
+  box-shadow: 1px 1px 4px 1px var(--gris-300);
+}
+
+.tile p {
+  height: 80px;
+  display: flex;
+  justify-content: center;
   text-align: center;
+  flex-direction: column;
 }
 
 .selected-tile {
   background-color: var(--casse);
-}
-
-.center-one {
-  padding: 70px 0;
-}
-
-.center-two {
-  padding: 43px 0;
-}
-
-.center-three {
-  padding: 16px 0;
 }
 
 .desactived-tile {
@@ -293,15 +291,18 @@ input[type="file"] {
 }
 
 .tile:hover {
-  background-color: #f3f3f3;
+  background-color: var(--casse);
 }
 
 .nom-tile {
   font-size: 20px;
+  height: 60px !important;
 }
 
 .num-tile {
   font-size: 10px;
+  margin: 0;
+  height: 20px !important;
 }
 
 #scroll-modal-dialog {
@@ -504,19 +505,27 @@ table#bills td:nth-child(2), table#bills td:nth-child(3) { text-align: right; }
 table#tarifs td:nth-child(1) { width: 20%; }
 
 table.dates-tarifs td:nth-child(1) { width: 20%; }
-table.dates-tarifs td:nth-child(2) { width: 10%; }
+
+.over-dates {
+  max-width: 600px;
+}
+
+table.dates-tarifs td {
+  padding: 10px;
+}
 
 table.dates-tarifs tr:hover {
   cursor: pointer;
   font-weight: bold;
 }
 
-#over-tarifs {
+.over-tarifs {
   margin: 0 auto;
   width: 80%;
   display: block;
   overflow-x: auto;
   max-height: 580px;
+  text-align: center;
 }
 
 #tarifs-content {
@@ -532,11 +541,11 @@ table.dates-tarifs tr:hover {
 }
 
 .tarifs-column {
+  margin: auto;
   padding: 5px;
   width: 200px;
-  border: 1px solid black;
+  border: 1px solid var(--noir);
   border-radius: 10px;
-  margin: 5px;
 }
 
 #tarifs-center {
@@ -546,8 +555,8 @@ table.dates-tarifs tr:hover {
 #tarifs-bottom {
   margin: auto;
   padding: 5px;
-  width: 600px;
-  border: 1px solid black;
+  width: 540px;
+  border: 1px solid var(--noir);
   border-radius: 10px;
 }
 
@@ -557,14 +566,38 @@ table.dates-tarifs tr:hover {
   margin: 10px;
 	border-radius: 5px;
   display: inline-block;
-  box-shadow: 1px 1px 4px 1px #aaa;
+  box-shadow: 1px 1px 4px 1px var(--gris-300);
   text-align: center;
   padding: 40px 0;
 }
 
 .mini-tile:hover {
-  background-color: #f3f3f3;
+  background-color: var(--casse);
 }
+
+#files {
+  margin: 0 auto;
+  max-width: 1000px;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+
+.file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+	width: 150px;
+  height: 80px;
+  margin: 10px;
+	border-radius: 5px;
+  padding-left: 25px;
+  padding-right: 25px;
+  border: 1px solid var(--gris-300);
+}
+
 
 /** reporting **/
 

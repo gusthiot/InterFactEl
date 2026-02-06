@@ -49,10 +49,14 @@ function reset() {
 }
 
 function displayFiles() {
-    let filesList = "";
-    Object.keys(files).forEach(function(key) {
-        filesList += key + "<br />";
+    let filesList = '<div id="files">';
+    filenames = ["Paramètres SAP", "Articles SAP", "Taux Overhead", "Liste Tarifs Base",
+        "Classes Client", "Données Plateforme", "Partenaires Plateforme", "Classes Prestations",
+        "Catégories", "Groupes", "Coefficients Prestations", "Tarifs Base", "Logo PDF", "Grille PDF"];
+    filenames.forEach(function(key) {
+        filesList += '<div class="file">' + key + "</div>";
     });
+    filesList += '</div>'
     $('#tarifs-files').html(filesList);
     $('#tarifs-save').removeClass('desactived-tile');
     $('#tarifs-check').removeClass('desactived-tile');
@@ -143,6 +147,7 @@ $("#tarifs-remove").on("click", function() {
 function loadDates(type) {
     $.post("controller/getLoadDates.php", {plate: plateforme, type: type}, function (data) {
         $('#tarifs-select').html(data);
+        $('#tarifs-files').html("");
     });
 }
 

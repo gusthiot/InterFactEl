@@ -111,7 +111,7 @@ function uploader(string $title, string $id): string
                 <div class="tab-content p-3">
                     <!-- Liste -->
                     <div class="tab-pane fade show active" id="tarifs-list" role="tabpanel" aria-labelledby="list-tab">
-                        <div id="over-tarifs">
+                        <div class="over-tarifs">
                             <table id="tarifs" class="table table-boxed">
                                 <?php
                                 foreach(globReverse($dir) as $dirYear) {
@@ -180,20 +180,24 @@ function uploader(string $title, string $id): string
                     <!-- Espace -->
                     <div class="tab-pane fade" id="tarifs-space" role="tabpanel" aria-labelledby="space-tab">
                         <div id="tarifs-top">
-                            <div id="tarifs-left" class="tarifs-column">
-                                <label class="mini-tile for="tarifs-import">
-                                    <input id="tarifs-import" type="file" name="tarifs-import" class="zip-file lockable" accept=".zip" />
-                                    Importer
-                                </label>
-                                <div type="button" id="tarifs-read" class="mini-tile">Lire</div>
+                            <div id="tarifs-left">
+                                <div class="tarifs-column">
+                                    <label class="mini-tile for="tarifs-import">
+                                        <input id="tarifs-import" type="file" name="tarifs-import" class="zip-file lockable" accept=".zip" />
+                                        Importer
+                                    </label>
+                                    <div type="button" id="tarifs-read" class="mini-tile">Lire</div>
+                                </div>
                             </div>
                             <div id="tarifs-center">
                                 <div id="tarifs-select"></div>
                                 <div id="tarifs-files"></div>
                             </div>
-                            <div id="tarifs-right" class="tarifs-column">
-                                <div type="button" id="tarifs-load" class="mini-tile desactived-tile">Charger</div>
-                                <div type="button" id="tarifs-remove" class="mini-tile">Effacer</div>
+                            <div id="tarifs-right">
+                                <div class="tarifs-column">
+                                    <div type="button" id="tarifs-load" class="mini-tile desactived-tile">Charger</div>
+                                    <div type="button" id="tarifs-remove" class="mini-tile">Effacer</div>
+                                </div>
                             </div>
                         </div>
                         <div id="tarifs-bottom">
