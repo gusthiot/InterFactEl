@@ -7,7 +7,7 @@ require_once("../session.inc");
 /**
  * Called to display a selector to choose a period for a report
  */
-if(isset($_POST["plate"]) && isset($_POST["type"])) { 
+if(isset($_POST["plate"]) && isset($_POST["type"])) {
     $plateforme = $_POST["plate"];
     checkPlateforme("reporting", $plateforme);
     $dir = DATA.$plateforme;
@@ -32,10 +32,9 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
         default:
             $vMin = 1.0;
     }
-
-    foreach(globReverse($dir)  as $dirYear) {
+    $open = [];
+    foreach(globReverse($dir) as $dirYear) {
         $year = basename($dirYear);
-        $open = [];
         foreach(globReverse($dirYear) as $dirMonth) {
             $month = basename($dirMonth);
             $glob = glob($dirMonth."/*", GLOB_ONLYDIR);
