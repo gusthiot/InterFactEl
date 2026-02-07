@@ -16,7 +16,6 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
     $dir = DATA.$plateforme;
     $mp = State::lastRun($dir);
     $choices = [];
-    $html = "";
     $type = $_POST["type"];
 
     if(intval($mp['month']) > 6) {
@@ -45,11 +44,11 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
             if($type == "load") {
                 $prefix = "replace";
             }
-            $choices[$prefix."-".$year.$month] = [$month." ".$year, $prefix, $label];
+            $choices[$prefix."-".$year.$month] = [$month." ".$year, $label];
         }
         else {
             if($type == "load") {
-                $choices["load-".$date] = [$month." ".$year, "Load", ""];
+                $choices["load-".$date] = [$month." ".$year, ""];
             }
         }
 
@@ -79,19 +78,5 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
             $choices["remove-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], $label];
         }
     }
-
-
-    if(count($choices) > 0) {
-        $html = '<div class="over-tarifs over-dates">
-                    <table id="load-dates" class="dates-tarifs table table-boxed">';
-        foreach($choices as $key=>$choice) {
-            $html .= '<tr data-key="'.$key.'"><td>'.$choice[0].'</td><td>'.$choice[1].'</td></tr>';
-        }
-        $html .=    '</table>
-                </div>';
-        echo $html;
-    }
-    else {
-        echo "Pas de données dans la période autorisée";
-    }
+    echo json_encode($choices);
 }

@@ -62,13 +62,51 @@ function displayFiles() {
     $('#tarifs-check').removeClass('desactived-tile');
 }
 
+function displayDates(data, type) {
+    let choices = "";
+    let first = 0;
+    if(type == "read") {
+        choices = data[0];
+        if(parseInt(data[1]) > 3) {
+            first = parseInt(data[1]) - 3;
+        }
+    }
+    else {
+        choices = data;
+        first = Object.keys(choices).length - 6;
+    }
+    if(Object.keys(choices).length > 0) {
+        let html = '<div class="over-tarifs over-dates">';
+        if(first > 0) {
+            html += 'more';
+        }
+        html += '<table id="' + type + '-dates" class="dates-tarifs table table-boxed">';
+        let pos = 0;
+        Object.keys(choices).forEach(function(key) {
+            if(pos >= first && pos < (first + 6)) {
+                const choice = choices[key];
+                html += '<tr data-key="' + key +'"><td>' + choice[0] + '</td><td>' + choice[1] + '</td></tr>';
+            }
+            pos++;
+        });
+        html += '</table>';
+        if((first + 6) < Object.keys(choices).length) {
+            html += 'more';
+        }
+        html += '</div>';
+        return html;
+    }
+    else {
+        return "Pas de données dans la période autorisée";
+    }
+}
 
 /** Left */
 
 $("#tarifs-read").on("click", function() {
     reset();
     $.post("controller/getReadDates.php", {plate: plateforme}, function (data) {
-        $('#tarifs-select').html(data);
+        $('#tarifs-select').html(displayDates(JSON.parse(data), "read"));
         $('#tarifs-cancel').removeClass('desactived-tile');
     });
 });
@@ -146,7 +184,7 @@ $("#tarifs-remove").on("click", function() {
 
 function loadDates(type) {
     $.post("controller/getLoadDates.php", {plate: plateforme, type: type}, function (data) {
-        $('#tarifs-select').html(data);
+        $('#tarifs-select').html(displayDates(JSON.parse(data), "load"));
         $('#tarifs-files').html("");
     });
 }

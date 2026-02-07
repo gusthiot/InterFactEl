@@ -16,6 +16,7 @@ if(isset($_POST["plate"])) {
     $dir = DATA.$plateforme;
     $mp = State::lastRun($dir);
     $choices = [];
+    $mpNb = 0;
 
     foreach(globReverse($dir) as $dirYear) {
         $year = basename($dirYear);
@@ -28,6 +29,9 @@ if(isset($_POST["plate"])) {
                         $label = "No label ?";
                     }
                     $choices["control-".$year.$month] = [$month." ".$year, $label];
+                    if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                        $mpNb = count($choices)-1;
+                    }
                 }
             }
             $lastRun = 0;
@@ -48,25 +52,14 @@ if(isset($_POST["plate"])) {
                             $label = "<i>Idem mois précédent</i>";
                         }
                         $choices["read-".$year.$month] = [$month." ".$year, $label];
+                        if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                            $mpNb = count($choices)-1;
+                        }
                         break;
                     }
                 }
             }
         }
     }
-
-    $html = "";
-    if(count($choices) > 0) {
-        $html = '<div class="over-tarifs over-dates">
-                    <table id="read-dates" class="dates-tarifs table table-boxed">';
-        foreach($choices as $key=>$choice) {
-            $html .= '<tr data-key="'.$key.'"><td>'.$choice[0].'</td><td>'.$choice[1].'</td></tr>';
-        }
-        $html .=    '</table>
-                </div>';
-        echo $html;
-    }
-    else {
-        echo "Pas de données dans la période autorisée";
-    }
+    echo json_encode([$choices, $mpNb]);
 }
