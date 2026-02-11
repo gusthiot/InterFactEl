@@ -36,6 +36,9 @@ $(document).on("click", "#save-label", function() {
 /** Espace */
 
 let files = {};
+let type = "";
+let choices = "";
+let first = 0;
 
 function reset() {
     files = {};
@@ -50,11 +53,10 @@ function reset() {
 
 function displayFiles() {
     let filesList = '<div id="files">';
-    filenames = ["Paramètres SAP", "Articles SAP", "Taux Overhead", "Liste Tarifs Base",
-        "Classes Client", "Données Plateforme", "Partenaires Plateforme", "Classes Prestations",
-        "Catégories", "Groupes", "Coefficients Prestations", "Tarifs Base", "Logo PDF", "Grille PDF"];
-    filenames.forEach(function(key) {
-        filesList += '<div class="file">' + key + "</div>";
+    [mandatoryCsvs, mandatoryPdfs, optionalPdfs].forEach(function(dict) {
+        Object.keys(dict).forEach(function(key) {
+            filesList += '<div id="' + key + '" class="file">' + dict[key].name + "</div>";
+        });
     });
     filesList += '</div>'
     $('#tarifs-files').html(filesList);
@@ -62,23 +64,14 @@ function displayFiles() {
     $('#tarifs-check').removeClass('desactived-tile');
 }
 
-function displayDates(data, type) {
-    let choices = "";
-    let first = 0;
-    if(type == "read") {
-        choices = data[0];
-        if(parseInt(data[1]) > 3) {
-            first = parseInt(data[1]) - 3;
-        }
-    }
-    else {
-        choices = data;
-        first = Object.keys(choices).length - 6;
-    }
+
+function displayDates() {
     if(Object.keys(choices).length > 0) {
         let html = '<div class="over-tarifs over-dates">';
         if(first > 0) {
-            html += 'more';
+            html += '<svg id="dates-up" class="icon icon-selectable" aria-hidden="true">' +
+                        '<use xlink:href="#chevrons-up"></use>' +
+                    '</svg>';
         }
         html += '<table id="' + type + '-dates" class="dates-tarifs table table-boxed">';
         let pos = 0;
@@ -91,22 +84,51 @@ function displayDates(data, type) {
         });
         html += '</table>';
         if((first + 6) < Object.keys(choices).length) {
-            html += 'more';
+            html += '<svg id="dates-down" class="icon icon-selectable" aria-hidden="true">' +
+                        '<use xlink:href="#chevrons-down"></use>' +
+                    '</svg>';
         }
         html += '</div>';
-        return html;
+        $('#tarifs-select').html(html);
     }
     else {
-        return "Pas de données dans la période autorisée";
+        $('#tarifs-select').html("Pas de données dans la période autorisée");
     }
 }
+
+$(document).on("click", "#dates-down", function() {
+    if(first < Object.keys(choices).length-6) {
+        first += 3;
+    }
+    else {
+        first = Object.keys(choices).length-6;
+    }
+    displayDates();
+});
+
+$(document).on("click", "#dates-up", function() {
+    if(first > 3) {
+        first -= 3;
+    }
+    else {
+        first = 0;
+    }
+    displayDates();
+});
 
 /** Left */
 
 $("#tarifs-read").on("click", function() {
     reset();
     $.post("controller/getReadDates.php", {plate: plateforme}, function (data) {
-        $('#tarifs-select').html(displayDates(JSON.parse(data), "read"));
+        type = "read";
+        first = 0;
+        const dataParsed = JSON.parse(data);
+        choices = dataParsed[0];
+        if(parseInt(dataParsed[1]) > 3) {
+            first = parseInt(dataParsed[1]) - 3;
+        }
+        displayDates();
         $('#tarifs-cancel').removeClass('desactived-tile');
     });
 });
@@ -184,8 +206,13 @@ $("#tarifs-remove").on("click", function() {
 
 function loadDates(type) {
     $.post("controller/getLoadDates.php", {plate: plateforme, type: type}, function (data) {
-        $('#tarifs-select').html(displayDates(JSON.parse(data), "load"));
-        $('#tarifs-files').html("");
+        type = "load";
+        first = 0;
+        choices = JSON.parse(data);
+        if(Object.keys(choices).length > 6) {
+            first = Object.keys(choices).length - 6;
+        }
+        displayDates();
     });
 }
 
@@ -210,19 +237,19 @@ $(document).on("click", "#load-dates tr", function() {
 
 function applyTarifs(date) {
     let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];
-    Object.keys(ids["classeclient.csv"]).forEach(function(ccKey) {
-        const ccLine = contents["classeclient.csv"][ids["classeclient.csv"][ccKey]];
+    Object.keys(ids["classeclient"]).forEach(function(ccKey) {
+        const ccLine = contents["classeclient"][ids["classeclient"][ccKey]];
         const idBase = ccLine[8];
-        Object.keys(ids["categorie.csv"]).forEach(function(caKey) {
+        Object.keys(ids["categorie"]).forEach(function(caKey) {
             const idBaseCateg = idBase+"_"+caKey;
-            const bcLine = contents["basecateg.csv"][ids["basecateg.csv"][idBaseCateg]];
+            const bcLine = contents["basecateg"][ids["basecateg"][idBaseCateg]];
             categprix.push([ccKey, caKey, bcLine[2]]);
         });
     });
     files["categprix.csv"] = btoa(Papa.unparse(categprix, {delimiter: ";", skipEmptyLines: true}));
     const enc_files = JSON.stringify(files);
     $.post("controller/applyTarifs.php", {plate: plateforme, date: date, files: enc_files}, function (data) {
-        $('#tarifs-files').html(data);
+        $('#message').html(data);
     });
 }
 
@@ -243,14 +270,14 @@ $("#tarifs-check").on("click", function() {
     if(runCheck(checkColumns(true))) {
         return;
     }
-    $('#tarifs-files').html("alles gut");
+    $('#message').html("alles gut");
     $('#tarifs-correct').removeClass('desactived-tile');
     $('#tarifs-load').removeClass('desactived-tile');
 });
 
 function runCheck(res) {
     if(res != "") {
-        $('#tarifs-files').html(res);
+        $('#message').html(res);
         return true;
     }
     return false;
@@ -270,30 +297,35 @@ $(document).on("click", "#tarifs-save", function() {
 let contents = {};
 let ids = {};
 
-const mandatoryCsvs = { "paramfact.csv": {
+const mandatoryCsvs = { "paramfact": {
+                            name: "Paramètres SAP",
                             columns: 4,
                             labels: ["code_int", "code_ext", "devise", "modes"]
                         },
-                        "articlesap.csv": {
+                        "articlesap": {
+                            name: "Articles SAP",
                             columns: 8,
                             uniqueId: [0],
                             tests: [
                                 {type: "num", col: 2, neg: false, zero: false, int: true}
                             ]
                         },
-                        "overhead.csv": {
+                        "overhead": {
+                            name: "Taux Overhead",
                             columns: 3,
                             uniqueId: [0],
                             tests: [
                                 {type: "num", col: 1, neg: false, zero: true, int: false},
-                                {type: "ref", col: 2, origin: "articlesap.csv", zero: false}
+                                {type: "ref", col: 2, origin: "articlesap", zero: false}
                             ]
                         },
-                        "base.csv": {
+                        "base": {
+                            name: "Liste Tarifs Base",
                             columns: 2,
                             uniqueId: [0]
                         },
-                        "classeclient.csv": {
+                        "classeclient": {
+                            name: "Classes Client",
                             columns: 9,
                             uniqueId: [0],
                             tests: [
@@ -301,85 +333,98 @@ const mandatoryCsvs = { "paramfact.csv": {
                                 {type: "in", col: 4, array: ["BONUS", "RABAIS"]},
                                 {type: "in", col: 5, array: ["BONUS", "RABAIS"]},
                                 {type: "in", col: 6, array: ["OUI", "NON"]},
-                                {type: "ref", col: 7, origin: "overhead.csv", zero: true},
-                                {type: "ref", col: 8, origin: "base.csv", zero: false}
+                                {type: "ref", col: 7, origin: "overhead", zero: true},
+                                {type: "ref", col: 8, origin: "base", zero: false}
                             ]
                         },
-                        "plateforme.csv": {
+                        "plateforme": {
+                            name: "Données Plateforme",
                             columns: 3,
                             labels: ["Id-Plateforme", "Code_P", "CF", "Fonds", "Admin", "Abrev-Plateforme", "Intitulé-Plateforme", "Grille-Plateforme"]
                         },
-                        "partenaire.csv": {
+                        "partenaire": {
+                            name: "Partenaires Plateforme",
                             columns: 3,
                             uniqueId: [0, 1],
                             tests: [
                                 {type: "plateforme", col: 0},
-                                {type: "ref", col: 2, origin: "classeclient.csv", zero: false}
+                                {type: "ref", col: 2, origin: "classeclient", zero: false}
                             ]
                         },
-                        "classeprestation.csv": {
+                        "classeprestation": {
+                            name: "Classes Prestations",
                             columns: 9,
                             uniqueId: [0],
                             tests: [
-                                {type: "ref", col: 1, origin: "articlesap.csv", zero: false},
+                                {type: "ref", col: 1, origin: "articlesap", zero: false},
                                 {type: "in", col: 2, array: ["OUI", "NON"]},
                                 {type: "in", col: 3, array: ["OUI", "NON"]},
                                 {type: "in", col: 4, array: ["OUI", "NON"]},
                                 {type: "in", col: 5, array: ["OUI", "NON"]}
                             ]
                         },
-                        "categorie.csv": {
+                        "categorie": {
+                            name: "Catégories",
                             columns: 8,
                             uniqueId: [0],
                             tests: [
                                 {type: "plateforme", col: 5},
                                 {type: "num", col: 4, neg: false, zero: true, int: true, max: 8},
-                                {type: "ref", col: 6, origin: "classeprestation.csv", zero: false, special: true},
+                                {type: "ref", col: 6, origin: "classeprestation", zero: false, special: true},
                                 {type: "in", col: 7, array: ["K1", "K2", "K3", "K4", "K5", "K6", "K7"]}
                             ]
                         },
-                        "groupe.csv": {
+                        "groupe": {
+                            name: "Groupes",
                             columns: 9,
                             uniqueId: [0],
                             tests: [
                                 {type: "in", col: 1, array: ["OUI", "NON"]},
-                                {type: "ref", col: 2, origin: "categorie.csv", zero: true},
-                                {type: "ref", col: 3, origin: "categorie.csv", zero: true},
-                                {type: "ref", col: 4, origin: "categorie.csv", zero: true},
-                                {type: "ref", col: 5, origin: "categorie.csv", zero: true},
-                                {type: "ref", col: 6, origin: "categorie.csv", zero: true},
-                                {type: "ref", col: 7, origin: "categorie.csv", zero: true},
-                                {type: "ref", col: 8, origin: "categorie.csv", zero: true}
+                                {type: "ref", col: 2, origin: "categorie", zero: true},
+                                {type: "ref", col: 3, origin: "categorie", zero: true},
+                                {type: "ref", col: 4, origin: "categorie", zero: true},
+                                {type: "ref", col: 5, origin: "categorie", zero: true},
+                                {type: "ref", col: 6, origin: "categorie", zero: true},
+                                {type: "ref", col: 7, origin: "categorie", zero: true},
+                                {type: "ref", col: 8, origin: "categorie", zero: true}
                             ]
                         },
-                        "coeffprestation.csv": {
+                        "coeffprestation": {
+                            name: "Coefficients Prestations",
                             columns: 3,
                             uniqueId: [0, 1],
-                            shouldExist: ["classeclient.csv", "classeprestation.csv"],
+                            shouldExist: ["classeclient", "classeprestation"],
                             tests: [
-                                {type: "ref", col: 0, origin: "classeclient.csv", zero: false},
-                                {type: "ref", col: 1, origin: "classeprestation.csv", zero: false}
+                                {type: "ref", col: 0, origin: "classeclient", zero: false},
+                                {type: "ref", col: 1, origin: "classeprestation", zero: false}
                             ]
                         },
-                        "basecateg.csv": {
+                        "basecateg": {
+                            name: "Tarifs Base",
                             columns: 3,
                             uniqueId: [0, 1],
-                            shouldExist: ["base.csv", "categorie.csv"],
+                            shouldExist: ["base", "categorie"],
                             tests: [
-                                {type: "ref", col: 0, origin: "base.csv", zero: false},
-                                {type: "ref", col: 1, origin: "categorie.csv", zero: false},
+                                {type: "ref", col: 0, origin: "base", zero: false},
+                                {type: "ref", col: 1, origin: "categorie", zero: false},
                                 {type: "num", col: 2, neg: false, zero: true, int: false}
                             ]
                         },
                     };
-const optionalCsvs = ["categprix.csv"];
-const mandatoryPdfs = ["logo.pdf"];
-const optionalPdfs = ["grille.pdf"];
+const optionalCsvs = ["categprix"];
+const mandatoryPdfs = {"logo": {
+                            name: "Logo PDF"
+                        }
+                    };
+const optionalPdfs = {"grille": {
+                            name: "Grille PDF"
+                        }
+                    };
 
 function extract() {
     Object.keys(mandatoryCsvs).forEach(function(filename) {
-        if(Object.keys(files).includes(filename)) {
-            contents[filename] = Papa.parse(atob(files[filename]), {delimiter: ";", skipEmptyLines: true}).data;
+        if(Object.keys(files).includes(filename + ".csv")) {
+            contents[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
         }
     });
 }
@@ -387,13 +432,13 @@ function extract() {
 function check() {
     let missing = [];
     Object.keys(mandatoryCsvs).forEach(function(mandatory) {
-        if(!Object.keys(files).includes(mandatory)) {
-            missing.push(mandatory);
+        if(!Object.keys(files).includes(mandatory + ".csv")) {
+            missing.push(mandatory + ".csv");
         }
     });
-    mandatoryPdfs.forEach(function(mandatory) {
-        if(!Object.keys(files).includes(mandatory)) {
-            missing.push(mandatory);
+    Object.keys(mandatoryPdfs).forEach(function(mandatory) {
+        if(!Object.keys(files).includes(mandatory + ".pdf")) {
+            missing.push(mandatory + ".pdf");
         }
     });
     if(missing.length > 0) {
@@ -408,9 +453,10 @@ function check() {
 
 function reCheck() {
     let polluting = [];
-    Object.keys(files).forEach(function(filename) {
-        if(!Object.keys(mandatoryCsvs).includes(filename) && !mandatoryPdfs.includes(filename)
-            && !optionalCsvs.includes(filename) && !optionalPdfs.includes(filename)) {
+    Object.keys(files).forEach(function(fn) {
+        const filename = fn.split(".")[0];
+        if(!Object.keys(mandatoryCsvs).includes(filename) && !Object.keys(mandatoryPdfs).includes(filename)
+            && !optionalCsvs.includes(filename) && !Object.keys(optionalPdfs).includes(filename)) {
             polluting.push(filename);
         }
     });
@@ -429,11 +475,15 @@ let has_grille = "";
 function checkColumns(complete) {
     let result = "";
     Object.keys(mandatoryCsvs).forEach(function(filename) {
+        $('#'+filename).removeClass('orange-tile');
+        $('#'+filename).removeClass('red-tile');
+        $('#'+filename).removeClass('green-tile');
         const number = mandatoryCsvs[filename].columns;
         let i = 1;
         contents[filename].forEach( function(line) {
             if(number != line.length) {
-                result += "la ligne " + i + " du fichier " + filename + " contient " + line.length + " colonnes au lieu de " + number + "<br />";
+                result += "la ligne " + i + " du fichier " + filename + ".csv contient " + line.length + " colonnes au lieu de " + number + "<br />";
+                $('#'+filename).addClass('orange-tile');
             }
             i++;
         });
@@ -442,6 +492,7 @@ function checkColumns(complete) {
         return result;
     }
     Object.keys(contents).forEach(function(filename) {
+        let resFile = "";
         let header = true;
         let arrayIds = {};
         let i = 1;
@@ -459,14 +510,14 @@ function checkColumns(complete) {
                         id += line[col];
                     });
                     if(Object.keys(arrayIds).includes(id)) {
-                        result += "l'id " + id + " du fichier " + filename + " n'est pas unique<br />";
+                        resFile += "l'id " + id + " du fichier " + filename + ".csv n'est pas unique<br />";
                     }
                     else {
                         arrayIds[id] = i-1;
                     }
                 }
                 if(mandatoryCsvs[filename].labels) {
-                    if(filename == "plateforme.csv") {
+                    if(filename == "plateforme") {
                         if(line[0] == mandatoryCsvs[filename].labels[0]) {
                             plateforme_id = line[2];
                         }
@@ -475,7 +526,7 @@ function checkColumns(complete) {
                         }
                     }
                     if(Object.keys(arrayIds).includes(line[0])) {
-                        result += "l'étiquette " + line[col] + " du fichier " + filename + " n'est pas unique<br />";
+                        resFile += "l'étiquette " + line[col] + " du fichier " + filename + ".csv n'est pas unique<br />";
                     }
                     else {
                         arrayIds[line[0]] = i-1;
@@ -486,50 +537,50 @@ function checkColumns(complete) {
                         switch(test.type) {
                             case "in":
                                 if(!test.array.includes(line[test.col])) {
-                                    result += "la ligne " + i + " du fichier " + filename + " contient " + line[test.col] + " au lieu de " + test.array.toString() + "<br />";
+                                    resFile += "la ligne " + i + " du fichier " + filename + ".csv contient " + line[test.col] + " au lieu de " + test.array.toString() + "<br />";
                                 }
                                 break;
                             case "ref":
                                 if(!(((Object.keys(ids[test.origin])).includes(line[test.col])) || (test.zero && (line[test.col] == 0)))) {
-                                    result += "l'id " + line[test.col] + " de la ligne " + i + " du fichier " + filename + " n'existe pas dans les ids de  " + test.origin + "<br />";
+                                    resFile += "l'id " + line[test.col] + " de la ligne " + i + " du fichier " + filename + ".csv n'existe pas dans les ids de  " + test.origin + "<br />";
                                 }
-                                if(filename == "categorie.csv") {
+                                if(filename == "categorie") {
                                     const idPrest = line[test.col];
                                     const contentLine = contents[test.origin][ids[test.origin][idPrest]];
                                     if(contentLine[2] != "NON") {
-                                        result += "le flag coef_prest de l'id classe prestation '" + idPrest + "' devrait être à NON <br />";
+                                        resFile += "le flag coef_prest de l'id classe prestation '" + idPrest + "' devrait être à NON <br />";
                                     }
                                 }
                                 break;
                             case "num":
-                                const pref = "la valeur de la colonne " + test.col + " (" + line[test.col] + ") de la ligne " + i + " du fichier " + filename;
+                                const pref = "la valeur de la colonne " + test.col + " (" + line[test.col] + ") de la ligne " + i + " du fichier " + filename + ".csv";
                                 if(Number.isNaN(Number(line[test.col]))) {
-                                    result += pref + " doit être un nombre<br />";
+                                    resFile += pref + " doit être un nombre<br />";
                                 }
                                 if(test.int && !Number.isInteger(Number(line[test.col]))) {
-                                    result += pref + " doit être un entier<br />";
+                                    resFile += pref + " doit être un entier<br />";
                                 }
                                 if(!test.neg && (line[test.col] < 0)) {
-                                    result += pref + " ne peut être négative<br />";
+                                    resFile += pref + " ne peut être négative<br />";
                                 }
                                 if(!test.zero && (line[test.col] == 0)) {
-                                    result += pref + " ne peut être nulle<br />";
+                                    resFile += pref + " ne peut être nulle<br />";
                                 }
                                 if(test.max && (line[test.col] > test.max)) {
-                                    result += pref + " ne peut être plus grand que " + test.max + " <br />";
+                                    resFile += pref + " ne peut être plus grand que " + test.max + " <br />";
                                 }
                                 break;
                             case "plateforme":
                                 if(line[test.col] != plateforme_id) {
-                                    result += "l'id " + line[test.col] + " de la ligne " + i + " du fichier " + filename + " n'existe pas dans les ids de plateforme.csv <br />";
+                                    resFile += "l'id " + line[test.col] + " de la ligne " + i + " du fichier " + filename + ".csv n'existe pas dans les ids de plateforme.csv <br />";
                                 }
                         }
                     });
-                    if((filename == "basecateg.csv") && (line[2] > 0)) {
-                        const prestLine = ids["categorie.csv"][line[1]];
-                        const nd = contents["categorie.csv"][prestLine][4];
+                    if((filename == "basecateg") && (line[2] > 0)) {
+                        const prestLine = ids["categorie"][line[1]];
+                        const nd = contents["categorie"][prestLine][4];
                         if((Math.floor(Math.log10(line[2])) + 1) > (9 - nd)) {
-                            result += "le prix unitaire " + line[2] + " de la ligne " + i + " du fichier " + filename + " contient trop de décimales <br />";
+                            resFile += "le prix unitaire " + line[2] + " de la ligne " + i + " du fichier " + filename + ".csv contient trop de décimales <br />";
                         }
                     }
                 }
@@ -540,18 +591,18 @@ function checkColumns(complete) {
             i++;
         });
         if(complete) {
-            if(filename == "plateforme.csv") {
+            if(filename == "plateforme") {
                 if(plateforme_id != plateforme) {
-                    result += "l'id plateforme du fichier " + filename + " ne correspond pas à la plateforme de travail <br />";
+                    resFile += "l'id plateforme du fichier " + filename + ".csv ne correspond pas à la plateforme de travail <br />";
                 }
                 if(has_grille == "OUI" && !Object.keys(files).includes("grille.pdf")) {
-                    result += "il manque la grille de tarifs mentiennée dans le fichier " + filename + " <br />";
+                    resFile += "il manque la grille de tarifs mentiennée dans le fichier " + filename + ".csv <br />";
                 }
             }
             if(mandatoryCsvs[filename].labels) {
                 mandatoryCsvs[filename].labels.forEach(function(label) {
                     if(!Object.keys(arrayIds).includes(label)) {
-                        result += "l'étiquette " + label + " est manquante dans le fichier " + filename + " <br />";
+                        resFile += "l'étiquette " + label + " est manquante dans le fichier " + filename + " <br />";
                     }
                 });
             }
@@ -559,14 +610,14 @@ function checkColumns(complete) {
                 Object.keys(ids[mandatoryCsvs[filename].shouldExist[0]]).forEach(function(id0) {
                     Object.keys(ids[mandatoryCsvs[filename].shouldExist[1]]).forEach(function(id1) {
                         const id = id0 + "_" + id1;
-                        if(filename == "coeffprestation.csv") {
-                            const contentLine = contents["classeprestation.csv"][ids["classeprestation.csv"][id1]];
+                        if(filename == "coeffprestation") {
+                            const contentLine = contents["classeprestation"][ids["classeprestation"][id1]];
                             if(contentLine[2] == "NON") {
                                 return;
                             }
                         }
                         if(!(Object.keys(arrayIds).includes(id))) {
-                            result += "Le couple id classe prestation '" + id0 + "' et id classe client '" + id1 + "' n'existe pas dans " + filename + " <br />";
+                            resFile += "Le couple id classe prestation '" + id0 + "' et id classe client '" + id1 + "' n'existe pas dans " + filename + " <br />";
                         }
                     });
                 });
@@ -574,6 +625,13 @@ function checkColumns(complete) {
             if(mandatoryCsvs[filename].uniqueId) {
                 ids[filename] = arrayIds;
             }
+        }
+        if(resFile != "") {
+            result += resFile;
+            $('#'+filename).addClass('orange-tile');
+        }
+        else {
+            $('#'+filename).addClass('green-tile');
         }
     });
     return result;

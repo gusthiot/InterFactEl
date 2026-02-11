@@ -8,6 +8,7 @@ require_once("../assets/ParamText.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Message.php");
 require_once("../assets/Sap.php");
+require_once("../assets/Version.php");
 require_once("../includes/Zip.php");
 require_once("../includes/State.php");
 require_once("../session.inc");
@@ -215,7 +216,9 @@ function runPrefa(string $tmpDir, string $path, ParamEdit $paramedit, string $pl
     if(DEV_MODE) {
         $dev = " -n";
     }
-    $cmd = '/usr/bin/python3 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -s -d '.TEMP.' -u'.$unique.' -l '.USER;
+    $version = Version::load('../');
+    $vl = $version["version-logiciel"][2];
+    $cmd = '/usr/bin/python3 ../PyFactEl/main.py -e '.$tmpDir.$dev.' -g -s -d '.TEMP.' -u'.$unique.' -l '.USER.' -v '.$vl;
     $res = shell_exec($cmd);
     $mstr = State::addToMonth($month, 0);
     if(substr($res, 0, 2) === "OK") {

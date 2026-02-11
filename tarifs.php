@@ -165,10 +165,10 @@ function uploader(string $title, string $id): string
                                                     <!--<button type="button" id="export-<?= $id ?>" class="btn but-line export">Exporter</button>-->
                                             <?php if($lastRun > 0) {
                                                 echo '<button type="button" id="all-'.$id.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'" class="btn but-line all">Exporter tout</button>';
-                                            }
+                                            } /*
                                             if(State::isLaterThan($month, $year, $mp['month'], $mp['year'])) {
                                                 echo '<button type="button" id="suppress-'.$id.'" class="btn but-line suppress">Supprimer</button>';
-                                            } ?>
+                                            }*/ ?>
                                             <div id="label-<?= $id ?>"></div>
                                             </div></td></tr>
                                         <?php }

@@ -4,6 +4,7 @@ require_once("../assets/Sap.php");
 require_once("../assets/Lock.php");
 require_once("../assets/ParamZip.php");
 require_once("../assets/Message.php");
+require_once("../assets/Version.php");
 require_once("../includes/Zip.php");
 require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
@@ -19,6 +20,7 @@ if(isset($_POST['plate']) && isset($_POST['files']) && isset($_POST['date'])) {
     $month = substr($_POST["date"], 4, 2);
     $year = substr($_POST["date"], 0, 4);
     $messages = new Message();
+    $msg = "";
 
     $dirTarifs = $dir.'/'.$year.'/'.$month.'/';
     $tmpDir = TEMP.'tarifs_'.time().'/';
@@ -29,9 +31,14 @@ if(isset($_POST['plate']) && isset($_POST['files']) && isset($_POST['date'])) {
     }
     if (file_exists($dirTarifs) || mkdir($dirTarifs, 0755, true)) {
         if (($open = fopen($dirTarifs."unused.csv", 'w')) !== false) {
+            $version = Version::load('../');
+            $vl = $version["version-logiciel"][2];
+            if(fwrite($open, $vl) === false) {
+                $msg += "impossible d'écrire dans unused.csv";
+            }
             fclose($open);
         }
-        $msg = Tarifs::createZip($dirTarifs, $tmpDir);
+        $msg += Tarifs::createZip($dirTarifs, $tmpDir);
     }
     State::delDir($tmpDir);
     echo ($msg == "" ? "ok" : $msg);

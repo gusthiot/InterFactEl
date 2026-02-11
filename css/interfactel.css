@@ -46,6 +46,7 @@ h1 {
 
 .icon-selectable:hover {
   color: var(--rose);
+  cursor: pointer;
 }
 
 .btn {
@@ -596,6 +597,21 @@ table.dates-tarifs tr:hover {
   padding-left: 25px;
   padding-right: 25px;
   border: 1px solid var(--gris-300);
+}
+
+.red-tile {
+  background-color: var(--groseille);
+  color: white;
+}
+
+.green-tile {
+  background-color: var(--chartreuse);
+  color: white;
+}
+
+.orange-tile {
+  background-color: var(--carotte);
+  color: white;
 }
 
 
