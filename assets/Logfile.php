@@ -21,7 +21,7 @@ class Logfile
     {
         $logfile = "";
         $file = $dir."/".self::NAME;
-        if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
+        if((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
             $logfile = fread($open, filesize($file));
             fclose($open);
         }

@@ -16,7 +16,7 @@ if($_FILES['zip_file']) {
             if(copy($source, $tmpFile)) {
                 $unique = 'tickets_'.time();
                 $tmpDir = TEMP.$unique.'/';
-                if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
+                if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
                     $msg = Zip::unzip($tmpFile, $tmpDir);
                     if(empty($msg)) {
                         if(!file_exists($tmpDir.Ticket::NAME)) {

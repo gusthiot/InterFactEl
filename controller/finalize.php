@@ -36,10 +36,10 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     Lock::save($dir, 'run', Lock::STATES['finalized']);
     $sep = strrpos($dir, "/");
     Lock::save(substr($dir, 0, $sep), 'version', substr($dir, $sep+1));
-    if (in_array($status, [0, 1]) && file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
+    if(in_array($status, [0, 1]) && file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
         $prevVersion = 0;
         foreach(globReverse($dirPrevMonth) as $dirPrevVersion) {
-                if (file_exists($dirPrevVersion."/".Lock::FILES['version'])) {
+                if(file_exists($dirPrevVersion."/".Lock::FILES['version'])) {
                     $sep = strrpos($dirPrevVersion, "/");
                     $prevVersion = substr($dirPrevVersion, $sep+1);
                     break;
@@ -58,7 +58,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         $_SESSION['alert-warning'] = "info vide ? ";
     }
 
-    if (file_exists($dirTarifs."/unused.csv")) {
+    if(file_exists($dirTarifs."/unused.csv")) {
         unlink($dirTarifs."/unused.csv");
     }
 

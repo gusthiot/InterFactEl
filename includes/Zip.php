@@ -19,7 +19,7 @@ class Zip
     {
         $zip = new ZipArchive;
         $res = $zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-        if ($res === true) {
+        if($res === true) {
             self::tree($zip, $dirname, "", $lessfile);
             if(!empty($morefile)) {
                 $zip->addFile($morefile, basename($morefile));
@@ -78,7 +78,7 @@ class Zip
     {
         $zip = new ZipArchive;
         $res = $zip->open($file);
-        if ($res === true) {
+        if($res === true) {
             if(!$zip->extractTo($dest)) {
                 $errors= error_get_last();
                 return $errors['message'];

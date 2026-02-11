@@ -61,7 +61,7 @@ if(isset($_POST['type'])) {
                 $tmpFile = TEMP.time().'_'.$fileName;
                 if(copy($source, $tmpFile)) {
                     $tmpDir = TEMP.'prepa_'.time().'/';
-                    if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
+                    if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
                         $msg = Zip::unzip($tmpFile, $tmpDir);
                         unlink($tmpFile);
                         if(empty($msg)) {
@@ -226,7 +226,7 @@ function runPrefa(string $tmpDir, string $path, ParamEdit $paramedit, string $pl
         $version = $tab[1];
         if($type === "SAP") {
             $dir = DATA.$plateforme."/".$year."/".$mstr."/".$version;
-            if (file_exists($dir) || mkdir($dir, 0755, true)) {
+            if(file_exists($dir) || mkdir($dir, 0755, true)) {
                 rename(TEMP.$unique, $dir."/".$unique);
                 $sap = new Sap($dir."/".$unique);
                 $txt = date('Y-m-d H:i:s')." | ".USER." | ".$year.", ".$mstr.", ".$version.", ".$unique." | ".$unique." | Création préfacturation | - | ".$sap->status();

@@ -102,13 +102,13 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
 
                                     Info::save($dir, $infos);
 
-                                    if (file_exists($dirTarifs."/unused.csv")) {
+                                    if(file_exists($dirTarifs."/unused.csv")) {
                                         unlink($dirTarifs."/unused.csv");
                                     }
                                 }
-                                if (file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
+                                if(file_exists($dirPrevMonth) && !file_exists($dirPrevMonth."/".Lock::FILES['month'])) {
                                     foreach(globReverse($dirPrevMonth) as $dirPrevVersion) {
-                                        if (file_exists($dirPrevVersion."/".Lock::FILES['version'])) {
+                                        if(file_exists($dirPrevVersion."/".Lock::FILES['version'])) {
                                             $sep = strrpos($dirPrevVersion, "/");
                                             Lock::save($dirPrevMonth, 'month', substr($dirPrevVersion, $sep+1));
                                             break;

@@ -67,7 +67,7 @@ class Gestionnaire extends Csv
      */
     function getGestionnaire(string $login): array
     {
-        if (array_key_exists($login, $this->gestionnaires)) {
+        if(array_key_exists($login, $this->gestionnaires)) {
             return $this->gestionnaires[$login];
         }
         return [];

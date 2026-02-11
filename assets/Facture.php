@@ -15,7 +15,7 @@ class Facture
     static function load(string $name): string
     {
         $facture = "";
-        if ((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
+        if((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
             $facture = fread($open, filesize($name));
             fclose($open);
         }

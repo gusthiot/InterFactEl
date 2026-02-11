@@ -130,7 +130,7 @@ class State
                     foreach(globReverse($dirMonth) as $dirVersion) {
                         $version = basename($dirVersion);
                         foreach(globReverse($dirVersion) as $dirRun) {
-                            if (!file_exists($dirRun."/".Lock::FILES['run'])) {
+                            if(!file_exists($dirRun."/".Lock::FILES['run'])) {
                                 return "(".$month." ".$year.", ".$version.")";
                             }
                         }
@@ -325,7 +325,7 @@ class State
      */
     static function delDir(string $dir): bool
     {
-        if (file_exists($dir) && is_dir($dir)) {
+        if(file_exists($dir) && is_dir($dir)) {
             exec(sprintf("rm -rf %s", escapeshellarg($dir)));
             return true;
         }
@@ -385,10 +385,10 @@ class State
     static function recurseCopy(string $src, string $dst): void
     {
         $dir = opendir($src);
-        if (file_exists($dst) || mkdir($dst, 0755, true)) {
+        if(file_exists($dst) || mkdir($dst, 0755, true)) {
             while(false !== ( $file = readdir($dir)) ) {
-                if (( $file != '.' ) && ( $file != '..' )) {
-                    if ( is_dir($src . '/' . $file) ) {
+                if(( $file != '.' ) && ( $file != '..' )) {
+                    if( is_dir($src . '/' . $file) ) {
                         self::recurseCopy($src . '/' . $file, $dst . '/' . $file);
                     } else {
                         copy($src . '/' . $file,$dst . '/' . $file);

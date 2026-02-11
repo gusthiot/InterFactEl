@@ -22,7 +22,7 @@ if(isset($_POST["plate"])) {
         $year = basename($dirYear);
         foreach(globReverse($dirYear) as $dirMonth) {
             $month = basename($dirMonth);
-            if (file_exists($dirMonth."/".ParamZip::NAME) && (file_exists($dirMonth."/unused.csv"))) {
+            if(file_exists($dirMonth."/".ParamZip::NAME) && (file_exists($dirMonth."/unused.csv"))) {
                 if(State::isLaterThan($month, $year, $mp['month'], $mp['year']) || State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
                     $label = Label::load($dirMonth);
                     if(empty($label)) {

@@ -40,7 +40,7 @@ class Superviseur extends Csv
      */
     function isSuperviseur(string $login): bool
     {
-        if (in_array($login, $this->superviseurs)) {
+        if(in_array($login, $this->superviseurs)) {
             return true;
         }
         return false;

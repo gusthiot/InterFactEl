@@ -24,13 +24,13 @@ if(isset($_POST['plate']) && isset($_POST['files']) && isset($_POST['date'])) {
 
     $dirTarifs = $dir.'/'.$year.'/'.$month.'/';
     $tmpDir = TEMP.'tarifs_'.time().'/';
-    if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
+    if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
         foreach($files as $file => $content) {
             file_put_contents($tmpDir.$file, base64_decode($content));
         }
     }
-    if (file_exists($dirTarifs) || mkdir($dirTarifs, 0755, true)) {
-        if (($open = fopen($dirTarifs."unused.csv", 'w')) !== false) {
+    if(file_exists($dirTarifs) || mkdir($dirTarifs, 0755, true)) {
+        if(($open = fopen($dirTarifs."unused.csv", 'w')) !== false) {
             $version = Version::load('../');
             $vl = $version["version-logiciel"][2];
             if(fwrite($open, $vl) === false) {

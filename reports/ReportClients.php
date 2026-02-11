@@ -347,7 +347,7 @@ class ReportClients extends Report
                     $mb = State::addToMonth($this->month, 1-$before);
                     $yb = $this->year;
                 }
-                if (file_exists(DATA.$this->plateforme."/".$yb."/".$mb)) {
+                if(file_exists(DATA.$this->plateforme."/".$yb."/".$mb)) {
                     $this->tabs[$tab]["results"][$id][$pre."-".$before."m"] = [];
                 }
             }
@@ -509,7 +509,7 @@ class ReportClients extends Report
             $month = substr($date, 4, 2);
             $year = substr($date, 0, 4);
             $dir = DATA.$this->plateforme."/".$year."/".$month;
-            if (!file_exists($dir)) {
+            if(!file_exists($dir)) {
                 break;
             }
             $version = Lock::load($dir, "month");

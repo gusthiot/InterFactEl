@@ -16,7 +16,7 @@ class Config
     {
         $tmpDir = TEMP.'config_'.time().'/';
 
-        if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
+        if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
             $msg = Zip::unzip($file, $tmpDir);
             if(empty($msg)) {
                 if(file_exists($tmpDir.Gestionnaire::NAME)) {

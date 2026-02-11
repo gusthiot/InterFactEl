@@ -97,7 +97,7 @@ $('#finalize').on('click', function () {
 } );
 
 $('#resend').on('click', function () {
-    if (confirm($(this).data('msg')) == true) {
+    if(confirm($(this).data('msg')) == true) {
         $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "resend-bills"}), function (data) {
             $('#prefa-content').html(data);
         });

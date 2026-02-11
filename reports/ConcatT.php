@@ -88,7 +88,7 @@ class ConcatT
             $year = substr($date, 0, 4);
             $dir = DATA.$plateforme."/".$year."/".$month;
 
-            if (file_exists($dir."/".Lock::FILES['month'])) {
+            if(file_exists($dir."/".Lock::FILES['month'])) {
                 $version = Lock::load($dir, "month");
                 $dirVersion = $dir."/".$version;
                 $run = Lock::load($dirVersion, "version");
@@ -97,7 +97,7 @@ class ConcatT
             else {
                 foreach(globReverse($dir) as $dirVersion) {
                     $run = Lock::load($dirVersion, "version");
-                    if (!is_null($run)) {
+                    if(!is_null($run)) {
                         $dirRun = $dirVersion."/".$run;
                         break;
                     }

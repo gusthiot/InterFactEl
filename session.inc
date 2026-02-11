@@ -18,7 +18,7 @@ if(DEV_MODE) {
     define( 'USER', DEV_MODE );
 }
 else {
-    if (!isset($_SESSION['user']))
+    if(!isset($_SESSION['user']))
     {
         header("Location: https://cmifact.epfl.ch/entra/entra.php");
         exit();
@@ -26,11 +26,11 @@ else {
     define( 'USER', $_SESSION["claims"]->gaspar );
 }
 
-if (!isset($_SESSION['encoding'])) {
+if(!isset($_SESSION['encoding'])) {
     $_SESSION['encoding'] = 'Windows-1252';
 }
 
-if (!isset($_SESSION['separator'])) {
+if(!isset($_SESSION['separator'])) {
     $_SESSION['separator'] = 'pv';
 }
 

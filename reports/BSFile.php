@@ -96,7 +96,7 @@ class BSFile
     static function getJsonStructure(string $url): array
     {
         $structure = [];
-        if ((file_exists($url)) && (($open = fopen($url, "r")) !== false)) {
+        if((file_exists($url)) && (($open = fopen($url, "r")) !== false)) {
             $structure = json_decode(fread($open, filesize($url)), true);
             fclose($open);
         }

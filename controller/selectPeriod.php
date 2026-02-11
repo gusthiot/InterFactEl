@@ -38,9 +38,9 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
         foreach(globReverse($dirYear) as $dirMonth) {
             $month = basename($dirMonth);
             $glob = glob($dirMonth."/*", GLOB_ONLYDIR);
-            if (!empty($glob)) {
+            if(!empty($glob)) {
                 $version = Lock::load($dirMonth, "month");
-                if (!is_null($version)) {
+                if(!is_null($version)) {
                     if(!empty($open)) {
                         $infos = Info::load($open[2]."/".$open[3]);
                         $factel = $infos["FactEl"][2];
@@ -60,7 +60,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
                 else {
                     foreach(array_reverse($glob) as $dirVersion) {
                         $run = Lock::load($dirVersion, "version");
-                        if (!is_null($run)) {
+                        if(!is_null($run)) {
                             $open = [$year, $month, $dirVersion, $run];
                             break;
                         }

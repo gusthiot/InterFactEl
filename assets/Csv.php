@@ -17,7 +17,7 @@ class Csv
     {
         $result = [];
         $first = true;
-        if ((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
+        if((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
             while (($data = fgetcsv($open, 2000, ";")) !== false) {
                 if($first && $header) {
                     $first = false;
@@ -71,7 +71,7 @@ class Csv
      */
     static private function put(string $file, array $array, string $mode): void
     {
-        if (($open = fopen($file, $mode)) !== false) {
+        if(($open = fopen($file, $mode)) !== false) {
             foreach($array as $row) {
                 self::formatLine($row);
                 $row = str_replace('"', '', $row);

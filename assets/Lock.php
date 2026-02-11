@@ -49,7 +49,7 @@ class Lock
      */
     static function loadByName(string $file): string|null
     {
-        if ((file_exists($file)) && (filesize($file) > 0) && (($open = fopen($file, "r")) !== false)) {
+        if((file_exists($file)) && (filesize($file) > 0) && (($open = fopen($file, "r")) !== false)) {
             $lock = fread($open, filesize($file));
             fclose($open);
             return trim($lock);

@@ -23,7 +23,7 @@ if($_FILES['zip_file'] && isset($_POST['plate']) && isset($_POST['type'])) {
             if($_POST['type'] == "new" && isset($_POST['month-picker'])) {
                 $date = explode(" ", $_POST['month-picker']);
                 $dirTarifs = DATA.$plateforme."/".$date[1]."/".$date[0]."/";
-                if (!file_exists($dirTarifs."/".ParamZip::NAME)) {
+                if(!file_exists($dirTarifs."/".ParamZip::NAME)) {
                     $tmpFile = TEMP.time().'_'.$fileName;
                     if(copy($source, $tmpFile)) {
                         $msg = Tarifs::importNew($dirTarifs, $tmpFile);

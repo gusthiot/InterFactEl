@@ -137,7 +137,7 @@ include("includes/lock.inc");
                                 else {
                                     if(empty($current)) {
                                         echo uploader("Refaire factures : ".$state->getLastMonth()."/".$state->getLastYear(), "REDO", $disabled);
-                                        if (!file_exists($dir."/".$state->getLastYear()."/".$state->getLastMonth()."/unused.csv")) {
+                                        if(!file_exists($dir."/".$state->getLastYear()."/".$state->getLastMonth()."/unused.csv")) {
                                             echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $disabled);
                                         }
                                     }
@@ -182,18 +182,18 @@ include("includes/lock.inc");
                             if(count($dirVersions) > 0) {
                                 echo '<tr>';
                                 echo '<td rowspan="'.count($dirVersions).'">';
-                                if (file_exists($dirMonth."/archive.csv")) { ?>
+                                if(file_exists($dirMonth."/archive.csv")) { ?>
                                     <svg class="icon" aria-hidden="true">
                                         <use xlink:href="#star"></use>
                                     </svg>
                                 <?php }
                                 echo $month.' '.$year;
-                                if (file_exists($dirMonth."/".Lock::FILES['month'])) { ?>
+                                if(file_exists($dirMonth."/".Lock::FILES['month'])) { ?>
                                     <svg class="icon" aria-hidden="true">
                                         <use xlink:href="#lock"></use>
                                     </svg>
                                 <?php }
-                                if (file_exists($dirMonth."/unused.csv") && State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
+                                if(file_exists($dirMonth."/unused.csv") && State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
                                     <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
                                         data-content="<?= $messages->getMessage('msg8') ?>">
                                         <svg class="icon icon-selectable red" aria-hidden="true">
@@ -209,7 +209,7 @@ include("includes/lock.inc");
                                         echo '<tr>';
                                     }
                                     echo '<td>'.$version;
-                                    if (file_exists($dirVersion."/".Lock::FILES['version'])) { ?>
+                                    if(file_exists($dirVersion."/".Lock::FILES['version'])) { ?>
                                         <svg class="icon" aria-hidden="true">
                                             <use xlink:href="#lock"></use>
                                         </svg>
@@ -226,7 +226,7 @@ include("includes/lock.inc");
                                             $sap = new Sap($dirRun);
                                             $lockRun = Lock::load($dirRun, "run");
                                             echo ' <button type="button" value="'.$value.'" class="open-run btn '.Sap::color($sap->status(), is_null($lockRun) ? "" : $lockRun).'"> '.$label;
-                                            if (!is_null($lockRun)) { ?>
+                                            if(!is_null($lockRun)) { ?>
                                                 <svg class="icon" aria-hidden="true">
                                                     <use xlink:href="#lock"></use>
                                                 </svg>

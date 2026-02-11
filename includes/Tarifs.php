@@ -62,7 +62,7 @@ class Tarifs
     static function correct(string $dirTarifs, string $file): string
     {
         $tmpDir = TEMP.'tarifs_'.time().'/';
-        if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
+        if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
             $msg = Zip::unzip($dirTarifs."/".ParamZip::NAME, $tmpDir);
             if(empty($msg)) {
                 $msg = Zip::unzip($file, $tmpDir);
@@ -85,9 +85,9 @@ class Tarifs
      */
     static function importNew(string $dirTarifs, string $file): string
     {
-        if (file_exists($dirTarifs) || mkdir($dirTarifs, 0777, true)) {
+        if(file_exists($dirTarifs) || mkdir($dirTarifs, 0777, true)) {
             $tmpDir = TEMP.'tarifs_'.time().'/';
-            if (file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
+            if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
                 $msg = Zip::unzip($file, $tmpDir);
                 if(empty($msg)) {
                     $msg = self::createZip($dirTarifs, $tmpDir);
@@ -114,7 +114,7 @@ class Tarifs
     static function exportLast(string $tmpFile, string $dir): string
     {
         $zip = new ZipArchive;
-        if ($zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+        if($zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
             foreach(self::FILES as $file) {
                 if(file_exists($dir."/IN/".$file)) {
                     $zip->addFile($dir."/IN/".$file, $file);
@@ -143,7 +143,7 @@ class Tarifs
     {
         $zip = new ZipArchive;
         $empty = true;
-        if ($zip->open($dest."/".ParamZip::NAME, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+        if($zip->open($dest."/".ParamZip::NAME, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
             foreach(self::FILES as $file) {
                 if(file_exists($from.$file)) {
                     $zip->addFile($from.$file, $file);

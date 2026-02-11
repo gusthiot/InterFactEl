@@ -42,7 +42,7 @@ if(isset($_POST["plate"]) && isset($_POST["date"]) && isset($_POST["type"])) {
     }
     if($type == "control") {
         $zip = new ZipArchive;
-        if ($zip->open($dir."/".ParamZip::NAME) === TRUE) {
+        if($zip->open($dir."/".ParamZip::NAME) === TRUE) {
             foreach(Tarifs::FILES as $file) {
                 $content = $zip->getFromName($file);
                 if($content) {
