@@ -77,7 +77,7 @@ class State
                     $month = basename($dirMonth);
                     foreach(globReverse($dirMonth) as $dirVersion) {
                         $version = basename($dirVersion);
-                        if(file_exists($dirVersion."/".Lock::FILES['version'])) {
+                        if(Lock::exists($dirVersion, 'version')) {
                             $this->last_y = $year;
                             $this->last_m = $month;
                             $this->last_v = $version;
@@ -130,7 +130,7 @@ class State
                     foreach(globReverse($dirMonth) as $dirVersion) {
                         $version = basename($dirVersion);
                         foreach(globReverse($dirVersion) as $dirRun) {
-                            if(!file_exists($dirRun."/".Lock::FILES['run'])) {
+                            if(!Lock::exists($dirRun, 'run')) {
                                 return "(".$month." ".$year.", ".$version.")";
                             }
                         }

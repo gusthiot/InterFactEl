@@ -1,6 +1,7 @@
 <?php
 
 require_once("assets/Label.php");
+require_once("assets/Unused.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");
 require_once("assets/Message.php");
@@ -137,7 +138,7 @@ include("includes/lock.inc");
                                 else {
                                     if(empty($current)) {
                                         echo uploader("Refaire factures : ".$state->getLastMonth()."/".$state->getLastYear(), "REDO", $disabled);
-                                        if(!file_exists($dir."/".$state->getLastYear()."/".$state->getLastMonth()."/unused.csv")) {
+                                        if(!Unused::exists($dir."/".$state->getLastYear()."/".$state->getLastMonth())) {
                                             echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $disabled);
                                         }
                                     }
@@ -188,12 +189,12 @@ include("includes/lock.inc");
                                     </svg>
                                 <?php }
                                 echo $month.' '.$year;
-                                if(file_exists($dirMonth."/".Lock::FILES['month'])) { ?>
+                                if(Lock::exists($dirMonth, 'month')) { ?>
                                     <svg class="icon" aria-hidden="true">
                                         <use xlink:href="#lock"></use>
                                     </svg>
                                 <?php }
-                                if(file_exists($dirMonth."/unused.csv") && State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
+                                if(Unused::exists($dirMonth) && State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
                                     <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
                                         data-content="<?= $messages->getMessage('msg8') ?>">
                                         <svg class="icon icon-selectable red" aria-hidden="true">
@@ -209,7 +210,7 @@ include("includes/lock.inc");
                                         echo '<tr>';
                                     }
                                     echo '<td>'.$version;
-                                    if(file_exists($dirVersion."/".Lock::FILES['version'])) { ?>
+                                    if(Lock::exists($dirVersion, 'version')) { ?>
                                         <svg class="icon" aria-hidden="true">
                                             <use xlink:href="#lock"></use>
                                         </svg>

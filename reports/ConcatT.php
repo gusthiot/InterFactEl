@@ -88,7 +88,7 @@ class ConcatT
             $year = substr($date, 0, 4);
             $dir = DATA.$plateforme."/".$year."/".$month;
 
-            if(file_exists($dir."/".Lock::FILES['month'])) {
+            if(Lock::exists($dir, 'month')) {
                 $version = Lock::load($dir, "month");
                 $dirVersion = $dir."/".$version;
                 $run = Lock::load($dirVersion, "version");

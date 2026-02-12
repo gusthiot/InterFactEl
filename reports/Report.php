@@ -547,7 +547,7 @@ abstract class Report
             $this->year = substr($date, 0, 4);
             $dir = DATA.$this->plateforme."/".$this->year."/".$this->month;
 
-            if(file_exists($dir."/".Lock::FILES['month'])) {
+            if(Lock::exists($dir, 'month')) {
                 $version = Lock::load($dir, "month");
                 $dirVersion = $dir."/".$version;
                 $run = Lock::load($dirVersion, "version");

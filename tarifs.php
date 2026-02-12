@@ -1,5 +1,6 @@
 <?php
 
+require_once("assets/Unused.php");
 require_once("assets/ParamZip.php");
 require_once("assets/Lock.php");
 require_once("assets/Label.php");
@@ -129,7 +130,7 @@ function uploader(string $title, string $id): string
                                             foreach(globReverse($dirMonth) as $dirVersion) {
                                                 foreach(globReverse($dirVersion) as $dirRun) {
                                                     $sap = new Sap($dirRun);
-                                                    if(file_exists($dirRun."/lock.csv") || $sap->status() > 1) {
+                                                    if(Lock::exists($dirRun, 'run') || $sap->status() > 1) {
                                                         $lastRun = basename($dirRun);
                                                         $lastVersion = basename($dirVersion);
                                                         break;
@@ -142,12 +143,12 @@ function uploader(string $title, string $id): string
                                             $id = $year."-".$month;
                                             echo '<tr>';
                                             echo '<td>'.$month.' '.$year;
-                                            if(file_exists($dirMonth."/".Lock::FILES['month'])) { ?>
+                                            if(Lock::exists($dirMonth, 'month')) { ?>
                                                 <svg class="icon" aria-hidden="true">
                                                     <use xlink:href="#lock"></use>
                                                 </svg>
                                             <?php }
-                                            if(file_exists($dirMonth."/unused.csv")) {
+                                            if(Unused::exists($dirMonth)) {
                                                 if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
                                                     <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
                                                         data-content="<?= $messages->getMessage('msg7') ?>">
@@ -156,6 +157,7 @@ function uploader(string $title, string $id): string
                                                         </svg>
                                                     </button>
                                             <?php }
+
                                             } ?>
                                             </td>
                                             <td>

@@ -1,6 +1,7 @@
 <?php
 
 require_once("../assets/Sap.php");
+require_once("../assets/Unused.php");
 require_once("../assets/ParamZip.php");
 require_once("../assets/Label.php");
 require_once("../assets/Lock.php");
@@ -35,7 +36,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
         $year = substr($date, 0, 4);
         $dirMonth = $dir."/".$year."/".$month;
 
-        if(file_exists($dirMonth."/".ParamZip::NAME) && (file_exists($dirMonth."/unused.csv"))) {
+        if(file_exists($dirMonth."/".ParamZip::NAME) && (Unused::exists($dirMonth))) {
             $label = Label::load($dirMonth);
             if(empty($label)) {
                 $label = "No label ?";
@@ -66,7 +67,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
     }
     if(file_exists($dirMonth."/".ParamZip::NAME)) {
         if($type == "load") {
-            if(file_exists($dirMonth."/unused.csv")) {
+            if(Unused::exists($dirMonth)) {
                 $prefix = "replace";
             }
             else {
@@ -74,7 +75,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
             }
             $choices[$prefix."-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], $label];
         }
-        if(($type == "remove") && (file_exists($dirMonth."/unused.csv"))) {
+        if(($type == "remove") && (Unused::exists($dirMonth))) {
             $choices["remove-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], $label];
         }
     }

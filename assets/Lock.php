@@ -21,6 +21,18 @@ class Lock
     const STATES = ['finalized'=>"finalized", 'invalidate'=>"invalidate"];
 
     /**
+     * Checks if lock file exists in given directory
+     *
+     * @param string $dir given directory
+     * @param string $type the type of lock file wanted (to get the file name)
+     * @return boolean
+     */
+    static function exists(string $dir, string $type): bool
+    {
+        return file_exists($dir."/".self::FILES[$type]);
+    }
+
+    /**
      * Extracts the file content as a string by the desired type of file
      *
      * @param string $dir directory where to find the file
@@ -31,7 +43,7 @@ class Lock
     {
         $lock = "";
         if(array_key_exists($type, self::FILES)) {
-            if(file_exists($dir."/".self::FILES[$type])) {
+            if(Lock::exists($dir, $type)) {
                 $loaded = self::loadByName($dir."/".self::FILES[$type]);
                 if(!is_null($loaded)) {
                     return trim($loaded);

@@ -1,6 +1,7 @@
 <?php
 
 require_once("../assets/Sap.php");
+require_once("../assets/Unused.php");
 require_once("../assets/ParamZip.php");
 require_once("../assets/Label.php");
 require_once("../assets/Lock.php");
@@ -22,7 +23,7 @@ if(isset($_POST["plate"])) {
         $year = basename($dirYear);
         foreach(globReverse($dirYear) as $dirMonth) {
             $month = basename($dirMonth);
-            if(file_exists($dirMonth."/".ParamZip::NAME) && (file_exists($dirMonth."/unused.csv"))) {
+            if(file_exists($dirMonth."/".ParamZip::NAME) && (Unused::exists($dirMonth))) {
                 if(State::isLaterThan($month, $year, $mp['month'], $mp['year']) || State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
                     $label = Label::load($dirMonth);
                     if(empty($label)) {
@@ -41,7 +42,7 @@ if(isset($_POST["plate"])) {
                     $sap = new Sap($dirRun);
                     $infos = Info::load($dirRun);
                     $factel = $infos["FactEl"][2];
-                    if((floatval($factel) > 11.02) && (file_exists($dirRun."/lock.csv") || $sap->status() > 1)) {
+                    if((floatval($factel) > 11.02) && (Lock::exists($dirRun, 'run') || $sap->status() > 1)) {
                         if(file_exists($dirMonth."/".ParamZip::NAME)) {
                             $label = Label::load($dirMonth);
                             if(empty($label)) {

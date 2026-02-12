@@ -23,7 +23,7 @@ if(isset($_POST["plate"]) && isset($_POST["date"]) && isset($_POST["type"])) {
         foreach(globReverse($dir) as $dirVersion) {
             foreach(globReverse($dirVersion) as $dirRun) {
                 $sap = new Sap($dirRun);
-                if(file_exists($dirRun."/lock.csv") || $sap->status() > 1) {
+                if(Lock::exists($dirRun, 'run') || $sap->status() > 1) {
                     $lastRun = basename($dirRun);
                     $lastVersion = basename($dirVersion);
                     break;
