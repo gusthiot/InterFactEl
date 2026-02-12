@@ -1,6 +1,7 @@
 <?php
 
 require_once("assets/Unused.php");
+require_once("../assets/Version.php");
 require_once("assets/ParamZip.php");
 require_once("assets/Lock.php");
 require_once("assets/Label.php");
@@ -152,6 +153,17 @@ function uploader(string $title, string $id): string
                                                 if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
                                                     <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
                                                         data-content="<?= $messages->getMessage('msg7') ?>">
+                                                        <svg class="icon icon-selectable red" aria-hidden="true">
+                                                            <use xlink:href="#alert-triangle"></use>
+                                                        </svg>
+                                                    </button>
+                                            <?php }
+                                                $unused = Unused::load($dirMonth);
+                                                $version = Version::load('../');
+                                                $vmin = $version["vl-min-controler"][2];
+                                                if(floatval($unused) < floatval($vmin)) {?>
+                                                    <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
+                                                        data-content="<?= $messages->getMessage('msg9') ?>">
                                                         <svg class="icon icon-selectable red" aria-hidden="true">
                                                             <use xlink:href="#alert-triangle"></use>
                                                         </svg>

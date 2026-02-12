@@ -2,6 +2,7 @@
 
 require_once("../assets/Sap.php");
 require_once("../assets/Unused.php");
+require_once("../assets/Version.php");
 require_once("../assets/ParamZip.php");
 require_once("../assets/Label.php");
 require_once("../assets/Lock.php");
@@ -42,7 +43,9 @@ if(isset($_POST["plate"])) {
                     $sap = new Sap($dirRun);
                     $infos = Info::load($dirRun);
                     $factel = $infos["FactEl"][2];
-                    if((floatval($factel) > 11.02) && (Lock::exists($dirRun, 'run') || $sap->status() > 1)) {
+                    $version = Version::load('../');
+                    $vmin = $version["vl-min-relire"][2];
+                    if(!(floatval($factel) < floatval($vmin)) && (Lock::exists($dirRun, 'run') || $sap->status() > 1)) {
                         if(file_exists($dirMonth."/".ParamZip::NAME)) {
                             $label = Label::load($dirMonth);
                             if(empty($label)) {
