@@ -39,6 +39,7 @@ let files = {};
 let type = "";
 let choices = "";
 let first = 0;
+let readPos = 0;
 
 function reset() {
     files = {};
@@ -68,11 +69,17 @@ function displayFiles() {
 function displayDates() {
     if(Object.keys(choices).length > 0) {
         let html = '<div class="over-tarifs over-dates">';
+        html += '<svg id="dates-center" class="icon icon-selectable left" aria-hidden="true">' +
+                    '<use xlink:href="#disc"></use>' +
+                '</svg>';
         if(first > 0) {
             html += '<svg id="dates-up" class="icon icon-selectable" aria-hidden="true">' +
                         '<use xlink:href="#chevrons-up"></use>' +
                     '</svg>';
         }
+        html += '<svg id="dates-remove" class="icon icon-selectable right" aria-hidden="true">' +
+                    '<use xlink:href="#x"></use>' +
+                '</svg>';
         html += '<table id="' + type + '-dates" class="dates-tarifs table table-boxed">';
         let pos = 0;
         Object.keys(choices).forEach(function(key) {
@@ -96,6 +103,11 @@ function displayDates() {
     }
 }
 
+
+$(document).on("click", "#dates-remove", function() {
+    $('#tarifs-select').html("");
+});
+
 $(document).on("click", "#dates-down", function() {
     if(first < Object.keys(choices).length-6) {
         first += 3;
@@ -116,6 +128,27 @@ $(document).on("click", "#dates-up", function() {
     displayDates();
 });
 
+$(document).on("click", "#dates-center", function() {
+    if(type == "read") {
+        if(readPos > 3) {
+            first = readPos - 3;
+        }
+        else {
+            first = 0;
+        }
+    }
+    else {
+        if(Object.keys(choices).length > 6) {
+            first = Object.keys(choices).length - 6;
+        }
+        else {
+            first = 0;
+        }
+    }
+    displayDates();
+});
+
+
 /** Left */
 
 $("#tarifs-read").on("click", function() {
@@ -125,8 +158,9 @@ $("#tarifs-read").on("click", function() {
         first = 0;
         const dataParsed = JSON.parse(data);
         choices = dataParsed[0];
-        if(parseInt(dataParsed[1]) > 3) {
-            first = parseInt(dataParsed[1]) - 3;
+        readPos = parseInt(dataParsed[1]);
+        if(readPos > 3) {
+            first = readPos - 3;
         }
         displayDates();
         $('#tarifs-cancel').removeClass('desactived-tile');
@@ -204,8 +238,8 @@ $("#tarifs-remove").on("click", function() {
     $('#tarifs-cancel').removeClass('desactived-tile');
 });
 
-function loadDates(type) {
-    $.post("controller/getLoadDates.php", {plate: plateforme, type: type}, function (data) {
+function loadDates(typeLoad) {
+    $.post("controller/getLoadDates.php", {plate: plateforme, type: typeLoad}, function (data) {
         type = "load";
         first = 0;
         choices = JSON.parse(data);
@@ -225,7 +259,11 @@ $(document).on("click", "#load-dates tr", function() {
     }
     else {
         if(type == "replace") {
-            if(confirm("Save ?")) {
+            if(confirm("Voulez-vous sauvegarder les paramètres existants ?")) {
+                window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
+                applyTarifs(date);
+            }
+            else {
                 applyTarifs(date);
             }
         }
@@ -250,6 +288,7 @@ function applyTarifs(date) {
     const enc_files = JSON.stringify(files);
     $.post("controller/applyTarifs.php", {plate: plateforme, date: date, files: enc_files}, function (data) {
         $('#message').html(data);
+        window.location.href = "tarifs.php?plateforme="+plateforme;
     });
 }
 

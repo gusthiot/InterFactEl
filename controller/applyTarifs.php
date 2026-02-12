@@ -1,7 +1,9 @@
 <?php
 
 require_once("../assets/Sap.php");
+require_once("../assets/Unused.php");
 require_once("../assets/Lock.php");
+require_once("../assets/Label.php");
 require_once("../assets/ParamZip.php");
 require_once("../assets/Message.php");
 require_once("../assets/Version.php");
@@ -22,7 +24,7 @@ if(isset($_POST['plate']) && isset($_POST['files']) && isset($_POST['date'])) {
     $messages = new Message();
     $msg = "";
 
-    $dirTarifs = $dir.'/'.$year.'/'.$month.'/';
+    $dirTarifs = $dir.'/'.$year.'/'.$month;
     $tmpDir = TEMP.'tarifs_'.time().'/';
     if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
         foreach($files as $file => $content) {
@@ -30,15 +32,15 @@ if(isset($_POST['plate']) && isset($_POST['files']) && isset($_POST['date'])) {
         }
     }
     if(file_exists($dirTarifs) || mkdir($dirTarifs, 0755, true)) {
-        if(($open = fopen($dirTarifs."unused.csv", 'w')) !== false) {
-            $version = Version::load('../');
-            $vl = $version["version-logiciel"][2];
-            if(fwrite($open, $vl) === false) {
-                $msg += "impossible d'écrire dans unused.csv";
-            }
-            fclose($open);
+        $version = Version::load('../');
+        $vl = $version["version-logiciel"][2];
+        if(!Unused::save($dirTarifs, $vl)) {
+            $msg .= "Problème avec le unused";
         }
-        $msg += Tarifs::createZip($dirTarifs, $tmpDir);
+        if(!Label::save($dirTarifs, "New")) {
+            $msg .= "Problème avec le label";
+        }
+        $msg .= Tarifs::createZip($dirTarifs, $tmpDir);
     }
     State::delDir($tmpDir);
     echo ($msg == "" ? "ok" : $msg);

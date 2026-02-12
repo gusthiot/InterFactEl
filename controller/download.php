@@ -50,6 +50,23 @@ if(isset($_GET['type'])) {
             header('Location: ../index.php');
         }
     }
+    elseif($type==="zip-tarifs") {
+        if(isset($_GET['plate']) && isset($_GET['date'])) {
+            checkPlateforme("tarifs", $_GET['plate']);
+            header('Content-disposition: attachment; filename="'.ParamZip::NAME.'"');
+            header('Content-type: application/zip');
+            $month = substr($_GET["date"], 4, 2);
+            $year = substr($_GET["date"], 0, 4);
+            $name = DATA.$_GET['plate']."/".$year."/".$month."/".ParamZip::NAME;
+            readfile($name);
+            ignore_user_abort(true);
+            unlink($name);
+        }
+        else {
+            $_SESSION['alert-danger'] = "erreur download";
+            header('Location: ../index.php');
+        }
+    }
     else {
         if(isset($_GET['plate']) && isset($_GET['year']) && isset($_GET['month'])) {
             $dirMonth = DATA.$_GET['plate']."/".$_GET['year']."/".$_GET['month'];
