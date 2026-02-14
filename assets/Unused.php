@@ -30,13 +30,15 @@ class Unused
      */
     static function load(string $dir): string
     {
-        $label = "";
+        $version = "";
         $file = $dir."/".self::NAME;
         if((file_exists($file)) && (($open = fopen($file, "r")) !== false)) {
-            $label = fread($open, filesize($file));
+            if(filesize($file) > 0) {
+                $version = fread($open, filesize($file));
+            }
             fclose($open);
         }
-        return $label;
+        return $version;
     }
 
     /**

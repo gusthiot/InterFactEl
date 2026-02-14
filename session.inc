@@ -4,6 +4,9 @@ require_once("config.inc");
 require_once("assets/Superviseur.php");
 require_once("assets/Gestionnaire.php");
 
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+
 /**
  * Managing error reporting
  */
