@@ -1,6 +1,7 @@
 <?php
 
 require_once("../assets/Sap.php");
+require_once("../assets/Lock.php");
 require_once("../includes/Tarifs.php");
 require_once("../includes/Zip.php");
 require_once("../session.inc");

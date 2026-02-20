@@ -1,8 +1,5 @@
 
-//let mpYear = $('#mp-year').val();
-//let mpMonth = $('#mp-month').val();
 let plateforme = $('#plate').val();
-
 
 /** Liste */
 
@@ -43,9 +40,14 @@ let readPos = 0;
 
 function reset() {
     files = {};
+    contents = {};
+    ids = {};
+    sessionStorage.removeItem("files");
+    sessionStorage.removeItem("contents");
+    sessionStorage.removeItem("ids");
     $('#tarifs-files').html("");
     $('#tarifs-select').html("");
-    $('#tarifs-correct').addClass('desactived-tile');
+    $('#message').html("");
     $('#tarifs-load').addClass('desactived-tile');
     $('#tarifs-save').addClass('desactived-tile');
     $('#tarifs-check').addClass('desactived-tile');
@@ -171,7 +173,9 @@ $(document).on("click", "#read-dates tr", function() {
     const key = $(this).data('key');
     $.post("controller/openTarifs.php", {plate: plateforme, type: key.split("-")[0], date: key.split("-")[1]}, function (data) {
         files = JSON.parse(data);
+        sessionStorage.setItem("files", data);
         extract();
+        sessionStorage.setItem("contents", JSON.stringify(contents));
         $('#tarifs-select').html("");
         displayFiles();
     });
@@ -217,8 +221,11 @@ $("#tarifs-import").on("change", function(e) {
         extract();
         if(runCheck(checkColumns(false))) {
             files = {};
+            contents = {};
         }
         else {
+            sessionStorage.setItem("files", JSON.stringify(json));
+            sessionStorage.setItem("contents", JSON.stringify(contents));
             displayFiles();
             $('#tarifs-cancel').removeClass('desactived-tile');
         }
@@ -310,7 +317,6 @@ $("#tarifs-check").on("click", function() {
         return;
     }
     $('#message').html("alles gut");
-    $('#tarifs-correct').removeClass('desactived-tile');
     $('#tarifs-load').removeClass('desactived-tile');
 });
 
@@ -335,6 +341,7 @@ $(document).on("click", "#tarifs-save", function() {
 
 let contents = {};
 let ids = {};
+let checks = {};
 
 const mandatoryCsvs = { "paramfact": {
                             name: "Paramètres SAP",
@@ -667,11 +674,39 @@ function checkColumns(complete) {
         }
         if(resFile != "") {
             result += resFile;
+            checks[filename] = "orange-tile";
             $('#'+filename).addClass('orange-tile');
         }
         else {
+            checks[filename] = "green-tile";
             $('#'+filename).addClass('green-tile');
         }
     });
+    sessionStorage.setItem("ids", JSON.stringify(ids));
+    sessionStorage.setItem("checks", JSON.stringify(checks));
     return result;
+}
+
+
+/** Start */
+
+if(sessionStorage.getItem("files")) {
+    files = JSON.parse(sessionStorage.getItem("files"));
+    contents = JSON.parse(sessionStorage.getItem("contents"));
+    displayFiles();
+    $('#tarifs-cancel').removeClass('desactived-tile');
+}
+if(sessionStorage.getItem("ids") && sessionStorage.getItem("checks")) {
+    ids = JSON.parse(sessionStorage.getItem("ids"));
+    checks = JSON.parse(sessionStorage.getItem("checks"));
+    let result = true;
+    Object.keys(checks).forEach(function(filename) {
+        $('#'+filename).addClass(checks[filename]);
+        if(checks[filename] != "green-tile") {
+            result = false;
+        }
+    });
+    if(result) {
+        $('#tarifs-load').removeClass('desactived-tile');
+    }
 }
