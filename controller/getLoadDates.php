@@ -61,11 +61,11 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
         }
     }
     $dirMonth = $dir."/".$mp['year']."/".$mp['month'];
-    $label = Label::load($dirMonth);
-    if(empty($label)) {
-        $label = "No label ?";
-    }
     if(file_exists($dirMonth."/".ParamZip::NAME)) {
+        $label = Label::load($dirMonth);
+        if(empty($label)) {
+            $label = "No label ?";
+        }
         if($type == "load") {
             if(Unused::exists($dirMonth)) {
                 $prefix = "replace";
@@ -81,7 +81,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
     }
     else {
         if($type == "load") {
-            $choices["correct-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], $label];
+            $choices["correct-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], ""];
         }
     }
     echo json_encode($choices);

@@ -213,7 +213,7 @@ function uploader(string $title, string $id): string
                             </div>
                             <div id="tarifs-right">
                                 <div class="tarifs-column">
-                                    <div type="button" id="tarifs-load" class="mini-tile desactived-tile">Charger</div>
+                                    <div type="button" id="tarifs-load" class="mini-tile desactived-tile">Ecrire</div>
                                     <div type="button" id="tarifs-remove" class="mini-tile">Effacer</div>
                                 </div>
                             </div>

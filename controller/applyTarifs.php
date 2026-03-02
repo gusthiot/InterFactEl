@@ -33,7 +33,7 @@ if(isset($_POST['plate']) && isset($_POST['files']) && isset($_POST['date'])) {
     }
     if(file_exists($dirTarifs) || mkdir($dirTarifs, 0755, true)) {
         $version = Version::load('../');
-        $vl = $version["version-logiciel"][2];
+        $vl = $version["version-interface"][2];
         if(!Unused::save($dirTarifs, $vl)) {
             $msg .= "Problème avec le unused";
         }
