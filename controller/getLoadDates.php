@@ -15,22 +15,22 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
     checkPlateforme("tarifs", $plateforme);
 
     $dir = DATA.$plateforme;
-    $mp = State::lastRun($dir);
+    $mp = new State($dir);
     $choices = [];
     $type = $_POST["type"];
 
-    if(intval($mp['month']) > 6) {
-        $maxYear = State::addToString($mp['year'], 2);
-        $maxMonth = State::addToMonth($mp['month'], -6);
+    if(intval($mp->getLastMonth()) > 6) {
+        $maxYear = State::addToString($mp->getLastYear(), 2);
+        $maxMonth = State::addToMonth($mp->getLastMonth(), -6);
     }
     else {
-        $maxYear = State::addToString($mp['year'], 1);
-        $maxMonth = State::addToMonth($mp['month'], 6);
+        $maxYear = State::addToString($mp->getLastYear(), 1);
+        $maxMonth = State::addToMonth($mp->getLastMonth(), 6);
     }
 
     $date = $maxYear.$maxMonth;
 
-    while(intval($date) > intval($mp['year'].$mp['month'])) {
+    while(intval($date) > intval($mp->getLastYear().$mp->getLastMonth())) {
 
         $month = substr($date, 4, 2);
         $year = substr($date, 0, 4);
@@ -60,7 +60,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
             $date--;
         }
     }
-    $dirMonth = $dir."/".$mp['year']."/".$mp['month'];
+    $dirMonth = $dir."/".$mp->getLastYear()."/".$mp->getLastMonth();
     if(file_exists($dirMonth."/".ParamZip::NAME)) {
         $label = Label::load($dirMonth);
         if(empty($label)) {
@@ -73,15 +73,15 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
             else {
                 $prefix = "correct";
             }
-            $choices[$prefix."-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], $label];
+            $choices[$prefix."-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), $prefix];
         }
         if(($type == "remove") && (Unused::exists($dirMonth))) {
-            $choices["remove-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], $label];
+            $choices["remove-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), $label];
         }
     }
     else {
         if($type == "load") {
-            $choices["correct-".$mp['year'].$mp['month']] = [$mp['month']." ".$mp['year'], ""];
+            $choices["correct-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), "load"];
         }
     }
     echo json_encode($choices);

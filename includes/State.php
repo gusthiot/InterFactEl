@@ -233,6 +233,15 @@ class State
         return self::isLaterThan($month, $year, $this->last_m, $this->last_y);
     }
 
+    /**
+     * Checks if a month follows, directly or not, another one
+     *
+     * @param string $month month to check
+     * @param string $year year to check
+     * @param string $m month followed or not
+     * @param string $y year followed or not
+     * @return boolean
+     */
     static function isLaterThan(string $month, string $year, string $m, string $y): bool
     {
         if($y == $year) {
@@ -260,6 +269,15 @@ class State
         return self::isSameAs($month, $year, $this->last_m, $this->last_y);
     }
 
+    /**
+     * Checks if it's the same month
+     *
+     * @param string $month month to check
+     * @param string $year year to check
+     * @param string $m month to compare with
+     * @param string $y year to compare with
+     * @return boolean
+     */
     static function isSameAs(string $month, string $year, string $m, string $y): bool
     {
         if(intval($m) == intval($month) && $y == $year) {

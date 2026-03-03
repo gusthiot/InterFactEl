@@ -16,7 +16,8 @@ if(isset($_POST["plate"])) {
     checkPlateforme("tarifs", $plateforme);
 
     $dir = DATA.$plateforme;
-    $mp = State::lastRun($dir);
+
+    $mp = new State($dir);
     $choices = [];
     $mpNb = 0;
 
@@ -25,13 +26,13 @@ if(isset($_POST["plate"])) {
         foreach(globReverse($dirYear) as $dirMonth) {
             $month = basename($dirMonth);
             if(file_exists($dirMonth."/".ParamZip::NAME) && (Unused::exists($dirMonth))) {
-                if(State::isLaterThan($month, $year, $mp['month'], $mp['year']) || State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                if($mp->isLater($month, $year) || $mp->isSame($month, $year)) {
                     $label = Label::load($dirMonth);
                     if(empty($label)) {
                         $label = "No label ?";
                     }
                     $choices["control-".$year.$month] = [$month." ".$year, $label];
-                    if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                    if($mp->isSame($month, $year)) {
                         $mpNb = count($choices)-1;
                     }
                 }
@@ -56,7 +57,7 @@ if(isset($_POST["plate"])) {
                             $label = "<i>Idem mois précédent</i>";
                         }
                         $choices["read-".$year.$month] = [$month." ".$year, $label];
-                        if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                        if($mp->isSame($month, $year)) {
                             $mpNb = count($choices)-1;
                         }
                         break;

@@ -294,8 +294,13 @@ function applyTarifs(date) {
     files["categprix.csv"] = btoa(Papa.unparse(categprix, {delimiter: ";", skipEmptyLines: true}));
     const enc_files = JSON.stringify(files);
     $.post("controller/applyTarifs.php", {plate: plateforme, date: date, files: enc_files}, function (data) {
-        $('#message').html(data);
-        window.location.href = "tarifs.php?plateforme="+plateforme;
+        if(data == "ok") {
+            reset();
+            window.location.href = "tarifs.php?plateforme="+plateforme;
+        }
+        else {
+            $('#message').html(data);
+        }
     });
 }
 
@@ -316,7 +321,6 @@ $("#tarifs-check").on("click", function() {
     if(runCheck(checkColumns(true))) {
         return;
     }
-    $('#message').html("alles gut");
     $('#tarifs-load').removeClass('desactived-tile');
 });
 
