@@ -73,7 +73,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
             else {
                 $prefix = "correct";
             }
-            $choices[$prefix."-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), $prefix];
+            $choices[$prefix."-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), $label];
         }
         if(($type == "remove") && (Unused::exists($dirMonth))) {
             $choices["remove-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), $label];
@@ -81,7 +81,7 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
     }
     else {
         if($type == "load") {
-            $choices["correct-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), "load"];
+            $choices["correct-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), ""];
         }
     }
     echo json_encode($choices);
