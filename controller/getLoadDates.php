@@ -61,27 +61,29 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
         }
     }
     $dirMonth = $dir."/".$mp->getLastYear()."/".$mp->getLastMonth();
-    if(file_exists($dirMonth."/".ParamZip::NAME)) {
-        $label = Label::load($dirMonth);
-        if(empty($label)) {
-            $label = "No label ?";
-        }
-        if($type == "load") {
-            if(Unused::exists($dirMonth)) {
-                $prefix = "replace";
+    if(!Lock::exists($dirMonth, 'month')) {
+        if(file_exists($dirMonth."/".ParamZip::NAME)) {
+            $label = Label::load($dirMonth);
+            if(empty($label)) {
+                $label = "No label ?";
             }
-            else {
-                $prefix = "correct";
+            if($type == "load") {
+                if(Unused::exists($dirMonth)) {
+                    $prefix = "replace";
+                }
+                else {
+                    $prefix = "correct";
+                }
+                $choices[$prefix."-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), $label];
             }
-            $choices[$prefix."-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), $label];
+            if(($type == "remove") && (Unused::exists($dirMonth))) {
+                $choices["remove-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), $label];
+            }
         }
-        if(($type == "remove") && (Unused::exists($dirMonth))) {
-            $choices["remove-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), $label];
-        }
-    }
-    else {
-        if($type == "load") {
-            $choices["correct-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), ""];
+        else {
+            if($type == "load") {
+                $choices["correct-".$mp->getLastYear().$mp->getLastMonth()] = [$mp->getLastMonth()." ".$mp->getLastYear(), ""];
+            }
         }
     }
     echo json_encode($choices);
