@@ -20,13 +20,13 @@ if(isset($_POST["plate"])) {
     $choices = [];
     $version = Version::load('../');
 
-    if(intval($mp->getLastMonth()) > 6) {
-        $maxYear = State::addToString($mp->getLastYear(), 2);
-        $maxMonth = State::addToMonth($mp->getLastMonth(), -6);
-    }
-    else {
-        $maxYear = State::addToString($mp->getLastYear(), 1);
-        $maxMonth = State::addToMonth($mp->getLastMonth(), 6);
+    foreach(globReverse($dir) as $dirYear) {
+        $maxYear = basename($dirYear);
+        foreach(globReverse($dirYear) as $dirMonth) {
+            $maxMonth = basename($dirMonth);
+            break;
+        }
+        break;
     }
 
     $date = $maxYear.$maxMonth;
@@ -57,7 +57,7 @@ if(isset($_POST["plate"])) {
                             if(floatval($unused) < floatval($vmin)) {
                                 $warning = $messages->getMessage('msg9');
                             }
-                            $choices["replace-".$year.$month] = [$month." ".$year, $label, 1, 1, 1, $warning];
+                            $choices["remove-".$year.$month] = [$month." ".$year, $label, 1, 1, 1, $warning];
                         }
                         else {
                             if(file_exists($dirMonth."/".ParamZip::NAME)) {
@@ -69,16 +69,16 @@ if(isset($_POST["plate"])) {
                             else {
                                 $label = "<i>Idem mois précédent</i>";
                             }
-                            $choices["correct-".$year.$month] = [$month." ".$year, $label, 1, 0, 1, ""];
+                            $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 1, ""];
                         }
                     }
                     else {
-                        $choices["load-".$year.$month] = [$month." ".$year, "", 0, 0, 1, $messages->getMessage('msg10')];
+                        $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 1, $messages->getMessage('msg10')];
                     }
                 }
             }
             else {
-                $choices["load-".$year.$month] = [$month." ".$year, "", 1, 0, 0, ""];
+                $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
             }
         }
         else {
@@ -93,10 +93,10 @@ if(isset($_POST["plate"])) {
                 if(floatval($unused) < floatval($vmin)) {
                     $warning = $messages->getMessage('msg9');
                 }
-                $choices["replace-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, $warning];
+                $choices["remove-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, $warning];
             }
             else {
-                $choices["load-".$year.$month] = [$month." ".$year, "", 1, 0, 0, ""];
+                $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
             }
 
         }

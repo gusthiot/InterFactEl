@@ -87,7 +87,37 @@ function displayDates() {
         Object.keys(choices).forEach(function(key) {
             if(pos >= first && pos < (first + 6)) {
                 const choice = choices[key];
-                html += '<tr data-key="' + key +'"><td>' + choice[0] + '</td><td>' + choice[1] + '</td></tr>';
+                const date = choice[0];
+                const label = choice[1];
+                let clickable = "clickable";
+                let trClickable = "tr-clickable";
+                if(choice[2] == 0) {
+                    clickable = "faded";
+                    trClickable = "";
+                }
+                let diode = "";
+                if(choice[3] == 1) {
+                    diode = '<svg class="icon" aria-hidden="true">' +
+                                '<use xlink:href="#skip-forward"></use>' +
+                            '</svg> ';
+                }
+                let base = "";
+                if(choice[4] == 1) {
+                    base = '<svg class="icon" aria-hidden="true">' +
+                                '<use xlink:href="#database"></use>' +
+                            '</svg> ';
+                }
+                let warning = "";
+                if(choice[5] != "") {
+                    warning = '<button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"' +
+                                        'data-content="' + choice[5] + '">' +
+                                    '<svg class="icon icon-selectable red" aria-hidden="true">' +
+                                        '<use xlink:href="#alert-triangle"></use>' +
+                                    '</svg>' +
+                                '</button>';
+                }
+
+                html += '<tr class="' + trClickable + '"><td>' + warning + '</td><td class="' + clickable + ' borded" data-key="' + key +'">' + diode + base + date + '</td><td class="' + clickable + ' borded" data-key="' + key +'">' + label + '</td><td></td></tr>';
             }
             pos++;
         });
@@ -169,7 +199,7 @@ $("#tarifs-read").on("click", function() {
     });
 });
 
-$(document).on("click", "#read-dates tr", function() {
+$(document).on("click", "#read-dates .clickable", function() {
     const key = $(this).data('key');
     $.post("controller/openTarifs.php", {plate: plateforme, type: key.split("-")[0], date: key.split("-")[1]}, function (data) {
         files = JSON.parse(data);
@@ -236,17 +266,7 @@ $("#tarifs-import").on("change", function(e) {
 /** Right */
 
 $("#tarifs-load").on("click", function() {
-    loadDates("load");
-});
-
-$("#tarifs-remove").on("click", function() {
-    reset();
-    loadDates("remove");
-    $('#tarifs-cancel').removeClass('desactived-tile');
-});
-
-function loadDates(typeLoad) {
-    $.post("controller/getLoadDates.php", {plate: plateforme, type: typeLoad}, function (data) {
+    $.post("controller/getLoadDates.php", {plate: plateforme}, function (data) {
         type = "load";
         first = 0;
         choices = JSON.parse(data);
@@ -255,28 +275,50 @@ function loadDates(typeLoad) {
         }
         displayDates();
     });
-}
+});
 
-$(document).on("click", "#load-dates tr", function() {
+$("#tarifs-remove").on("click", function() {
+    reset();
+    $.post("controller/getRemoveDates.php", {plate: plateforme}, function (data) {
+        type = "remove";
+        first = 0;
+        choices = JSON.parse(data);
+        if(Object.keys(choices).length > 6) {
+            first = Object.keys(choices).length - 6;
+        }
+        displayDates();
+        $('#tarifs-cancel').removeClass('desactived-tile');
+    });
+});
+
+$(document).on("click", "#remove-dates .clickable", function() {
     const key = $(this).data('key');
     const type = key.split("-")[0];
     const date = key.split("-")[1];
-    if(type == "remove") {
+    /*if(confirm("Voulez-vous sauvegarder les paramètres existants ?")) {
+        window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
         window.location.href = "controller/suppressTarifs.php?plate="+plateforme+"&date="+date;
     }
-    else {
-        if(type == "replace") {
-            if(confirm("Voulez-vous sauvegarder les paramètres existants ?")) {
-                window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
-                applyTarifs(date);
-            }
-            else {
-                applyTarifs(date);
-            }
+    else {*/
+        window.location.href = "controller/suppressTarifs.php?plate="+plateforme+"&date="+date;
+    //}
+});
+
+$(document).on("click", "#load-dates .clickable", function() {
+    const key = $(this).data('key');
+    const type = key.split("-")[0];
+    const date = key.split("-")[1];
+    if(type == "replace") {
+        if(confirm("Voulez-vous sauvegarder les paramètres existants ?")) {
+            window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
+            applyTarifs(date);
         }
         else {
             applyTarifs(date);
         }
+    }
+    else {
+        applyTarifs(date);
     }
 });
 

@@ -81,25 +81,9 @@ function uploader(string $title, string $id): string
             <div class="title <?php if(TEST_MODE) echo "test";?>">
                 <h1 class="text-center p-1"><?= $name ?></h1>
             </div>
-            <!--<div class="text-center" id="buttons">
-                <form action="controller/uploadTarifs.php" method="post" id="form-tarifs" enctype="multipart/form-data" >
-                    <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
-                    <input type="hidden" name="type" value="new" />
-                    <input name="month-picker" id="month-picker" class="date-picker"/>
-                    <div>
-                        <label class="btn but-line">
-                            <input type="file" id="zip-tarifs" name="zip_file" class="zip-file" accept=".zip">
-                            Importer de nouveaux tarifs applicables dès ce mois
-                        </label>
-                    </div>
-                </form>
-            </div>-->
 
             <?php include("includes/message.inc"); ?>
             <div id="tarifs-content">
-                <!--<input type="hidden" id="mp-month" value="<?= $mp['month'] ?>" />-->
-                <!--<input type="hidden" id="mp-year" value="<?= $mp['year'] ?>" />-->
-                <!--<input type="hidden" id="msg" value="<?= $messages->getMessage('msg8') ?>" />-->
                 <nav class="nav-tabs-light-wrapper">
                     <ul class="nav nav-tabs-light" role="tablist">
                         <li class="nav-item">
@@ -154,7 +138,7 @@ function uploader(string $title, string $id): string
                                                 if(Unused::exists($dirMonth)) {
                                                     $unused = Unused::load($dirMonth);
                                                     $version = Version::load('./');
-                                                    $vmin = $version["vl-min-controler"][2];
+                                                    $vmin = $version["vi-min-controler"][2];
                                                     if(floatval($unused) < floatval($vmin)) {?>
                                                         <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
                                                             data-content="<?= $messages->getMessage('msg9') ?>">
@@ -180,13 +164,9 @@ function uploader(string $title, string $id): string
                                                 <button id="<?= $id ?>" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-<?= $id ?>" aria-expanded="false" aria-controls="collapse-<?= $id ?>"><?= $label?></button>
                                                 <div class="collapse collapse-item collapse-item-desktop" id="collapse-<?= $id ?>">
                                                     <button type="button" id="etiquette-<?= $id ?>" class="btn but-line etiquette">Etiquette</button>
-                                                    <!--<button type="button" id="export-<?= $id ?>" class="btn but-line export">Exporter</button>-->
                                             <?php if($lastRun > 0) {
                                                 echo '<button type="button" id="all-'.$id.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'" class="btn but-line all">Exporter tout</button>';
-                                            } /*
-                                            if(State::isLaterThan($month, $year, $mp['month'], $mp['year'])) {
-                                                echo '<button type="button" id="suppress-'.$id.'" class="btn but-line suppress">Supprimer</button>';
-                                            }*/ ?>
+                                            } ?>
                                             <div id="label-<?= $id ?>"></div>
                                             </div></td></tr>
                                         <?php }

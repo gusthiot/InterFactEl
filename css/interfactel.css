@@ -513,17 +513,43 @@ table#bills td:nth-child(2), table#bills td:nth-child(3) { text-align: right; }
 
 table#tarifs td:nth-child(1) { width: 20%; }
 
-table.dates-tarifs td:nth-child(1) { width: 20%; }
+table.dates-tarifs td:nth-child(1) { width: 40px; }
+table.dates-tarifs td:nth-child(2) { width: 20%; }
+table.dates-tarifs td:nth-child(4) { width: 40px; }
 
 .over-dates {
-  max-width: 600px;
+  max-width: 700px;
 }
 
 table.dates-tarifs td {
   padding: 10px;
 }
 
-table.dates-tarifs tr:hover {
+.faded {
+  color: var(--gris-500);
+}
+
+.borded {
+  border: 1px solid var(--gris-200) !important;
+}
+
+#dates-center {
+  margin-left: 40px;
+}
+
+#dates-remove {
+  margin-right: 40px;
+}
+
+table.dates-tarifs {
+  border: 0;
+}
+
+table.dates-tarifs td {
+  border: 0;
+}
+
+table.dates-tarifs .tr-clickable:hover {
   cursor: pointer;
   font-weight: bold;
 }
