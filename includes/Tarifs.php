@@ -48,8 +48,12 @@ class Tarifs
      */
     static function suppress(string $dirTarifs): void
     {
-        unlink($dirTarifs."/".ParamZip::NAME);
-        unlink($dir."/".Label::NAME);
+        if(file_exists($dirTarifs."/".ParamZip::NAME)){
+            unlink($dirTarifs."/".ParamZip::NAME);
+        }
+        if(file_exists($dirTarifs."/".Label::NAME)){
+            unlink($dirTarifs."/".Label::NAME);
+        }
     }
 
     /**

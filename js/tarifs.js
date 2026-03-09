@@ -293,16 +293,28 @@ $("#tarifs-remove").on("click", function() {
 
 $(document).on("click", "#remove-dates .clickable", function() {
     const key = $(this).data('key');
-    const type = key.split("-")[0];
     const date = key.split("-")[1];
-    /*if(confirm("Voulez-vous sauvegarder les paramètres existants ?")) {
+    if(confirm("Voulez-vous sauvegarder les paramètres existants ?")) {
         window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
-        window.location.href = "controller/suppressTarifs.php?plate="+plateforme+"&date="+date;
+        setTimeout(() => {  removeTarifs(date); }, 2000);
     }
-    else {*/
-        window.location.href = "controller/suppressTarifs.php?plate="+plateforme+"&date="+date;
-    //}
+    else {
+        removeTarifs(date);
+    }
 });
+
+function removeTarifs(date) {
+    $.post("controller/suppressTarifs.php", {plate: plateforme, date: date}, function (data) {
+        if(data == "ok") {
+            reset();
+            window.location.href = "tarifs.php?plateforme="+plateforme;
+        }
+        else {
+            $('#message').html(data);
+        }
+    });
+
+}
 
 $(document).on("click", "#load-dates .clickable", function() {
     const key = $(this).data('key');
@@ -311,7 +323,7 @@ $(document).on("click", "#load-dates .clickable", function() {
     if(type == "replace") {
         if(confirm("Voulez-vous sauvegarder les paramètres existants ?")) {
             window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
-            applyTarifs(date);
+            setTimeout(() => {  applyTarifs(date); }, 2000);
         }
         else {
             applyTarifs(date);

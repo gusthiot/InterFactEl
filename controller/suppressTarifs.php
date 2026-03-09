@@ -7,19 +7,14 @@ require_once("../session.inc");
 /**
  * Called to suppress month tarifs
  */
-if(isset($_GET["plate"]) && isset($_GET["date"])) {
+if(isset($_POST["plate"]) && isset($_POST["date"])) {
 
-    $plateforme = $_GET["plate"];
+    $plateforme = $_POST["plate"];
     checkPlateforme("tarifs", $plateforme);
-    $month = substr($_GET["date"], 4, 2);
-    $year = substr($_GET["date"], 0, 4);
+    $month = substr($_POST["date"], 4, 2);
+    $year = substr($_POST["date"], 0, 4);
     $dirTarifs = DATA.$plateforme."/".$year."/".$month."/";
     Unused::remove($dirTarifs);
     Tarifs::suppress($dirTarifs);
-    $_SESSION['alert-success'] = "tarifs correctement effacées";
-    header('Location: ../tarifs.php?plateforme='.$plateforme);
-}
-else {
-    $_SESSION['alert-danger'] = "post_data_missing";
-    header('Location: ../index.php');
+    echo "ok";
 }

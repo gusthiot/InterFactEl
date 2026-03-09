@@ -24,9 +24,13 @@ if(isset($_POST["plate"])) {
         $maxYear = basename($dirYear);
         foreach(globReverse($dirYear) as $dirMonth) {
             $maxMonth = basename($dirMonth);
+            if(Unused::exists($dirMonth)) {
+                break;
+            }
+        }
+        if(Unused::exists($dirMonth)) {
             break;
         }
-        break;
     }
 
     $date = $maxYear.$maxMonth;
