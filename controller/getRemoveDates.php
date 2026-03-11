@@ -46,47 +46,11 @@ if(isset($_POST["plate"])) {
         }
 
 
-        if($mp->isSame($month, $year)) {
-            if(Lock::exists($dirMonth."/0", 'version')) {
-                foreach(globReverse($dirMonth) as $dirVersion) {
-                    if(Lock::exists($dirVersion, 'version')) {
-                        if(Unused::exists($dirMonth)) {
-                            $label = Label::load($dirMonth);
-                            if(empty($label)) {
-                                $label = "No label ?";
-                            }
-                            $unused = Unused::load($dirMonth);
-                            $vmin = $version["vi-min-controler"][2];
-                            $warning = "";
-                            if(floatval($unused) < floatval($vmin)) {
-                                $warning = $messages->getMessage('msg9');
-                            }
-                            $choices["remove-".$year.$month] = [$month." ".$year, $label, 1, 1, 1, $warning];
-                        }
-                        else {
-                            if(file_exists($dirMonth."/".ParamZip::NAME)) {
-                                $label = Label::load($dirMonth);
-                                if(empty($label)) {
-                                    $label = "No label ?";
-                                }
-                            }
-                            else {
-                                $label = "<i>Idem mois précédent</i>";
-                            }
-                            $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 1, ""];
-                        }
-                    }
-                    else {
-                        $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 1, $messages->getMessage('msg10')];
-                    }
-                }
+        if(Unused::exists($dirMonth)) {
+            if($mp->isSame($month, $year) && !Lock::exists(globReverse($dirMonth)[0], 'version')) {
+                $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 1, 0, $messages->getMessage('msg10')];
             }
             else {
-                $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
-            }
-        }
-        else {
-            if(Unused::exists($dirMonth)) {
                 $label = Label::load($dirMonth);
                 if(empty($label)) {
                     $label = "No label ?";
@@ -99,10 +63,9 @@ if(isset($_POST["plate"])) {
                 }
                 $choices["remove-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, $warning];
             }
-            else {
-                $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
-            }
-
+        }
+        else {
+            $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
         }
 
         if($month == "01") {

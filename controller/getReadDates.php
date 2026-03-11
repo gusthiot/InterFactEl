@@ -51,7 +51,7 @@ if(isset($_POST["plate"])) {
             }
             else {
                 if($mp->isSame($month, $year)) {
-                    if(Lock::exists($dirMonth."/0", 'version')) {
+                    if(file_exists($dirMonth."/0")) {
                         foreach(globReverse($dirMonth) as $dirVersion) {
                             if(Lock::exists($dirVersion, 'version')) {
                                 foreach(globReverse($dirVersion) as $dirRun) {
@@ -72,7 +72,11 @@ if(isset($_POST["plate"])) {
                                         break;
                                     }
                                     else {
-                                        $choices["read-".$year.$month] = [$month." ".$year, "", 0, 0, 1, ""];
+                                        $base = 0;
+                                        if(floatval(basename($dirVersion)) > 0) {
+                                            $base = 1;
+                                        }
+                                        $choices["read-".$year.$month] = [$month." ".$year, "", 0, 0, $base, ""];
                                     }
                                 }
                             }
@@ -80,9 +84,6 @@ if(isset($_POST["plate"])) {
                                 $choices["read-".$year.$month] = [$month." ".$year, "", 0, 0, 1, $messages->getMessage('msg10')];
                             }
                         }
-                    }
-                    else {
-                        $choices["read-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
                     }
                     $mpNb = count($choices)-1;
                 }
