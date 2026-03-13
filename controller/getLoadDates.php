@@ -21,6 +21,7 @@ if(isset($_POST["plate"])) {
 
     if(!empty($mp['month'])) {
         $version = Version::load('../');
+        $messages = new Message();
 
         if(intval($mp['month']) > 6) {
             $maxYear = State::addToString($mp['year'], 2);

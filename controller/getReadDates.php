@@ -23,6 +23,7 @@ if(isset($_POST["plate"])) {
 
     if(!empty($mp['month'])) {
         $version = Version::load('../');
+        $messages = new Message();
 
         foreach(globReverse($dir) as $dirYear) {
             $year = basename($dirYear);
