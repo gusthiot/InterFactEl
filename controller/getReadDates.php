@@ -16,92 +16,95 @@ if(isset($_POST["plate"])) {
     checkPlateforme("tarifs", $plateforme);
 
     $dir = DATA.$plateforme;
-
-    $mp = new State($dir);
+    $mp = State::firstOpenMonth($dir);
     $choices = [];
     $mpNb = 0;
-    $version = Version::load('../');
 
-    foreach(globReverse($dir) as $dirYear) {
-        $year = basename($dirYear);
-        foreach(globReverse($dirYear) as $dirMonth) {
-            $month = basename($dirMonth);
-            if(Lock::exists($dirMonth, 'month')) {
-                foreach(globReverse($dirMonth) as $dirVersion) {
-                    foreach(globReverse($dirVersion) as $dirRun) {
-                        $infos = Info::load($dirRun);
-                        $factel = $infos["FactEl"][2];
-                        $vmin = $version["vl-min-relire"][2];
-                        if(floatval($factel) >= floatval($vmin)) {
-                            if(file_exists($dirMonth."/".ParamZip::NAME)) {
-                                $label = Label::load($dirMonth);
-                                if(empty($label)) {
-                                    $label = "No label ?";
+
+    if(!empty($mp['month'])) {
+        $version = Version::load('../');
+
+        foreach(globReverse($dir) as $dirYear) {
+            $year = basename($dirYear);
+            foreach(globReverse($dirYear) as $dirMonth) {
+                $month = basename($dirMonth);
+                if(Lock::exists($dirMonth, 'month')) {
+                    foreach(globReverse($dirMonth) as $dirVersion) {
+                        foreach(globReverse($dirVersion) as $dirRun) {
+                            $infos = Info::load($dirRun);
+                            $factel = $infos["FactEl"][2];
+                            $vmin = $version["vl-min-relire"][2];
+                            if(floatval($factel) >= floatval($vmin)) {
+                                if(file_exists($dirMonth."/".ParamZip::NAME)) {
+                                    $label = Label::load($dirMonth);
+                                    if(empty($label)) {
+                                        $label = "No label ?";
+                                    }
                                 }
+                                else {
+                                    $label = "<i>Idem mois précédent</i>";
+                                }
+                                $choices["read-".$year.$month] = [$month." ".$year, $label, 1, 0, 1, ""];
+                                break;
                             }
-                            else {
-                                $label = "<i>Idem mois précédent</i>";
-                            }
-                            $choices["read-".$year.$month] = [$month." ".$year, $label, 1, 0, 1, ""];
-                            break;
                         }
                     }
-                }
 
-            }
-            else {
-                if($mp->isSame($month, $year)) {
-                    if(file_exists($dirMonth."/0")) {
-                        foreach(globReverse($dirMonth) as $dirVersion) {
-                            if(Lock::exists($dirVersion, 'version')) {
-                                foreach(globReverse($dirVersion) as $dirRun) {
-                                    $infos = Info::load($dirRun);
-                                    $factel = $infos["FactEl"][2];
-                                    $vmin = $version["vl-min-relire"][2];
-                                    if(floatval($factel) >= floatval($vmin)) {
-                                        if(file_exists($dirMonth."/".ParamZip::NAME)) {
-                                            $label = Label::load($dirMonth);
-                                            if(empty($label)) {
-                                                $label = "No label ?";
+                }
+                else {
+                    if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                        if(file_exists($dirMonth."/0")) {
+                            foreach(globReverse($dirMonth) as $dirVersion) {
+                                if(Lock::exists($dirVersion, 'version')) {
+                                    foreach(globReverse($dirVersion) as $dirRun) {
+                                        $infos = Info::load($dirRun);
+                                        $factel = $infos["FactEl"][2];
+                                        $vmin = $version["vl-min-relire"][2];
+                                        if(floatval($factel) >= floatval($vmin)) {
+                                            if(file_exists($dirMonth."/".ParamZip::NAME)) {
+                                                $label = Label::load($dirMonth);
+                                                if(empty($label)) {
+                                                    $label = "No label ?";
+                                                }
                                             }
+                                            else {
+                                                $label = "<i>Idem mois précédent</i>";
+                                            }
+                                            $choices["read-".$year.$month] = [$month." ".$year, $label, 1, 0, 1, ""];
+                                            break;
                                         }
                                         else {
-                                            $label = "<i>Idem mois précédent</i>";
+                                            $base = 0;
+                                            if(floatval(basename($dirVersion)) > 0) {
+                                                $base = 1;
+                                            }
+                                            $choices["read-".$year.$month] = [$month." ".$year, "", 0, 0, $base, ""];
                                         }
-                                        $choices["read-".$year.$month] = [$month." ".$year, $label, 1, 0, 1, ""];
-                                        break;
-                                    }
-                                    else {
-                                        $base = 0;
-                                        if(floatval(basename($dirVersion)) > 0) {
-                                            $base = 1;
-                                        }
-                                        $choices["read-".$year.$month] = [$month." ".$year, "", 0, 0, $base, ""];
                                     }
                                 }
-                            }
-                            else {
-                                $choices["read-".$year.$month] = [$month." ".$year, "", 0, 0, 1, $messages->getMessage('msg10')];
+                                else {
+                                    $choices["read-".$year.$month] = [$month." ".$year, "", 0, 0, 1, $messages->getMessage('msg10')];
+                                }
                             }
                         }
+                        $mpNb = count($choices)-1;
                     }
-                    $mpNb = count($choices)-1;
-                }
-                if(Unused::exists($dirMonth)) {
-                    $diode = 1;
-                    $label = Label::load($dirMonth);
-                    if(empty($label)) {
-                        $label = "No label ?";
+                    if(Unused::exists($dirMonth)) {
+                        $diode = 1;
+                        $label = Label::load($dirMonth);
+                        if(empty($label)) {
+                            $label = "No label ?";
+                        }
+                        $unused = Unused::load($dirMonth);
+                        $vmin = $version["vi-min-controler"][2];
+                        $warning = "";
+                        $click = 1;
+                        if(floatval($unused) < floatval($vmin)) {
+                            $click = 0;
+                            $warning = $messages->getMessage('msg9');
+                        }
+                        $choices["control-".$year.$month] = [$month." ".$year, $label, $click, $diode, 0, $warning];
                     }
-                    $unused = Unused::load($dirMonth);
-                    $vmin = $version["vi-min-controler"][2];
-                    $warning = "";
-                    $click = 1;
-                    if(floatval($unused) < floatval($vmin)) {
-                        $click = 0;
-                        $warning = $messages->getMessage('msg9');
-                    }
-                    $choices["control-".$year.$month] = [$month." ".$year, $label, $click, $diode, 0, $warning];
                 }
             }
         }

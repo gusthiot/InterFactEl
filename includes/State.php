@@ -92,6 +92,50 @@ class State
         }
     }
 
+    /**
+     * Determines the first not locked month for a plateform
+     *
+     * @param string $pathPlate path to plateform directory
+     * @return array array containing month and year
+     */
+    static function firstOpenMonth(string $pathPlate): array
+    {
+        $openMonth = "";
+        $openYear = "";
+        if(file_exists($pathPlate)) {
+            foreach(globReverse($pathPlate) as $dirYear) {
+                $year = basename($dirYear);
+                foreach(globReverse($dirYear) as $dirMonth) {
+                    $month = basename($dirMonth);
+                    if(Lock::exists($dirMonth, 'month')) {
+                        if(empty($openMonth)) {
+                            if($month == "12") {
+                                $openYear = self::addToString($year, 1);
+                                $openMonth = "01";
+                            }
+                            else {
+                                $openYear = $year;
+                                $openMonth = self::addToMonth($month, 1);
+                            }
+                        }
+                        return ['month' => $openMonth, 'year' => $openYear];
+                    }
+                    else {
+                        $openMonth = $month;
+                        $openYear = $year;
+                    }
+                }
+            }
+        }
+        return ['month' => $openMonth, 'year' => $openYear];
+    }
+
+    /**
+     * Determines the month of the last run with status > 1 for a plateform
+     *
+     * @param string $pathPlate path to plateform directory
+     * @return array array containing month and year
+     */
     static function lastRun(string $pathPlate): array
     {
         if(file_exists($pathPlate)) {
