@@ -186,6 +186,7 @@ $(document).on("click", "#dates-center", function() {
 $("#tarifs-read").on("click", function() {
     reset();
     $.post("controller/getReadDates.php", {plate: plateforme}, function (data) {
+        console.log(data);
         type = "read";
         first = 0;
         const dataParsed = JSON.parse(data);
@@ -267,6 +268,7 @@ $("#tarifs-import").on("change", function(e) {
 
 $("#tarifs-load").on("click", function() {
     $.post("controller/getLoadDates.php", {plate: plateforme}, function (data) {
+        console.log(data);
         type = "load";
         first = 0;
         choices = JSON.parse(data);
@@ -280,6 +282,7 @@ $("#tarifs-load").on("click", function() {
 $("#tarifs-remove").on("click", function() {
     reset();
     $.post("controller/getRemoveDates.php", {plate: plateforme}, function (data) {
+        console.log(data);
         type = "remove";
         first = 0;
         choices = JSON.parse(data);
