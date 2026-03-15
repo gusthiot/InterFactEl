@@ -47,14 +47,19 @@ if(isset($_POST["plate"])) {
 
 
             if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                if(file_exists($dirMonth."/".ParamZip::NAME)) {
+                    $label = Label::load($dirMonth);
+                    if(empty($label)) {
+                        $label = "No label ?";
+                    }
+                }
+                else {
+                    $label = "<i>Idem mois précédent</i>";
+                }
                 if(file_exists($dirMonth."/0")) {
                     foreach(globReverse($dirMonth) as $dirVersion) {
                         if(Lock::exists($dirVersion, 'version')) {
                             if(Unused::exists($dirMonth)) {
-                                $label = Label::load($dirMonth);
-                                if(empty($label)) {
-                                    $label = "No label ?";
-                                }
                                 $unused = Unused::load($dirMonth);
                                 $vmin = $version["vi-min-controler"][2];
                                 $warning = "";
@@ -64,15 +69,6 @@ if(isset($_POST["plate"])) {
                                 $choices["replace-".$year.$month] = [$month." ".$year, $label, 1, 1, 1, $warning];
                             }
                             else {
-                                if(file_exists($dirMonth."/".ParamZip::NAME)) {
-                                    $label = Label::load($dirMonth);
-                                    if(empty($label)) {
-                                        $label = "No label ?";
-                                    }
-                                }
-                                else {
-                                    $label = "<i>Idem mois précédent</i>";
-                                }
                                 $choices["correct-".$year.$month] = [$month." ".$year, $label, 1, 0, 1, ""];
                             }
                         }
@@ -81,12 +77,12 @@ if(isset($_POST["plate"])) {
                             if(floatval(basename($dirVersion)) > 0) {
                                 $base = 1;
                             }
-                            $choices["load-".$year.$month] = [$month." ".$year, "", 0, 0, $base, $messages->getMessage('msg10')];
+                            $choices["load-".$year.$month] = [$month." ".$year, $label, 0, 0, $base, $messages->getMessage('msg10')];
                         }
                     }
                 }
                 else {
-                    $choices["load-".$year.$month] = [$month." ".$year, "", 1, 0, 0, ""];
+                    $choices["load-".$year.$month] = [$month." ".$year, $label, 1, 0, 0, ""];
                 }
             }
             else {

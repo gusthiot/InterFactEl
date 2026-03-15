@@ -49,17 +49,27 @@ if(isset($_POST["plate"])) {
             if(Lock::exists($dirMonth, 'month')) {
                 break;
             }
+            if(file_exists($dirMonth."/".ParamZip::NAME)) {
+                $label = Label::load($dirMonth);
+                if(empty($label)) {
+                    $label = "No label ?";
+                }
+            }
+            else {
+                if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                    $label = "<i>Idem mois précédent</i>";
+                }
+                else {
+                    $label = "";
+                }
+            }
 
 
             if(Unused::exists($dirMonth)) {
                 if(State::isSameAs($month, $year, $mp['month'], $mp['year']) && !Lock::exists(globReverse($dirMonth)[0], 'version')) {
-                    $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 1, 0, $messages->getMessage('msg10')];
+                    $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 1, 0, $messages->getMessage('msg10')];
                 }
                 else {
-                    $label = Label::load($dirMonth);
-                    if(empty($label)) {
-                        $label = "No label ?";
-                    }
                     $unused = Unused::load($dirMonth);
                     $vmin = $version["vi-min-controler"][2];
                     $warning = "";
@@ -70,7 +80,7 @@ if(isset($_POST["plate"])) {
                 }
             }
             else {
-                $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
+                $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, ""];
             }
 
             if($month == "01") {

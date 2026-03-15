@@ -49,6 +49,10 @@ h1 {
   cursor: pointer;
 }
 
+.popover .arrow {
+  display: none;
+}
+
 .left {
   float: left;
 }
@@ -392,7 +396,7 @@ input[type="file"] {
   100% { margin-left: 0%; }
 }
 
-/** plateforme **/
+/** facturation **/
 
 #display {
   margin: 10px;
@@ -424,7 +428,15 @@ input[type="file"] {
 #plate-content {
   margin: auto;
   text-align: center;
-  width: 1500px;
+  max-width: 1500px;
+  padding-bottom: 20px;
+}
+
+.over-fact {
+  margin: 0 auto;
+  display: block;
+  overflow-x: auto;
+  max-height: 480px;
 }
 
 #historique-div {
@@ -446,7 +458,7 @@ input[type="file"] {
   margin: auto;
 }
 
-/** prefacturation **/
+/** run **/
 
 #prefa-content {
   margin: auto;

@@ -171,82 +171,83 @@ include("includes/lock.inc");
             <?php
             if(file_exists($dir)) {
             ?>
-                <table class="table table-boxed">
-                    <?php
+                <div class="over-fact">
+                    <table class="table table-boxed">
+                        <?php
 
-                    // Listing of all year/month/version/run for th plateform
-                    foreach(globReverse($dir) as $dirYear) {
-                        $year = basename($dirYear);
-                        foreach(globReverse($dirYear) as $dirMonth) {
-                            $month = basename($dirMonth);
-                            $dirVersions = globReverse($dirMonth);
-                            if(count($dirVersions) > 0) {
-                                echo '<tr>';
-                                echo '<td rowspan="'.count($dirVersions).'">';
-                                if(file_exists($dirMonth."/archive.csv")) { ?>
-                                    <svg class="icon" aria-hidden="true">
-                                        <use xlink:href="#star"></use>
-                                    </svg>
-                                <?php }
-                                echo $month.' '.$year;
-                                if(Lock::exists($dirMonth, 'month')) { ?>
-                                    <svg class="icon" aria-hidden="true">
-                                        <use xlink:href="#lock"></use>
-                                    </svg>
-                                <?php }
-                                if(Unused::exists($dirMonth) && State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
-                                    <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
-                                        data-content="<?= $messages->getMessage('msg8') ?>">
-                                        <svg class="icon icon-selectable red" aria-hidden="true">
-                                            <use xlink:href="#alert-triangle"></use>
+                        // Listing of all year/month/version/run for th plateform
+                        foreach(globReverse($dir) as $dirYear) {
+                            $year = basename($dirYear);
+                            foreach(globReverse($dirYear) as $dirMonth) {
+                                $month = basename($dirMonth);
+                                $dirVersions = globReverse($dirMonth);
+                                if(count($dirVersions) > 0) {
+                                    echo '<tr>';
+                                    echo '<td rowspan="'.count($dirVersions).'">';
+                                    if(file_exists($dirMonth."/archive.csv")) { ?>
+                                        <svg class="icon" aria-hidden="true">
+                                            <use xlink:href="#star"></use>
                                         </svg>
-                                    </button>
-                                <?php }
-                                echo '</td>';
-                                $line = 0;
-                                foreach($dirVersions as $dirVersion) {
-                                    $version = basename($dirVersion);
-                                    if($line > 0){
-                                        echo '<tr>';
-                                    }
-                                    echo '<td>'.$version;
-                                    if(Lock::exists($dirVersion, 'version')) { ?>
+                                    <?php }
+                                    echo $month.' '.$year;
+                                    if(Lock::exists($dirMonth, 'month')) { ?>
                                         <svg class="icon" aria-hidden="true">
                                             <use xlink:href="#lock"></use>
                                         </svg>
                                     <?php }
-                                    echo '</td><td>';
-                                    foreach(globReverse($dirVersion) as $dirRun) {
-                                        $run = basename($dirRun);
-                                        if($run != $lockedRun || $lockedProcessus != "Une préfacturation") {
-                                            $value = 'year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
-                                            $label = Label::load($dirRun);
-                                            if(empty($label)) {
-                                                $label = $run;
-                                            }
-                                            $sap = new Sap($dirRun);
-                                            $lockRun = Lock::load($dirRun, "run");
-                                            echo ' <button type="button" value="'.$value.'" class="open-run btn '.Sap::color($sap->status(), is_null($lockRun) ? "" : $lockRun).'"> '.$label;
-                                            if(!is_null($lockRun)) { ?>
-                                                <svg class="icon" aria-hidden="true">
-                                                    <use xlink:href="#lock"></use>
-                                                </svg>
-                                            <?php }
-                                            echo '</button>';
-                                        }
-                                    }
+                                    if(Unused::exists($dirMonth) && State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
+                                        <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
+                                            data-content="<?= $messages->getMessage('msg8') ?>">
+                                            <svg class="icon icon-selectable red" aria-hidden="true">
+                                                <use xlink:href="#alert-triangle"></use>
+                                            </svg>
+                                        </button>
+                                    <?php }
                                     echo '</td>';
+                                    $line = 0;
+                                    foreach($dirVersions as $dirVersion) {
+                                        $version = basename($dirVersion);
+                                        if($line > 0){
+                                            echo '<tr>';
+                                        }
+                                        echo '<td>'.$version;
+                                        if(Lock::exists($dirVersion, 'version')) { ?>
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#lock"></use>
+                                            </svg>
+                                        <?php }
+                                        echo '</td><td>';
+                                        foreach(globReverse($dirVersion) as $dirRun) {
+                                            $run = basename($dirRun);
+                                            if($run != $lockedRun || $lockedProcessus != "Une préfacturation") {
+                                                $value = 'year='.$year.'&month='.$month.'&version='.$version.'&run='.$run;
+                                                $label = Label::load($dirRun);
+                                                if(empty($label)) {
+                                                    $label = $run;
+                                                }
+                                                $sap = new Sap($dirRun);
+                                                $lockRun = Lock::load($dirRun, "run");
+                                                echo ' <button type="button" value="'.$value.'" class="open-run btn '.Sap::color($sap->status(), is_null($lockRun) ? "" : $lockRun).'"> '.$label;
+                                                if(!is_null($lockRun)) { ?>
+                                                    <svg class="icon" aria-hidden="true">
+                                                        <use xlink:href="#lock"></use>
+                                                    </svg>
+                                                <?php }
+                                                echo '</button>';
+                                            }
+                                        }
+                                        echo '</td>';
 
-                                    if($line > 0){
-                                        echo '</tr>';
+                                        if($line > 0){
+                                            echo '</tr>';
+                                        }
+                                        $line++;
                                     }
-                                    $line++;
+                                    echo '</tr>';
                                 }
-                                echo '</tr>';
                             }
                         }
-                    }
-                ?></table><?php
+                    ?></table></div><?php
             }
             ?>
             </div>

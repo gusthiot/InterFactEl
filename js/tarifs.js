@@ -34,6 +34,7 @@ $(document).on("click", "#save-label", function() {
 
 let files = {};
 let type = "";
+let date = "";
 let choices = "";
 let first = 0;
 let readPos = 0;
@@ -109,7 +110,7 @@ function displayDates() {
                 }
                 let warning = "";
                 if(choice[5] != "") {
-                    warning = '<button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"' +
+                    warning = '<button aria-hidden="true" type="button" class="btn-invisible popover-warning" data-toggle="popover" data-trigger="focus"' +
                                         'data-content="' + choice[5] + '">' +
                                     '<svg class="icon icon-selectable red" aria-hidden="true">' +
                                         '<use xlink:href="#alert-triangle"></use>' +
@@ -129,6 +130,7 @@ function displayDates() {
         }
         html += '</div>';
         $('#tarifs-select').html(html);
+        $('.popover-warning').popover();
     }
     else {
         $('#tarifs-select').html("Pas de données dans la période autorisée");
@@ -186,7 +188,6 @@ $(document).on("click", "#dates-center", function() {
 $("#tarifs-read").on("click", function() {
     reset();
     $.post("controller/getReadDates.php", {plate: plateforme}, function (data) {
-        console.log(data);
         type = "read";
         first = 0;
         const dataParsed = JSON.parse(data);
@@ -268,7 +269,6 @@ $("#tarifs-import").on("change", function(e) {
 
 $("#tarifs-load").on("click", function() {
     $.post("controller/getLoadDates.php", {plate: plateforme}, function (data) {
-        console.log(data);
         type = "load";
         first = 0;
         choices = JSON.parse(data);
@@ -282,7 +282,6 @@ $("#tarifs-load").on("click", function() {
 $("#tarifs-remove").on("click", function() {
     reset();
     $.post("controller/getRemoveDates.php", {plate: plateforme}, function (data) {
-        console.log(data);
         type = "remove";
         first = 0;
         choices = JSON.parse(data);
@@ -296,14 +295,51 @@ $("#tarifs-remove").on("click", function() {
 
 $(document).on("click", "#remove-dates .clickable", function() {
     const key = $(this).data('key');
-    const date = key.split("-")[1];
-    if(confirm("Voulez-vous sauvegarder les paramètres existants ?")) {
+    date = key.split("-")[1];
+    $('#save-modal').addClass("show");
+    $('#save-modal').css("display", "block");
+});
+
+$(document).on("click", "#load-dates .clickable", function() {
+    const key = $(this).data('key');
+    type = key.split("-")[0];
+    date = key.split("-")[1];
+    if(type == "replace") {
+        $('#save-modal').addClass("show");
+        $('#save-modal').css("display", "block");
+    }
+    else {
+        applyTarifs(date);
+    }
+});
+
+$(document).on("click", "#modal-no", function() {
+    $('#save-modal').removeClass("show");
+    $('#save-modal').css("display", "none");
+    if(type == "replace") {
+        applyTarifs(date);
+    }
+    if(type == "remove") {
+        removeTarifs(date);
+    }
+});
+
+$(document).on("click", "#modal-yes", function() {
+    $('#save-modal').removeClass("show");
+    $('#save-modal').css("display", "none");
+    if(type == "replace") {
+        window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
+        setTimeout(() => {  applyTarifs(date); }, 2000);
+    }
+    if(type == "remove") {
         window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
         setTimeout(() => {  removeTarifs(date); }, 2000);
     }
-    else {
-        removeTarifs(date);
-    }
+});
+
+$(document).on("click", "#close-modal", function() {
+    $('#save-modal').removeClass("show");
+    $('#save-modal').css("display", "none");
 });
 
 function removeTarifs(date) {
@@ -318,24 +354,6 @@ function removeTarifs(date) {
     });
 
 }
-
-$(document).on("click", "#load-dates .clickable", function() {
-    const key = $(this).data('key');
-    const type = key.split("-")[0];
-    const date = key.split("-")[1];
-    if(type == "replace") {
-        if(confirm("Voulez-vous sauvegarder les paramètres existants ?")) {
-            window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
-            setTimeout(() => {  applyTarifs(date); }, 2000);
-        }
-        else {
-            applyTarifs(date);
-        }
-    }
-    else {
-        applyTarifs(date);
-    }
-});
 
 function applyTarifs(date) {
     let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];

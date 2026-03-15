@@ -204,6 +204,22 @@ function uploader(string $title, string $id): string
                             <div type="button" id="tarifs-check" class="mini-tile desactived-tile">Vérifier</div>
                         </div>
                     </div>
+                <div class="modal fade" id="save-modal" tabindex="-1" role="dialog" aria-labelledby="save-modal-title" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" id="save-modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="scroll-modal-title">Voulez-vous sauvegarder les paramètres existants ?</h5>
+                                    <button type="button" class="close" id="close-modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" id="modal-no">Non</button>
+                                <button type="button" class="btn btn-primary" id="modal-yes">Oui</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
