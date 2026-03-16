@@ -82,7 +82,7 @@ if(isset($_POST["plate"])) {
                     }
                 }
                 else {
-                    $choices["load-".$year.$month] = [$month." ".$year, $label, 1, 0, 0, ""];
+                    $choices["load-".$year.$month] = [$month." ".$year, "", 1, 0, 0, ""];
                 }
             }
             else {
