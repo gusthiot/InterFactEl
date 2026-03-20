@@ -1,15 +1,51 @@
 <?php
 
-require_once("../assets/Sap.php");
 require_once("../assets/Unused.php");
 require_once("../assets/Version.php");
-require_once("../assets/ParamZip.php");
-require_once("../assets/Label.php");
 require_once("../assets/Lock.php");
-require_once("../assets/Info.php");
 require_once("../assets/Message.php");
 require_once("../includes/State.php");
+require_once("../includes/Tarifs.php");
 require_once("../session.inc");
+
+function loadOrReplace(&$choices, $year, $month, $dirMonth, $idem=true)
+{
+    if(Unused::exists($dirMonth)) {
+        replace($choices, $year, $month, $dirMonth, $idem);
+    }
+    else {
+        load($choices, $year, $month, $dirMonth, $idem);
+    }
+}
+
+function fade(&$choices, $year, $month, $dirMonth, $base)
+{
+    $messages = new Message();
+    $choices["load-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, $base, $messages->getMessage('msg10')];
+}
+
+function load(&$choices, $year, $month, $dirMonth, $idem)
+{
+    $choices["load-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth, $idem), 1, 0, 0, ""];
+}
+
+function correct(&$choices, $year, $month, $dirMonth)
+{
+    $choices["correct-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 1, 0, 1, ""];
+}
+
+function replace(&$choices, $year, $month, $dirMonth, $idem, $base=0)
+{
+    $messages = new Message();
+    $unused = Unused::load($dirMonth);
+    $version = Version::load('../');
+    $vmin = $version["vi-min-controler"][2];
+    $warning = "";
+    if(floatval($unused) < floatval($vmin)) {
+        $warning = $messages->getMessage('msg9');
+    }
+    $choices["replace-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth, $idem), 1, 1, $base, $warning];
+}
 
 if(isset($_POST["plate"])) {
 
@@ -21,8 +57,6 @@ if(isset($_POST["plate"])) {
     $choices = [];
 
     if(!empty($mp['month'])) {
-        $version = Version::load('../');
-        $messages = new Message();
 
         if(intval($mp['month']) > 6) {
             $maxYear = State::addToString($mp['year'], 2);
@@ -45,64 +79,31 @@ if(isset($_POST["plate"])) {
                 break;
             }
 
-
             if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
-                if(file_exists($dirMonth."/".ParamZip::NAME)) {
-                    $label = Label::load($dirMonth);
-                    if(empty($label)) {
-                        $label = "No label ?";
-                    }
-                }
-                else {
-                    $label = "<i>Idem mois précédent</i>";
-                }
-                if(file_exists($dirMonth."/0")) {
-                    foreach(globReverse($dirMonth) as $dirVersion) {
-                        if(Lock::exists($dirVersion, 'version')) {
-                            if(Unused::exists($dirMonth)) {
-                                $unused = Unused::load($dirMonth);
-                                $vmin = $version["vi-min-controler"][2];
-                                $warning = "";
-                                if(floatval($unused) < floatval($vmin)) {
-                                    $warning = $messages->getMessage('msg9');
-                                }
-                                $choices["replace-".$year.$month] = [$month." ".$year, $label, 1, 1, 1, $warning];
-                            }
-                            else {
-                                $choices["correct-".$year.$month] = [$month." ".$year, $label, 1, 0, 1, ""];
-                            }
+                if(Tarifs::v0_exists($dirMonth)) {
+                    $dirVersion = globReverse($dirMonth)[0];
+                    if(Lock::exists($dirVersion, 'version')) {
+                        if(Unused::exists($dirMonth)) {
+                            replace($choices, $year, $month, $dirMonth, true, 1);
                         }
                         else {
-                            $base = 0;
-                            if(floatval(basename($dirVersion)) > 0) {
-                                $base = 1;
-                            }
-                            $choices["load-".$year.$month] = [$month." ".$year, $label, 0, 0, $base, $messages->getMessage('msg10')];
+                            correct($choices, $year, $month, $dirMonth);
                         }
+                    }
+                    else {
+                        $base = 0;
+                        if(floatval(basename($dirVersion)) > 0) {
+                            $base = 1;
+                        }
+                        fade($choices, $year, $month, $dirMonth, $base);
                     }
                 }
                 else {
-                    $choices["load-".$year.$month] = [$month." ".$year, "", 1, 0, 0, ""];
+                    loadOrReplace($choices, $year, $month, $dirMonth, false);
                 }
             }
             else {
-                if(Unused::exists($dirMonth)) {
-                    $label = Label::load($dirMonth);
-                    if(empty($label)) {
-                        $label = "No label ?";
-                    }
-                    $unused = Unused::load($dirMonth);
-                    $vmin = $version["vi-min-controler"][2];
-                    $warning = "";
-                    if(floatval($unused) < floatval($vmin)) {
-                        $warning = $messages->getMessage('msg9');
-                    }
-                    $choices["replace-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, $warning];
-                }
-                else {
-                    $choices["load-".$year.$month] = [$month." ".$year, "", 1, 0, 0, ""];
-                }
-
+                loadOrReplace($choices, $year, $month, $dirMonth, false);
             }
 
             if($month == "01") {

@@ -1,6 +1,7 @@
 <?php
 
 require_once("../assets/Label.php");
+require_once("../assets/Lock.php");
 require_once("../assets/ParamZip.php");
 require_once("State.php");
 require_once("Zip.php");
@@ -168,6 +169,40 @@ class Tarifs
         }
         else {
             return "open error";
+        }
+    }
+
+    static function v0_exists($dirMonth)
+    {
+        if(file_exists($dirMonth."/0")) {
+            foreach(globReverse($dirMonth."/0") as $dirRun) {
+                $lockRun = Lock::load($dirRun, "run");
+                if(is_null($lockRun) || $lockRun != "invalidate") {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static function label($dirMonth, $idem=true)
+    {
+        if(file_exists($dirMonth."/".ParamZip::NAME)) {
+            $label = Label::load($dirMonth);
+            if(empty($label)) {
+                return "No label ?";
+            }
+            else {
+                return $label;
+            }
+        }
+        else {
+            if($idem) {
+                return "<i>Idem mois précédent</i>";
+            }
+            else {
+                return "";
+            }
         }
     }
 }

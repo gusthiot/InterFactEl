@@ -41,6 +41,9 @@ if(!$available) {
 }
 $messages = new Message();
 
+$open = State::firstOpenMonth($dir);
+$last = $open['month']."/".$open['year'];
+
 /**
  * Customized button to upload prepa
  *
@@ -198,6 +201,7 @@ function uploader(string $title, string $id): string
                                 </div>
                             </div>
                         </div>
+                            <?= $last ?>
                         <div id="tarifs-bottom">
                             <div type="button" id="tarifs-cancel" class="mini-tile desactived-tile">Annuler</div>
                             <div type="button" id="tarifs-save" class="mini-tile desactived-tile">Sauvegarder</div>
