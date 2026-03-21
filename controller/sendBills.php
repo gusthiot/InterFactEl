@@ -184,7 +184,9 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     catch(Exception $e) {
         $error .= $e->getMessage();
     }
-    unlink("../".Lock::FILES['process']);
+    finally {
+        unlink("../".Lock::FILES['process']);
+    }
 
     if($sap->status() == 4) {
         $state = new State(DATA.$plateforme);

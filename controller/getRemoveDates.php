@@ -21,7 +21,20 @@ function remove(&$choices, $year, $month, $dirMonth, $idem=true)
     $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth, $idem), 1, 1, 0, $warning];
 }
 
+function maxDate($mp, $dir)
+{
+    foreach(globReverse($dir) as $dirYear) {
+        foreach(globReverse($dirYear) as $dirMonth) {
+            if(Unused::exists($dirMonth)) {
+                return basename($dirYear).basename($dirMonth);
+            }
+        }
+    }
+    return $mp['year'].$mp['month'];
+}
+
 if(isset($_POST["plate"])) {
+
 
     $plateforme = $_POST["plate"];
     checkPlateforme("tarifs", $plateforme);
@@ -32,21 +45,7 @@ if(isset($_POST["plate"])) {
 
     if(!empty($mp['month'])) {
         $messages = new Message();
-
-        foreach(globReverse($dir) as $dirYear) {
-            $maxYear = basename($dirYear);
-            foreach(globReverse($dirYear) as $dirMonth) {
-                $maxMonth = basename($dirMonth);
-                if(Unused::exists($dirMonth)) {
-                    break;
-                }
-            }
-            if(Unused::exists($dirMonth)) {
-                break;
-            }
-        }
-
-        $date = $maxYear.$maxMonth;
+        $date = maxDate($mp, $dir);
 
         while(true) {
 
@@ -54,7 +53,7 @@ if(isset($_POST["plate"])) {
             $year = substr($date, 0, 4);
 
             $dirMonth = $dir."/".$year."/".$month;
-            if(Lock::exists($dirMonth, 'month')) {
+            if(!file_exists($dirMonth) || Lock::exists($dirMonth, 'month')) {
                 break;
             }
 

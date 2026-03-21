@@ -115,23 +115,24 @@ function uploader(string $title, string $id): string
 
                                             $lastRun = 0;
                                             $lastVersion = 0;
-                                            foreach(globReverse($dirMonth) as $dirVersion) {
-                                                foreach(globReverse($dirVersion) as $dirRun) {
-                                                    $sap = new Sap($dirRun);
-                                                    if(Lock::exists($dirRun, 'run') || $sap->status() > 1) {
-                                                        $lastRun = basename($dirRun);
-                                                        $lastVersion = basename($dirVersion);
-                                                        break;
-                                                    }
-                                                }
-                                                if($lastRun > 0) {
-                                                    break;
-                                                }
-                                            }
                                             $id = $year."-".$month;
                                             echo '<tr>';
                                             echo '<td>'.$month.' '.$year;
-                                            if(Lock::exists($dirMonth, 'month')) { ?>
+                                            if(Lock::exists($dirMonth, 'month')) {
+                                                foreach(globReverse($dirMonth) as $dirVersion) {
+                                                    foreach(globReverse($dirVersion) as $dirRun) {
+                                                        $sap = new Sap($dirRun);
+                                                        if(Lock::exists($dirRun, 'run') || $sap->status() > 1) {
+                                                            $lastRun = basename($dirRun);
+                                                            $lastVersion = basename($dirVersion);
+                                                            break;
+                                                        }
+                                                    }
+                                                    if($lastRun > 0) {
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
                                                 <svg class="icon" aria-hidden="true">
                                                     <use xlink:href="#lock"></use>
                                                 </svg>
