@@ -75,7 +75,7 @@ if(isset($_POST["plate"])) {
             $year = substr($date, 0, 4);
 
             $dirMonth = $dir."/".$year."/".$month;
-            if(!file_exists($dirMonth) || Lock::exists($dirMonth, 'month')) {
+            if(($date == "202407") || Lock::exists($dirMonth, 'month')) {
                 break;
             }
 
