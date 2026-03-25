@@ -1,6 +1,8 @@
 <?php
 
+require_once("../assets/Label.php");
 require_once("../assets/Lock.php");
+require_once("../assets/ParamZip.php");
 require_once("../assets/Unused.php");
 require_once("../assets/Logfile.php");
 require_once("../assets/Sap.php");

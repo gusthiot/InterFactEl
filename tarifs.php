@@ -8,6 +8,7 @@ require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Message.php");
 require_once("includes/State.php");
+require_once("includes/Tarifs.php");
 require_once("session.inc");
 
 /**
@@ -43,6 +44,25 @@ $messages = new Message();
 
 $open = State::firstOpenMonth($dir);
 $last = $open['month']."/".$open['year'];
+
+$dirOpen = $dir."/".$open['year']."/".$open['month'];
+$v0_exists = "non";
+if(Tarifs::v0_exists($dirOpen)) {
+    $v0_exists = "oui";
+}
+$lock_exists = "non";
+$dirOpenVersion = globReverse($dirOpen)[0];
+if(Lock::exists($dirOpenVersion, 'version')) {
+    $lock_exists = "oui";
+}
+$v1_exists = "non";
+if(floatval(basename($dirOpenVersion)) > 0) {
+    $v1_exists = "oui";
+}
+$unused_exists = "non";
+if(Unused::exists($dirOpen)) {
+    $unused_exists = "oui";
+}
 
 /**
  * Customized button to upload prepa
@@ -202,7 +222,8 @@ function uploader(string $title, string $id): string
                                 </div>
                             </div>
                         </div>
-                            <?= $last ?>
+                            <?= $last." | V0? ".$v0_exists." | last lockv? ".$lock_exists." | last V>0? ".$v1_exists." | unused? ".$unused_exists ?>
+
                         <div id="tarifs-bottom">
                             <div type="button" id="tarifs-cancel" class="mini-tile desactived-tile">Annuler</div>
                             <div type="button" id="tarifs-save" class="mini-tile desactived-tile">Sauvegarder</div>
