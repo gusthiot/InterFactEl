@@ -51,13 +51,15 @@ if(Tarifs::v0_exists($dirOpen)) {
     $v0_exists = "oui";
 }
 $lock_exists = "non";
-$dirOpenVersion = globReverse($dirOpen)[0];
-if(Lock::exists($dirOpenVersion, 'version')) {
-    $lock_exists = "oui";
-}
 $v1_exists = "non";
-if(floatval(basename($dirOpenVersion)) > 0) {
-    $v1_exists = "oui";
+if(count(globReverse($dirOpen)) > 0) {
+    $dirOpenVersion = globReverse($dirOpen)[0];
+    if(Lock::exists($dirOpenVersion, 'version')) {
+        $lock_exists = "oui";
+    }
+    if(floatval(basename($dirOpenVersion)) > 0) {
+        $v1_exists = "oui";
+    }
 }
 $unused_exists = "non";
 if(Unused::exists($dirOpen)) {
