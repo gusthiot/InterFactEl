@@ -12,6 +12,17 @@ class Label
     const NAME = "label.txt";
 
     /**
+     * Checks if file exists in given directory
+     *
+     * @param string $dir given directory
+     * @return boolean
+     */
+    static function exists(string $dir): bool
+    {
+        return file_exists($dir."/".self::NAME);
+    }
+
+    /**
      * Extracts the text file content as a string
      *
      * @param string $dir directory where to find the text file

@@ -61,9 +61,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         $_SESSION['alert-warning'] = "info vide ? ";
     }
 
-    if(Unused::exists($dirTarifs)) {
-        Unused::remove($dirTarifs);
-    }
+    Tarifs::finalize($dirTarifs);
 
     $txt = date('Y-m-d H:i:s')." | ".USER." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;
     Logfile::write(DATA.$plateforme, $txt);

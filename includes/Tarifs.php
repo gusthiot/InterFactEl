@@ -1,8 +1,5 @@
 <?php
 
-require_once("State.php");
-require_once("Zip.php");
-
 /**
  * Tarifs class allows to manage the parameters archive
  * - one different version can be kept by month
@@ -52,58 +49,6 @@ class Tarifs
         if(file_exists($dirTarifs."/".Label::NAME)){
             unlink($dirTarifs."/".Label::NAME);
         }
-    }
-
-    /**
-     * Corrects an archive, by replacing some files by new given ones
-     *
-     * @param string $dirTarifs directory where to find the archive
-     * @param string $file archive containing the new files
-     * @return string empty, or error
-     */
-    static function correct(string $dirTarifs, string $file): string
-    {
-        $tmpDir = TEMP.'tarifs_'.time().'/';
-        if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
-            $msg = Zip::unzip($dirTarifs."/".ParamZip::NAME, $tmpDir);
-            if(empty($msg)) {
-                $msg = Zip::unzip($file, $tmpDir);
-                if(empty($msg)) {
-                    $msg = self::createZip($dirTarifs, $tmpDir);
-                }
-            }
-            State::delDir($tmpDir);
-            return $msg;
-        }
-        return error_get_last();
-    }
-
-    /**
-     * Saves a new archive
-     *
-     * @param string $dirTarifs directory where to save the archive
-     * @param string $file archive containing the new files
-     * @return string empty, or error
-     */
-    static function importNew(string $dirTarifs, string $file): string
-    {
-        if(file_exists($dirTarifs) || mkdir($dirTarifs, 0777, true)) {
-            $tmpDir = TEMP.'tarifs_'.time().'/';
-            if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
-                $msg = Zip::unzip($file, $tmpDir);
-                if(empty($msg)) {
-                    $msg = self::createZip($dirTarifs, $tmpDir);
-                    if(empty($msg)) {
-                        if(!Label::save($dirTarifs, "New")) {
-                            $msg = "Problème avec le label";
-                        }
-                    }
-                }
-                State::delDir($tmpDir);
-                return $msg;
-            }
-        }
-        return error_get_last();
     }
 
     /**
@@ -182,10 +127,29 @@ class Tarifs
         return false;
     }
 
-    static function label($dirMonth, $idem=true)
+    static function status($dirMonth)
+    {
+        $status = 0;
+        if(Unused::exists($dirMonth)) {
+            $status += 1;
+        }
+        if(Tarifs::v0_exists($dirMonth)) {
+            $status += 8;
+            $dirVersion = globReverse($dirMonth)[0];
+            if(Lock::exists($dirVersion, 'version')) {
+                $status += 4;
+            }
+            if(floatval(basename($dirVersion)) > 0) {
+                $status += 2;
+            }
+        }
+        return $status;
+    }
+
+    static function label($dirMonth, $idem=false)
     {
         if(file_exists($dirMonth."/".ParamZip::NAME)) {
-            $label = Label::load($dirMonth);
+            return Label::load($dirMonth);
             if(empty($label)) {
                 return "No label ?";
             }
@@ -201,5 +165,32 @@ class Tarifs
                 return "";
             }
         }
+    }
+
+    static function finalize($dirMonth)
+    {
+        if(Unused::exists($dirTarifs)) {
+
+            $file = $dirTarifs."/newrates.csv";
+            if((($open = fopen($file, "w")) !== false)) {
+                fclose($open);
+            }
+            Unused::remove($dirTarifs);
+        }
+        if(file_exists($dirTarifs."/".ParamZip::NAME)){
+            unlink($dirTarifs."/".ParamZip::NAME);
+        }
+    }
+
+    static function warning9($dirMonth)
+    {
+        $messages = new Message();
+        $unused = Unused::load($dirMonth);
+        $version = Version::load('../');
+        $vmin = $version["vi-min-controler"][2];
+        if(floatval($unused) < floatval($vmin)) {
+            return $messages->getMessage('msg9');
+        }
+        return "";
     }
 }

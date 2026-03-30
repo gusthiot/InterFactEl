@@ -105,9 +105,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
 
                                     Info::save($dir, $infos);
 
-                                    if(Unused::exists($dirTarifs)) {
-                                        Unused::remove($dirTarifs);
-                                    }
+                                    Tarifs::finalize($dirTarifs);
                                 }
                                 if(file_exists($dirPrevMonth) && !Lock::exists($dirPrevMonth, 'month')) {
                                     foreach(globReverse($dirPrevMonth) as $dirPrevVersion) {

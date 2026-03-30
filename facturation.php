@@ -6,6 +6,7 @@ require_once("assets/Sap.php");
 require_once("assets/Lock.php");
 require_once("assets/Message.php");
 require_once("includes/State.php");
+require_once("includes/Tarifs.php");
 require_once("session.inc");
 
 /**
@@ -195,7 +196,8 @@ include("includes/lock.inc");
                                             <use xlink:href="#lock"></use>
                                         </svg>
                                     <?php }
-                                    if(Unused::exists($dirMonth) && State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
+                                    $status = Tarifs::status($dirMonth);
+                                    if(State::isSameAs($month, $year, $mp['month'], $mp['year']) && in_array($status, [11, 13, 15])) { ?>
                                         <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
                                             data-content="<?= $messages->getMessage('msg8') ?>">
                                             <svg class="icon icon-selectable red" aria-hidden="true">

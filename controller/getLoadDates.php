@@ -10,45 +10,6 @@ require_once("../includes/State.php");
 require_once("../includes/Tarifs.php");
 require_once("../session.inc");
 
-function loadOrReplace(&$choices, $year, $month, $dirMonth, $idem=true)
-{
-    if(Unused::exists($dirMonth)) {
-        replace($choices, $year, $month, $dirMonth, $idem);
-    }
-    else {
-        load($choices, $year, $month, $dirMonth, $idem);
-    }
-}
-
-function fade(&$choices, $year, $month, $dirMonth, $base)
-{
-    $messages = new Message();
-    $choices["load-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, $base, $messages->getMessage('msg10')];
-}
-
-function load(&$choices, $year, $month, $dirMonth, $idem)
-{
-    $choices["load-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth, $idem), 1, 0, 0, ""];
-}
-
-function correct(&$choices, $year, $month, $dirMonth)
-{
-    $choices["correct-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 1, 0, 1, ""];
-}
-
-function replace(&$choices, $year, $month, $dirMonth, $idem, $base=0)
-{
-    $messages = new Message();
-    $unused = Unused::load($dirMonth);
-    $version = Version::load('../');
-    $vmin = $version["vi-min-controler"][2];
-    $warning = "";
-    if(floatval($unused) < floatval($vmin)) {
-        $warning = $messages->getMessage('msg9');
-    }
-    $choices["replace-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth, $idem), 1, 1, $base, $warning];
-}
-
 if(isset($_POST["plate"])) {
 
     $plateforme = $_POST["plate"];
@@ -77,35 +38,30 @@ if(isset($_POST["plate"])) {
             $year = substr($date, 0, 4);
 
             $dirMonth = $dir."/".$year."/".$month;
-            if(($date == "202407") || Lock::exists($dirMonth, 'month')) {
+            if(Lock::exists($dirMonth, 'month') || ($date == "202407")) {
                 break;
             }
 
             if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
-                if(Tarifs::v0_exists($dirMonth)) {
-                    $dirVersion = globReverse($dirMonth)[0];
-                    if(Lock::exists($dirVersion, 'version')) {
-                        if(Unused::exists($dirMonth)) {
-                            replace($choices, $year, $month, $dirMonth, true, 1);
-                        }
-                        else {
-                            correct($choices, $year, $month, $dirMonth);
-                        }
-                    }
-                    else {
-                        $base = 0;
-                        if(floatval(basename($dirVersion)) > 0) {
-                            $base = 1;
-                        }
-                        fade($choices, $year, $month, $dirMonth, $base);
-                    }
-                }
-                else {
-                    loadOrReplace($choices, $year, $month, $dirMonth, false);
-                }
+                $status = Tarifs::status($dirMonth);
+                in_array($status, [8, 9, 10, 11]) ? $warning = $messages->getMessage('msg10') :
+                    ($status == 1 ? $warning = Tarif::warning9($dirMonth) : $warning = "");
+                $status > 9 ? $base = 1 : $base = 0;
+                Unused::exists($dirMonth) ? $diode = 0 : $diode = 1;
+                in_array($status, [8, 9, 10, 11]) ? $clic = 0 : $clic = 1;
+                in_array($status, [12, 14]) ? $type = "correct" :
+                    (in_array($status, [1, 13, 15]) ? $type = "replace" : $type = "load");
+
+                $choices[$type."-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, $diode, $base, $warning];
             }
             else {
-                loadOrReplace($choices, $year, $month, $dirMonth, false);
+                $label = Tarifs::label($dirMonth);
+                if(Unused::exists($dirMonth)) {
+                    $choices["replace-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, Tarifs::warning9($dirMonth)];
+                }
+                else {
+                    $choices["load-".$year.$month] = [$month." ".$year, $label, 1, 0, 0, ""];
+                }
             }
 
             if($month == "01") {

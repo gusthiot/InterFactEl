@@ -37,8 +37,10 @@ if(isset($_POST['plate']) && isset($_POST['files']) && isset($_POST['date'])) {
         if(!Unused::save($dirTarifs, $vl)) {
             $msg .= "Problème avec le unused";
         }
-        if(!Label::save($dirTarifs, "New")) {
-            $msg .= "Problème avec le label";
+        if(!file_exists($dirTarifs."/newrates.csv")) {
+            if(!Label::save($dirTarifs, "New")) {
+                $msg .= "Problème avec le label";
+            }
         }
         $msg .= Tarifs::createZip($dirTarifs, $tmpDir);
     }

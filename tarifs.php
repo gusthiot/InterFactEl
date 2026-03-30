@@ -34,7 +34,6 @@ if(file_exists($dir)) {
         $available = false;
     }
 }
-$mp = State::lastRun($dir);
 if(!$available) {
     $_SESSION['alert-danger'] = "Les tarifs de cette plateforme ne peuvent pas être modifiés !";
     header('Location: index.php');
@@ -42,29 +41,11 @@ if(!$available) {
 }
 $messages = new Message();
 
+$mp = State::lastRun($dir);
 $open = State::firstOpenMonth($dir);
 $last = $open['month']."/".$open['year'];
 
 $dirOpen = $dir."/".$open['year']."/".$open['month'];
-$v0_exists = "non";
-if(Tarifs::v0_exists($dirOpen)) {
-    $v0_exists = "oui";
-}
-$lock_exists = "non";
-$v1_exists = "non";
-if(count(globReverse($dirOpen)) > 0) {
-    $dirOpenVersion = globReverse($dirOpen)[0];
-    if(Lock::exists($dirOpenVersion, 'version')) {
-        $lock_exists = "oui";
-    }
-    if(floatval(basename($dirOpenVersion)) > 0) {
-        $v1_exists = "oui";
-    }
-}
-$unused_exists = "non";
-if(Unused::exists($dirOpen)) {
-    $unused_exists = "oui";
-}
 
 /**
  * Customized button to upload prepa
@@ -80,6 +61,87 @@ function uploader(string $title, string $id): string
     $html .= $title;
     $html .= '</label>';
     return $html;
+}
+
+function tarifLine($year, $month, $dirMonth, $warning, $lock=false)
+{
+    $label = Label::load($dirMonth);
+    if(empty($label)) {
+        $label = "No label ?";
+    }
+    $id = $year."-".$month;
+    echo '<tr>';
+    echo '<td>'.$month.' '.$year;
+    if($lock) {
+        $lastRun = 0;
+        $lastVersion = 0;
+        foreach(globReverse($dirMonth) as $dirVersion) {
+            foreach(globReverse($dirVersion) as $dirRun) {
+                $sap = new Sap($dirRun);
+                if(Lock::exists($dirRun, 'run') || $sap->status() > 1) {
+                    $lastRun = basename($dirRun);
+                    $lastVersion = basename($dirVersion);
+                    break;
+                }
+            }
+            if($lastRun > 0) {
+                break;
+            }
+        }
+        echo '<svg class="icon" aria-hidden="true">
+                <use xlink:href="#lock"></use>
+            </svg>';
+    }
+    if(!empty($warning)) {
+        echo '<button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
+                data-content="'.$messages->getMessage('msg7').'">
+                <svg class="icon icon-selectable red" aria-hidden="true">
+                    <use xlink:href="#alert-triangle"></use>
+                </svg>
+            </button>';
+    }
+    echo '</td>';
+    echo '<td>';
+    echo '<button id="'.$id.'" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-'.$id.'" aria-expanded="false" aria-controls="collapse-'.$id.'">'.$label.'</button>
+            <div class="collapse collapse-item collapse-item-desktop" id="collapse-'.$id.'">
+        <button type="button" id="etiquette-'.$id.'" class="btn but-line etiquette">Etiquette</button>';
+    if($lock) {
+        echo '<button type="button" id="all-'.$id.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'" class="btn but-line all">Exporter tout</button>';
+    }
+    echo '<div id="label-'.$id.'"></div>';
+    echo '</div></td></tr>';
+}
+
+function displayTarifs($year, $month, $dirMonth, $mp)
+{
+    if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+        $status = Tarifs::status($dirMonth);
+        if($status == 1) {
+            tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth));
+
+        }
+        if($status > 8) {
+            if(in_array($status, [11, 13, 15])) {
+                tarifLine($year, $month, $dirMonth, $messages->getMessage('msg10'));
+            }
+            else {
+                tarifLine($year, $month, $dirMonth, "");
+            }
+
+        }
+    }
+    else {
+        if(Lock::exists($dirMonth, 'month')) {
+            if(Label::exists($dirMonth)) {
+                tarifLine($year, $month, $dirMonth, "", true);
+            }
+        }
+        else {
+            if(file_exists($dirMonth."/".ParamZip::NAME)) {
+                tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth));
+            }
+        }
+    }
 }
 
 ?>
@@ -129,73 +191,7 @@ function uploader(string $title, string $id): string
                                     $year = basename($dirYear);
                                     foreach(globReverse($dirYear) as $dirMonth) {
                                         $month = basename($dirMonth);
-                                        if(file_exists($dirMonth."/".ParamZip::NAME)) {
-                                            $label = Label::load($dirMonth);
-                                            if(empty($label)) {
-                                                $label = "No label ?";
-                                            }
-
-                                            $lastRun = 0;
-                                            $lastVersion = 0;
-                                            $id = $year."-".$month;
-                                            echo '<tr>';
-                                            echo '<td>'.$month.' '.$year;
-                                            if(Lock::exists($dirMonth, 'month')) {
-                                                foreach(globReverse($dirMonth) as $dirVersion) {
-                                                    foreach(globReverse($dirVersion) as $dirRun) {
-                                                        $sap = new Sap($dirRun);
-                                                        if(Lock::exists($dirRun, 'run') || $sap->status() > 1) {
-                                                            $lastRun = basename($dirRun);
-                                                            $lastVersion = basename($dirVersion);
-                                                            break;
-                                                        }
-                                                    }
-                                                    if($lastRun > 0) {
-                                                        break;
-                                                    }
-                                                }
-                                                ?>
-                                                <svg class="icon" aria-hidden="true">
-                                                    <use xlink:href="#lock"></use>
-                                                </svg>
-                                            <?php
-                                            }
-                                            else {
-                                                if(Unused::exists($dirMonth)) {
-                                                    $unused = Unused::load($dirMonth);
-                                                    $version = Version::load('./');
-                                                    $vmin = $version["vi-min-controler"][2];
-                                                    if(floatval($unused) < floatval($vmin)) {?>
-                                                        <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
-                                                            data-content="<?= $messages->getMessage('msg9') ?>">
-                                                            <svg class="icon icon-selectable red" aria-hidden="true">
-                                                                <use xlink:href="#alert-triangle"></use>
-                                                            </svg>
-                                                        </button>
-                                                <?php }
-                                                }
-                                            }
-                                            if(Unused::exists($dirMonth)) {
-                                                if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) { ?>
-                                                    <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
-                                                        data-content="<?= $messages->getMessage('msg7') ?>">
-                                                        <svg class="icon icon-selectable red" aria-hidden="true">
-                                                            <use xlink:href="#alert-triangle"></use>
-                                                        </svg>
-                                                    </button>
-                                            <?php }
-                                            } ?>
-                                            </td>
-                                            <td>
-                                                <button id="<?= $id ?>" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-<?= $id ?>" aria-expanded="false" aria-controls="collapse-<?= $id ?>"><?= $label?></button>
-                                                <div class="collapse collapse-item collapse-item-desktop" id="collapse-<?= $id ?>">
-                                                    <button type="button" id="etiquette-<?= $id ?>" class="btn but-line etiquette">Etiquette</button>
-                                            <?php if($lastRun > 0) {
-                                                echo '<button type="button" id="all-'.$id.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'" class="btn but-line all">Exporter tout</button>';
-                                            } ?>
-                                            <div id="label-<?= $id ?>"></div>
-                                            </div></td></tr>
-                                        <?php }
+                                        displayTarifs($year, $month, $dirMonth, $mp);
                                     }
                                 }
                             ?></table>
@@ -224,7 +220,7 @@ function uploader(string $title, string $id): string
                                 </div>
                             </div>
                         </div>
-                            <?= $last." | V0? ".$v0_exists." | last lockv? ".$lock_exists." | last V>0? ".$v1_exists." | unused? ".$unused_exists ?>
+                            <?= $last." | status : ".Tarifs::status($dirOpen) ?>
 
                         <div id="tarifs-bottom">
                             <div type="button" id="tarifs-cancel" class="mini-tile desactived-tile">Annuler</div>

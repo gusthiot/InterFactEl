@@ -30,6 +30,7 @@ if(isset($_POST["plate"])) {
             $year = basename($dirYear);
             foreach(globReverse($dirYear) as $dirMonth) {
                 $month = basename($dirMonth);
+
                 if(Lock::exists($dirMonth, 'month')) {
                     foreach(globReverse($dirMonth) as $dirVersion) {
                         foreach(globReverse($dirVersion) as $dirRun) {
@@ -37,50 +38,50 @@ if(isset($_POST["plate"])) {
                             $factel = $infos["FactEl"][2];
                             $vmin = $version["vl-min-relire"][2];
                             if(floatval($factel) >= floatval($vmin)) {
-                                $choices["read-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 1, 0, 1, ""];
+                                $choices["read-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth, true), 1, 0, 1, ""];
                                 break;
                             }
                         }
                     }
+                }
+
+                if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                    $status = Tarifs::status($dirMonth);
+                    if(Unused::exists($dirMonth)) {
+                        $clic = 1;
+                        $warning = "";
+                        if($status == 1) {
+                            $warning = Tarifs::warning9($dirMonth);
+                            if(empty($warning)) {
+                                $clic = 0;
+                            }
+                        }
+                        $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
+                    }
+                    if($status == 0) {
+                        $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, 0, 0];
+                    }
+                    if($status > 7) {
+                        ($status > 9) ? $base = 1 : $base = 0;
+                        $warning = "";
+                        $clic = 1;
+                        if(in_array($status, [8, 9, 10, 11])) {
+                            $warning = $messages->getMessage('msg10');
+                            $clic = 0;
+                        }
+                        $choices["read-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 0, $base, $warning];
+                    }
+                    $mpNb = count($choices)-1;
 
                 }
                 else {
                     if(Unused::exists($dirMonth)) {
-                        $diode = 1;
-                        $unused = Unused::load($dirMonth);
-                        $vmin = $version["vi-min-controler"][2];
-                        $warning = "";
-                        $click = 1;
-                        if(floatval($unused) < floatval($vmin)) {
-                            $click = 0;
-                            $warning = $messages->getMessage('msg9');
-                        }
-                        $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $click, $diode, 0, $warning];
+                        $warning = Tarifs::warning9($dirMonth);
+                        empty($warning) ? $clic = 0 : $clic = 1;
+                        $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
                     }
-                    if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
-                        if(Tarifs::v0_exists($dirMonth)) {
-                            $dirVersion = globReverse($dirMonth)[0];
-                            if(Lock::exists($dirVersion, 'version')) {
-                                foreach(globReverse($dirVersion) as $dirRun) {
-                                    $infos = Info::load($dirRun);
-                                    $factel = $infos["FactEl"][2];
-                                    $vmin = $version["vl-min-relire"][2];
-                                    $click = 0;
-                                    if(floatval($factel) >= floatval($vmin)) {
-                                        $click = 1;
-                                    }
-                                    $choices["read-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $click, 0, 1, ""];
-                                }
-                            }
-                            else {
-                                $base = 0;
-                                if(floatval(basename($dirVersion)) > 0) {
-                                    $base = 1;
-                                }
-                                $choices["read-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, $base, $messages->getMessage('msg10')];
-                            }
-                        }
-                        $mpNb = count($choices)-1;
+                    else {
+                        $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, 0, 0];
                     }
                 }
             }

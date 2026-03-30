@@ -10,19 +10,6 @@ require_once("../includes/State.php");
 require_once("../includes/Tarifs.php");
 require_once("../session.inc");
 
-function remove(&$choices, $year, $month, $dirMonth, $idem=true)
-{
-    $messages = new Message();
-    $unused = Unused::load($dirMonth);
-    $version = Version::load('../');
-    $vmin = $version["vi-min-controler"][2];
-    $warning = "";
-    if(floatval($unused) < floatval($vmin)) {
-        $warning = $messages->getMessage('msg9');
-    }
-    $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth, $idem), 1, 1, 0, $warning];
-}
-
 function maxDate($mp, $dir)
 {
     foreach(globReverse($dir) as $dirYear) {
@@ -36,7 +23,6 @@ function maxDate($mp, $dir)
 }
 
 if(isset($_POST["plate"])) {
-
 
     $plateforme = $_POST["plate"];
     checkPlateforme("tarifs", $plateforme);
@@ -55,32 +41,24 @@ if(isset($_POST["plate"])) {
             $year = substr($date, 0, 4);
 
             $dirMonth = $dir."/".$year."/".$month;
-            if(($date == "202407") || Lock::exists($dirMonth, 'month')) {
+            if(Lock::exists($dirMonth, 'month') || ($date == "202407")) {
                 break;
             }
 
             if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
-                if(Unused::exists($dirMonth)) {
-                    if(Tarifs::v0_exists($dirMonth)) {
-                        $dirVersion = globReverse($dirMonth)[0];
-                        if(Lock::exists($dirVersion, 'version')) {
-                            remove($choices, $year, $month, $dirMonth);
-                        }
-                        else {
-                            $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 1, 0, $messages->getMessage('msg10')];
-                        }
-                    }
-                    else {
-                        remove($choices, $year, $month, $dirMonth, false);
-                    }
-                }
-                else {
-                    $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, 0, ""];
-                }
+                $status = Tarifs::status($dirMonth);
+                in_array($status, [8, 9, 10, 11]) ? $warning = $messages->getMessage('msg10') :
+                    ($status == 1 ? $warning = Tarif::warning9($dirMonth) : $warning = "");
+                in_array($status, [1, 13, 15]) ? $clic = 1 : $clic = 0;
+                in_array($status, [0, 10, 12, 14]) ? $diode = 0 : $diode = 1;
+
+                $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, $diode, 0, $warning];
             }
             else {
                 if(Unused::exists($dirMonth)) {
-                    remove($choices, $year, $month, $dirMonth, false);
+                    $warning = Tarifs::warning9($dirMonth);
+                    empty($warning) ? $clic = 0 : $clic = 1;
+                    $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
                 }
                 else {
                     $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
