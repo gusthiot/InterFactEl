@@ -30,6 +30,7 @@ if(isset($_POST["plate"])) {
     $dir = DATA.$plateforme;
     $mp = State::firstOpenMonth($dir);
     $choices = [];
+    $version = Version::load('../');
 
     if(!empty($mp['month'])) {
         $messages = new Message();
@@ -48,15 +49,15 @@ if(isset($_POST["plate"])) {
             if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
                 $status = Tarifs::status($dirMonth);
                 in_array($status, [8, 9, 10, 11]) ? $warning = $messages->getMessage('msg10') :
-                    ($status == 1 ? $warning = Tarif::warning9($dirMonth) : $warning = "");
+                    ($status == 1 ? $warning = Tarif::warning9($dirMonth, $version) : $warning = "");
                 in_array($status, [1, 13, 15]) ? $clic = 1 : $clic = 0;
-                in_array($status, [0, 10, 12, 14]) ? $diode = 0 : $diode = 1;
+                Unused::exists($dirMonth) ? $diode = 1 : $diode = 0;
 
                 $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, $diode, 0, $warning];
             }
             else {
                 if(Unused::exists($dirMonth)) {
-                    $warning = Tarifs::warning9($dirMonth);
+                    $warning = Tarifs::warning9($dirMonth, $version);
                     empty($warning) ? $clic = 0 : $clic = 1;
                     $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
                 }

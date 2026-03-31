@@ -19,6 +19,7 @@ if(isset($_POST["plate"])) {
     $dir = DATA.$plateforme;
     $mp = State::firstOpenMonth($dir);
     $choices = [];
+    $version = Version::load('../');
     $mpNb = 0;
 
     $mpProcessed = false;
@@ -33,7 +34,7 @@ if(isset($_POST["plate"])) {
             $clic = 1;
             $warning = "";
             if($status == 1) {
-                $warning = Tarifs::warning9($dirMonth);
+                $warning = Tarifs::warning9($dirMonth, $version);
                 if(empty($warning)) {
                     $clic = 0;
                 }
@@ -91,7 +92,7 @@ if(isset($_POST["plate"])) {
                     }
                     else {
                         if(Unused::exists($dirMonth)) {
-                            $warning = Tarifs::warning9($dirMonth);
+                            $warning = Tarifs::warning9($dirMonth, $version);
                             empty($warning) ? $clic = 0 : $clic = 1;
                             $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
                         }

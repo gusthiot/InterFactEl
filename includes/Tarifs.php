@@ -169,24 +169,23 @@ class Tarifs
 
     static function finalize($dirMonth)
     {
-        if(Unused::exists($dirTarifs)) {
+        if(Unused::exists($dirMonth)) {
 
-            $file = $dirTarifs."/newrates.csv";
+            $file = $dirMonth."/newrates.csv";
             if((($open = fopen($file, "w")) !== false)) {
                 fclose($open);
             }
-            Unused::remove($dirTarifs);
+            Unused::remove($dirMonth);
         }
-        if(file_exists($dirTarifs."/".ParamZip::NAME)){
-            unlink($dirTarifs."/".ParamZip::NAME);
+        if(file_exists($dirMonth."/".ParamZip::NAME)){
+            unlink($dirMonth."/".ParamZip::NAME);
         }
     }
 
-    static function warning9($dirMonth)
+    static function warning9($dirMonth, $version)
     {
         $messages = new Message();
         $unused = Unused::load($dirMonth);
-        $version = Version::load('../');
         $vmin = $version["vi-min-controler"][2];
         if(floatval($unused) < floatval($vmin)) {
             return $messages->getMessage('msg9');

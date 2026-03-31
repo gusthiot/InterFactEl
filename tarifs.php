@@ -115,6 +115,7 @@ function tarifLine($year, $month, $dirMonth, $warning, $lock=false)
 function displayTarifs($year, $month, $dirMonth, $mp)
 {
 
+    $version = Version::load('./');
     if(Lock::exists($dirMonth, 'month')) {
         if(Label::exists($dirMonth)) {
             tarifLine($year, $month, $dirMonth, "", true);
@@ -124,7 +125,7 @@ function displayTarifs($year, $month, $dirMonth, $mp)
         if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
             $status = Tarifs::status($dirMonth);
             if($status == 1) {
-                tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth));
+                tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth, $version));
 
             }
             if($status > 8) {
@@ -139,7 +140,7 @@ function displayTarifs($year, $month, $dirMonth, $mp)
         }
         else {
             if(file_exists($dirMonth."/".ParamZip::NAME)) {
-                tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth));
+                tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth, $version));
             }
         }
     }
