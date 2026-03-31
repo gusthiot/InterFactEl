@@ -58,8 +58,7 @@ if(isset($_POST["plate"])) {
             else {
                 if(Unused::exists($dirMonth)) {
                     $warning = Tarifs::warning9($dirMonth, $version);
-                    empty($warning) ? $clic = 0 : $clic = 1;
-                    $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
+                    $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 1, 1, 0, $warning];
                 }
                 else {
                     $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
