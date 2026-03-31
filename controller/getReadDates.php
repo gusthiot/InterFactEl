@@ -19,23 +19,25 @@ if(isset($_POST["plate"])) {
     $dir = DATA.$plateforme;
     $mp = State::firstOpenMonth($dir);
     $choices = [];
-    $version = Version::load('../');
     $mpNb = 0;
 
     $mpProcessed = false;
 
     function processMp(&$choices, $mp, $dir)
     {
+        $version = Version::load('../');
+        $messages = new Message();
         $month = $mp['month'];
         $year = $mp['year'];
         $dirMonth = $dir."/".$year."/".$month;
         $status = Tarifs::status($dirMonth);
+
         if(Unused::exists($dirMonth)) {
             $clic = 1;
             $warning = "";
             if($status == 1) {
                 $warning = Tarifs::warning9($dirMonth, $version);
-                if(empty($warning)) {
+                if(!empty($warning)) {
                     $clic = 0;
                 }
             }
@@ -59,7 +61,6 @@ if(isset($_POST["plate"])) {
 
     if(!empty($mp['month'])) {
         $version = Version::load('../');
-        $messages = new Message();
 
         foreach(globReverse($dir) as $dirYear) {
             $year = basename($dirYear);
