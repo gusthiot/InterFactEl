@@ -58,9 +58,9 @@ if(isset($_POST["plate"])) {
                             }
                             $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
                         }
-                        if($status == 0) {
-                            $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, 0, 0];
-                        }
+                        //if($status == 0) {
+                            $choices["control-".$year.$month] = [$month." ".$year, $dirMonth." ".$status, 0, 0, 0, 0];
+                        //}
                         if($status > 7) {
                             ($status > 9) ? $base = 1 : $base = 0;
                             $warning = "";

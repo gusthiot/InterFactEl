@@ -47,7 +47,7 @@ if(isset($_POST["plate"])) {
                 in_array($status, [8, 9, 10, 11]) ? $warning = $messages->getMessage('msg10') :
                     ($status == 1 ? $warning = Tarif::warning9($dirMonth) : $warning = "");
                 $status > 9 ? $base = 1 : $base = 0;
-                Unused::exists($dirMonth) ? $diode = 0 : $diode = 1;
+                Unused::exists($dirMonth) ? $diode = 1 : $diode = 0;
                 in_array($status, [8, 9, 10, 11]) ? $clic = 0 : $clic = 1;
                 in_array($status, [12, 14]) ? $type = "correct" :
                     (in_array($status, [1, 13, 15]) ? $type = "replace" : $type = "load");
