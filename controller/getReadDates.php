@@ -44,44 +44,45 @@ if(isset($_POST["plate"])) {
                         }
                     }
                 }
-
-                if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
-                    $status = Tarifs::status($dirMonth);
-                    if(Unused::exists($dirMonth)) {
-                        $clic = 1;
-                        $warning = "";
-                        if($status == 1) {
-                            $warning = Tarifs::warning9($dirMonth);
-                            if(empty($warning)) {
+                else {
+                    if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+                        $status = Tarifs::status($dirMonth);
+                        if(Unused::exists($dirMonth)) {
+                            $clic = 1;
+                            $warning = "";
+                            if($status == 1) {
+                                $warning = Tarifs::warning9($dirMonth);
+                                if(empty($warning)) {
+                                    $clic = 0;
+                                }
+                            }
+                            $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
+                        }
+                        if($status == 0) {
+                            $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, 0, 0];
+                        }
+                        if($status > 7) {
+                            ($status > 9) ? $base = 1 : $base = 0;
+                            $warning = "";
+                            $clic = 1;
+                            if(in_array($status, [8, 9, 10, 11])) {
+                                $warning = $messages->getMessage('msg10');
                                 $clic = 0;
                             }
+                            $choices["read-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 0, $base, $warning];
                         }
-                        $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
-                    }
-                    if($status == 0) {
-                        $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, 0, 0];
-                    }
-                    if($status > 7) {
-                        ($status > 9) ? $base = 1 : $base = 0;
-                        $warning = "";
-                        $clic = 1;
-                        if(in_array($status, [8, 9, 10, 11])) {
-                            $warning = $messages->getMessage('msg10');
-                            $clic = 0;
-                        }
-                        $choices["read-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 0, $base, $warning];
-                    }
-                    $mpNb = count($choices)-1;
+                        $mpNb = count($choices)-1;
 
-                }
-                else {
-                    if(Unused::exists($dirMonth)) {
-                        $warning = Tarifs::warning9($dirMonth);
-                        empty($warning) ? $clic = 0 : $clic = 1;
-                        $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
                     }
                     else {
-                        $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, 0, 0];
+                        if(Unused::exists($dirMonth)) {
+                            $warning = Tarifs::warning9($dirMonth);
+                            empty($warning) ? $clic = 0 : $clic = 1;
+                            $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
+                        }
+                        else {
+                            $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 0, 0, 0, 0];
+                        }
                     }
                 }
             }

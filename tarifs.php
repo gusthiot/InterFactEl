@@ -114,26 +114,27 @@ function tarifLine($year, $month, $dirMonth, $warning, $lock=false)
 
 function displayTarifs($year, $month, $dirMonth, $mp)
 {
-    if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
-        $status = Tarifs::status($dirMonth);
-        if($status == 1) {
-            tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth));
 
-        }
-        if($status > 8) {
-            if(in_array($status, [11, 13, 15])) {
-                tarifLine($year, $month, $dirMonth, $messages->getMessage('msg10'));
-            }
-            else {
-                tarifLine($year, $month, $dirMonth, "");
-            }
-
+    if(Lock::exists($dirMonth, 'month')) {
+        if(Label::exists($dirMonth)) {
+            tarifLine($year, $month, $dirMonth, "", true);
         }
     }
     else {
-        if(Lock::exists($dirMonth, 'month')) {
-            if(Label::exists($dirMonth)) {
-                tarifLine($year, $month, $dirMonth, "", true);
+        if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
+            $status = Tarifs::status($dirMonth);
+            if($status == 1) {
+                tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth));
+
+            }
+            if($status > 8) {
+                if(in_array($status, [11, 13, 15])) {
+                    tarifLine($year, $month, $dirMonth, $messages->getMessage('msg10'));
+                }
+                else {
+                    tarifLine($year, $month, $dirMonth, "");
+                }
+
             }
         }
         else {
