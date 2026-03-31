@@ -21,6 +21,40 @@ if(isset($_POST["plate"])) {
     $choices = [];
     $mpNb = 0;
 
+    $mpProcessed = false;
+
+    function processMp(&$choices, $mp, $dir)
+    {
+        $month = $mp['month'];
+        $year = $mp['year'];
+        $dirMonth = $dir."/".$year."/".$month;
+        $status = Tarifs::status($dirMonth);
+        if(Unused::exists($dirMonth)) {
+            $clic = 1;
+            $warning = "";
+            if($status == 1) {
+                $warning = Tarifs::warning9($dirMonth);
+                if(empty($warning)) {
+                    $clic = 0;
+                }
+            }
+            $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
+        }
+        if($status == 0) {
+            $choices["control-".$year.$month] = [$month." ".$year, "", 0, 0, 0, 0];
+        }
+        if($status > 7) {
+            ($status > 9) ? $base = 1 : $base = 0;
+            $warning = "";
+            $clic = 1;
+            if(in_array($status, [8, 9, 10, 11])) {
+                $warning = $messages->getMessage('msg10');
+                $clic = 0;
+            }
+            $choices["read-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 0, $base, $warning];
+        }
+    }
+
 
     if(!empty($mp['month'])) {
         $version = Version::load('../');
@@ -30,6 +64,11 @@ if(isset($_POST["plate"])) {
             $year = basename($dirYear);
             foreach(globReverse($dirYear) as $dirMonth) {
                 $month = basename($dirMonth);
+
+                if(!$mpProcessed && (intval($year.$month) < intval($mp['year'].$mp['month']))) {
+                    processMp($choices, $mp, $dir);
+                    $mpProcessed = true;
+                }
 
                 if(Lock::exists($dirMonth, 'month')) {
                     foreach(globReverse($dirMonth) as $dirVersion) {
@@ -46,33 +85,9 @@ if(isset($_POST["plate"])) {
                 }
                 else {
                     if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
-                        $status = Tarifs::status($dirMonth);
-                        if(Unused::exists($dirMonth)) {
-                            $clic = 1;
-                            $warning = "";
-                            if($status == 1) {
-                                $warning = Tarifs::warning9($dirMonth);
-                                if(empty($warning)) {
-                                    $clic = 0;
-                                }
-                            }
-                            $choices["control-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 1, 0, $warning];
-                        }
-                        //if($status == 0) {
-                            $choices["control-".$year.$month] = [$month." ".$year, $dirMonth." ".$status, 0, 0, 0, 0];
-                        //}
-                        if($status > 7) {
-                            ($status > 9) ? $base = 1 : $base = 0;
-                            $warning = "";
-                            $clic = 1;
-                            if(in_array($status, [8, 9, 10, 11])) {
-                                $warning = $messages->getMessage('msg10');
-                                $clic = 0;
-                            }
-                            $choices["read-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, 0, $base, $warning];
-                        }
+                        processMp($choices, $mp, $dir);
+                        $mpProcessed = true;
                         $mpNb = count($choices)-1;
-
                     }
                     else {
                         if(Unused::exists($dirMonth)) {
