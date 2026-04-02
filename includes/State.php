@@ -131,34 +131,6 @@ class State
     }
 
     /**
-     * Determines the month of the last run with status > 1 for a plateform
-     *
-     * @param string $pathPlate path to plateform directory
-     * @return array array containing month and year
-     */
-    static function lastRun(string $pathPlate): array
-    {
-        if(file_exists($pathPlate)) {
-            foreach(globReverse($pathPlate) as $dirYear) {
-                $year = basename($dirYear);
-                foreach(globReverse($dirYear) as $dirMonth) {
-                    $month = basename($dirMonth);
-                    foreach(globReverse($dirMonth) as $dirVersion) {
-                        $version = basename($dirVersion);
-                        foreach(globReverse($dirVersion) as $dirRun) {
-                            $sap = new Sap($dirRun);
-                            if($sap->status() > 1) {
-                                return ['month' => $month, 'year' => $year];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return ['month' => "", 'year' => ""];
-    }
-
-    /**
      * Determines which is the current facturation, for a plateform, if there is one
      *
      * @param string $pathPlate path to plateform directory

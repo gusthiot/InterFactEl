@@ -36,7 +36,7 @@ if(file_exists($dir)) {
 }
 $name = DATA_GEST['facturation'][$plateforme];
 $messages = new Message();
-$mp = State::lastRun($dir);
+$mp = State::firstOpenMonth($dir);
 
 /**
  * Customized button to upload prepa

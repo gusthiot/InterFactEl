@@ -41,11 +41,10 @@ if(!$available) {
 }
 $messages = new Message();
 
-$mp = State::lastRun($dir);
-$open = State::firstOpenMonth($dir);
-$last = $open['month']."/".$open['year'];
+$mp = State::firstOpenMonth($dir);
+$last = $mp['month']."/".$mp['year'];
 
-$dirOpen = $dir."/".$open['year']."/".$open['month'];
+$dirOpen = $dir."/".$mp['year']."/".$mp['month'];
 
 /**
  * Customized button to upload prepa
@@ -65,6 +64,7 @@ function uploader(string $title, string $id): string
 
 function tarifLine($year, $month, $dirMonth, $warning, $lock=false)
 {
+    $messages = new Message();
     $label = Label::load($dirMonth);
     if(empty($label)) {
         $label = "No label ?";
@@ -114,7 +114,7 @@ function tarifLine($year, $month, $dirMonth, $warning, $lock=false)
 
 function displayTarifs($year, $month, $dirMonth, $mp)
 {
-
+    $messages = new Message();
     $version = Version::load('./');
     if(Lock::exists($dirMonth, 'month')) {
         if(Label::exists($dirMonth)) {

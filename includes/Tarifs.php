@@ -46,8 +46,9 @@ class Tarifs
         if(file_exists($dirTarifs."/".ParamZip::NAME)){
             unlink($dirTarifs."/".ParamZip::NAME);
         }
-        if(file_exists($dirTarifs."/".Label::NAME)){
-            unlink($dirTarifs."/".Label::NAME);
+
+        if(!file_exists($dirTarifs."/newrates.csv") && file_exists($dirTarifs."/".Label::NAME)) {
+            Label::remove($dirTarifs);
         }
     }
 
@@ -127,6 +128,19 @@ class Tarifs
         return false;
     }
 
+    static function v_exists($dirVersion)
+    {
+        if(file_exists($dirVersion)) {
+            foreach(globReverse($dirVersion) as $dirRun) {
+                $lockRun = Lock::load($dirRun, "run");
+                if(is_null($lockRun) || $lockRun != "invalidate") {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     static function status($dirMonth)
     {
         $status = 0;
@@ -135,7 +149,12 @@ class Tarifs
         }
         if(Tarifs::v0_exists($dirMonth)) {
             $status += 8;
-            $dirVersion = globReverse($dirMonth)[0];
+            foreach(globReverse($dirMonth) as $dirVersion) {
+                if(self::v_exists($dirVersion)) {
+                    break;
+                }
+
+            }
             if(Lock::exists($dirVersion, 'version')) {
                 $status += 4;
             }
