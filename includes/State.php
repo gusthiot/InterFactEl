@@ -93,44 +93,6 @@ class State
     }
 
     /**
-     * Determines the first not locked month for a plateform
-     *
-     * @param string $pathPlate path to plateform directory
-     * @return array array containing month and year
-     */
-    static function firstOpenMonth(string $pathPlate): array
-    {
-        $openMonth = "";
-        $openYear = "";
-        if(file_exists($pathPlate)) {
-            foreach(globReverse($pathPlate) as $dirYear) {
-                $year = basename($dirYear);
-                foreach(globReverse($dirYear) as $dirMonth) {
-                    $month = basename($dirMonth);
-                    if(Lock::exists($dirMonth, 'month')) {
-                        if(empty($openMonth)) {
-                            if($month == "12") {
-                                $openYear = self::addToString($year, 1);
-                                $openMonth = "01";
-                            }
-                            else {
-                                $openYear = $year;
-                                $openMonth = self::addToMonth($month, 1);
-                            }
-                        }
-                        return ['month' => $openMonth, 'year' => $openYear];
-                    }
-                    else {
-                        $openMonth = $month;
-                        $openYear = $year;
-                    }
-                }
-            }
-        }
-        return ['month' => $openMonth, 'year' => $openYear];
-    }
-
-    /**
      * Determines which is the current facturation, for a plateform, if there is one
      *
      * @param string $pathPlate path to plateform directory
@@ -349,6 +311,18 @@ class State
     {
         $m = intval($month) + $num;
         return $m < 10 ? "0".strval($m) : strval($m);
+    }
+
+    static function decreaseDate(string $date)
+    {
+        $month = substr($date, 4, 2);
+        if($month == "01") {
+            return strval(intval($date) - 89);
+        }
+        else {
+            return strval(intval($date) - 1);
+        }
+
     }
 
     /**

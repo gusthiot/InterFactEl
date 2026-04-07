@@ -1,5 +1,7 @@
 
-let plateforme = $('#plate').val();
+const plateforme = $('#plate').val();
+const m0 = $('#m0').val();
+const m0Status = $('#status').val();
 
 /** Liste */
 
@@ -187,7 +189,7 @@ $(document).on("click", "#dates-center", function() {
 
 $("#tarifs-read").on("click", function() {
     reset();
-    $.post("controller/getReadDates.php", {plate: plateforme}, function (data) {
+    $.post("controller/getReadDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
         type = "read";
         first = 0;
         const dataParsed = JSON.parse(data);
@@ -268,7 +270,7 @@ $("#tarifs-import").on("change", function(e) {
 /** Right */
 
 $("#tarifs-load").on("click", function() {
-    $.post("controller/getLoadDates.php", {plate: plateforme}, function (data) {
+    $.post("controller/getLoadDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
         type = "load";
         first = 0;
         choices = JSON.parse(data);
@@ -281,7 +283,7 @@ $("#tarifs-load").on("click", function() {
 
 $("#tarifs-remove").on("click", function() {
     reset();
-    $.post("controller/getRemoveDates.php", {plate: plateforme}, function (data) {
+    $.post("controller/getRemoveDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
         type = "remove";
         first = 0;
         choices = JSON.parse(data);
@@ -344,7 +346,7 @@ $(document).on("click", "#close-modal", function() {
 
 function removeTarifs(date) {
     $.post("controller/suppressTarifs.php", {plate: plateforme, date: date}, function (data) {
-        if(data == "ok") {
+        if(data == "ok" || data.includes("not empty")) {
             reset();
             window.location.href = "tarifs.php?plateforme="+plateforme;
         }

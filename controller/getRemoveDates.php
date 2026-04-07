@@ -10,7 +10,7 @@ require_once("../includes/State.php");
 require_once("../includes/Tarifs.php");
 require_once("../session.inc");
 
-function maxDate($mp, $dir)
+function maxDate($dir, $m0)
 {
     foreach(globReverse($dir) as $dirYear) {
         foreach(globReverse($dirYear) as $dirMonth) {
@@ -19,41 +19,44 @@ function maxDate($mp, $dir)
             }
         }
     }
-    return $mp['year'].$mp['month'];
+    return $m0;
 }
 
-if(isset($_POST["plate"])) {
+if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
 
     $plateforme = $_POST["plate"];
     checkPlateforme("tarifs", $plateforme);
 
     $dir = DATA.$plateforme;
-    $mp = State::firstOpenMonth($dir);
     $choices = [];
+    $m0 = $_POST["m0"];
+    $date = maxDate($dir, $m0);
 
-    if(!empty($mp['month'])) {
+    if(!empty($date)) {
         $version = Version::load('../');
         $messages = new Message();
-        $date = maxDate($mp, $dir);
 
-        while(true) {
+        while($date > "202406") {
 
             $month = substr($date, 4, 2);
             $year = substr($date, 0, 4);
 
             $dirMonth = $dir."/".$year."/".$month;
-            if(Lock::exists($dirMonth, 'month') || ($date == "202407")) {
+            if(Lock::exists($dirMonth, 'month')) {
                 break;
             }
 
-            if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
-                $status = Tarifs::status($dirMonth);
-                in_array($status, [8, 9, 10, 11]) ? $warning = $messages->getMessage('msg10') :
-                    ($status == 1 ? $warning = Tarifs::warning9($dirMonth, $version) : $warning = "");
-                in_array($status, [1, 13, 15]) ? $clic = 1 : $clic = 0;
-                Unused::exists($dirMonth) ? $diode = 1 : $diode = 0;
-
-                $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, $diode, 0, $warning];
+            if(Tarifs::v0_exists($dirMonth)) {
+                if($m0 == $date) {
+                    $status = $_POST["status"];
+                    $status < 4 ? $warning = $messages->getMessage('msg10') : $warning = "";
+                    Unused::exists($dirMonth) ? $diode = 1 : $diode = 0;
+                    in_array($status, [5, 7]) ? $clic = 1 : $clic = 0;
+                    $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, $diode, 0, $warning];
+                }
+                else {
+                    $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
+                }
             }
             else {
                 if(Unused::exists($dirMonth)) {
@@ -63,15 +66,20 @@ if(isset($_POST["plate"])) {
                 else {
                     $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
                 }
-
             }
-
-            if($month == "01") {
-                $date -= 89;
-            }
-            else {
-                $date--;
-            }
+            $date = State::decreaseDate($date);
+        }
+    }
+    else {
+        $month = substr($m0, 4, 2);
+        $year = substr($m0, 0, 4);
+        $dirMonth = $dir."/".$year."/".$month;
+        if(Unused::exists($dirMonth)) {
+            $warning = Tarifs::warning9($dirMonth, $version);
+            $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 1, 1, 0, $warning];
+        }
+        else {
+            $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
         }
     }
     echo json_encode($choices);

@@ -36,7 +36,8 @@ if(file_exists($dir)) {
 }
 $name = DATA_GEST['facturation'][$plateforme];
 $messages = new Message();
-$mp = State::firstOpenMonth($dir);
+$m0 = "";
+
 
 /**
  * Customized button to upload prepa
@@ -195,16 +196,19 @@ include("includes/lock.inc");
                                         <svg class="icon" aria-hidden="true">
                                             <use xlink:href="#lock"></use>
                                         </svg>
-                                    <?php }
-                                    $status = Tarifs::status($dirMonth);
-                                    if(State::isSameAs($month, $year, $mp['month'], $mp['year']) && in_array($status, [11, 13, 15])) { ?>
-                                        <button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
-                                            data-content="<?= $messages->getMessage('msg8') ?>">
-                                            <svg class="icon icon-selectable red" aria-hidden="true">
-                                                <use xlink:href="#alert-triangle"></use>
-                                            </svg>
-                                        </button>
-                                    <?php }
+                                    <?php
+                                    }
+                                    else {
+                                        if(Tarifs::v0_exists($dirMonth)) {
+                                            if(empty($m0)) {
+                                                $m0 = $month."/".$year;
+                                                $status = Tarifs::status($dirMonth);
+                                                if(in_array($status, [3, 5, 7])) {
+                                                    echo Tarifs::warningButton($messages->getMessage('msg7'));
+                                                };
+                                            }
+                                        }
+                                    }
                                     echo '</td>';
                                     $line = 0;
                                     foreach($dirVersions as $dirVersion) {

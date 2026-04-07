@@ -19,5 +19,6 @@ if(isset($_POST["plate"]) && isset($_POST["date"])) {
     $dirTarifs = DATA.$plateforme."/".$year."/".$month."/";
     Unused::remove($dirTarifs);
     Tarifs::suppress($dirTarifs);
+    $rep = rmdir($dirTarifs);
     echo "ok";
 }

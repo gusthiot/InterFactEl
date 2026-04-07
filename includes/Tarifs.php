@@ -117,15 +117,7 @@ class Tarifs
 
     static function v0_exists($dirMonth)
     {
-        if(file_exists($dirMonth."/0")) {
-            foreach(globReverse($dirMonth."/0") as $dirRun) {
-                $lockRun = Lock::load($dirRun, "run");
-                if(is_null($lockRun) || $lockRun != "invalidate") {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return self::v_exists($dirMonth."/0");
     }
 
     static function v_exists($dirVersion)
@@ -147,13 +139,12 @@ class Tarifs
         if(Unused::exists($dirMonth)) {
             $status += 1;
         }
-        if(Tarifs::v0_exists($dirMonth)) {
-            $status += 8;
-            foreach(globReverse($dirMonth) as $dirVersion) {
+        $versions = globReverse($dirMonth);
+        if(count($versions) > 0) {
+            foreach($versions as $dirVersion) {
                 if(self::v_exists($dirVersion)) {
                     break;
                 }
-
             }
             if(Lock::exists($dirVersion, 'version')) {
                 $status += 4;
@@ -163,6 +154,16 @@ class Tarifs
             }
         }
         return $status;
+    }
+
+    static function warningButton($warning)
+    {
+        return '<button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
+                data-content="'.$warning.'">
+                <svg class="icon icon-selectable red" aria-hidden="true">
+                    <use xlink:href="#alert-triangle"></use>
+                </svg>
+            </button>';
     }
 
     static function label($dirMonth, $idem=false)

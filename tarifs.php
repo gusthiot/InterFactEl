@@ -40,11 +40,11 @@ if(!$available) {
     exit;
 }
 $messages = new Message();
+$version = Version::load('./');
 
-$mp = State::firstOpenMonth($dir);
-$last = $mp['month']."/".$mp['year'];
-
-$dirOpen = $dir."/".$mp['year']."/".$mp['month'];
+$m0 = "";
+$m0Dis = "";
+$status = "";
 
 /**
  * Customized button to upload prepa
@@ -64,85 +64,47 @@ function uploader(string $title, string $id): string
 
 function tarifLine($year, $month, $dirMonth, $warning, $lock=false)
 {
-    $messages = new Message();
-    $label = Label::load($dirMonth);
-    if(empty($label)) {
-        $label = "No label ?";
-    }
-    $id = $year."-".$month;
-    echo '<tr>';
-    echo '<td>'.$month.' '.$year;
-    if($lock) {
-        $lastRun = 0;
-        $lastVersion = 0;
-        foreach(globReverse($dirMonth) as $dirVersion) {
-            foreach(globReverse($dirVersion) as $dirRun) {
-                $sap = new Sap($dirRun);
-                if(Lock::exists($dirRun, 'run') || $sap->status() > 1) {
-                    $lastRun = basename($dirRun);
-                    $lastVersion = basename($dirVersion);
+    if(Label::exists($dirMonth)) {
+        $label = Label::load($dirMonth);
+        if(empty($label)) {
+            $label = "No label ?";
+        }
+        $id = $year."-".$month;
+        echo '<tr>';
+        echo '<td>'.$month.' '.$year;
+        if($lock) {
+            $lastRun = 0;
+            $lastVersion = 0;
+            foreach(globReverse($dirMonth) as $dirVersion) {
+                foreach(globReverse($dirVersion) as $dirRun) {
+                    $sap = new Sap($dirRun);
+                    if(Lock::exists($dirRun, 'run') || $sap->status() > 1) {
+                        $lastRun = basename($dirRun);
+                        $lastVersion = basename($dirVersion);
+                        break;
+                    }
+                }
+                if($lastRun > 0) {
                     break;
                 }
             }
-            if($lastRun > 0) {
-                break;
-            }
+            echo '<svg class="icon" aria-hidden="true">
+                    <use xlink:href="#lock"></use>
+                </svg>';
         }
-        echo '<svg class="icon" aria-hidden="true">
-                <use xlink:href="#lock"></use>
-            </svg>';
-    }
-    if(!empty($warning)) {
-        echo '<button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
-                data-content="'.$messages->getMessage('msg7').'">
-                <svg class="icon icon-selectable red" aria-hidden="true">
-                    <use xlink:href="#alert-triangle"></use>
-                </svg>
-            </button>';
-    }
-    echo '</td>';
-    echo '<td>';
-    echo '<button id="'.$id.'" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-'.$id.'" aria-expanded="false" aria-controls="collapse-'.$id.'">'.$label.'</button>
-            <div class="collapse collapse-item collapse-item-desktop" id="collapse-'.$id.'">
-        <button type="button" id="etiquette-'.$id.'" class="btn but-line etiquette">Etiquette</button>';
-    if($lock) {
-        echo '<button type="button" id="all-'.$id.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'" class="btn but-line all">Exporter tout</button>';
-    }
-    echo '<div id="label-'.$id.'"></div>';
-    echo '</div></td></tr>';
-}
-
-function displayTarifs($year, $month, $dirMonth, $mp)
-{
-    $messages = new Message();
-    $version = Version::load('./');
-    if(Lock::exists($dirMonth, 'month')) {
-        if(Label::exists($dirMonth)) {
-            tarifLine($year, $month, $dirMonth, "", true);
+        if(!empty($warning)) {
+            echo Tarifs::warningButton($warning);
         }
-    }
-    else {
-        if(State::isSameAs($month, $year, $mp['month'], $mp['year'])) {
-            $status = Tarifs::status($dirMonth);
-            if($status == 1) {
-                tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth, $version));
-
-            }
-            if($status > 8) {
-                if(in_array($status, [11, 13, 15])) {
-                    tarifLine($year, $month, $dirMonth, $messages->getMessage('msg10'));
-                }
-                else {
-                    tarifLine($year, $month, $dirMonth, "");
-                }
-
-            }
+        echo '</td>';
+        echo '<td>';
+        echo '<button id="'.$id.'" type="button" class="collapse-title collapse-title-desktop collapsed" data-toggle="collapse" data-target="#collapse-'.$id.'" aria-expanded="false" aria-controls="collapse-'.$id.'">'.$label.'</button>
+                <div class="collapse collapse-item collapse-item-desktop" id="collapse-'.$id.'">
+            <button type="button" id="etiquette-'.$id.'" class="btn but-line etiquette">Etiquette</button>';
+        if($lock) {
+            echo '<button type="button" id="all-'.$id.'" data-run="'.$lastRun.'" data-version="'.$lastVersion.'" class="btn but-line all">Exporter tout</button>';
         }
-        else {
-            if(file_exists($dirMonth."/".ParamZip::NAME)) {
-                tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth, $version));
-            }
-        }
+        echo '<div id="label-'.$id.'"></div>';
+        echo '</div></td></tr>';
     }
 }
 
@@ -193,14 +155,41 @@ function displayTarifs($year, $month, $dirMonth, $mp)
                                     $year = basename($dirYear);
                                     foreach(globReverse($dirYear) as $dirMonth) {
                                         $month = basename($dirMonth);
-                                        displayTarifs($year, $month, $dirMonth, $mp);
+                                        if(Lock::exists($dirMonth, 'month')) {
+                                            tarifLine($year, $month, $dirMonth, "", true);
+                                        }
+                                        else {
+                                            if(Tarifs::v0_exists($dirMonth)) {
+                                                if(empty($m0)) {
+                                                    $m0Dis = $month."/".$year;
+                                                    $m0 = $year.$month;
+                                                    $status = Tarifs::status($dirMonth);
+                                                    in_array($status, [3, 5, 7]) ? $warning = $messages->getMessage('msg7') : $warning = "";
+                                                    tarifLine($year, $month, $dirMonth, $warning);
+                                                }
+                                                else {
+                                                    tarifLine($year, $month, $dirMonth, "");
+                                                }
+                                            }
+                                            else {
+                                                tarifLine($year, $month, $dirMonth, Tarifs::warning9($dirMonth, $version));
+                                            }
+                                        }
                                     }
+                                }
+                                if(empty($m0)) {
+                                    $m = $state->getNextMonth();
+                                    $y = $state->getNextYear();
+                                    $m0Dis = $m."/".$y;
+                                    $m0 = $y.$m;
                                 }
                             ?></table>
                         </div>
                     </div>
                     <!-- Espace -->
                     <div class="tab-pane fade" id="tarifs-space" role="tabpanel" aria-labelledby="space-tab">
+                    <input type="hidden" name="m0" id="m0" value="<?= $m0 ?>" />
+                    <input type="hidden" name="status" id="status" value="<?= $status ?>" />
                         <div id="tarifs-top">
                             <div id="tarifs-left">
                                 <div class="tarifs-column">
@@ -222,7 +211,7 @@ function displayTarifs($year, $month, $dirMonth, $mp)
                                 </div>
                             </div>
                         </div>
-                            <?= $last." | status : ".Tarifs::status($dirOpen) ?>
+                            <?= $m0Dis." | status : ".$status ?>
 
                         <div id="tarifs-bottom">
                             <div type="button" id="tarifs-cancel" class="mini-tile desactived-tile">Annuler</div>
