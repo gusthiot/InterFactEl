@@ -11,6 +11,9 @@ require_once("../includes/State.php");
 require_once("../includes/Tarifs.php");
 require_once("../session.inc");
 
+/**
+ * Called to obtain dates from which we could read/control tarifs
+ */
 if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
 
     $plateforme = $_POST["plate"];

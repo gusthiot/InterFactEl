@@ -7,6 +7,7 @@ require_once("../assets/Unused.php");
 require_once("../assets/Logfile.php");
 require_once("../assets/Sap.php");
 require_once("../assets/Info.php");
+require_once("../assets/NewRates.php");
 require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
 require_once("../session.inc");

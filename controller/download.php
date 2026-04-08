@@ -3,6 +3,7 @@
 require_once("../assets/ParamZip.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Label.php");
+require_once("../assets/Sap.php");
 require_once("../includes/Zip.php");
 require_once("../includes/Tarifs.php");
 require_once("../session.inc");
@@ -97,7 +98,7 @@ if(isset($_GET['type'])) {
                     }
                     elseif($type==="sap") {
                         // bills list of a run
-                        readCsv($dirRun."/sap.csv");
+                        readCsv($dirRun."/".Sap::NAME);
                     }
                     elseif($type==="modif") {
                         // modification file (journal, client, modifications) of a run

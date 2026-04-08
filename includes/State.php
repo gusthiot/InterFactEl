@@ -313,7 +313,13 @@ class State
         return $m < 10 ? "0".strval($m) : strval($m);
     }
 
-    static function decreaseDate(string $date)
+    /**
+     * Decreases a date from 1 month as a 6 characters string
+     *
+     * @param string $date previous date
+     * @return string
+     */
+    static function decreaseDate(string $date): string
     {
         $month = substr($date, 4, 2);
         if($month == "01") {

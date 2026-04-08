@@ -62,7 +62,7 @@ function uploader(string $title, string $id): string
     return $html;
 }
 
-function tarifLine($year, $month, $dirMonth, $warning, $lock=false)
+function tarifLine(string $year, string $month, string $dirMonth, string $warning, bool $lock=false): void
 {
     if(Label::exists($dirMonth)) {
         $label = Label::load($dirMonth);

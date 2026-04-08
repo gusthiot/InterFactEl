@@ -7,12 +7,15 @@ require_once("../assets/Label.php");
 require_once("../assets/ParamZip.php");
 require_once("../assets/Message.php");
 require_once("../assets/Version.php");
+require_once("../assets/NewRates.php");
 require_once("../includes/Zip.php");
 require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
 require_once("../session.inc");
 
-
+/**
+ * Called to apply new tarifs
+ */
 if(isset($_POST['plate']) && isset($_POST['files']) && isset($_POST['date'])) {
 
     $plateforme = $_POST["plate"];
@@ -37,7 +40,7 @@ if(isset($_POST['plate']) && isset($_POST['files']) && isset($_POST['date'])) {
         if(!Unused::save($dirTarifs, $vl)) {
             $msg .= "Problème avec le unused";
         }
-        if(!file_exists($dirTarifs."/newrates.csv")) {
+        if(!file_exists($dirTarifs."/".NewRates::NAME)) {
             if(!Label::save($dirTarifs, "New")) {
                 $msg .= "Problème avec le label";
             }

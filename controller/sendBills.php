@@ -9,6 +9,7 @@ require_once("../assets/Lock.php");
 require_once("../assets/ParamZip.php");
 require_once("../assets/Logfile.php");
 require_once("../assets/Message.php");
+require_once("../assets/NewRates.php");
 require_once("../includes/Tarifs.php");
 require_once("../includes/State.php");
 require_once("../session.inc");

@@ -47,7 +47,7 @@ class Tarifs
             unlink($dirTarifs."/".ParamZip::NAME);
         }
 
-        if(!file_exists($dirTarifs."/newrates.csv") && file_exists($dirTarifs."/".Label::NAME)) {
+        if(!file_exists($dirTarifs."/".NewRates::NAME) && file_exists($dirTarifs."/".Label::NAME)) {
             Label::remove($dirTarifs);
         }
     }
@@ -115,12 +115,24 @@ class Tarifs
         }
     }
 
-    static function v0_exists($dirMonth)
+    /**
+     * Checks whether v0 directory exists or not for a given month
+     *
+     * @param string $dirMonth month directory
+     * @return boolean
+     */
+    static function v0_exists(string $dirMonth): bool
     {
         return self::v_exists($dirMonth."/0");
     }
 
-    static function v_exists($dirVersion)
+    /**
+     * Checks whether given version directory exists or not for a given month
+     *
+     * @param string $dirVersion month-version directory
+     * @return boolean
+     */
+    static function v_exists(string $dirVersion): bool
     {
         if(file_exists($dirVersion)) {
             foreach(globReverse($dirVersion) as $dirRun) {
@@ -133,7 +145,13 @@ class Tarifs
         return false;
     }
 
-    static function status($dirMonth)
+    /**
+     * Returns month tarifs status
+     *
+     * @param string $dirMonth month directory
+     * @return integer
+     */
+    static function status(string $dirMonth): int
     {
         $status = 0;
         if(Unused::exists($dirMonth)) {
@@ -156,7 +174,13 @@ class Tarifs
         return $status;
     }
 
-    static function warningButton($warning)
+    /**
+     * Returns html for a given warning message
+     *
+     * @param string $warning warning message
+     * @return string
+     */
+    static function warningButton(string $warning): string
     {
         return '<button aria-hidden="true" type="button" class="btn-invisible" data-toggle="popover" data-trigger="focus"
                 data-content="'.$warning.'">
@@ -166,9 +190,16 @@ class Tarifs
             </button>';
     }
 
-    static function label($dirMonth, $idem=false)
+    /**
+     * Returns a tarifs label for a given month
+     *
+     * @param string $dirMonth month directory
+     * @param boolean $idem if we want to display "idem" or nothing wen there's no label in directory
+     * @return string
+     */
+    static function label(string $dirMonth, bool $idem=false): string
     {
-        if(file_exists($dirMonth."/".ParamZip::NAME)) {
+        if(file_exists($dirMonth."/".Label::NAME)) {
             return Label::load($dirMonth);
             if(empty($label)) {
                 return "No label ?";
@@ -187,11 +218,17 @@ class Tarifs
         }
     }
 
-    static function finalize($dirMonth)
+    /**
+     * finalizes a run in terms of tarifs
+     *
+     * @param string $dirMonth month directory of the run
+     * @return void
+     */
+    static function finalize(string $dirMonth): void
     {
         if(Unused::exists($dirMonth)) {
 
-            $file = $dirMonth."/newrates.csv";
+            $file = $dirMonth."/".NewRates::NAME;
             if((($open = fopen($file, "w")) !== false)) {
                 fclose($open);
             }
@@ -202,7 +239,14 @@ class Tarifs
         }
     }
 
-    static function warning9($dirMonth, $version)
+    /**
+     * Checks whether you should display message 9 or not
+     *
+     * @param string $dirMonth month directory
+     * @param array $version
+     * @return string
+     */
+    static function warning9(string $dirMonth, array $version): string
     {
         $messages = new Message();
         $unused = Unused::load($dirMonth);

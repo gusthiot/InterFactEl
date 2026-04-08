@@ -10,6 +10,9 @@ require_once("../includes/State.php");
 require_once("../includes/Tarifs.php");
 require_once("../session.inc");
 
+/**
+ * Called to obtain dates on which we could apply new tarifs
+ */
 if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
 
     $plateforme = $_POST["plate"];
@@ -45,6 +48,8 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
             break;
         }
 
+        $label = Tarifs::label($dirMonth);
+
         if(Tarifs::v0_exists($dirMonth)) {
             if($m0 == $date) {
                 $status = $_POST["status"];
@@ -60,7 +65,7 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
                     Unused::exists($dirMonth) ? $type = "replace" : $type = "correct";
                     }
                 Unused::exists($dirMonth) ? $diode = 1 : $diode = 0;
-                $choices[$type."-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), $clic, $diode, $base, $warning];
+                $choices[$type."-".$year.$month] = [$month." ".$year, $label, $clic, $diode, $base, $warning];
             }
             else {
                 $choices["load-".$year.$month] = [$month." ".$year, $label, 0, 0, 1, $messages->getMessage('msg10')];
@@ -68,7 +73,6 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
 
         }
         else {
-            $label = Tarifs::label($dirMonth);
             if(Unused::exists($dirMonth)) {
                 $choices["replace-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, Tarifs::warning9($dirMonth, $version)];
             }
