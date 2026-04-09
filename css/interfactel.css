@@ -294,7 +294,7 @@ input[type="file"] {
 }
 
 .selected-tile {
-  background-color: var(--casse);
+  background-color: var(--gris-100);
 }
 
 .desactived-tile {
@@ -304,7 +304,7 @@ input[type="file"] {
 }
 
 .tile:hover {
-  background-color: var(--casse);
+  background-color: var(--gris-100);
 }
 
 .nom-tile {
@@ -619,7 +619,7 @@ table.dates-tarifs .tr-clickable:hover {
 }
 
 .mini-tile:hover {
-  background-color: var(--casse);
+  background-color: var(--gris-100);
 }
 
 #files {
