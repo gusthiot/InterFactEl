@@ -55,6 +55,9 @@ function reset() {
     $('#tarifs-save').addClass('desactived-tile');
     $('#tarifs-check').addClass('desactived-tile');
     $('#tarifs-cancel').addClass('desactived-tile');
+    $("#tarifs-read").removeClass('selected-tile');
+    $("#tarifs-remove").removeClass('selected-tile');
+    $("#tarifs-load").removeClass('selected-tile');
 }
 
 function displayFiles() {
@@ -200,6 +203,7 @@ $("#tarifs-read").on("click", function() {
         }
         displayDates();
         $('#tarifs-cancel').removeClass('desactived-tile');
+        $("#tarifs-read").addClass('selected-tile');
     });
 });
 
@@ -211,6 +215,7 @@ $(document).on("click", "#read-dates .clickable", function() {
         extract();
         sessionStorage.setItem("contents", JSON.stringify(contents));
         $('#tarifs-select').html("");
+        $("#tarifs-read").removeClass('selected-tile');
         displayFiles();
     });
 });
@@ -278,6 +283,7 @@ $("#tarifs-load").on("click", function() {
             first = Object.keys(choices).length - 6;
         }
         displayDates();
+        $("#tarifs-load").addClass('selected-tile');
     });
 });
 
@@ -292,6 +298,7 @@ $("#tarifs-remove").on("click", function() {
         }
         displayDates();
         $('#tarifs-cancel').removeClass('desactived-tile');
+        $("#tarifs-remove").addClass('selected-tile');
     });
 });
 
