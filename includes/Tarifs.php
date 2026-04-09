@@ -256,4 +256,23 @@ class Tarifs
         }
         return "";
     }
+
+    /**
+     * Determines which date is the latest with unused file
+     *
+     * @param string $dir plateform directory
+     * @param string $m0 current month 0 returned if no other directory found
+     * @return string
+     */
+    static function maxDate(string $dir, string $m0): string
+    {
+        foreach(globReverse($dir) as $dirYear) {
+            foreach(globReverse($dirYear) as $dirMonth) {
+                if(Unused::exists($dirMonth)) {
+                    return basename($dirYear).basename($dirMonth);
+                }
+            }
+        }
+        return $m0;
+    }
 }

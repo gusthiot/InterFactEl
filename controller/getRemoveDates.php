@@ -21,79 +21,47 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
     $dir = DATA.$plateforme;
     $choices = [];
     $m0 = $_POST["m0"];
-    $date = maxDate($dir, $m0);
+    $date = Tarifs::maxDate($dir, $m0);
 
-    if(!empty($date)) {
-        $version = Version::load('../');
-        $messages = new Message();
+    $version = Version::load('../');
+    $messages = new Message();
 
-        while($date > "202406") {
+    while($date > "202406") {
 
-            $month = substr($date, 4, 2);
-            $year = substr($date, 0, 4);
+        $month = substr($date, 4, 2);
+        $year = substr($date, 0, 4);
 
-            $dirMonth = $dir."/".$year."/".$month;
-            if(Lock::exists($dirMonth, 'month')) {
-                break;
-            }
+        $dirMonth = $dir."/".$year."/".$month;
+        if(Lock::exists($dirMonth, 'month')) {
+            break;
+        }
 
-            $label = Tarifs::label($dirMonth);
+        $label = Tarifs::label($dirMonth);
 
-            if(Tarifs::v0_exists($dirMonth)) {
-                if($m0 == $date) {
-                    $status = $_POST["status"];
-                    $status < 4 ? $warning = $messages->getMessage('msg10') : $warning = "";
-                    Unused::exists($dirMonth) ? $diode = 1 : $diode = 0;
-                    in_array($status, [5, 7]) ? $clic = 1 : $clic = 0;
-                    $choices["remove-".$year.$month] = [$month." ".$year, $label, $clic, $diode, 0, $warning];
-                }
-                else {
-                    $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, ""];
-                }
+        if(Tarifs::v0_exists($dirMonth)) {
+            if($m0 == $date) {
+                $status = $_POST["status"];
+                $status < 4 ? $warning = $messages->getMessage('msg10') : $warning = "";
+                Unused::exists($dirMonth) ? $diode = 1 : $diode = 0;
+                in_array($status, [5, 7]) ? $clic = 1 : $clic = 0;
+                $choices["remove-".$year.$month] = [$month." ".$year, $label, $clic, $diode, 0, $warning];
             }
             else {
-                if(Unused::exists($dirMonth)) {
-                    $warning = Tarifs::warning9($dirMonth, $version);
-                    $choices["remove-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, $warning];
-                }
-                else {
-                    $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, ""];
-                }
+                $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, ""];
             }
-            $date = State::decreaseDate($date);
-        }
-    }
-    else {
-        $month = substr($m0, 4, 2);
-        $year = substr($m0, 0, 4);
-        $dirMonth = $dir."/".$year."/".$month;
-        if(Unused::exists($dirMonth)) {
-            $warning = Tarifs::warning9($dirMonth, $version);
-            $choices["remove-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth), 1, 1, 0, $warning];
         }
         else {
-            $choices["remove-".$year.$month] = [$month." ".$year, "", 0, 0, 0, ""];
-        }
-    }
-    echo json_encode($choices);
-
-}
-
-/**
- * Determines which date is the latest with unused file
- *
- * @param string $dir plateform directory
- * @param string $m0 current month 0 returned if no other directory found
- * @return string
- */
-function maxDate(string $dir, string $m0): string
-{
-    foreach(globReverse($dir) as $dirYear) {
-        foreach(globReverse($dirYear) as $dirMonth) {
             if(Unused::exists($dirMonth)) {
-                return basename($dirYear).basename($dirMonth);
+                $warning = Tarifs::warning9($dirMonth, $version);
+                $choices["remove-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, $warning];
+            }
+            else {
+                $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, ""];
             }
         }
+        $date = State::decreaseDate($date);
     }
-    return $m0;
+
+    echo json_encode($choices);
+
 }
