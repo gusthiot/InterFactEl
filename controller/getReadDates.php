@@ -73,13 +73,15 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
                 }
             }
             else {
-                if(Unused::exists($dirMonth)) {
-                    $warning = Tarifs::warning9($dirMonth, $version);
-                    empty($warning) ? $clic = 1 : $clic = 0;
-                    $choices["control-".$year.$month] = [$month." ".$year, $label, $clic, 1, 0, $warning];
-                }
-                else {
-                    $choices["control-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, 0];
+                if($year.$month > $m0) {
+                    if(Unused::exists($dirMonth)) {
+                        $warning = Tarifs::warning9($dirMonth, $version);
+                        empty($warning) ? $clic = 1 : $clic = 0;
+                        $choices["control-".$year.$month] = [$month." ".$year, $label, $clic, 1, 0, $warning];
+                    }
+                    else {
+                        $choices["control-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, 0];
+                    }
                 }
             }
         }
