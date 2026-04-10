@@ -79,7 +79,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
             foreach($bills as $bill) {
                 $archive[$bill] = [$sap_cont[$bill][0], $sap_cont[$bill][1], $sap_cont[$bill][2]];
                 $resArray = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"), $dir, $mode);
-                if($resArray[0]) {
+                if(empty($resArray[1] && !empty($resArray[0]))) {
                     $res = json_decode($resArray[0]);
                     if($res && property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
                         $infos = Info::load($dir);
@@ -152,6 +152,12 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                     }
                 }
                 else {
+                    if(empty($resArray[0])) {
+                        $warn .= "result empty, retry <br />";
+                    }
+                    if(empty(!$resArray[1])) {
+                        $warn .= "error ".$resArray[1].", retry <br />";
+                    }
                     $redo[] = $bill;
                 }
             }
@@ -289,15 +295,9 @@ function send(string $data, string $dir, string $mode): array
     curl_setopt($curl, CURLOPT_URL, SAP_URL);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-    $result[] = curl_exec($curl);
-    if($result[0]) {
-        $result[] = null;
-    }
-    else {
-        $result[] = curl_error($curl);
-    }
+    $result = curl_exec($curl);
 
     curl_close($curl);
 
-    return $result;
+    return [$result, curl_error($curl)];
 }
