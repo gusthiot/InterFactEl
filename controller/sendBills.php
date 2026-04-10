@@ -53,6 +53,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
 
 
     $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
+    $dirTarifs = DATA.$plateforme."/".$year."/".$month;
     $dirPrevMonth = DATA.$plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
 
     $warn = "";

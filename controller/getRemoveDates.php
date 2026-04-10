@@ -26,7 +26,9 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
     $version = Version::load('../');
     $messages = new Message();
 
-    while($date > "202406") {
+    $first = Tarifs::firstDate($dir);
+
+    while($date >= $first) {
 
         $month = substr($date, 4, 2);
         $year = substr($date, 0, 4);

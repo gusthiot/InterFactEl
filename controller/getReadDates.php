@@ -27,8 +27,9 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
 
     $version = Version::load('../');
     $messages = new Message();
+    $first = Tarifs::firstDate($dir);
 
-    while($date > "202406") {
+    while($date >= $first) {
 
         $month = substr($date, 4, 2);
         $year = substr($date, 0, 4);
@@ -43,7 +44,7 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
                     $factel = $infos["FactEl"][2];
                     $vmin = $version["vl-min-relire"][2];
                     if(floatval($factel) >= floatval($vmin)) {
-                        $choices["read-".$year.$month] = [$month." ".$year, Tarifs::label($dirMonth, true), 1, 0, 1, ""];
+                        $choices["read-".$year.$month] = [$month." ".$year, $label, 1, 0, 1, ""];
                         break;
                     }
                 }
@@ -73,7 +74,7 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
                 }
             }
             else {
-                if($year.$month > $m0) {
+                if($year.$month >= $m0) {
                     if(Unused::exists($dirMonth)) {
                         $warning = Tarifs::warning9($dirMonth, $version);
                         empty($warning) ? $clic = 1 : $clic = 0;

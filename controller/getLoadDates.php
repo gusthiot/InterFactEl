@@ -37,8 +37,9 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
     }
 
     $date = $maxYear.$maxMonth;
+    $first = Tarifs::firstDate($dir);
 
-    while($date > "202406") {
+    while($date >= $first) {
 
         $month = substr($date, 4, 2);
         $year = substr($date, 0, 4);

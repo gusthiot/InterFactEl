@@ -202,20 +202,11 @@ class Tarifs
         if(file_exists($dirMonth."/".Label::NAME)) {
             return Label::load($dirMonth);
             if(empty($label)) {
-                return "No label ?";
+                return "Label vide ?";
             }
-            else {
-                return $label;
-            }
+            return $label;
         }
-        else {
-            if($idem) {
-                return "<i>Idem mois précédent</i>";
-            }
-            else {
-                return "";
-            }
-        }
+        return "";
     }
 
     /**
@@ -274,5 +265,21 @@ class Tarifs
             }
         }
         return $m0;
+    }
+
+    /**
+     * Determines which is the first processed date
+     *
+     * @param string $dir plateform directory
+     * @return string
+     */
+    static function firstDate(string $dir): string
+    {
+        foreach(glob($dir."/*", GLOB_ONLYDIR) as $dirYear) {
+            foreach(glob($dirYear."/*", GLOB_ONLYDIR) as $dirMonth) {
+                return basename($dirYear).basename($dirMonth);
+            }
+        }
+        return "202406";
     }
 }
