@@ -53,7 +53,7 @@ function uploader(string $title, string $id, string $disabled): string
     if($disabled == "disabled") {
         $html .= ' desactived-tile';
     }
-    $html .'" accept=".zip">';
+    $html .= '" accept=".zip">';
     $html .= '<label class="tile tight-tile" for="'.$id.'">
                 '.$title.'
             </label>';
