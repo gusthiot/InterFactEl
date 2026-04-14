@@ -1,3 +1,4 @@
+$('#historique-div').hide();
 
 $('#open-historique').on('click', function () {
     $('#plate-content').hide();

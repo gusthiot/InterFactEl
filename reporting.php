@@ -31,7 +31,7 @@ include("includes/lock.inc");
 function displayTile(array $tiles): void
 {
     foreach($tiles as $tile) {
-    echo '<div type="button" id="'.$tile[0].'" class="select-period tile">
+    echo '<div id="'.$tile[0].'" class="select-period tile big-tile">
             <p>'.$tile[1].'</p>
             <svg class="icon feather icon-tile" aria-hidden="true">
                 <use xlink:href="'.$tile[2].'"></use>

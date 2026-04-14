@@ -8,6 +8,45 @@ require_once("session.inc");
 include("includes/lock.inc");
 
 /**
+ * Customized tile
+ *
+ * @param string $class tile specific class
+ * @param string $title tile title
+ * @param string $icon tile icon
+ * @param string $input hidden input value if any
+ * @return string
+ */
+function tile(string $class, string $title, string $icon, string $input=""): string
+{
+    return '<div class="tile big-tile '.$class.'">
+                '.$input.'
+                '.$title.'
+                <svg class="icon feather icon-tile" aria-hidden="true">
+                    <use xlink:href="#'.$icon.'"></use>
+                </svg>
+            </div>';
+}
+
+/**
+ * Customized uploading tile
+ *
+ * @param string $action uploading form
+ * @param string $title tile title
+ * @param string $icon tile icon
+ * @return string
+ */
+function uploaderTile(string $action, string $title, string $icon): string
+{
+    return '<label class="tile big-tile">'.
+                $action.'
+                <p>'.$title.'</p>
+                <svg class="icon feather icon-tile" aria-hidden="true">
+                    <use xlink:href="#'.$icon.'"></use>
+                </svg>
+            </label>';
+}
+
+/**
  * Main page
  */
 
@@ -65,27 +104,14 @@ include("includes/lock.inc");
                 <div class="index-primary">
                     <h3>Supervision</h3>
                     <div class="tiles">
-                        <div type="button" id="download-config" class="tile">
-                            <p>Download CONFIG <br /> files</p>
-                            <svg class="icon feather icon-tile" aria-hidden="true">
-                                <use xlink:href="#download-cloud"></use>
-                            </svg>
-                        </div>
-                        <label class="tile">
-                            <form action="controller/uploadConfig.php" method="post" id="form-config" enctype="multipart/form-data" >
-                                <input type="file" name="zip_file" id="zip-config" accept=".zip">
-                            </form>
-                            <p>Upload CONFIG <br > files</p>
-                            <svg class="icon feather icon-tile" aria-hidden="true">
-                                <use xlink:href="#upload-cloud"></use>
-                            </svg>
-                        </label>
-                        <div type="button" id="manage-message" class="tile" data-toggle="modal" data-target="#scroll-modal">
-                            <p>Manage Scroll <br /> Message</p>
-                            <svg class="icon feather icon-tile" aria-hidden="true">
-                                <use xlink:href="#message-square"></use>
-                            </svg>
-                        </div>
+                        <?php
+                            echo tile("download-config", "<p>Download CONFIG <br /> files</p>", "download-cloud");
+                            $action = '<form action="controller/uploadConfig.php" method="post" id="form-config" enctype="multipart/form-data" >
+                                        <input type="file" name="zip_file" id="zip-config" accept=".zip">
+                                    </form>';
+                            echo uploaderTile($action, "Upload CONFIG <br > files", "upload-cloud");
+                            echo tile('manage-message" data-toggle="modal" data-target="#scroll-modal', "<p>Manage Scroll <br /> Message</p>", "message-square");
+                        ?>
                     </div>
                 </div>
                 <div class="modal fade" id="scroll-modal" tabindex="-1" role="dialog" aria-labelledby="scroll-modal-title" aria-hidden="true">
@@ -147,15 +173,10 @@ include("includes/lock.inc");
                                 <div class="tiles">
                                 <?php
                                 foreach(DATA_GEST['facturation'] as $plateforme => $name) {
-                                ?>
-                                    <div class="facturation tile">
-                                        <input type="hidden" id="plate-fact" value="<?= $plateforme ?>" />
-                                        <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
-                                        <svg class="icon feather icon-tile" aria-hidden="true">
-                                            <use xlink:href="#dollar-sign"></use>
-                                        </svg>
-                                    </div>
-                                <?php }
+                                    $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
+                                    $input = '<input type="hidden" id="plate-fact" value="'.$plateforme.'" />';
+                                    echo tile("facturation", $title, "dollar-sign", $input);
+                                }
                                 ?>
                                 </div>
                             </div>
@@ -176,19 +197,11 @@ include("includes/lock.inc");
                                             $available = false;
                                         }
                                     }
-                                    $des = "";
-                                    if(!$available) {
-                                        $des = "desactived-tile";
+                                    if($available) {
+                                        $input = '<input type="hidden" id="plate-tarifs" value="'.$plateforme.'" />';
+                                        $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
+                                        echo tile("tarifs", $title, "settings", $input);
                                     }
-                                    ?>
-                                    <div class="tarifs tile <?= $des ?>">
-                                        <input type="hidden" id="plate-tarifs" value="<?= $plateforme ?>" />
-                                        <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
-                                        <svg class="icon feather icon-tile" aria-hidden="true">
-                                            <use xlink:href="#settings"></use>
-                                        </svg>
-                                    </div>
-                                <?php
                                 }
                                 ?>
                                 </div>
@@ -202,15 +215,10 @@ include("includes/lock.inc");
                                 <div class="tiles">
                                 <?php
                                 foreach(DATA_GEST['reporting'] as $plateforme => $name) {
-                                ?>
-                                    <div class="reporting tile">
-                                        <input type="hidden" id="plate-report" value="<?= $plateforme ?>" />
-                                        <p class="num-tile"><?= $plateforme ?></p><p class="nom-tile"><?= $name ?></p>
-                                        <svg class="icon feather icon-tile" aria-hidden="true">
-                                            <use xlink:href="#book"></use>
-                                        </svg>
-                                    </div>
-                                <?php }
+                                    $input = '<input type="hidden" id="plate-report" value="'.$plateforme.'" />';
+                                    $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
+                                    echo tile("reporting", $title, "book", $input);
+                                }
                                 ?>
                                 </div>
                             </div>
@@ -224,25 +232,17 @@ include("includes/lock.inc");
             <div class="index-primary">
                 <h3>Outils</h3>
                 <div class="tiles">
-                    <label class="tile">
-                        <form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >
-                            <input type="file" name="zip_file" id="zip-view" accept=".zip">
-                        </form>
-                        <p>Visionner Tickets</p>
-                        <svg class="icon feather icon-tile" aria-hidden="true">
-                            <use xlink:href="#eye"></use>
-                        </svg>
-                    </label>
-                    <label class="simulation tile">
-                        <form action="controller/uploadPrepa.php" method="post" class="form-simu" enctype="multipart/form-data" >
-                            <input type="hidden" name="type" id="type" value="SIMU">
-                            <input id="SIMU" type="file" name="SIMU" <?= $disabled ?> class="zip-simu lockable" accept=".zip">
-                        </form>
-                        <p>Simulation</p>
-                        <svg class="icon icon-tile" aria-hidden="true">
-                            <use xlink:href="#activity"></use>
-                        </svg>
-                    </label>
+                    <?php
+                        $action = '<form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >
+                                    <input type="file" name="zip_file" id="zip-view" accept=".zip">
+                                </form>';
+                        echo uploaderTile($action, "Visionner Tickets", "eye");
+                        $action = '<form action="controller/uploadPrepa.php" method="post" id="form-simu" enctype="multipart/form-data" >
+                                    <input type="hidden" name="type" id="type" value="SIMU">
+                                    <input id="SIMU" type="file" name="SIMU" '. $disabled.' class="zip-simu lockable" accept=".zip">
+                                </form>';
+                        echo uploaderTile($action, "Simulation", "activity");
+                    ?>
                 </div>
             </div>
         </div>

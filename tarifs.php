@@ -55,13 +55,22 @@ $status = "";
  */
 function uploader(string $title, string $id): string
 {
-    $html = '<input id="'.$id.'" type="file" name="'.$id.'" class="zip-file lockable" accept=".zip">';
-    $html .= '<label class="btn but-line" for="'.$id.'">';
-    $html .= $title;
-    $html .= '</label>';
-    return $html;
+    return '<input id="'.$id.'" type="file" name="'.$id.'" class="zip-file lockable" accept=".zip">
+            <label class="btn but-line" for="'.$id.'">
+            '.$title.
+            '</label>';
 }
 
+/**
+ * Display a tarif line in the list
+ *
+ * @param string $year tarif year
+ * @param string $month tarif month
+ * @param string $dirMonth tarif directory
+ * @param string $warning warning text to display if any
+ * @param boolean $lock if a lock icon have to be displayed or not
+ * @return void
+ */
 function tarifLine(string $year, string $month, string $dirMonth, string $warning, bool $lock=false): void
 {
     if(Label::exists($dirMonth)) {
@@ -193,11 +202,11 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                         <div id="tarifs-top">
                             <div id="tarifs-left">
                                 <div class="tarifs-column">
-                                    <label class="mini-tile for="tarifs-import">
+                                    <label class="tile mini-tile" for="tarifs-import">
                                         <input id="tarifs-import" type="file" name="tarifs-import" class="zip-file lockable" accept=".zip" />
                                         Importer
                                     </label>
-                                    <div type="button" id="tarifs-read" class="mini-tile">Lire</div>
+                                    <div id="tarifs-read" class="tile mini-tile">Lire</div>
                                 </div>
                             </div>
                             <div id="tarifs-center">
@@ -206,17 +215,17 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                             </div>
                             <div id="tarifs-right">
                                 <div class="tarifs-column">
-                                    <div type="button" id="tarifs-load" class="mini-tile desactived-tile">Ecrire</div>
-                                    <div type="button" id="tarifs-remove" class="mini-tile">Effacer</div>
+                                    <div id="tarifs-load" class="tile mini-tile desactived-tile">Ecrire</div>
+                                    <div id="tarifs-remove" class="tile mini-tile">Effacer</div>
                                 </div>
                             </div>
                         </div>
                             <?= $m0Dis." | status : ".$status ?>
 
                         <div id="tarifs-bottom">
-                            <div type="button" id="tarifs-cancel" class="mini-tile desactived-tile">Annuler</div>
-                            <div type="button" id="tarifs-save" class="mini-tile desactived-tile">Sauvegarder</div>
-                            <div type="button" id="tarifs-check" class="mini-tile desactived-tile">Vérifier</div>
+                            <div id="tarifs-cancel" class="tile mini-tile desactived-tile">Annuler</div>
+                            <div id="tarifs-save" class="tile mini-tile desactived-tile">Sauvegarder</div>
+                            <div id="tarifs-check" class="tile mini-tile desactived-tile">Vérifier</div>
                         </div>
                     </div>
                 <div class="modal fade" id="save-modal" tabindex="-1" role="dialog" aria-labelledby="save-modal-title" aria-hidden="true">

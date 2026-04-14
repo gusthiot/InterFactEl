@@ -40,7 +40,7 @@ $m0 = "";
 
 
 /**
- * Customized button to upload prepa
+ * Customized tile to upload prepa
  *
  * @param string $title button title
  * @param string $id upload input id
@@ -49,10 +49,14 @@ $m0 = "";
  */
 function uploader(string $title, string $id, string $disabled): string
 {
-    $html = '<input id="'.$id.'" type="file" name="'.$id.'" '.$disabled.' class="zip-file lockable" accept=".zip">';
-    $html .= '<label class="btn but-line" for="'.$id.'">';
-    $html .= $title;
-    $html .= '</label>';
+    $html = '<input id="'.$id.'" type="file" name="'.$id.'" class="zip-file lockable';
+    if($disabled == "disabled") {
+        $html .= ' desactived-tile';
+    }
+    $html .'" accept=".zip">';
+    $html .= '<label class="tile tight-tile" for="'.$id.'">
+                '.$title.'
+            </label>';
     return $html;
 }
 
@@ -92,7 +96,7 @@ include("includes/lock.inc");
                         <div class="col-sm">
                             <?php
                                 if(!$first) { ?>
-                                    <div><button type="button" id="open-historique" class="btn but-line">Ouvrir l'historique</button></div>
+                                    <div id="open-historique" class="tile tight-tile">Ouvrir l'historique</div>
                                     <?php
                                     if(empty($current)) {
                                         echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $disabled);
@@ -148,8 +152,8 @@ include("includes/lock.inc");
                             ?>
                         </div>
                     </div>
-                    <div class="row hidden" id="historique-div">
-                        <div><button type="button" id="close-historique" class="btn but-line">Fermer l'historique</button></div>
+                    <div class="row" id="historique-div">
+                        <div id="close-historique" class="tile tight-tile">Fermer l'historique</div>
                     </div>
                 </div>
 

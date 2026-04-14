@@ -12,7 +12,7 @@ $('#download-generated').on('click', function () {
     window.location.href = "controller/download.php?type=generated";
 });
 
-$('#download-config').on('click', function () {
+$('.download-config').on('click', function () {
     window.location.href = "controller/download.php?type=config";
 });
 
