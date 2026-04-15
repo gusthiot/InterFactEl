@@ -5,7 +5,16 @@ $('#download-generated').on('click', function () {
     window.location.href = "controller/download.php?type=generated";
 } );
 
+function selectRemove() {
+    $('.tile').removeClass('selected-tile');
+    $('.tile').removeClass('selected-green-tile');
+    $('.tile').removeClass('selected-red-tile');
+    $('#prefa-content').html("");
+}
+
 $('#open-label').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-tile');
     $.post("controller/getLabel.php", Object.assign({}, postDir, {right: "facturation"}), function (data) {
         $('#prefa-content').html(data);
     });
@@ -19,12 +28,16 @@ $(document).on("click", "#save-label", function() {
 } );
 
 $('#open-info').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-tile');
     $.post("controller/getInfos.php", postDir, function (data) {
         $('#prefa-content').html(data);
     });
 } );
 
 $('#open-bills').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-tile');
     $.post("controller/displaySap.php", postDir, function (data) {
         $('#prefa-content').html(data);
     });
@@ -45,10 +58,14 @@ $(document).on("click", "#get-report", function() {
 } );
 
 $('#open-ticket').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-tile');
     window.open("ticket.php?"+getDir);
 } );
 
 $('#open-changes').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-tile');
     $.post("controller/getModifs.php", postDir, function (data) {
         $('#prefa-content').html(data);
     });
@@ -73,18 +90,26 @@ $('#invalidate').on('click', function () {
 } );
 
 $('#bilans').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-tile');
     window.location.href = "controller/download.php?type=bilans&"+getDir;
 } );
 
 $('#annexes').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-tile');
     window.location.href = "controller/download.php?type=annexes&"+getDir;
 } );
 
 $('#all').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-tile');
     window.location.href = "controller/download.php?type=all&"+getDir;
 } );
 
 $('#send').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-green-tile');
     $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "send-bills"}), function (data) {
         $('#prefa-content').html(data);
     });
@@ -97,6 +122,8 @@ $('#finalize').on('click', function () {
 } );
 
 $('#resend').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-red-tile');
     if(confirm($(this).data('msg')) == true) {
         $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "resend-bills"}), function (data) {
             $('#prefa-content').html(data);

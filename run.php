@@ -68,44 +68,77 @@ include("includes/lock.inc");
             <input type="hidden" id="version" value="<?= $version ?>" />
             <input type="hidden" id="run" value="<?= $run ?>" />
 
-            <div id="actions" class="text-center">
-                <button type="button" id="open-label" class="btn but-line">Etiqueter</button>
-                <button type="button" id="open-info" class="btn but-line">Afficher les infos</button>
+            <div id="actions">
                 <?php
+
+                $desList = $desRapport = $desControl = $desInvalid = $desEnvoi = $desFinal = $desRenvoi = $desBS = $desAnnexes = "desactived-tile";
                 if(!$archive) {
-                ?>
-                    <button type="button" id="open-bills" class="btn but-line">Afficher la liste des factures</button>
-                    <button type="button" id="open-ticket" class="btn but-line">Contrôler le ticket</button>
-                    <button type="button" id="open-changes" class="btn but-line">Afficher les modifications</button>
-                <?php
-                    if(($status < 4) && is_null($lockRun)) {
-                        echo '<button type="button" id="invalidate" '.$disabled.' class="btn but-line lockable">Invalider</button>';
+                    $desList = $desControl = $desModifs = "";
+                    if($status > 0) {
+                        $desRapport = "";
+                    }
+                    if(!$disabled) {
+                        if(($status < 4) && is_null($lockRun)) {
+                            $desInvalid = "";
+                        }
+                        if(in_array($status, [1, 2, 3, 5, 6, 7]) && is_null($lockRun)) {
+                            $desEnvoi = "";
+                        }
+                        if(in_array($status, [0, 1, 5, 6, 7]) && is_null($lockRun)) {
+                            $desFinal = "";
+                        }
+                        if((in_array($status, [5, 6, 7]) && is_null($lockRun)) || (in_array($status, [1, 4, 5, 6, 7]) && !is_null($lockVersion) && ($lockVersion == $run))) {
+                            $desRenvoi = "";
+                        }
                     }
                 }
-                if(in_array($status, [0, 1, 4, 5, 6, 7]) && !is_null($lockVersion) && ($lockVersion == $run)) { ?>
-                    <button type="button" id="bilans" class="btn but-line">Exporter Bilans & Stats</button>
-                    <?php if(!$archive) { ?>
-                        <button type="button" id="annexes" class="btn but-line">Exporter Annexes csv</button>
-                <?php }
+                if(in_array($status, [0, 1, 4, 5, 6, 7]) && !is_null($lockVersion) && ($lockVersion == $run)) {
+                    $desBS = "";
+                    if(!$archive) {
+                        $desAnnexes = "";
+                    }
                 }
+
                 ?>
-                <button type="button" id="all" class="btn but-line">Exporter Tout</button>
-                <?php
-                if(!$archive && in_array($status, [1, 2, 3, 5, 6, 7]) && is_null($lockRun)) {
-                    echo '<button type="button" id="send" '.$disabled.' class="btn but-line-green lockable">Envoi SAP</button>';
-                }
-                if(!$archive && in_array($status, [0, 1, 5, 6, 7]) && is_null($lockRun)) {
-                    echo '<button type="button" id="finalize" '.$disabled.' class="btn but-line-blue lockable">Finaliser SAP</button>';
-                }
-                if(!$archive && (in_array($status, [5, 6, 7]) && is_null($lockRun)) || (in_array($status, [1, 4, 5, 6, 7]) && !is_null($lockVersion) && ($lockVersion == $run))) {
-                    echo '<button type="button" id="resend" data-msg="'.$messages->getMessage('msg5').'" '.$disabled.' class="btn but-line-red lockable">Renvoi SAP</button>';
-                }
-                if(!$archive && $status > 1) {
-                ?>
-                    <button type="button" id="open-report" class="btn but-line">Rapports d'envoi SAP</button>
-                <?php
-                }
-                ?>
+
+                <div class="links-group">
+                    <h5 id="links-group-title">Informations</h5>
+                    <ul class="list-unstyled">
+                        <li><div id="open-label" class="tile tight-tile">Etiqueter</div></li>
+                        <li><div id="open-info" class="tile tight-tile">Afficher les infos</div></li>
+
+                        <li><div id="open-bills" class="tile tight-tile <?= $desList ?>">Afficher la liste des factures</div></li>
+                        <li><div id="open-report" class="tile tight-tile <?= $desRapport ?>">Rapports d'envoi SAP</div></li>
+                    </ul>
+                </div>
+
+                <div class="links-group">
+                    <h5 id="links-group-title">Contrôles</h5>
+                    <ul class="list-unstyled">
+                        <li><div id="open-ticket" class="tile tight-tile <?= $desControl ?>">Contrôler le ticket</div></li>
+                        <li><div id="open-changes" class="tile tight-tile <?= $desModifs ?>">Afficher les modifications</div></li>
+                    </ul>
+                </div>
+
+                <div class="links-group">
+                    <h5 id="links-group-title">Actions</h5>
+                    <ul class="list-unstyled">
+                        <li><div id="invalidate" class="tile tight-tile lockable <?= $desInvalid ?>">Invalider</div></li>
+                        <li><div id="send" class="tile tight-tile green-tile lockable <?= $desEnvoi ?>">Envoi SAP</div></li>
+                        <li><div id="finalize" class="tile tight-tile blue-tile lockable <?= $desFinal ?>">Finaliser SAP</div></li>
+                        <li><div id="resend" data-msg="<?=$messages->getMessage('msg5')?>" class="tile tight-tile red-tile lockable <?= $desRenvoi ?>">Renvoi SAP</div></li>
+                    </ul>
+                </div>
+
+                <div class="links-group">
+                    <h5 id="links-group-title">Exportations</h5>
+                    <ul class="list-unstyled">
+                        <li><div id="bilans" class="tile tight-tile <?= $desBS ?>">Exporter Bilans & Stats</div></li>
+                        <li><div id="annexes" class="tile tight-tile <?= $desAnnexes ?>">Exporter Annexes csv</div></li>
+                        <li><div id="all" class="tile tight-tile">Exporter Tout</div></li>
+                    </ul>
+                </div>
+
             </div>
 
             <?php include("includes/message.inc");

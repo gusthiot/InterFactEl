@@ -609,15 +609,15 @@ let has_grille = "";
 function checkColumns(complete) {
     let result = "";
     Object.keys(mandatoryCsvs).forEach(function(filename) {
-        $('#'+filename).removeClass('orange-tile');
-        $('#'+filename).removeClass('red-tile');
-        $('#'+filename).removeClass('green-tile');
+        $('#'+filename).removeClass('orange-file');
+        $('#'+filename).removeClass('red-file');
+        $('#'+filename).removeClass('green-file');
         const number = mandatoryCsvs[filename].columns;
         let i = 1;
         contents[filename].forEach( function(line) {
             if(number != line.length) {
                 result += "la ligne " + i + " du fichier " + filename + ".csv contient " + line.length + " colonnes au lieu de " + number + "<br />";
-                $('#'+filename).addClass('orange-tile');
+                $('#'+filename).addClass('orange-file');
             }
             i++;
         });
@@ -762,12 +762,12 @@ function checkColumns(complete) {
         }
         if(resFile != "") {
             result += resFile;
-            checks[filename] = "orange-tile";
-            $('#'+filename).addClass('orange-tile');
+            checks[filename] = "orange-file";
+            $('#'+filename).addClass('orange-file');
         }
         else {
-            checks[filename] = "green-tile";
-            $('#'+filename).addClass('green-tile');
+            checks[filename] = "green-file";
+            $('#'+filename).addClass('green-file');
         }
     });
     sessionStorage.setItem("ids", JSON.stringify(ids));
@@ -790,7 +790,7 @@ if(sessionStorage.getItem("ids") && sessionStorage.getItem("checks")) {
     let result = true;
     Object.keys(checks).forEach(function(filename) {
         $('#'+filename).addClass(checks[filename]);
-        if(checks[filename] != "green-tile") {
+        if(checks[filename] != "green-file") {
             result = false;
         }
     });

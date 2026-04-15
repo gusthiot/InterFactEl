@@ -42,19 +42,15 @@ $m0 = "";
 /**
  * Customized tile to upload prepa
  *
- * @param string $title button title
+ * @param string $title tile title
  * @param string $id upload input id
- * @param string $disabled if button is disabled, when a process is running
+ * @param string $desactived if tile is desactived, when a process is running
  * @return string
  */
-function uploader(string $title, string $id, string $disabled): string
+function uploader(string $title, string $id, string $desactived): string
 {
-    $html = '<input id="'.$id.'" type="file" name="'.$id.'" class="zip-file lockable';
-    if($disabled == "disabled") {
-        $html .= ' desactived-tile';
-    }
-    $html .= '" accept=".zip">';
-    $html .= '<label class="tile tight-tile" for="'.$id.'">
+    $html = '<input id="'.$id.'" type="file" name="'.$id.'" class="zip-file lockable '.$desactived.'" accept=".zip">
+            <label class="tile tight-tile" for="'.$id.'">
                 '.$title.'
             </label>';
     return $html;
@@ -92,23 +88,24 @@ include("includes/lock.inc");
                     <p>Dernière facturation : <?php echo (!empty($state->getLast())) ? $state->getLast() : "aucune";  ?></p>
                     <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
                     <input type="hidden" name="type" id="type" value="SAP">
-                    <div class="row" id="buttons">
-                        <div class="col-sm">
+                    <div id="buttons">
+                        <div class="but-col">
                             <?php
                                 if(!$first) { ?>
                                     <div id="open-historique" class="tile tight-tile">Ouvrir l'historique</div>
                                     <?php
-                                    if(empty($current)) {
-                                        echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $disabled);
+                                    $des = "desactived-tile";
+                                    if(empty($current) && empty($disabled)) {
+                                        $des = "";
                                     }
+                                    echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $des);
                                     if(IS_SUPER && TEST_MODE == "TEST") {
                                         ?>
-                                        <div><button type="button" id="destroy" '.$disabled.' class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button>
+                                        <div><button type="button" id="destroy" <?= $disabled ?> class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button>
                                         </div>
                                     <?php }
                                 }
                                 if(IS_SUPER && TEST_MODE == "TEST") {
-                                    //echo uploader("Charger des archives", "ARCHIVE", $disabled);
                                     $choices = [];
                                     if($first) {
                                         $title = "Charger une période";
@@ -134,25 +131,28 @@ include("includes/lock.inc");
                                 <?php }
                             ?>
                         </div>
-                        <div class="col-sm">
+                        <div class="but-col">
                             <?php
                                 if($first) {
                                     if(DATA_GEST['tarifs'] && array_key_exists($plateforme, DATA_GEST['tarifs'])) {
-                                        echo uploader("Préparer 1ère facturation", "FIRST", $disabled);
+                                        echo uploader("Préparer 1ère facturation", "FIRST", "");
                                     }
                                 }
                                 else {
-                                    if(empty($current)) {
-                                        echo uploader("Refaire factures : ".$state->getLastMonth()."/".$state->getLastYear(), "REDO", $disabled);
+                                    $desRef = $desFact = "desactived-tile";
+                                    if(empty($current) && empty($disabled)) {
+                                        $desRef = "";
                                         if(!Unused::exists($dir."/".$state->getLastYear()."/".$state->getLastMonth())) {
-                                            echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $disabled);
+                                            $desFact = "";
                                         }
                                     }
+                                    echo uploader("Refaire factures : ".$state->getLastMonth()."/".$state->getLastYear(), "REDO", $desRef);
+                                    echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $desFact);
                                 }
                             ?>
                         </div>
                     </div>
-                    <div class="row" id="historique-div">
+                    <div id="historique-div">
                         <div id="close-historique" class="tile tight-tile">Fermer l'historique</div>
                     </div>
                 </div>

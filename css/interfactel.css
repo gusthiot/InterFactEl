@@ -223,22 +223,50 @@ input[type="file"] {
 }
 
 .red-tile {
-  background-color: var(--groseille);
+  background-color: white;
+  color: var(--groseille);
+  box-shadow: 1px 1px 4px 1px var(--groseille);
+}
+
+.red-tile:hover {
+  background-color: var(--groseille) !important;
   color: white;
 }
 
 .green-tile {
-  background-color: var(--chartreuse);
+  background-color: white;
+  color: var(--chartreuse);
+  box-shadow: 1px 1px 4px 1px var(--chartreuse);
+}
+
+.green-tile:hover {
+  background-color: var(--chartreuse) !important;
   color: white;
 }
 
-.orange-tile {
-  background-color: var(--carotte);
+.blue-tile {
+  background-color: white;
+  color: var(--acier);
+  box-shadow: 1px 1px 4px 1px var(--acier);
+}
+
+.blue-tile:hover {
+  background-color: var(--acier) !important;
   color: white;
 }
 
 .selected-tile {
   background-color: var(--gris-100);
+}
+
+.selected-green-tile {
+  background-color: var(--chartreuse) !important;
+  color: white;
+}
+
+.selected-red-tile {
+  background-color: var(--groseille) !important;
+  color: white;
 }
 
 .desactived-tile {
@@ -249,10 +277,6 @@ input[type="file"] {
 
 .tile:hover {
   background-color: var(--gris-100);
-}
-
-.tile:active {
-  background-color: var(--gris-200);
 }
 
 /** head **/
@@ -319,6 +343,12 @@ input[type="file"] {
   justify-content: center;
   height: 200px;
 	width: 200px;
+}
+
+.big-tile:active {
+  height: 202px;
+	width: 202px;
+
 }
 
 .big-tile p {
@@ -444,6 +474,11 @@ input[type="file"] {
   width: 1000px;
   margin: auto;
   padding: 10px;
+  display: flex;
+}
+
+.but-col {
+  flex-basis: 50%;
 }
 
 #plate-content {
@@ -488,6 +523,11 @@ input[type="file"] {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.tight-tile:active {
+  height: 52px;
+	width: 322px;
 }
 
 /** run **/
@@ -535,6 +575,17 @@ table.modifs thead tr th, table.journal thead tr th, table.client thead tr th, t
 
 .yellow {
   background-color: var(--soufre);
+}
+
+#actions {
+  display: flex;
+  width: 90%;
+  margin: auto;
+}
+
+
+.links-group {
+  flex-basis: 25%;
 }
 
 #label-line {
@@ -650,6 +701,10 @@ table.dates-tarifs .tr-clickable:hover {
   justify-content: center;
 }
 
+.mini-tile:active {
+  height: 102px;
+	width: 152px;
+}
 
 #files {
   margin: 0 auto;
@@ -675,6 +730,20 @@ table.dates-tarifs .tr-clickable:hover {
 }
 
 
+.red-file {
+  background-color: var(--groseille);
+  color: white;
+}
+
+.green-file {
+  background-color: var(--chartreuse);
+  color: white;
+}
+
+.orange-file {
+  background-color: var(--carotte);
+  color: white;
+}
 
 /** reporting **/
 
