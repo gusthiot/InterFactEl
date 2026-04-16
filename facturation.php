@@ -49,8 +49,8 @@ $m0 = "";
  */
 function uploader(string $title, string $id, string $desactived): string
 {
-    $html = '<input id="'.$id.'" type="file" name="'.$id.'" class="zip-file lockable '.$desactived.'" accept=".zip">
-            <label class="tile tight-tile" for="'.$id.'">
+    $html = '<input id="'.$id.'" type="file" name="'.$id.'" class="zip-file lockable" accept=".zip">
+            <label class="tile tight-tile '.$desactived.'" for="'.$id.'">
                 '.$title.'
             </label>';
     return $html;
