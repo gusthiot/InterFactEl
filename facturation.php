@@ -95,7 +95,7 @@ include("includes/lock.inc");
                                     <div id="open-historique" class="tile tight-tile">Ouvrir l'historique</div>
                                     <?php
                                     $des = "desactived-tile";
-                                    if(empty($current) && empty($disabled)) {
+                                    if(empty($current) && empty($disabled) && !Unused::exists($dir."/".$state->getLastYear()."/".$state->getLastMonth())) {
                                         $des = "";
                                     }
                                     echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $des);
