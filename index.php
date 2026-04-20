@@ -110,7 +110,7 @@ function uploaderTile(string $action, string $title, string $icon): string
                                         <input type="file" name="zip_file" id="zip-config" accept=".zip">
                                     </form>';
                             echo uploaderTile($action, "Upload CONFIG <br > files", "upload-cloud");
-                            echo tile('manage-message" data-toggle="modal" data-target="#scroll-modal', "<p>Manage Scroll <br /> Message</p>", "message-square");
+                            echo tile('manage-message" data-toggle="modal" data-target="#scroll-modal', "<p>Gestion du <br />bandeau défilant</p>", "message-square");
                         ?>
                     </div>
                 </div>
@@ -211,7 +211,7 @@ function uploaderTile(string $action, string $title, string $icon): string
                         if(!empty(DATA_GEST['reporting'])) {
                             ?>
                             <div class="index-secondary">
-                                <h5>Reporting</h5>
+                                <h5>Statistiques</h5>
                                 <div class="tiles">
                                 <?php
                                 foreach(DATA_GEST['reporting'] as $plateforme => $name) {

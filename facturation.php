@@ -152,7 +152,7 @@ include("includes/lock.inc");
                             ?>
                         </div>
                     </div>
-                    <div id="historique-div">
+                    <div id="historique-div" class="center-tile">
                         <div id="close-historique" class="tile tight-tile">Fermer l'historique</div>
                     </div>
                 </div>

@@ -44,6 +44,8 @@ $('#open-bills').on('click', function () {
 } );
 
 $('#open-report').on('click', function () {
+    selectRemove(this);
+    $(this).addClass('selected-tile');
     $.post("controller/displayReport.php", postDir, function (data) {
         $('#prefa-content').html(data);
     });

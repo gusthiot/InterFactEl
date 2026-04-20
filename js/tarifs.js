@@ -730,7 +730,8 @@ function checkColumns(complete) {
                     resFile += "l'id plateforme du fichier " + filename + ".csv ne correspond pas à la plateforme de travail <br />";
                 }
                 if(has_grille == "OUI" && !Object.keys(files).includes("grille.pdf")) {
-                    resFile += "il manque la grille de tarifs mentiennée dans le fichier " + filename + ".csv <br />";
+                    resFile += "il manque la grille de tarifs mentionnée dans le fichier " + filename + ".csv <br />";
+                    $('#grille').addClass('orange-file');
                 }
             }
             if(mandatoryCsvs[filename].labels) {

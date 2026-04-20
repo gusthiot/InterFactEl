@@ -164,7 +164,7 @@ class Sap extends Csv
             }
         }
         $html .= '</tbody></table></div>';
-        $html .= '<button type="button" '.$parameters.' class="btn but-line">Download File</button>';
+        $html .= '<div class="center-tile"><div" '.$parameters.' class="tile tight-tile">Exporter</div></div>';
         return $html;
     }
 

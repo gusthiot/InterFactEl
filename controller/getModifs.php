@@ -61,7 +61,7 @@ function table(array $modifs, string $id, string $title, string $class, array $p
 
         }
         $html .= "</tbody></table></div>";
-        $html .= '<button type="button" id="'.$id.'" class="btn but-line">Download '.$title.'</button>';
+        $html .= '<div class="center-tile"><div id="'.$id.'" class="tile tight-tile">Exporter '.$title.'</div></div>';
     }
     return $html;
 }

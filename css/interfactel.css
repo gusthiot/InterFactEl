@@ -230,7 +230,7 @@ input[type="file"] {
 
 .red-tile:hover {
   background-color: var(--groseille) !important;
-  color: white;
+  color: white !important;
 }
 
 .green-tile {
@@ -241,7 +241,7 @@ input[type="file"] {
 
 .green-tile:hover {
   background-color: var(--chartreuse) !important;
-  color: white;
+  color: white !important;
 }
 
 .blue-tile {
@@ -252,7 +252,7 @@ input[type="file"] {
 
 .blue-tile:hover {
   background-color: var(--acier) !important;
-  color: white;
+  color: white !important;
 }
 
 .selected-tile {
@@ -261,12 +261,12 @@ input[type="file"] {
 
 .selected-green-tile {
   background-color: var(--chartreuse) !important;
-  color: white;
+  color: white !important;
 }
 
 .selected-red-tile {
   background-color: var(--groseille) !important;
-  color: white;
+  color: white !important;
 }
 
 .desactived-tile {
@@ -343,12 +343,6 @@ input[type="file"] {
   justify-content: center;
   height: 200px;
 	width: 200px;
-}
-
-.big-tile:active {
-  height: 202px;
-	width: 202px;
-
 }
 
 .big-tile p {
@@ -495,7 +489,7 @@ input[type="file"] {
   max-height: 480px;
 }
 
-#historique-div {
+.center-tile {
   padding: 10px;
   display: flex;
   flex-direction: row;
@@ -523,11 +517,6 @@ input[type="file"] {
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-
-.tight-tile:active {
-  height: 52px;
-	width: 322px;
 }
 
 /** run **/
@@ -701,11 +690,6 @@ table.dates-tarifs .tr-clickable:hover {
   justify-content: center;
 }
 
-.mini-tile:active {
-  height: 102px;
-	width: 152px;
-}
-
 #files {
   margin: 0 auto;
   max-width: 1000px;
@@ -798,6 +782,10 @@ table.report-table th {
   margin: 10px;
   text-align: center;
   font-weight: bold;
+}
+
+.total a {
+	text-decoration: none;
 }
 
 .subtotal {
