@@ -53,11 +53,11 @@ h1 {
   display: none;
 }
 
-.left {
+.date-left {
   float: left;
 }
 
-.right {
+.date-right {
   float: right;
 }
 

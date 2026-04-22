@@ -77,7 +77,7 @@ function displayFiles() {
 function displayDates() {
     if(Object.keys(choices).length > 0) {
         let html = '<div class="over-tarifs over-dates">';
-        html += '<svg id="dates-center" class="icon icon-selectable left" aria-hidden="true">' +
+        html += '<svg id="dates-center" class="icon icon-selectable date-left" aria-hidden="true">' +
                     '<use xlink:href="#disc"></use>' +
                 '</svg>';
         if(first > 0) {
@@ -85,7 +85,7 @@ function displayDates() {
                         '<use xlink:href="#chevrons-up"></use>' +
                     '</svg>';
         }
-        html += '<svg id="dates-remove" class="icon icon-selectable right" aria-hidden="true">' +
+        html += '<svg id="dates-remove" class="icon icon-selectable date-right" aria-hidden="true">' +
                     '<use xlink:href="#x"></use>' +
                 '</svg>';
         html += '<table id="' + type + '-dates" class="dates-tarifs table table-boxed">';
