@@ -17,7 +17,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
             $tab = explode('_', $pre[0]);
             $html .= '<button class="collapse-title collapse-title-desktop collapsed" type="button" data-toggle="collapse" data-target="#collapse-'.$i.'" aria-expanded="false" aria-controls="collapse-'.$i.'">'.$tab[2]." ".$tab[3]." ".$tab[1]."</button>";
             $sap = new Sap($dir, $file);
-            $html .= '<div class="collapse collapse-item collapse-item-desktop" id="collapse-'.$i.'"><p>'.$sap->displayTable('id="get-report" data-name="'.$file.'"').'</p></div>';
+            $html .= '<div class="collapse collapse-item collapse-item-desktop" id="collapse-'.$i.'">'.$sap->displayTable('id="get-report" data-name="'.$file.'"');
         }
     }
     $html .= '</div>';

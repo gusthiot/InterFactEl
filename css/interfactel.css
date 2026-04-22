@@ -496,6 +496,14 @@ input[type="file"] {
   justify-content: center;
 }
 
+.center-tile a {
+	text-decoration: none;
+}
+
+.center-tile a:hover {
+  color: var(--noir);
+}
+
 .hidden {
   display: none;
 }
@@ -782,10 +790,6 @@ table.report-table th {
   margin: 10px;
   text-align: center;
   font-weight: bold;
-}
-
-.total a {
-	text-decoration: none;
 }
 
 .subtotal {

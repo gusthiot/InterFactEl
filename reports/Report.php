@@ -702,7 +702,7 @@ abstract class Report
                 $totalCsv .= "\n".$this->csvLine($this->totalCsvData["dimensions"], $this->totalCsvData["operations"], $line, $withMonths);
             }
         }
-        return '<div class="total"><a href="data:text/plain;base64,'.base64_encode($totalCsv).'" download="'.$csvKey.'.csv"><button type="button" id="'.$csvKey.'" class="btn but-line">Download Csv</button></a></div>';
+        return '<div class="center-tile"><a href="data:text/plain;base64,'.base64_encode($totalCsv).'" download="'.$csvKey.'.csv"><div id="'.$csvKey.'" class="tile tight-tile">Exporter</div></a></div>';
     }
 
     /**
@@ -838,7 +838,7 @@ abstract class Report
                 }
             }
             $html .= "</tbody></table></div>";
-            $html .= '<a href="data:text/plain;base64,'.base64_encode($csv).'" download="'.$tab.'.csv"><button type="button" id="'.$tab.'-dl"  class="btn but-line">Download Csv</button></a></div>';
+            $html .= '<div class="center-tile"><a href="data:text/plain;base64,'.base64_encode($csv).'" download="'.$tab.'.csv"><div id="'.$tab.'-dl"  class="tile tight-tile">Exporter</div></a></div></div>';
         }
         return $html;
     }

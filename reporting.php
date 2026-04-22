@@ -57,7 +57,7 @@ function displayTile(array $tiles): void
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
                 </div>
                 <div id="div-path">
-                    <p class="title"><a href="index.php">Accueil</a> > Reporting <?= $name ?></p>
+                    <p class="title"><a href="index.php">Accueil</a> > Statistiques <?= $name ?></p>
                     <p class="title"><a href="logout.php">Logout</a></p>
                 </div>
             </div>

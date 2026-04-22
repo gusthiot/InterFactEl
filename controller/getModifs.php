@@ -12,9 +12,9 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $name = DATA_GEST['facturation'][$_POST['plate']];
     $suf = "_".$name."_".$_POST['year']."_".$_POST['month']."_".$_POST['version'];
     $html = "";
-    $html .= table(Csv::extract($dir."/Modif-factures".$suf.".csv"), "get-modif", "Factures-modifs", "modifs", [7, 8]);
-    $html .= table(Csv::extract($dir."/Journal-corrections".$suf.".csv"), "get-journal", "Journal-modifs", "journal", []);
-    $html .= table(Csv::extract($dir."/Clients-modifs".$suf.".csv"), "get-client", "Client-modifs", "client", []);
+    $html .= table(Csv::extract($dir."/Modif-factures".$suf.".csv"), "get-modif", "modifs", [7, 8]);
+    $html .= table(Csv::extract($dir."/Journal-corrections".$suf.".csv"), "get-journal", "journal", []);
+    $html .= table(Csv::extract($dir."/Clients-modifs".$suf.".csv"), "get-client", "client", []);
 
     if($html == "") {
         $html = "<p>Aucune modification</p>";
@@ -27,12 +27,11 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
  *
  * @param array $modifs data array
  * @param string $id button id to download the data file
- * @param string $title button title for download
  * @param string $class table class
  * @param array $prices columns with financial format
  * @return string
  */
-function table(array $modifs, string $id, string $title, string $class, array $prices): string
+function table(array $modifs, string $id, string $class, array $prices): string
 {
     $html = "";
     if(count($modifs)>1) {
@@ -61,7 +60,7 @@ function table(array $modifs, string $id, string $title, string $class, array $p
 
         }
         $html .= "</tbody></table></div>";
-        $html .= '<div class="center-tile"><div id="'.$id.'" class="tile tight-tile">Exporter '.$title.'</div></div>';
+        $html .= '<div class="center-tile"><div id="'.$id.'" class="tile tight-tile">Exporter</div></div>';
     }
     return $html;
 }
