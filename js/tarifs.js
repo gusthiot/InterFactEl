@@ -674,7 +674,7 @@ function checkColumns() {
     let result = "";
     Object.keys(contents).forEach(function(filename) {
         if(["paramfact", "plateforme"].includes(filename)) {
-            continue;
+            return;
         }
 /*
         if(mandatoryCsvs[filename].uniqueId) {
