@@ -1,5 +1,6 @@
 
 const plateforme = $('#plate').val();
+const messages = JSON.parse($('#messages').val());
 const m0 = $('#m0').val();
 const m0Status = $('#status').val();
 
@@ -258,7 +259,8 @@ $("#tarifs-import").on("change", function(e) {
         json += "}";
         files = JSON.parse(json);
         extract();
-        if(runCheck(checkColumns(false))) {
+
+        if(runCheck(checkMandatory()) || runCheck(checkAuthorized()) || runCheck(checkColumnsNumbers()) || runCheck(checkPlateFact())) {
             files = {};
             contents = {};
         }
@@ -396,13 +398,11 @@ $("#tarifs-cancel").on("click", function() {
 });
 
 $("#tarifs-check").on("click", function() {
-    if(runCheck(check())) {
+
+    if(runCheck(checkMandatory()) || runCheck(checkAuthorized()) || runCheck(checkColumnsNumbers()) || runCheck(checkPlateFact())) {
         return;
     }
-    if(runCheck(reCheck())) {
-        return;
-    }
-    if(runCheck(checkColumns(true))) {
+    if(runCheck(checkColumns())) {
         return;
     }
     $('#tarifs-load').removeClass('desactived-tile');
@@ -440,35 +440,37 @@ const mandatoryCsvs = { "paramfact": {
                             name: "Articles SAP",
                             columns: 8,
                             uniqueId: [0],
-                            tests: [
-                                {type: "num", col: 2, neg: false, zero: false, int: true}
-                            ]
+                            uniqueMsg: "articlesap01"
                         },
                         "overhead": {
                             name: "Taux Overhead",
                             columns: 3,
                             uniqueId: [0],
+                            uniqueMsg: "overhead01",
                             tests: [
-                                {type: "num", col: 1, neg: false, zero: true, int: false},
-                                {type: "ref", col: 2, origin: "articlesap", zero: false}
-                            ]
+                                {type: "num", col: 1, neg: false, zero: true, int: false, msg: "overhead02"},
+                                {type: "ref", col: 2, origin: "articlesap", zero: false, msg: "overhead03"}
+                            ],
+                            messages
                         },
                         "base": {
                             name: "Liste Tarifs Base",
                             columns: 2,
-                            uniqueId: [0]
+                            uniqueId: [0],
+                            uniqueMsg: "base01"
                         },
                         "classeclient": {
                             name: "Classes Client",
                             columns: 9,
                             uniqueId: [0],
+                            uniqueMsg: "classeclient01",
                             tests: [
-                                {type: "in", col: 3, array: ["INT", "EXT"]},
-                                {type: "in", col: 4, array: ["BONUS", "RABAIS"]},
-                                {type: "in", col: 5, array: ["BONUS", "RABAIS"]},
-                                {type: "in", col: 6, array: ["OUI", "NON"]},
-                                {type: "ref", col: 7, origin: "overhead", zero: true},
-                                {type: "ref", col: 8, origin: "base", zero: false}
+                                {type: "in", col: 3, array: ["INT", "EXT"], msg: "classeclient02"},
+                                {type: "in", col: 4, array: ["BONUS", "RABAIS"], msg: "classeclient03"},
+                                {type: "in", col: 5, array: ["BONUS", "RABAIS"], msg: "classeclient04"},
+                                {type: "in", col: 6, array: ["OUI", "NON"], msg: "classeclient05"},
+                                {type: "ref", col: 7, origin: "overhead", zero: true, msg: "classeclient06"},
+                                {type: "ref", col: 8, origin: "base", zero: false, msg: "classeclient07"}
                             ]
                         },
                         "plateforme": {
@@ -480,68 +482,74 @@ const mandatoryCsvs = { "paramfact": {
                             name: "Partenaires Plateforme",
                             columns: 3,
                             uniqueId: [0, 1],
+                            uniqueMsg: "partenaire02",
                             tests: [
-                                {type: "plateforme", col: 0},
-                                {type: "ref", col: 2, origin: "classeclient", zero: false}
+                                {type: "plateforme", col: 0, msg: "partenaire01"},
+                                {type: "ref", col: 2, origin: "classeclient", zero: false, msg: "partenaire03"}
                             ]
                         },
                         "classeprestation": {
                             name: "Classes Prestations",
                             columns: 9,
                             uniqueId: [0],
+                            uniqueMsg: "classeprestation01",
                             tests: [
-                                {type: "ref", col: 1, origin: "articlesap", zero: false},
-                                {type: "in", col: 2, array: ["OUI", "NON"]},
-                                {type: "in", col: 3, array: ["OUI", "NON"]},
-                                {type: "in", col: 4, array: ["OUI", "NON"]},
-                                {type: "in", col: 5, array: ["OUI", "NON"]}
+                                {type: "ref", col: 1, origin: "articlesap", zero: false, msg: "classeprestation02"},
+                                {type: "in", col: 2, array: ["OUI", "NON"], msg: "classeprestation03"},
+                                {type: "in", col: 3, array: ["OUI", "NON"], msg: "classeprestation04"},
+                                {type: "in", col: 4, array: ["OUI", "NON"], msg: "classeprestation05"},
+                                {type: "in", col: 5, array: ["OUI", "NON"], msg: "classeprestation06"}
                             ]
                         },
                         "categorie": {
                             name: "Catégories",
                             columns: 8,
                             uniqueId: [0],
+                            uniqueMsg: "categorie01",
                             tests: [
-                                {type: "plateforme", col: 5},
-                                {type: "num", col: 4, neg: false, zero: true, int: true, max: 8},
-                                {type: "ref", col: 6, origin: "classeprestation", zero: false, special: true},
-                                {type: "in", col: 7, array: ["K1", "K2", "K3", "K4", "K5", "K6", "K7"]}
+                                {type: "plateforme", col: 5, msg: "categorie02"},
+                                {type: "ref", col: 6, origin: "classeprestation", zero: false, special: true, msg: "categorie03"},
+                                {type: "num", col: 4, neg: false, zero: true, int: true, max: 8, msg: "categorie05"},
+                                {type: "in", col: 7, array: ["K1", "K2", "K3", "K4", "K5", "K6", "K7"], msg: "categorie06"}
                             ]
                         },
                         "groupe": {
                             name: "Groupes",
                             columns: 9,
                             uniqueId: [0],
+                            uniqueMsg: "groupe01",
                             tests: [
-                                {type: "in", col: 1, array: ["OUI", "NON"]},
-                                {type: "ref", col: 2, origin: "categorie", zero: true},
-                                {type: "ref", col: 3, origin: "categorie", zero: true},
-                                {type: "ref", col: 4, origin: "categorie", zero: true},
-                                {type: "ref", col: 5, origin: "categorie", zero: true},
-                                {type: "ref", col: 6, origin: "categorie", zero: true},
-                                {type: "ref", col: 7, origin: "categorie", zero: true},
-                                {type: "ref", col: 8, origin: "categorie", zero: true}
+                                {type: "in", col: 1, array: ["OUI", "NON"], msg: "groupe02"},
+                                {type: "ref", col: 2, origin: "categorie", zero: true, msg: "groupe03"},
+                                {type: "ref", col: 3, origin: "categorie", zero: true, msg: "groupe03"},
+                                {type: "ref", col: 4, origin: "categorie", zero: true, msg: "groupe03"},
+                                {type: "ref", col: 5, origin: "categorie", zero: true, msg: "groupe03"},
+                                {type: "ref", col: 6, origin: "categorie", zero: true, msg: "groupe03"},
+                                {type: "ref", col: 7, origin: "categorie", zero: true, msg: "groupe03"},
+                                {type: "ref", col: 8, origin: "categorie", zero: true, msg: "groupe03"}
                             ]
                         },
                         "coeffprestation": {
                             name: "Coefficients Prestations",
                             columns: 3,
                             uniqueId: [0, 1],
+                            uniqueMsg: "coeffprestation03",
                             shouldExist: ["classeclient", "classeprestation"],
                             tests: [
-                                {type: "ref", col: 0, origin: "classeclient", zero: false},
-                                {type: "ref", col: 1, origin: "classeprestation", zero: false}
+                                {type: "ref", col: 0, origin: "classeclient", zero: false, msg: "coeffprestation01"},
+                                {type: "ref", col: 1, origin: "classeprestation", zero: false, msg: "coeffprestation02"}
                             ]
                         },
                         "basecateg": {
                             name: "Tarifs Base",
                             columns: 3,
                             uniqueId: [0, 1],
+                            uniqueMsg: "basecateg03",
                             shouldExist: ["base", "categorie"],
                             tests: [
-                                {type: "ref", col: 0, origin: "base", zero: false},
-                                {type: "ref", col: 1, origin: "categorie", zero: false},
-                                {type: "num", col: 2, neg: false, zero: true, int: false}
+                                {type: "ref", col: 0, origin: "base", zero: false, msg: "basecateg01"},
+                                {type: "ref", col: 1, origin: "categorie", zero: false, msg: "basecateg02"},
+                                {type: "num", col: 2, neg: false, zero: true, int: false, msg: "basecateg05"}
                             ]
                         },
                     };
@@ -563,7 +571,7 @@ function extract() {
     });
 }
 
-function check() {
+function checkMandatory() {
     let missing = [];
     Object.keys(mandatoryCsvs).forEach(function(mandatory) {
         if(!Object.keys(files).includes(mandatory + ".csv")) {
@@ -585,7 +593,7 @@ function check() {
     return "";
 }
 
-function reCheck() {
+function checkAuthorized() {
     let polluting = [];
     Object.keys(files).forEach(function(fn) {
         const filename = fn.split(".")[0];
@@ -604,9 +612,7 @@ function reCheck() {
     return "";
 }
 
-let plateforme_id = "";
-let has_grille = "";
-function checkColumns(complete) {
+function checkColumnsNumbers() {
     let result = "";
     Object.keys(mandatoryCsvs).forEach(function(filename) {
         $('#'+filename).removeClass('orange-file');
@@ -622,17 +628,98 @@ function checkColumns(complete) {
             i++;
         });
     });
-    if(result != "") {
-        return result;
-    }
+    return result;
+}
+
+function checkPlateFact() {
+    let result = "";
+    const names = ["paramfact", "plateforme"];
+    names.forEach(function(filename) {
+        let arrayIds = {};
+        let i = 1;
+        contents[filename].forEach(function(line) {
+            if(!Object.keys(arrayIds).includes(line[0])) {
+                arrayIds[line[0]] = i-1;
+            }
+            if(filename == "plateforme") {
+                if(line[0] == mandatoryCsvs[filename].labels[0]) {
+                    if(line[2] != plateforme) {
+                        result += messages["plateforme01"] + " <br />";
+                    }
+                }
+                if(line[0] == mandatoryCsvs[filename].labels[7]) {
+                    if(!["OUI", "NON"].includes(line[2])) {
+                        result += messages["plateforme02"] + " <br />";
+                    }
+                    if(line[2] == "OUI" && !Object.keys(files).includes("grille.pdf")) {
+                        result += "il manque la grille de tarifs mentionnée dans le fichier " + filename + ".csv <br />";
+                    }
+                }
+            }
+            i++;
+        });
+        if(Object.keys(arrayIds).length != mandatoryCsvs[filename].labels.length) {
+            result += "le fichier " + filename + " doit contenir " + mandatoryCsvs[filename].labels.length + " étiquettes <br />";
+        }
+        mandatoryCsvs[filename].labels.forEach(function(label) {
+            if(!Object.keys(arrayIds).includes(label)) {
+                result += "le fichier " + filename + " doit contenir l'étiquette : '" + label + "' <br />";
+            }
+        });
+    });
+    return result;
+}
+
+function checkColumns() {
+    let result = "";
     Object.keys(contents).forEach(function(filename) {
-        let resFile = "";
+        if(["paramfact", "plateforme"].includes(filename)) {
+            continue;
+        }
+/*
+        if(mandatoryCsvs[filename].uniqueId) {
+            let header = true;
+            let arrayIds = {};
+            let i = 1;
+            let resUnique = "";
+            let columns = "";
+            contents[filename].forEach(function(line) {
+                if(header) {
+                    header = false;
+                    mandatoryCsvs[filename].uniqueId.forEach(function(col) {
+                        if(columns != "") {
+                            columns += " | ";
+                        }
+                        columns += line[col];
+                    });
+                }
+                else {
+                    let id = "";
+                    mandatoryCsvs[filename].uniqueId.forEach(function(col) {
+                        if(id != "") {
+                            id += "_";
+                        }
+                        id += line[col];
+                    });
+                    if(Object.keys(arrayIds).includes(id)) {
+                        if(resUnique == "") {
+                            resUnique += mandatoryCsvs[filename].uniqueMsg + "<br />";
+                            resUnique += "Fichier : " + filename + "<br />";
+                            resUnique += "Colonne : '" + columns + "'<br />";
+                        }
+                        resUnique += "Erreur ligne " + i + " : '" + id + "'<br />";
+                    }
+                    else {
+                        arrayIds[id] = i-1;
+                    }
+                }
+                i++;
+            });
+        }
+*/
         let header = true;
         let arrayIds = {};
         let i = 1;
-        if(mandatoryCsvs[filename].labels) {
-            header = false;
-        }
         contents[filename].forEach(function(line) {
             if(!header) {
                 if(mandatoryCsvs[filename].uniqueId) {
@@ -644,29 +731,13 @@ function checkColumns(complete) {
                         id += line[col];
                     });
                     if(Object.keys(arrayIds).includes(id)) {
-                        resFile += "l'id " + id + " du fichier " + filename + ".csv n'est pas unique<br />";
+                        result += "l'id " + id + " du fichier " + filename + ".csv n'est pas unique<br />";
                     }
                     else {
                         arrayIds[id] = i-1;
                     }
                 }
-                if(mandatoryCsvs[filename].labels) {
-                    if(filename == "plateforme") {
-                        if(line[0] == mandatoryCsvs[filename].labels[0]) {
-                            plateforme_id = line[2];
-                        }
-                        if(line[0] == mandatoryCsvs[filename].labels[7]) {
-                            has_grille = line[2];
-                        }
-                    }
-                    if(Object.keys(arrayIds).includes(line[0])) {
-                        resFile += "l'étiquette " + line[col] + " du fichier " + filename + ".csv n'est pas unique<br />";
-                    }
-                    else {
-                        arrayIds[line[0]] = i-1;
-                    }
-                }
-                if(complete && mandatoryCsvs[filename].tests) {
+                if(mandatoryCsvs[filename].tests) {
                     mandatoryCsvs[filename].tests.forEach(function(test) {
                         switch(test.type) {
                             case "in":
@@ -705,7 +776,7 @@ function checkColumns(complete) {
                                 }
                                 break;
                             case "plateforme":
-                                if(line[test.col] != plateforme_id) {
+                                if(line[test.col] != plateforme) {
                                     resFile += "l'id " + line[test.col] + " de la ligne " + i + " du fichier " + filename + ".csv n'existe pas dans les ids de plateforme.csv <br />";
                                 }
                         }
@@ -724,51 +795,33 @@ function checkColumns(complete) {
             }
             i++;
         });
-        if(complete) {
-            if(filename == "plateforme") {
-                if(plateforme_id != plateforme) {
-                    resFile += "l'id plateforme du fichier " + filename + ".csv ne correspond pas à la plateforme de travail <br />";
-                }
-                if(has_grille == "OUI" && !Object.keys(files).includes("grille.pdf")) {
-                    resFile += "il manque la grille de tarifs mentionnée dans le fichier " + filename + ".csv <br />";
-                    $('#grille').addClass('orange-file');
-                }
-            }
-            if(mandatoryCsvs[filename].labels) {
-                mandatoryCsvs[filename].labels.forEach(function(label) {
-                    if(!Object.keys(arrayIds).includes(label)) {
-                        resFile += "l'étiquette " + label + " est manquante dans le fichier " + filename + " <br />";
+        if(mandatoryCsvs[filename].shouldExist) {
+            Object.keys(ids[mandatoryCsvs[filename].shouldExist[0]]).forEach(function(id0) {
+                Object.keys(ids[mandatoryCsvs[filename].shouldExist[1]]).forEach(function(id1) {
+                    const id = id0 + "_" + id1;
+                    if(filename == "coeffprestation") {
+                        const contentLine = contents["classeprestation"][ids["classeprestation"][id1]];
+                        if(contentLine[2] == "NON") {
+                            return;
+                        }
+                    }
+                    if(!(Object.keys(arrayIds).includes(id))) {
+                        resFile += "Le couple id classe prestation '" + id0 + "' et id classe client '" + id1 + "' n'existe pas dans " + filename + " <br />";
                     }
                 });
-            }
-            if(mandatoryCsvs[filename].shouldExist) {
-                Object.keys(ids[mandatoryCsvs[filename].shouldExist[0]]).forEach(function(id0) {
-                    Object.keys(ids[mandatoryCsvs[filename].shouldExist[1]]).forEach(function(id1) {
-                        const id = id0 + "_" + id1;
-                        if(filename == "coeffprestation") {
-                            const contentLine = contents["classeprestation"][ids["classeprestation"][id1]];
-                            if(contentLine[2] == "NON") {
-                                return;
-                            }
-                        }
-                        if(!(Object.keys(arrayIds).includes(id))) {
-                            resFile += "Le couple id classe prestation '" + id0 + "' et id classe client '" + id1 + "' n'existe pas dans " + filename + " <br />";
-                        }
-                    });
-                });
-            }
-            if(mandatoryCsvs[filename].uniqueId) {
-                ids[filename] = arrayIds;
-            }
+            });
         }
-        if(resFile != "") {
-            result += resFile;
+        if(result != "") {
             checks[filename] = "orange-file";
             $('#'+filename).addClass('orange-file');
+            return result;
         }
-        else {
-            checks[filename] = "green-file";
-            $('#'+filename).addClass('green-file');
+
+        checks[filename] = "green-file";
+        $('#'+filename).addClass('green-file');
+
+        if(mandatoryCsvs[filename].uniqueId) {
+            ids[filename] = arrayIds;
         }
     });
     sessionStorage.setItem("ids", JSON.stringify(ids));

@@ -179,11 +179,10 @@ function displayTile(array $tiles): void
                     </div>
                 </div>
             </div>
-            <div id="back"><a href="#">
-                <svg class="icon feather" aria-hidden="true">
-                    <use xlink:href="#arrow-left"></use>
-                </svg>
-                Back</a>
+            <div class="center-tile">
+                <div id="back" class="tile tight-tile">
+                    Retour au menu Statistiques
+                </div>
             </div>
             <div id="report-title"></div>
             <div id="report-period"></div>

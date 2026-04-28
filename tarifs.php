@@ -129,6 +129,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
     <body>
         <div class="container-fluid">
             <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
+            <input type="hidden" name="messages" id="messages" value="<?php echo htmlentities(json_encode($messages->getMessages()),ENT_QUOTES); ?>" />
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>

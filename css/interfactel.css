@@ -776,12 +776,6 @@ table.report-table th {
   text-align: left;
 }
 
-#back {
-  display: none;
-  margin: 10px;
-  text-align: center;
-}
-
 .right {
   text-align: right;
 }
