@@ -439,15 +439,15 @@ const mandatoryCsvs = { "paramfact": {
                         "articlesap": {
                             name: "Articles SAP",
                             columns: 8,
-                            uniqueId: [0],
-                            uniqueMsg: "articlesap01"
+                            tests: [
+                                {type: "unique", id: [0], msg: "articlesap01"}
+                            ]
                         },
                         "overhead": {
                             name: "Taux Overhead",
                             columns: 3,
-                            uniqueId: [0],
-                            uniqueMsg: "overhead01",
                             tests: [
+                                {type: "unique", id: [0], msg: "overhead01"},
                                 {type: "num", col: 1, neg: false, zero: true, int: false, msg: "overhead02"},
                                 {type: "ref", col: 2, origin: "articlesap", zero: false, msg: "overhead03"}
                             ],
@@ -456,15 +456,15 @@ const mandatoryCsvs = { "paramfact": {
                         "base": {
                             name: "Liste Tarifs Base",
                             columns: 2,
-                            uniqueId: [0],
-                            uniqueMsg: "base01"
+                            tests: [
+                                {type: "unique", id: [0], msg: "base01"}
+                            ]
                         },
                         "classeclient": {
                             name: "Classes Client",
                             columns: 9,
-                            uniqueId: [0],
-                            uniqueMsg: "classeclient01",
                             tests: [
+                                {type: "unique", id: [0], msg: "classeclient01"},
                                 {type: "in", col: 3, array: ["INT", "EXT"], msg: "classeclient02"},
                                 {type: "in", col: 4, array: ["BONUS", "RABAIS"], msg: "classeclient03"},
                                 {type: "in", col: 5, array: ["BONUS", "RABAIS"], msg: "classeclient04"},
@@ -481,19 +481,17 @@ const mandatoryCsvs = { "paramfact": {
                         "partenaire": {
                             name: "Partenaires Plateforme",
                             columns: 3,
-                            uniqueId: [0, 1],
-                            uniqueMsg: "partenaire02",
                             tests: [
                                 {type: "plateforme", col: 0, msg: "partenaire01"},
+                                {type: "unique", id: [0, 1], msg: "partenaire02"},
                                 {type: "ref", col: 2, origin: "classeclient", zero: false, msg: "partenaire03"}
                             ]
                         },
                         "classeprestation": {
                             name: "Classes Prestations",
                             columns: 9,
-                            uniqueId: [0],
-                            uniqueMsg: "classeprestation01",
                             tests: [
+                                {type: "unique", id: [0], msg: "classeprestation01"},
                                 {type: "ref", col: 1, origin: "articlesap", zero: false, msg: "classeprestation02"},
                                 {type: "in", col: 2, array: ["OUI", "NON"], msg: "classeprestation03"},
                                 {type: "in", col: 3, array: ["OUI", "NON"], msg: "classeprestation04"},
@@ -504,11 +502,11 @@ const mandatoryCsvs = { "paramfact": {
                         "categorie": {
                             name: "Catégories",
                             columns: 8,
-                            uniqueId: [0],
-                            uniqueMsg: "categorie01",
                             tests: [
+                                {type: "unique", id: [0], msg: "categorie01"},
                                 {type: "plateforme", col: 5, msg: "categorie02"},
                                 {type: "ref", col: 6, origin: "classeprestation", zero: false, special: true, msg: "categorie03"},
+                                {type: "flag", col: 6, flag: "NON", msg: "categorie04"},
                                 {type: "num", col: 4, neg: false, zero: true, int: true, max: 8, msg: "categorie05"},
                                 {type: "in", col: 7, array: ["K1", "K2", "K3", "K4", "K5", "K6", "K7"], msg: "categorie06"}
                             ]
@@ -516,9 +514,8 @@ const mandatoryCsvs = { "paramfact": {
                         "groupe": {
                             name: "Groupes",
                             columns: 9,
-                            uniqueId: [0],
-                            uniqueMsg: "groupe01",
                             tests: [
+                                {type: "unique", id: [0], msg: "groupe01"},
                                 {type: "in", col: 1, array: ["OUI", "NON"], msg: "groupe02"},
                                 {type: "ref", col: 2, origin: "categorie", zero: true, msg: "groupe03"},
                                 {type: "ref", col: 3, origin: "categorie", zero: true, msg: "groupe03"},
@@ -526,30 +523,36 @@ const mandatoryCsvs = { "paramfact": {
                                 {type: "ref", col: 5, origin: "categorie", zero: true, msg: "groupe03"},
                                 {type: "ref", col: 6, origin: "categorie", zero: true, msg: "groupe03"},
                                 {type: "ref", col: 7, origin: "categorie", zero: true, msg: "groupe03"},
-                                {type: "ref", col: 8, origin: "categorie", zero: true, msg: "groupe03"}
+                                {type: "ref", col: 8, origin: "categorie", zero: true, msg: "groupe03"},
+                                {type: "itemk", col: 2, msg: "groupe04"},
+                                {type: "itemk", col: 3, msg: "groupe04"},
+                                {type: "itemk", col: 4, msg: "groupe04"},
+                                {type: "itemk", col: 5, msg: "groupe04"},
+                                {type: "itemk", col: 6, msg: "groupe04"},
+                                {type: "itemk", col: 7, msg: "groupe04"},
+                                {type: "itemk", col: 8, msg: "groupe04"},
                             ]
                         },
                         "coeffprestation": {
                             name: "Coefficients Prestations",
                             columns: 3,
-                            uniqueId: [0, 1],
-                            uniqueMsg: "coeffprestation03",
-                            shouldExist: ["classeclient", "classeprestation"],
                             tests: [
                                 {type: "ref", col: 0, origin: "classeclient", zero: false, msg: "coeffprestation01"},
-                                {type: "ref", col: 1, origin: "classeprestation", zero: false, msg: "coeffprestation02"}
+                                {type: "ref", col: 1, origin: "classeprestation", zero: false, msg: "coeffprestation02"},
+                                {type: "unique", id: [0, 1], msg: "coeffprestation03"},
+                                {type: "should", id: ["classeclient", "classeprestation"], msg: "coeffprestation04"},
+                                {type: "flag", col: 1, flag: "OUI", msg: "coeffprestation05"},
                             ]
                         },
                         "basecateg": {
                             name: "Tarifs Base",
                             columns: 3,
-                            uniqueId: [0, 1],
-                            uniqueMsg: "basecateg03",
-                            shouldExist: ["base", "categorie"],
                             tests: [
                                 {type: "ref", col: 0, origin: "base", zero: false, msg: "basecateg01"},
                                 {type: "ref", col: 1, origin: "categorie", zero: false, msg: "basecateg02"},
-                                {type: "num", col: 2, neg: false, zero: true, int: false, msg: "basecateg05"}
+                                {type: "unique", id: [0, 1], msg: "basecateg03"},
+                                {type: "should", id: ["base", "categorie"], msg: "basecateg04"},
+                                {type: "num", col: 2, neg: false, zero: true, int: false, special: true, msg: "basecateg05"}
                             ]
                         },
                     };
@@ -670,147 +673,156 @@ function checkPlateFact() {
     return result;
 }
 
+function switchTest(test, line, i, column) {
+    switch(test.type) {
+        case "in":
+            if(!test.array.includes(line[test.col])) {
+                return line[test.col];
+            }
+            break;
+        case "ref":
+            if(!(((Object.keys(ids[test.origin])).includes(line[test.col])) || (test.zero && (line[test.col] == 0)))) {
+                return line[test.col];
+            }
+            break;
+        case "flag":
+            const idPrest = line[test.col];
+            const prestLine = contents["classeprestation"][ids["classeprestation"][idPrest]];
+            if(prestLine[2] != test.flag) {
+                return line[test.col];
+            }
+            break;
+        case "num":
+            if(Number.isNaN(Number(line[test.col]))) {
+                return line[test.col];
+            }
+            if(test.int && !Number.isInteger(Number(line[test.col]))) {
+                return line[test.col];
+            }
+            if(!test.neg && (line[test.col] < 0)) {
+                return line[test.col];
+            }
+            if(!test.zero && (line[test.col] == 0)) {
+                return line[test.col];
+            }
+            if(test.max && (line[test.col] > test.max)) {
+                return line[test.col];
+            }
+            if(test.special) {
+                const catLine = contents["categorie"][ids["categorie"][line[1]]];
+                if((Math.floor(Math.log10(line[test.col])) + 1) > (9 - catLine[4])) {
+                    return line[test.col];
+                }
+            }
+            break;
+        case "plateforme":
+            if(line[test.col] != plateforme) {
+                return line[test.col];
+            }
+            break;
+        case "unique":
+            let id = "";
+            test.id.forEach(function(col) {
+                if(id != "") {
+                    id += "_";
+                }
+                id += line[col];
+            });
+            if(Object.keys(arrayIds).includes(id)) {
+                return id;
+            }
+            else {
+                arrayIds[id] = i-1;
+            }
+            break;
+        case "itemk":
+            if(line[test.col] > 0) {
+                const idCat = line[test.col];
+                const cateLine = contents["categorie"][ids["categorie"][idCat]];
+                if(cateLine[7] != column) {
+                    return idCat;
+                }
+            }
+    }
+    return "";
+}
+
+let arrayIds = {};
 function checkColumns() {
     let result = "";
     Object.keys(contents).forEach(function(filename) {
-        if(["paramfact", "plateforme"].includes(filename)) {
+        if("paramfact" == filename) {
+            checks[filename] = "green-file";
+            $('#'+filename).addClass('green-file');
             return;
         }
-/*
-        if(mandatoryCsvs[filename].uniqueId) {
-            let header = true;
-            let arrayIds = {};
-            let i = 1;
-            let resUnique = "";
-            let columns = "";
-            contents[filename].forEach(function(line) {
-                if(header) {
-                    header = false;
-                    mandatoryCsvs[filename].uniqueId.forEach(function(col) {
-                        if(columns != "") {
-                            columns += " | ";
-                        }
-                        columns += line[col];
-                    });
-                }
-                else {
-                    let id = "";
-                    mandatoryCsvs[filename].uniqueId.forEach(function(col) {
-                        if(id != "") {
-                            id += "_";
-                        }
-                        id += line[col];
-                    });
-                    if(Object.keys(arrayIds).includes(id)) {
-                        if(resUnique == "") {
-                            resUnique += mandatoryCsvs[filename].uniqueMsg + "<br />";
-                            resUnique += "Fichier : " + filename + "<br />";
-                            resUnique += "Colonne : '" + columns + "'<br />";
-                        }
-                        resUnique += "Erreur ligne " + i + " : '" + id + "'<br />";
-                    }
-                    else {
-                        arrayIds[id] = i-1;
-                    }
-                }
-                i++;
-            });
+        if(result != "") {
+            return;
         }
-*/
-        let header = true;
-        let arrayIds = {};
-        let i = 1;
-        contents[filename].forEach(function(line) {
-            if(!header) {
-                if(mandatoryCsvs[filename].uniqueId) {
-                    let id = "";
-                    mandatoryCsvs[filename].uniqueId.forEach(function(col) {
-                        if(id != "") {
-                            id += "_";
+
+        if(mandatoryCsvs[filename].tests) {
+            mandatoryCsvs[filename].tests.forEach(function(test) {
+                let header = true;
+                let i = 1;
+                let resTest = "";
+                let column = "";
+                contents[filename].forEach(function(line) {
+                    if(header) {
+                        header = false;
+                        if(test.type == "unique") {
+                            arrayIds = {};
+                            test.id.forEach(function(col) {
+                                if(column != "") {
+                                    column += " | ";
+                                }
+                                column += line[col];
+                            });
                         }
-                        id += line[col];
-                    });
-                    if(Object.keys(arrayIds).includes(id)) {
-                        result += "l'id " + id + " du fichier " + filename + ".csv n'est pas unique<br />";
+                        else {
+                            column = line[test.col];
+                        }
                     }
                     else {
-                        arrayIds[id] = i-1;
-                    }
-                }
-                if(mandatoryCsvs[filename].tests) {
-                    mandatoryCsvs[filename].tests.forEach(function(test) {
-                        switch(test.type) {
-                            case "in":
-                                if(!test.array.includes(line[test.col])) {
-                                    resFile += "la ligne " + i + " du fichier " + filename + ".csv contient " + line[test.col] + " au lieu de " + test.array.toString() + "<br />";
-                                }
-                                break;
-                            case "ref":
-                                if(!(((Object.keys(ids[test.origin])).includes(line[test.col])) || (test.zero && (line[test.col] == 0)))) {
-                                    resFile += "l'id " + line[test.col] + " de la ligne " + i + " du fichier " + filename + ".csv n'existe pas dans les ids de  " + test.origin + "<br />";
-                                }
-                                if(filename == "categorie") {
-                                    const idPrest = line[test.col];
-                                    const contentLine = contents[test.origin][ids[test.origin][idPrest]];
-                                    if(contentLine[2] != "NON") {
-                                        resFile += "le flag coef_prest de l'id classe prestation '" + idPrest + "' devrait être à NON <br />";
-                                    }
-                                }
-                                break;
-                            case "num":
-                                const pref = "la valeur de la colonne " + test.col + " (" + line[test.col] + ") de la ligne " + i + " du fichier " + filename + ".csv";
-                                if(Number.isNaN(Number(line[test.col]))) {
-                                    resFile += pref + " doit être un nombre<br />";
-                                }
-                                if(test.int && !Number.isInteger(Number(line[test.col]))) {
-                                    resFile += pref + " doit être un entier<br />";
-                                }
-                                if(!test.neg && (line[test.col] < 0)) {
-                                    resFile += pref + " ne peut être négative<br />";
-                                }
-                                if(!test.zero && (line[test.col] == 0)) {
-                                    resFile += pref + " ne peut être nulle<br />";
-                                }
-                                if(test.max && (line[test.col] > test.max)) {
-                                    resFile += pref + " ne peut être plus grand que " + test.max + " <br />";
-                                }
-                                break;
-                            case "plateforme":
-                                if(line[test.col] != plateforme) {
-                                    resFile += "l'id " + line[test.col] + " de la ligne " + i + " du fichier " + filename + ".csv n'existe pas dans les ids de plateforme.csv <br />";
-                                }
-                        }
-                    });
-                    if((filename == "basecateg") && (line[2] > 0)) {
-                        const prestLine = ids["categorie"][line[1]];
-                        const nd = contents["categorie"][prestLine][4];
-                        if((Math.floor(Math.log10(line[2])) + 1) > (9 - nd)) {
-                            resFile += "le prix unitaire " + line[2] + " de la ligne " + i + " du fichier " + filename + ".csv contient trop de décimales <br />";
+                        let error = switchTest(test, line, i, column);
+                        if(error != "") {
+                            if(resTest == "") {
+                                resTest += test.msg + "<br />";
+                                resTest += "Fichier : " + filename + "<br />";
+                                resTest += "Colonne : '" + column + "'<br />";
+                            }
+                            resTest += "Erreur ligne " + i + " : '" + error + "'<br />";
                         }
                     }
-                }
-            }
-            else {
-                header = false;
-            }
-            i++;
-        });
-        if(mandatoryCsvs[filename].shouldExist) {
-            Object.keys(ids[mandatoryCsvs[filename].shouldExist[0]]).forEach(function(id0) {
-                Object.keys(ids[mandatoryCsvs[filename].shouldExist[1]]).forEach(function(id1) {
-                    const id = id0 + "_" + id1;
-                    if(filename == "coeffprestation") {
-                        const contentLine = contents["classeprestation"][ids["classeprestation"][id1]];
-                        if(contentLine[2] == "NON") {
-                            return;
-                        }
-                    }
-                    if(!(Object.keys(arrayIds).includes(id))) {
-                        resFile += "Le couple id classe prestation '" + id0 + "' et id classe client '" + id1 + "' n'existe pas dans " + filename + " <br />";
-                    }
+                    i++;
                 });
+                if(test.type == "unique") {
+                    ids[filename] = arrayIds;
+                }
+                if(test.type == "should") {
+                    Object.keys(ids[test.id[0]]).forEach(function(id0) {
+                        Object.keys(ids[test.id[1]]).forEach(function(id1) {
+                            if(filename == "coeffprestation") {
+                                const prestLine = contents["classeprestation"][ids["classeprestation"][id1]];
+                                if(prestLine[2] != "OUI") {
+                                    return;
+                                }
+                            }
+                            const id = id0 + "_" + id1;
+                            if(!(Object.keys(arrayIds).includes(id))) {
+                                if(resTest == "") {
+                                    resTest += test.msg + "<br />";
+                                    resTest += "Fichier : " + filename + "<br />";
+                                    resTest += "Colonne : '" + column + "'<br />";
+                                }
+                                resTest += "Le couple '" + id1 + "' et '" + id0 + "' n'existe pas <br />";
+                            }
+                        });
+                    });
+                }
+                result += resTest;
             });
         }
+
         if(result != "") {
             checks[filename] = "orange-file";
             $('#'+filename).addClass('orange-file');
@@ -820,9 +832,6 @@ function checkColumns() {
         checks[filename] = "green-file";
         $('#'+filename).addClass('green-file');
 
-        if(mandatoryCsvs[filename].uniqueId) {
-            ids[filename] = arrayIds;
-        }
     });
     sessionStorage.setItem("ids", JSON.stringify(ids));
     sessionStorage.setItem("checks", JSON.stringify(checks));
