@@ -170,8 +170,8 @@ $(document).on("click", "#dates-up", function() {
 
 $(document).on("click", "#dates-center", function() {
     if(type == "read") {
-        if(readPos > 3) {
-            first = readPos - 3;
+        if(readPos > 5) {
+            first = readPos - 5;
         }
         else {
             first = 0;
@@ -199,8 +199,8 @@ $("#tarifs-read").on("click", function() {
         const dataParsed = JSON.parse(data);
         choices = dataParsed[0];
         readPos = parseInt(dataParsed[1]);
-        if(readPos > 3) {
-            first = readPos - 3;
+        if(readPos > 5) {
+            first = readPos - 5;
         }
         displayDates();
         $('#tarifs-cancel').removeClass('desactived-tile');

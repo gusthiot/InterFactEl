@@ -115,6 +115,9 @@ if(isset($_POST['type'])) {
                                             break;
                                         }
                                     }
+                                    if(!copy($state->getLastPath()."/sap.csv", $tmpDir."sap.csv")) {
+                                        $msg .= "erreur de copie de ".$file;
+                                    }
 
                                     $wm = "";
                                     $tyfact = "SAP";
