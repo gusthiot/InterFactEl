@@ -644,6 +644,9 @@ function checkPlateFact() {
             if(!Object.keys(arrayIds).includes(line[0])) {
                 arrayIds[line[0]] = i-1;
             }
+            else {
+                result += "le label '" + line[0] + "' est présent plus d'une fois dans  " + filename + ".csv <br />";
+            }
             if(filename == "plateforme") {
                 if(line[0] == mandatoryCsvs[filename].labels[0]) {
                     if(line[2] != plateforme) {
@@ -693,6 +696,9 @@ function switchTest(test, line, i, column) {
             }
             break;
         case "num":
+            if(line[test.col] == "") {
+                return line[test.col];
+            }
             if(Number.isNaN(Number(line[test.col]))) {
                 return line[test.col];
             }
