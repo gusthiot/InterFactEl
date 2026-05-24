@@ -260,7 +260,7 @@ $("#tarifs-import").on("change", function(e) {
         files = JSON.parse(json);
         extract();
 
-        if(runCheck(checkMandatory()) || runCheck(checkAuthorized()) || runCheck(checkColumnsNumbers()) || runCheck(checkPlateFact())) {
+        if(runCheck(checkMandatory()) || runCheck(checkAuthorized()) || runCheck(checkColumnsNumbers()) || runCheck(checkPlateFact(false))) {
             files = {};
             contents = {};
         }
@@ -399,7 +399,7 @@ $("#tarifs-cancel").on("click", function() {
 
 $("#tarifs-check").on("click", function() {
 
-    if(runCheck(checkMandatory()) || runCheck(checkAuthorized()) || runCheck(checkColumnsNumbers()) || runCheck(checkPlateFact())) {
+    if(runCheck(checkMandatory()) || runCheck(checkAuthorized()) || runCheck(checkColumnsNumbers()) || runCheck(checkPlateFact(true))) {
         return;
     }
     if(runCheck(checkColumns())) {
@@ -634,7 +634,7 @@ function checkColumnsNumbers() {
     return result;
 }
 
-function checkPlateFact() {
+function checkPlateFact(verify) {
     let result = "";
     const names = ["paramfact", "plateforme"];
     names.forEach(function(filename) {
@@ -650,12 +650,22 @@ function checkPlateFact() {
             if(filename == "plateforme") {
                 if(line[0] == mandatoryCsvs[filename].labels[0]) {
                     if(line[2] != plateforme) {
-                        result += messages["plateforme01"] + " <br />";
+                        if(verify) {
+                            result += messages["plateforme01"] + " <br />";
+                        }
+                        else {
+                            result +=  "L’étiquette [Id-Plateforme] dans plateforme.csv ne correspond pas à la plateforme de travail <br />";
+                        }
                     }
                 }
                 if(line[0] == mandatoryCsvs[filename].labels[7]) {
                     if(!["OUI", "NON"].includes(line[2])) {
-                        result += messages["plateforme02"] + " <br />";
+                        if(verify) {
+                            result += messages["plateforme02"] + " <br />";
+                        }
+                        else {
+                            result += "L’étiquette [Grille-Plateforme] dans plateforme.csv ne peut prendre comme valeur que OUI ou NON <br />";
+                        }
                     }
                     if(line[2] == "OUI" && !Object.keys(files).includes("grille.pdf")) {
                         result += "il manque la grille de tarifs mentionnée dans le fichier " + filename + ".csv <br />";
