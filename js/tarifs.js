@@ -610,7 +610,7 @@ function checkAuthorized() {
         polluting.forEach( function(pollute) {
             list += pollute+" ";
         });
-        return '" ' + list +'" est de trop les paramètres';
+        return '" ' + list +'".csv est de trop dans le dossier importé';
     }
     return "";
 }

@@ -27,8 +27,8 @@ class ConcatT
             "item-text2K", "item-nbr", "item-name", "item-unit", "item-codeD", "item-labelcode",
             "item-extra", "transac-date", "transac-valid", "transac-quantity", "transac-usage",
             "transac-runtime", "valuation-price", "valuation-brut", "discount-type", "discount-CHF",
-            "valuation-net", "subsid-ok", "deduct-CHF", "subsid-deduct", "total-fact",
-            "discount-bonus", "subsid-bonus"]
+            "valuation-net", "subsid-name", "subsid-type", "subsid-ok", "deduct-CHF", "subsid-deduct",
+            "total-fact", "discount-bonus", "subsid-bonus"]
     ];
 
     /**
