@@ -438,7 +438,7 @@ const mandatoryCsvs = { "paramfact": {
                         },
                         "articlesap": {
                             name: "Articles SAP",
-                            columns: 8,
+                            columns: 9,
                             tests: [
                                 {type: "unique", id: [0], msg: "articlesap01"}
                             ]
@@ -448,7 +448,7 @@ const mandatoryCsvs = { "paramfact": {
                             columns: 3,
                             tests: [
                                 {type: "unique", id: [0], msg: "overhead01"},
-                                {type: "num", col: 1, neg: false, zero: true, int: false, msg: "overhead02"},
+                                {type: "num", col: 1, neg: false, zero: true, int: false, max: 100, msg: "overhead02"},
                                 {type: "ref", col: 2, origin: "articlesap", zero: false, msg: "overhead03"}
                             ],
                             messages
@@ -480,35 +480,33 @@ const mandatoryCsvs = { "paramfact": {
                         },
                         "partenaire": {
                             name: "Partenaires Plateforme",
-                            columns: 3,
+                            columns: 2,
                             tests: [
-                                {type: "plateforme", col: 0, msg: "partenaire01"},
-                                {type: "unique", id: [0, 1], msg: "partenaire02"},
-                                {type: "ref", col: 2, origin: "classeclient", zero: false, msg: "partenaire03"}
+                                {type: "unique", id: [0], msg: "partenaire01"},
+                                {type: "ref", col: 1, origin: "classeclient", zero: false, msg: "partenaire02"}
                             ]
                         },
                         "classeprestation": {
                             name: "Classes Prestations",
-                            columns: 9,
+                            columns: 10,
                             tests: [
                                 {type: "unique", id: [0], msg: "classeprestation01"},
-                                {type: "ref", col: 1, origin: "articlesap", zero: false, msg: "classeprestation02"},
-                                {type: "in", col: 2, array: ["OUI", "NON"], msg: "classeprestation03"},
-                                {type: "in", col: 3, array: ["OUI", "NON"], msg: "classeprestation04"},
-                                {type: "in", col: 4, array: ["OUI", "NON"], msg: "classeprestation05"},
-                                {type: "in", col: 5, array: ["OUI", "NON"], msg: "classeprestation06"}
+                                {type: "ref", col: 2, origin: "articlesap", zero: false, msg: "classeprestation02"},
+                                {type: "in", col: 3, array: ["OUI", "NON"], msg: "classeprestation03"},
+                                {type: "in", col: 4, array: ["OUI", "NON"], msg: "classeprestation04"},
+                                {type: "in", col: 5, array: ["OUI", "NON"], msg: "classeprestation05"},
+                                {type: "in", col: 6, array: ["OUI", "NON"], msg: "classeprestation06"}
                             ]
                         },
                         "categorie": {
                             name: "Catégories",
-                            columns: 8,
+                            columns: 7,
                             tests: [
                                 {type: "unique", id: [0], msg: "categorie01"},
-                                {type: "plateforme", col: 5, msg: "categorie02"},
-                                {type: "ref", col: 6, origin: "classeprestation", zero: false, special: true, msg: "categorie03"},
-                                {type: "flag", col: 6, flag: "NON", msg: "categorie04"},
+                                {type: "ref", col: 5, origin: "classeprestation", zero: false, special: true, msg: "categorie03"},
+                                {type: "flag", col: 5, flag: "NON", msg: "categorie04"},
                                 {type: "num", col: 4, neg: false, zero: true, int: true, max: 8, msg: "categorie05"},
-                                {type: "in", col: 7, array: ["K1", "K2", "K3", "K4", "K5", "K6", "K7"], msg: "categorie06"}
+                                {type: "in", col: 6, array: ["K1", "K2", "K3", "K4", "K5", "K6", "K7"], msg: "categorie06"}
                             ]
                         },
                         "groupe": {
@@ -607,10 +605,19 @@ function checkAuthorized() {
     });
     if(polluting.length > 0) {
         let list = "";
+        let num = 0;
         polluting.forEach( function(pollute) {
-            list += pollute+" ";
+            if(num > 0) {
+                list += ", ";
+            }
+            list += pollute+".csv";
+            num++;
         });
-        return '" ' + list +'".csv est de trop dans le dossier importé';
+        let verbe = "est";
+        if(num > 1) {
+            verbe = "sont";
+        }
+        return '" ' + list +'" ' + verbe + ' de trop dans le dossier importé';
     }
     return "";
 }
@@ -701,7 +708,7 @@ function switchTest(test, line, i, column) {
         case "flag":
             const idPrest = line[test.col];
             const prestLine = contents["classeprestation"][ids["classeprestation"][idPrest]];
-            if(prestLine[2] != test.flag) {
+            if(prestLine[3] != test.flag) {
                 return line[test.col];
             }
             break;
@@ -731,10 +738,6 @@ function switchTest(test, line, i, column) {
                 }
             }
             break;
-        case "plateforme":
-            if(line[test.col] != plateforme) {
-                return line[test.col];
-            }
             break;
         case "unique":
             let id = "";
@@ -755,7 +758,7 @@ function switchTest(test, line, i, column) {
             if(line[test.col] > 0) {
                 const idCat = line[test.col];
                 const cateLine = contents["categorie"][ids["categorie"][idCat]];
-                if(cateLine[7] != column) {
+                if(cateLine[6] != column) {
                     return idCat;
                 }
             }

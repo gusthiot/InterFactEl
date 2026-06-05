@@ -1,4 +1,4 @@
-version-logiciel;"n° de version active du logiciel";11.03
-version-interface;"n° de version de l'interface web";2
-vi-min-controler;"n° de version minimale pour Tarif – Lire – Controler";2
-vl-min-relire;"n° de version minimale pour Tarif – Lire – Relire";11.03
+version-logiciel;n° de version active du logiciel;11.04
+version-interface;n° de version de l'interface web;3
+vi-min-controler;n° de version minimale pour Tarif – Lire – Controler;3
+vl-min-relire;n° de version minimale pour Tarif – Lire – Relire;11.04

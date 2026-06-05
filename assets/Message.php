@@ -14,19 +14,20 @@ class Message extends Csv
     const NAME = "message.csv";
 
     const LABELS = ["msg1", "msg2", "msg3", "msg3.1", "msg3.2", "msg3.3", "msg3.4", "msg3.5", "msg3.6", "msg4", "msg5", "msg6", "msg7", "msg8", "msg9", "msg10",
-                        "plateforme01", "plateforme02",
-                        "articlesap01",
-                        "overhead01", "overhead02", "overhead03",
-                        "base01",
-                        "classeclient01", "classeclient02", "classeclient03", "classeclient04", "classeclient05", "classeclient06", "classeclient07",
-                        "partenaire01", "partenaire02", "partenaire03",
-                        "classeprestation01", "classeprestation02", "classeprestation03", "classeprestation04", "classeprestation05", "classeprestation06",
-                        "categorie01", "categorie02", "categorie03", "categorie04", "categorie05", "categorie06",
-                        "groupe01", "groupe02", "groupe03", "groupe04",
-                        "coeffprestation01", "coeffprestation02", "coeffprestation03", "coeffprestation04", "coeffprestation05",
-                        "basecateg01", "basecateg02", "basecateg03", "basecateg04", "basecateg05",
-                        "logo01",
-                        "grille01", "grille02"];
+                        "paramsap00",
+                        "plateforme00", "plateforme01", "plateforme02",
+                        "articlesap00", "articlesap01", "articlesap02", "articlesap03", "articlesap04",
+                        "overhead00", "overhead01", "overhead02", "overhead03", "overhead04",
+                        "base00", "base01",
+                        "classeclient00", "classeclient01", "classeclient02", "classeclient03", "classeclient04", "classeclient05", "classeclient06", "classeclient07",
+                        "partenaire00", "partenaire01", "partenaire02",
+                        "classeprestation00", "classeprestation01", "classeprestation02", "classeprestation03", "classeprestation04", "classeprestation05", "classeprestation06", "classeprestation07",
+                        "categorie00", "categorie01", "categorie02", "categorie03", "categorie04", "categorie05",
+                        "groupe00", "groupe01", "groupe02", "groupe03", "groupe04",
+                        "coeffprestation00", "coeffprestation01", "coeffprestation02", "coeffprestation03", "coeffprestation04", "coeffprestation05",
+                        "basecateg00", "basecateg01", "basecateg02", "basecateg03", "basecateg04", "basecateg05",
+                        "logo00", "logo01",
+                        "grille00", "grille01", "grille02"];
 
     /**
      * Array containing the messages, by specific keys
