@@ -1,6 +1,7 @@
 
 const plateforme = $('#plate').val();
 const messages = JSON.parse($('#messages').val());
+const paramtext = JSON.parse($('#paramtext').val());
 const m0 = $('#m0').val();
 const m0Status = $('#status').val();
 
@@ -62,13 +63,17 @@ function reset() {
 }
 
 function displayFiles() {
-    let filesList = '<div id="files">';
-    [mandatoryCsvs, mandatoryPdfs, optionalPdfs].forEach(function(dict) {
+    let filesList = '';
+    [mandatoryCsvs].forEach(function(dict) {
         Object.keys(dict).forEach(function(key) {
-            filesList += '<div id="' + key + '" class="file">' + dict[key].name + "</div>";
+            filesList += '<div id="' + key + '" class="file tile csv">' + dict[key].name + "</div>";
         });
     });
-    filesList += '</div>'
+    [mandatoryPdfs, optionalPdfs].forEach(function(dict) {
+        Object.keys(dict).forEach(function(key) {
+            filesList += '<div id="' + key + '" class="file tile pdf">' + dict[key].name + "</div>";
+        });
+    });
     $('#tarifs-files').html(filesList);
     $('#tarifs-save').removeClass('desactived-tile');
     $('#tarifs-check').removeClass('desactived-tile');
@@ -77,7 +82,7 @@ function displayFiles() {
 
 function displayDates() {
     if(Object.keys(choices).length > 0) {
-        let html = '<div class="over-tarifs over-dates">';
+        let html = '<div class="over-tarifs">';
         html += '<svg id="dates-center" class="icon icon-selectable date-left" aria-hidden="true">' +
                     '<use xlink:href="#disc"></use>' +
                 '</svg>';
@@ -188,6 +193,38 @@ $(document).on("click", "#dates-center", function() {
     displayDates();
 });
 
+$(document).on("click", ".csv", function() {
+    $('#tarifs-files').html("");
+    const id = $(this).attr('id');
+    let html = '<div>';
+    html += '<svg id="manage-remove" class="icon icon-selectable date-right" aria-hidden="true">' +
+                    '<use xlink:href="#x"></use>' +
+                '</svg>';
+    html += '<table class="table">';
+    const number = mandatoryCsvs[id].columns;
+    for (let i = 0; i < number; i++) {
+        html += '<th>' + paramtext["table-"+id+"-"+i] + '</th>';
+    }
+    let num = 0;
+    contents[id].forEach(function(line) {
+        html += '<tr>';
+        line.forEach(function(cell) {
+            if(["paramfact", "plateforme"].includes(id) ||(num > 0)) {
+                html += '<td>' + cell + '</td>';
+            }
+        });
+        html += '</tr>';
+        num++;
+    });
+    html += '</table>';
+    html += '</div>';
+    $('#tarifs-manage').html(html);
+});
+
+$(document).on("click", "#manage-remove", function() {
+    $('#tarifs-manage').html("");
+    displayFiles();
+});
 
 /** Left */
 
@@ -450,8 +487,7 @@ const mandatoryCsvs = { "paramfact": {
                                 {type: "unique", id: [0], msg: "overhead01"},
                                 {type: "num", col: 1, neg: false, zero: true, int: false, max: 100, msg: "overhead02"},
                                 {type: "ref", col: 2, origin: "articlesap", zero: false, msg: "overhead03"}
-                            ],
-                            messages
+                            ]
                         },
                         "base": {
                             name: "Liste Tarifs Base",
@@ -625,7 +661,6 @@ function checkAuthorized() {
 function checkColumnsNumbers() {
     let result = "";
     Object.keys(mandatoryCsvs).forEach(function(filename) {
-        $('#'+filename).removeClass('orange-file');
         $('#'+filename).removeClass('red-file');
         $('#'+filename).removeClass('green-file');
         const number = mandatoryCsvs[filename].columns;
@@ -633,7 +668,7 @@ function checkColumnsNumbers() {
         contents[filename].forEach( function(line) {
             if(number != line.length) {
                 result += "la ligne " + i + " du fichier " + filename + ".csv contient " + line.length + " colonnes au lieu de " + number + "<br />";
-                $('#'+filename).addClass('orange-file');
+                $('#'+filename).addClass('red-file');
             }
             i++;
         });
@@ -843,8 +878,8 @@ function checkColumns() {
         }
 
         if(result != "") {
-            checks[filename] = "orange-file";
-            $('#'+filename).addClass('orange-file');
+            checks[filename] = "red-file";
+            $('#'+filename).addClass('red-file');
             return result;
         }
 

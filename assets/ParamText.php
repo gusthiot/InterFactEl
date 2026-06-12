@@ -39,16 +39,17 @@ class ParamText extends Csv
                     "annex-compte-prestation", "annex-compte-quantity", "annex-compte-unit", "annex-compte-unit-price", "annex-compte-total-CHF", "annex-compte-subtotal",
                     "annex-compte-total", "annex-compte-pied-page-g1", "annex-compte-pied-page-g2", "res-factel", "res-pltf", "res-year", "res-month", "res-version",
                     "res-folder", "res-type", "info-created", "info-sent", "info-closed", "filigr-prof", "track-status", "track-doc-nr", "track-err-msg", "date",
-                    "transac-nbr", "transac-nbr-cae", "transac-nbr-lvr", "transac-nbr-srv", "transac-nbr-noshow", "total-subsid", "total-remb", "table-param-1", "table-param-2",
-                    "table-param-3", "table-param-4", "table-article-1", "table-article-2", "table-article-3", "table-article-4", "table-article-5", "table-article-6", "table-article-7",
-                    "table-article-8", "table-article-9", "table-overhead-1", "table-overhead-2", "table-overhead-3", "table-base-1", "table-base-2", "table-classeclient-1",
-                    "table-classeclient-2", "table-classeclient-3", "table-classeclient-4", "table-classeclient-5", "table-classeclient-6", "table-classeclient-7", "table-classeclient-8",
-                    "table-classeclient-9", "table-plateforme-1", "table-plateforme-2", "table-plateforme-3", "table-partenaire-1", "table-partenaire-2", "table-classeprest-1",
-                    "table-classeprest-2", "table-classeprest-3", "table-classeprest-4", "table-classeprest-5", "table-classeprest-6", "table-classeprest-7", "table-classeprest-8",
-                    "table-classeprest-9", "table-classeprest-10", "table-categorie-1", "table-categorie-2", "table-categorie-3", "table-categorie-4", "table-categorie-5",
-                    "table-categorie-6", "table-categorie-7", "table-groupe-1", "table-groupe-2", "table-groupe-3", "table-groupe-4", "table-groupe-5", "table-groupe-6",
-                    "table-groupe-7", "table-groupe-8", "table-groupe-9", "table-coeffprest-1", "table-coeffprest-2", "table-coeffprest-3", "table-basecateg-1",
-                    "table-basecateg-2", "table-basecateg-3", "table-categprix-1", "table-categprix-2", "table-categprix-3"];
+                    "transac-nbr", "transac-nbr-cae", "transac-nbr-lvr", "transac-nbr-srv", "transac-nbr-noshow", "total-subsid", "total-remb", "table-paramfact-0", "table-paramfact-1",
+                    "table-paramfact-2", "table-paramfact-3", "table-articlesap-0", "table-articlesap-1", "table-articlesap-2", "table-articlesap-3", "table-articlesap-4",
+                    "table-articlesap-5", "table-articlesap-6", "table-articlesap-7", "table-articlesap-8", "table-overhead-0", "table-overhead-1", "table-overhead-2", "table-base-0",
+                    "table-base-1", "table-classeclient-0", "table-classeclient-1", "table-classeclient-2", "table-classeclient-3", "table-classeclient-4", "table-classeclient-5",
+                    "table-classeclient-6", "table-classeclient-7", "table-classeclient-8", "table-plateforme-0", "table-plateforme-1", "table-plateforme-2", "table-partenaire-0",
+                    "table-partenaire-1", "table-classeprestation-0", "table-classeprestation-1", "table-classeprestation-2", "table-classeprestation-3", "table-classeprestation-4",
+                    "table-classeprestation-5", "table-classeprestation-6", "table-classeprestation-7", "table-classeprestation-8", "table-classeprestation-9", "table-categorie-0",
+                    "table-categorie-1", "table-categorie-2", "table-categorie-3", "table-categorie-4", "table-categorie-5", "table-categorie-6", "table-groupe-0", "table-groupe-1",
+                    "table-groupe-2", "table-groupe-3", "table-groupe-4", "table-groupe-5", "table-groupe-6", "table-groupe-7", "table-groupe-8", "table-coeffprestation-0",
+                    "table-coeffprestation-1", "table-coeffprestation-2", "table-basecateg-0", "table-basecateg-1", "table-basecateg-2", "table-categprix-0", "table-categprix-1",
+                    "table-categprix-2"];
 
     /**
      * Array containing the parameters, by specific keys
@@ -83,6 +84,16 @@ class ParamText extends Csv
         else {
             return "";
         }
+    }
+
+    /**
+     * Gets all parameters
+     *
+     * @return array
+     */
+    function getParams(): array
+    {
+        return $this->params;
     }
 
 }

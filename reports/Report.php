@@ -472,6 +472,7 @@ abstract class Report
 
     /**
      * Returns the plateform concerned by a machine or false
+     * (usually when $this->factel < 8)
      *
      * @param string $machId machine id
      * @return string

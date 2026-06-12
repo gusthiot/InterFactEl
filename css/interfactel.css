@@ -609,10 +609,6 @@ table.dates-tarifs td:nth-child(1) { width: 40px; }
 table.dates-tarifs td:nth-child(2) { width: 20%; }
 table.dates-tarifs td:nth-child(4) { width: 40px; }
 
-.over-dates {
-  max-width: 700px;
-}
-
 table.dates-tarifs td {
   padding: 10px;
 }
@@ -653,6 +649,11 @@ table.dates-tarifs .tr-clickable:hover {
   overflow-x: auto;
   max-height: 580px;
   text-align: center;
+}
+
+#tarifs-select {
+  margin: 0 auto;
+  max-width: 700px;
 }
 
 #tarifs-content {
@@ -698,7 +699,7 @@ table.dates-tarifs .tr-clickable:hover {
   justify-content: center;
 }
 
-#files {
+#tarifs-files {
   margin: 0 auto;
   max-width: 1000px;
   padding: 20px;
@@ -707,20 +708,15 @@ table.dates-tarifs .tr-clickable:hover {
   justify-content: space-around;
 }
 
-
 .file {
+  height: 80px;
+	width: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
-	width: 150px;
-  height: 80px;
-  margin: 10px;
-	border-radius: 5px;
   padding-left: 25px;
   padding-right: 25px;
-  border: 1px solid var(--gris-300);
 }
-
 
 .red-file {
   background-color: var(--groseille);
@@ -730,11 +726,17 @@ table.dates-tarifs .tr-clickable:hover {
 .green-file {
   background-color: var(--chartreuse);
   color: white;
+  box-shadow: 1px 1px 4px 1px var(--chartreuse);
 }
 
-.orange-file {
-  background-color: var(--carotte);
-  color: white;
+.green-file:hover {
+  background-color: white !important;
+  color: var(--chartreuse) !important;
+}
+
+#tarifs-manage {
+  margin: 0 auto;
+  max-width: 1000px;
 }
 
 /** reporting **/

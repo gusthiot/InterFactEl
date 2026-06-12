@@ -103,8 +103,8 @@ class ReportPlateforme extends Report
                     $cond = ($line[$columns["platf-code"]] == $this->plateforme) && $fceCond;
                 }
                 elseif(floatval($this->factel) >= 9 && floatval($this->factel) < 10) {
-                $datetime = explode(" ", $line[$columns["transac-date"]]);
-                $parts = explode("-", $datetime[0]);
+                    $datetime = explode(" ", $line[$columns["transac-date"]]);
+                    $parts = explode("-", $datetime[0]);
                     $cond = ($parts[0] == $this->year) && ($parts[1] == $this->month) && ($line[$columns["platf-code"]] == $this->plateforme) && $fceCond;
                 }
                 else {

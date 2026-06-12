@@ -7,6 +7,7 @@ require_once("assets/Lock.php");
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Message.php");
+require_once("assets/ParamText.php");
 require_once("includes/State.php");
 require_once("includes/Tarifs.php");
 require_once("session.inc");
@@ -41,6 +42,8 @@ if(!$available) {
 }
 $messages = new Message();
 $version = Version::load('./');
+
+$paramtext = new ParamText();
 
 $m0 = "";
 $m0Dis = "";
@@ -130,6 +133,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
         <div class="container-fluid">
             <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
             <input type="hidden" name="messages" id="messages" value="<?php echo htmlentities(json_encode($messages->getMessages()),ENT_QUOTES); ?>" />
+            <input type="hidden" name="paramtext" id="paramtext" value="<?php echo htmlentities(json_encode($paramtext->getParams()),ENT_QUOTES); ?>" />
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
@@ -213,6 +217,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                             <div id="tarifs-center">
                                 <div id="tarifs-select"></div>
                                 <div id="tarifs-files"></div>
+                                <div id="tarifs-manage"></div>
                             </div>
                             <div id="tarifs-right">
                                 <div class="tarifs-column">
