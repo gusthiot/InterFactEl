@@ -28,29 +28,19 @@ if(isset($_POST['type'])) {
         checkPlateforme("facturation", $_POST["plate"]);
         $plateforme = $_POST['plate'];
     }
-/*
-    if($type == "ARCHIVE") {
-        if(!IS_SUPER || TEST_MODE != "TEST") {
-            $_SESSION['alert-danger'] = "wrong place, wrong user";
+
+    $lockProcess = Lock::load("../", "process");
+    if(!is_null($lockProcess)) {
+        $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';
+        if($type == "SIMU") {
+            header('Location: ../index.php');
+            exit;
+        }
+        else {
             header('Location: ../facturation.php?plateforme='.$plateforme);
             exit;
         }
     }
-*/
-//    if($type != "ARCHIVE") {
-        $lockProcess = Lock::load("../", "process");
-        if(!is_null($lockProcess)) {
-            $_SESSION['alert-danger'] = 'Un processus est en cours. Veuillez patientez et rafraîchir la page...</div>';
-            if($type == "SIMU") {
-                header('Location: ../index.php');
-                exit;
-            }
-            else {
-                header('Location: ../facturation.php?plateforme='.$plateforme);
-                exit;
-            }
-        }
-//    }
 
     if(isset($_FILES[$type])) {
         if($_FILES[$type]["error"] == 0) {
@@ -65,100 +55,94 @@ if(isset($_POST['type'])) {
                         $msg = Zip::unzip($tmpFile, $tmpDir);
                         unlink($tmpFile);
                         if(empty($msg)) {
-                            /*if($type == "ARCHIVE") {
-                                State::recurseCopy($tmpDir, DATA.$plateforme);
-                                $_SESSION['alert-success'] = "Archive correctement chargée";
-                            }*/
-                            //else {
-                                $messages = new Message();
-                                if(!copy(CONFIG.ParamText::NAME, $tmpDir.ParamText::NAME)) {
-                                    $msg .= "erreur de copie de ".ParamText::NAME;
+                            $messages = new Message();
+                            if(!copy(CONFIG.ParamText::NAME, $tmpDir.ParamText::NAME)) {
+                                $msg .= "erreur de copie de ".ParamText::NAME;
+                            }
+                            if($type == "FIRST") {
+                                // if you need to upload all data, we need ton check consistancy
+                                $result = new Result($tmpDir);
+                                $paramedit = new ParamEdit($tmpDir);
+                                if($plateforme !== $paramedit->getParam('Platform')) {
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
                                 }
-                                if($type == "FIRST") {
-                                    // if you need to upload all data, we need ton check consistancy
-                                    $result = new Result($tmpDir);
-                                    $paramedit = new ParamEdit($tmpDir);
-                                    if($plateforme !== $paramedit->getParam('Platform')) {
-                                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
-                                    }
-                                    elseif($plateforme !== $result->getParam('Platform')) {
-                                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
-                                    }
-                                    elseif(!State::isNextToOrSameAs($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
-                                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
-                                    }
+                                elseif($plateforme !== $result->getParam('Platform')) {
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
                                 }
-                                elseif($type == "SIMU") {
-                                    $result = new Result($tmpDir);
-                                    $paramedit = new ParamEdit($tmpDir);
-                                    if($paramedit->getParam('Type') !== "SIMU") {
-                                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
-                                    }
-                                    elseif($paramedit->getParam('Platform') !== $result->getParam('Platform')) {
-                                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
-                                    }
-                                    elseif(!State::isNextToOrSameAs($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
-                                        $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
-                                    }
-                                    $plateforme = $paramedit->getParam('Platform');
+                                elseif(!State::isNextToOrSameAs($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
                                 }
-                                else {
-                                    // with previous internal data, consistancy should be guaranteed
-                                    $state = new State(DATA.$plateforme);
-                                    $dirOut = $state->getLastPath()."/OUT/";
-                                    foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
-                                        if($file == ParamText::NAME) {
-                                            continue;
-                                        }
-                                        if(!copy($dirOut.$file, $tmpDir.$file)) {
-                                            $msg .= "erreur de copie de ".$file;
-                                            break;
-                                        }
+                            }
+                            elseif($type == "SIMU") {
+                                $result = new Result($tmpDir);
+                                $paramedit = new ParamEdit($tmpDir);
+                                if($paramedit->getParam('Type') !== "SIMU") {
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.1');
+                                }
+                                elseif($paramedit->getParam('Platform') !== $result->getParam('Platform')) {
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.2');
+                                }
+                                elseif(!State::isNextToOrSameAs($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
+                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.3');
+                                }
+                                $plateforme = $paramedit->getParam('Platform');
+                            }
+                            else {
+                                // with previous internal data, consistancy should be guaranteed
+                                $state = new State(DATA.$plateforme);
+                                $dirOut = $state->getLastPath()."/OUT/";
+                                foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
+                                    if($file == ParamText::NAME) {
+                                        continue;
                                     }
-                                    if(!copy($state->getLastPath()."/sap.csv", $tmpDir."sap.csv")) {
+                                    if(!copy($dirOut.$file, $tmpDir.$file)) {
                                         $msg .= "erreur de copie de ".$file;
-                                    }
-
-                                    $wm = "";
-                                    $tyfact = "SAP";
-                                    if($type == "PROFORMA") {
-                                        $paramtext = new ParamText();
-                                        $wm = $paramtext->getParam('filigr-prof');
-                                        $tyfact = "PROFORMA";
-                                    }
-                                    if($type == "REDO") {
-                                        $year = $state->getLastYear();
-                                        $month = $state->getLastMonth();
-                                    }
-                                    else {
-                                        $year = $state->getNextYear();
-                                        $month = $state->getNextMonth();
-                                    }
-                                    $array = [["Platform", $plateforme], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
-                                    Csv::write($tmpDir."/".ParamEdit::NAME, $array);
-                                    $paramedit = new ParamEdit($tmpDir);
-                                    $paramFile = DATA.$plateforme."/".$year."/".$month."/".ParamZip::NAME;
-                                    if(file_exists($paramFile)) {
-                                        $msg .= Zip::unzip($paramFile, $tmpDir);
+                                        break;
                                     }
                                 }
-                                if(empty($msg)) {
-                                    // if files are ok, we can run
-                                    $pathPlate = DATA.$plateforme;
-                                    $unique = time();
-                                    Lock::save("../", 'process', "prefa ".$plateforme." ".$unique);
-                                    try {
-                                        runPrefa($tmpDir, $pathPlate, $paramedit, $plateforme, $unique, $messages);
-                                    }
-                                    catch(Exception $e) {
-                                        $msg = $e->getMessage();
-                                    }
-                                    unlink("../".Lock::FILES['process']);
+                                if(!copy($state->getLastPath()."/sap.csv", $tmpDir."sap.csv")) {
+                                    $msg .= "erreur de copie de ".$file;
+                                }
+
+                                $wm = "";
+                                $tyfact = "SAP";
+                                if($type == "PROFORMA") {
+                                    $paramtext = new ParamText();
+                                    $wm = $paramtext->getParam('filigr-prof');
+                                    $tyfact = "PROFORMA";
+                                }
+                                if($type == "REDO") {
+                                    $year = $state->getLastYear();
+                                    $month = $state->getLastMonth();
                                 }
                                 else {
-                                    $_SESSION['alert-danger'] = $msg;
+                                    $year = $state->getNextYear();
+                                    $month = $state->getNextMonth();
                                 }
-                            //}
+                                $array = [["Platform", $plateforme], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
+                                Csv::write($tmpDir."/".ParamEdit::NAME, $array);
+                                $paramedit = new ParamEdit($tmpDir);
+                                $paramFile = DATA.$plateforme."/".$year."/".$month."/".ParamZip::NAME;
+                                if(file_exists($paramFile)) {
+                                    $msg .= Zip::unzip($paramFile, $tmpDir);
+                                }
+                            }
+                            if(empty($msg)) {
+                                // if files are ok, we can run
+                                $pathPlate = DATA.$plateforme;
+                                $unique = time();
+                                Lock::save("../", 'process', "prefa ".$plateforme." ".$unique);
+                                try {
+                                    runPrefa($tmpDir, $pathPlate, $paramedit, $plateforme, $unique, $messages);
+                                }
+                                catch(Exception $e) {
+                                    $msg = $e->getMessage();
+                                }
+                                unlink("../".Lock::FILES['process']);
+                            }
+                            else {
+                                $_SESSION['alert-danger'] = $msg;
+                            }
                         }
                         else {
                             $_SESSION['alert-danger'] = $msg;

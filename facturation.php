@@ -78,7 +78,7 @@ include("includes/lock.inc");
                     <p><a href="logout.php">Logout</a></p>
                 </div>
             </div>
-            <div class="title <?php if(TEST_MODE) echo "test";?>">
+            <div class="title <?php if(TEST_MODE) echo TEST_MODE; ?>">
                 <h1 class="text-center p-1"><?= $name ?></h1>
             </div>
 
@@ -99,13 +99,13 @@ include("includes/lock.inc");
                                         $des = "";
                                     }
                                     echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $des);
-                                    if(IS_SUPER && TEST_MODE == "TEST") {
+                                    if(IS_SUPER && TEST_MODE) {
                                         ?>
                                         <div><button type="button" id="destroy" <?= $disabled ?> class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button>
                                         </div>
                                     <?php }
                                 }
-                                if(IS_SUPER && TEST_MODE == "TEST") {
+                                if(IS_SUPER && TEST_MODE) {
                                     $choices = [];
                                     if($first) {
                                         $title = "Charger une période";

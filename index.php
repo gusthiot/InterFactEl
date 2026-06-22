@@ -69,7 +69,7 @@ function uploaderTile(string $action, string $title, string $icon): string
                     <p><a href="logout.php">Logout</a></p>
                 </div>
             </div>
-            <div class="title <?php if(TEST_MODE) echo "test";?>">
+            <div class="title <?php if(TEST_MODE) echo TEST_MODE; ?>">
                 <h1 class="text-center p-1">Interface de facturation</h1>
                 <h6 class="text-center">Welcome <i><?= USER ?></i></h6>
             </div>
