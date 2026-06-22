@@ -6,6 +6,7 @@ config.inc
 config.dev.inc
 config.prod.inc
 config.test.inc
+config.test2.inc
 reveal.js
 openid
 entra/.env
