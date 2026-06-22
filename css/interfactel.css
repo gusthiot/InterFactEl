@@ -214,6 +214,11 @@ input[type="file"] {
   background-color: var(--noir);
 }
 
+.test2 {
+  color: white;
+  background-color: var(--groseille);
+}
+
 .tile {
 	border-radius: 5px;
   box-shadow: 1px 1px 4px 1px var(--gris-300);
