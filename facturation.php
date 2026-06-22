@@ -99,13 +99,13 @@ include("includes/lock.inc");
                                         $des = "";
                                     }
                                     echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $des);
-                                    if(IS_SUPER && TEST_MODE == "TEST") {
+                                    if(IS_SUPER && TEST_MODE) {
                                         ?>
                                         <div><button type="button" id="destroy" <?= $disabled ?> class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button>
                                         </div>
                                     <?php }
                                 }
-                                if(IS_SUPER && TEST_MODE == "TEST") {
+                                if(IS_SUPER && TEST_MODE) {
                                     $choices = [];
                                     if($first) {
                                         $title = "Charger une période";

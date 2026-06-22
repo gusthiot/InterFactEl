@@ -9,7 +9,7 @@ require_once("../session.inc");
 if(isset($_GET["from"]) && isset($_GET["to"]) && isset($_GET["plate"])) {
     $plateforme = $_GET["plate"];
     checkPlateforme("facturation", $plateforme);
-    if(IS_SUPER && TEST_MODE == "TEST") {
+    if(IS_SUPER && TEST_MODE) {
         exec(sprintf("rm -rf %s", escapeshellarg(DATA.$plateforme)));
         $date = $_GET["from"];
         while(true) {
@@ -42,4 +42,3 @@ else {
     $_SESSION['alert-danger'] = "post_data_missing";
     header('Location: ../index.php');
 }
-
