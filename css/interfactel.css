@@ -744,6 +744,27 @@ table.dates-tarifs .tr-clickable:hover {
   max-width: 1000px;
 }
 
+#param-table {
+  overflow-x: auto;
+  max-height: 580px;
+}
+
+#param-header {
+  height: 30px;
+}
+
+.vert-th {
+  writing-mode: sideways-lr;
+}
+
+.border-around {
+  border: 1px solid var(--gris-200);
+}
+
+.border-around-black {
+  border: 1px solid black !important;
+}
+
 /** reporting **/
 
 #report-tiles {

@@ -1,0 +1,254 @@
+{
+    "paramfact": {
+        "name": "Paramètres SAP",
+        "labels": ["code_int", "code_ext", "devise", "modes"],
+        "numcol": 4,
+        "columns": [
+            {"type": "none"},
+            {"type": "txt"},
+            {"type": "alphanum"},
+            {"type": "alphanum"}
+        ]
+    },
+    "articlesap": {
+        "name": "Articles SAP",
+        "numcol": 9,
+        "tools": true,
+        "columns": [
+            {"type": "alphanum"},
+            {
+                "type": "menu",
+                "map": {"STD": "STD - article prestation", "OVH": "OVH - article overhead"}
+            },
+            {"type": "alphanum"},
+            {"type": "line"},
+            {"type": "txt"},
+            {"type": "num", "int": true},
+            {"type": "num", "zero": true, "int": true},
+            {"type": "txt"},
+            {"type": "txt"}
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "in", "col": 1, "msg": "02"},
+            {"type": "num", "col": 3, "msg": "03"},
+            {"type": "unique", "noindex": true, "id": [3], "msg": "04"}
+        ]
+    },
+    "overhead": {
+        "name": "Taux Overhead",
+        "numcol": 3,
+        "tools": true,
+        "columns": [
+            {"type": "alphanum"},
+            {"type": "num", "zero": true, "int": true, "max": 100},
+            {"type": "ref", "origin": "articlesap", "col": 1, "value": "OVH", "intitule": 4}
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "num", "col": 1, "msg": "02"},
+            {"type": "ref", "col": 2, "msg": "03"},
+            {"type": "ext", "col": 2, "extCol": 1, "extValue": "OVH", "extName": "articlesap", "msg": "04"}
+        ]
+    },
+    "base": {
+        "name": "Liste Tarifs Base",
+        "numcol": 2,
+        "tools": true,
+        "columns": [
+            {"type": "alphanum"},
+            {"type": "txt"}
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"}
+        ]
+    },
+    "classeclient": {
+        "name": "Classes Client",
+        "numcol": 9,
+        "tools": true,
+        "columns": [
+            {"type": "alphanum"},
+            {"type": "alphanum"},
+            {"type": "txt"},
+            {
+                "type": "menu",
+                "map": {"INT": "INT - facturation interne", "EXT": "EXT - facturation externe"}
+            },
+            {"type": "menu", "list": ["BONUS", "RABAIS"]},
+            {"type": "menu", "list": ["BONUS", "RABAIS"]},
+            {"type": "menu", "list": ["OUI", "NON"]},
+            {"type": "ref", "origin": "overhead", "zero": true, "intitule": 1, "plus": "%"},
+            {"type": "ref", "origin": "base", "intitule": 1}
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "in", "col": 3, "msg": "02"},
+            {"type": "in", "col": 4, "msg": "03"},
+            {"type": "in", "col": 5, "msg": "04"},
+            {"type": "in", "col": 6, "msg": "05"},
+            {"type": "ref", "col": 7, "msg": "06"},
+            {"type": "ref", "col": 8, "msg": "07"}
+        ]
+    },
+    "plateforme": {
+        "name": "Données Plateforme",
+        "labels": ["Id-Plateforme", "Code_P", "CF", "Fonds", "Admin", "Abrev-Plateforme", "Intitulé-Plateforme", "Grille-Plateforme"],
+        "numcol": 3,
+        "columns": [
+            {"type": "none"},
+            {"type": "txt"},
+            {
+                "type": "specific",
+                "lines": [
+                    {"type": "alphanum"},
+                    {"type": "alphanum"},
+                    {"type": "alphanum"},
+                    {"type": "alphanum"},
+                    {"type": "alphanum"},
+                    {"type": "txt"},
+                    {"type": "menu", "list": ["OUI", "NON"]}
+                ]
+            }
+        ]
+    },
+    "partenaire": {
+        "name": "Partenaires Plateforme",
+        "numcol": 2,
+        "tools": true,
+        "columns": [
+            {"type": "alphanum"},
+            {"type": "ref", "origin": "classeclient", "intitule": 2}
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "ref", "col": 1, "msg": "02"}
+        ]
+    },
+    "classeprestation": {
+        "name": "Classes Prestations",
+        "numcol": 10,
+        "tools": true,
+        "columns": [
+            {"type": "alphanum"},
+            {"type": "txt"},
+            {"type": "ref", "origin": "articlesap", "col": 1, "value": "STD", "intitule": 4},
+            {"type": "menu", "list": ["OUI", "NON"]},
+            {"type": "menu", "list": ["OUI", "NON"]},
+            {"type": "menu", "list": ["OUI", "NON"]},
+            {"type": "menu", "list": ["OUI", "NON"]},
+            {"type": "alphanum"},
+            {"type": "alphanum"},
+            {"type": "txt"}
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "ref", "col": 2, "msg": "02"},
+            {"type": "ext", "col": 2, "extCol": 1, "extValue": "STD", "extName": "articlesap", "msg": "03"},
+            {"type": "in", "col": 3, "msg": "04"},
+            {"type": "in", "col": 4, "msg": "05"},
+            {"type": "in", "col": 5, "msg": "06"},
+            {"type": "in", "col": 6, "msg": "07"}
+        ]
+    },
+    "categorie": {
+        "name": "Catégories",
+        "numcol": 7,
+        "tools": true,
+        "columns": [
+            {"type": "alphanum"},
+            {"type": "ref", "origin": "articlesap"},
+            {"type": "txt"},
+            {"type": "txt"},
+            {"type": "num", "zero": true, "int": true, "max": 8},
+            {"type": "ref", "origin": "classeprestation", "intitule": 1},
+            {
+                "type": "menu",
+                "map": {
+                    "K1": "K1 : machine",
+                    "K2": "K2 : main d'oeuvre opérateur",
+                    "K3": "K3 : accès plateforme",
+                    "K4": "K4 : coûts additionnels",
+                    "K5": "K5 : pénalités HP",
+                    "K6": "K6 : pénalités HC",
+                    "K7": "K7 : fixe machine"
+                }
+            }
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "ref", "col": 5, "special": true, "msg": "02"},
+            {"type": "ext", "col": 5, "extCol": 3, "extValue": "NON", "extName": "classeprestation", "msg": "03"},
+            {"type": "num", "col": 4, "msg": "04"},
+            {"type": "in", "col": 6, "msg": "05"}
+        ]
+    },
+    "groupe": {
+        "name": "Groupes",
+        "numcol": 9,
+        "tools": true,
+        "columns": [
+            {"type": "alphanum"},
+            {"type": "menu", "list": ["OUI", "NON"]},
+            {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K1", "intitule": 2},
+            {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K2", "intitule": 2},
+            {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K3", "intitule": 2},
+            {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K4", "intitule": 2},
+            {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K5", "intitule": 2},
+            {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K6", "intitule": 2},
+            {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K7", "intitule": 2}
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "in", "col": 1, "msg": "02"},
+            {"type": "ref", "col": 2, "msg": "03"},
+            {"type": "ref", "col": 3, "msg": "03"},
+            {"type": "ref", "col": 4, "msg": "03"},
+            {"type": "ref", "col": 5, "msg": "03"},
+            {"type": "ref", "col": 6, "msg": "03"},
+            {"type": "ref", "col": 7, "msg": "03"},
+            {"type": "ref", "col": 8, "msg": "03"},
+            {"type": "itemk", "col": 2, "msg": "04"},
+            {"type": "itemk", "col": 3, "msg": "04"},
+            {"type": "itemk", "col": 4, "msg": "04"},
+            {"type": "itemk", "col": 5, "msg": "04"},
+            {"type": "itemk", "col": 6, "msg": "04"},
+            {"type": "itemk", "col": 7, "msg": "04"},
+            {"type": "itemk", "col": 8, "msg": "04"}
+        ]
+    },
+    "coeffprestation": {
+        "name": "Coefficients Prestations",
+        "numcol": 3,
+        "bidim": true,
+        "columns": [
+            {"type": "none", "origin": "classeclient"},
+            {"type": "none", "origin": "classeprestation"},
+            {"type": "num", "zero": true}
+        ],
+        "tests": [
+            {"type": "ref", "col": 0, "msg": "01"},
+            {"type": "ref", "col": 1, "msg": "02"},
+            {"type": "unique", "id": [0, 1], "msg": "03"},
+            {"type": "should", "id": ["classeclient", "classeprestation"], "msg": "04"},
+            {"type": "ext", "col": 1, "extCol": 3, "extValue": "OUI", "extName": "classeprestation", "msg": "05"}
+        ]
+    },
+    "basecateg": {
+        "name": "Tarifs Base",
+        "numcol": 3,
+        "bidim": true,
+        "columns": [
+            {"type": "none", "origin": "base"},
+            {"type": "none", "origin": "categorie"},
+            {"type": "num", "zero": true}
+        ],
+        "tests": [
+            {"type": "ref", "col": 0, "msg": "01"},
+            {"type": "ref", "col": 1, "msg": "02"},
+            {"type": "unique", "id": [0, 1], "msg": "03"},
+            {"type": "should", "id": ["base", "categorie"], "msg": "04"},
+            {"type": "num", "col": 2, "special": true, "msg": "05"}
+        ]
+    }
+}
