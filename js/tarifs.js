@@ -554,12 +554,12 @@ let contents = {};
 let ids = {};
 let checks = {};
 
-let mandatoryCsvs = {};
-
+let mandatoryCsvs = JSON.parse($('#parameters').val());
+/*
 $.getJSON( "./parameters.json", function( data ) {
     mandatoryCsvs = data;
 });
-
+*/
 const optionalCsvs = ["categprix"];
 const mandatoryPdfs = {"logo": {
                             name: "Logo PDF"
