@@ -195,6 +195,7 @@ $(document).on("click", "#dates-center", function() {
 
 let tmpContent = "";
 $(document).on("click", ".csv", function() {
+    $('#tarifs-desktop').css("display", "none");
     $('#tarifs-files').html("");
     const id = $(this).attr('id');
     tmpContent = contents[id];
@@ -205,7 +206,7 @@ $(document).on("click", ".csv", function() {
     html += '<svg id="manage-remove" class="icon icon-selectable date-right" aria-hidden="true">' +
                     '<use xlink:href="#x"></use>' +
                 '</svg></div>';
-    html += '<div id="param-table"><table class="table">';
+    html += '<div id="param-table"><table class="table" data-id="' + id + '" id="table-params">';
     if(parameters.bidim) {
         const dim0 = contents[parameters.columns[0].origin];
         const dim1 = contents[parameters.columns[1].origin];
@@ -214,7 +215,17 @@ $(document).on("click", ".csv", function() {
         let num = 0;
         for(const key1 in dim1) {
             if(num > 0) {
-                html += '<td class="border-around-black">' + dim1[key1][0] + '</td>';
+                const positions = parameters.bidim[0].intitule;
+                let line = dim1[key1];
+                /*
+                if(parameters.bidim[0].origin) {
+                    console.log(contents[parameters.bidim[0].origin]);
+                    console.log(parameters.bidim[0].col);
+                    console.log(dim1[key1][parameters.bidim[0].col]);
+                    line = contents[parameters.bidim[0].origin][dim1[key1][0]];
+                }
+                    */
+                html += '<td class="border-around-black">' + line[positions[0]] + " - " + line[positions[1]] + '</td>';
             }
             num++;
         };
@@ -226,7 +237,9 @@ $(document).on("click", ".csv", function() {
                 if(num == 1) {
                     html += '<th rowspan="' + (dim0.length-1) + '" class="vert-th">' + paramtext["table-"+id+"-"+0] + '</th>';
                 }
-                html += '<td class="border-around-black">' + dim0[key0][0] + '</td>';
+                const positions = parameters.bidim[1].intitule;
+                let line = dim0[key0];
+                html += '<td class="border-around-black">' + line[positions[0]] + " - " + line[positions[1]] + '</td>';
                 let num1 = 0;
                 for(const key1 in dim1) {
                     if(num1 > 0) {
@@ -254,12 +267,15 @@ $(document).on("click", ".csv", function() {
         html += '</tr>';
         let num = 0;
         tmpContent.forEach(function(line) {
-            html += '<tr>';
             if(["paramfact", "plateforme"].includes(id) ||(num > 0)) {
+                html += '<tr class="values" id="line-' + num + '">';
                 let num1 = 0;
                 line.forEach(function(cell) {
-                    const paramCol = parameters.columns[num1];
+                    let paramCol = parameters.columns[num1];
                     html += '<td class="border-around">';
+                    if(paramCol.type == "specific") {
+                        paramCol = paramCol.lines[num];
+                    }
                     switch(paramCol.type) {
                         case "num":
                             html += number(cell, paramCol);
@@ -285,14 +301,161 @@ $(document).on("click", ".csv", function() {
                     html += '</td>';
                     num1++;
                 });
+                if(parameters.tools) {
+                    html += '<td class="border-around td-tools">';
+                    if(num > 1) {
+                        html += lineUp();
+                    }
+                    if(num < (tmpContent.length-1)) {
+                        html += lineDown();
+                    }
+                    html += lineRemove() + '</td>';
+                }
+                html += '</tr>';
             }
-            html += '</tr>';
             num++;
         });
+        if(parameters.tools) {
+            html += '<tr><td class="border-around left" colspan="' + (parameters.numcol + 1) + '">' +
+                    '<svg id="line-plus" class="icon icon-selectable" aria-hidden="true">' +
+                        '<use xlink:href="#plus"></use>' +
+                    '</svg></td></tr>';
+        }
     }
     html += '</table></div>';
     $('#tarifs-manage').html(html);
 });
+
+function lineUp() {
+    return '<svg id="line-up" class="icon icon-selectable" aria-hidden="true">' +
+        '<use xlink:href="#chevron-up"></use>' +
+    '</svg>&nbsp;';
+}
+
+function lineDown() {
+    return '<svg id="line-down" class="icon icon-selectable" aria-hidden="true">' +
+        '<use xlink:href="#chevron-down"></use>' +
+    '</svg>&nbsp;';
+}
+
+function lineRemove() {
+    return '<svg id="line-remove" class="icon icon-selectable" aria-hidden="true">' +
+        '<use xlink:href="#minus-circle"></use>' +
+    '</svg>';
+}
+
+$(document).on("click", "#line-plus", function() {
+    const table = $(this).closest('table');
+    const name = table.data('id');
+    const tr = $(this).closest('tr').prev();
+    let num = 1;
+    if(tr.hasClass('values')) {
+        const tab = tr.attr('id').split("-");
+        num = parseInt(tab[1]) + 1;
+    }
+    let html = '<tr class="values" id="line-' + num + '">';
+    let num1 = 0;
+    const parameters = mandatoryCsvs[name];
+    parameters.columns.forEach(function(paramCol) {
+        let cell = "";
+        html += '<td class="border-around">';
+        switch(paramCol.type) {
+            case "num":
+                html += number(cell, paramCol);
+                break;
+            case "txt":
+                html += text(cell);
+                break;
+            case "alphanum":
+                html += alphanum(cell);
+                break;
+            case "menu":
+                html += menu(cell, paramCol);
+                break;
+            case "ref":
+                html += ref(cell, paramCol);
+                break;
+            case "line":
+                html += num;
+                break;
+            default:
+                html += cell;
+        }
+        html += '</td>';
+        num1++;
+    });
+    html += '<td class="border-around td-tools">';
+    if(tr.hasClass('values')) {
+        html += lineUp();
+        let tools = "";
+        if(tr.prev().hasClass('values')) {
+            tools += lineUp();
+        }
+        tools += lineDown() + lineRemove();
+        tr.find('.td-tools').html(tools);
+    }
+    html += lineRemove() + '</td></tr>';
+    tr.after(html);
+});
+
+$(document).on("input", ".param-input", function() {
+    $(this).attr('value',$(this).val());
+});
+
+$(document).on("input", ".param-select", function() {
+    const oldSelected = $(this).find('option[selected]');
+    oldSelected.removeAttr('selected');
+    const newSelected = $(this).find('option[value="' + $(this).find(":selected").val() + '"]');
+    newSelected.attr('selected', true);
+});
+
+$(document).on("click", "#line-up", function() {
+    const tr = $(this).closest('tr');
+    const cont = tr.html();
+    const tools = tr.find('.td-tools').html();
+    const cont1 = tr.prev().html();
+    const tools1 = tr.prev().find('.td-tools').html();
+    tr.html(cont1);
+    tr.prev().html(cont);
+    tr.find('.td-tools').html(tools);
+    tr.prev().find('.td-tools').html(tools1);
+});
+
+$(document).on("click", "#line-down", function() {
+    const tr = $(this).closest('tr');
+    const cont = tr.html();
+    const tools = tr.find('.td-tools').html();
+    const cont1 = tr.next().html();
+    const tools1 = tr.next().find('.td-tools').html();
+    tr.html(cont1);
+    tr.next().html(cont);
+    tr.find('.td-tools').html(tools);
+    tr.next().find('.td-tools').html(tools1);
+});
+
+$(document).on("click", "#line-remove", function() {
+    const tr = $(this).closest('tr');
+    nextTr(tr, 0);
+});
+
+function nextTr(tr, level) {
+    if(tr.next().hasClass('values')) {
+        tr.html(tr.next().html());
+        nextTr(tr.next(), level++);
+    }
+    else {
+        if((level == 0) && (tr.prev().hasClass('values'))) {
+            let tools = "";
+            if(tr.prev().prev().hasClass('values')) {
+                tools += lineUp();
+            }
+            tools += lineRemove();
+            tr.prev().find('.td-tools').html(tools);
+        }
+        tr.remove();
+    }
+}
+
 
 $(document).on("click", "#param-info", function() {
     const id = $(this).data('id');
@@ -308,6 +471,7 @@ $(document).on("click", ".modal-ok", function() {
 });
 
 $(document).on("click", "#manage-remove", function() {
+    $('#tarifs-desktop').css("display", "block");
     $('#tarifs-manage').html("");
     displayFiles();
 });
@@ -874,7 +1038,7 @@ function switchTest(columns, test, line, i, column) {
 /** Inputs */
 
 function number(value, params) {
-    let ret = '<input type="number" size="6" value="' + value + '" ';
+    let ret = '<input class="param-input" type="number" size="6" value="' + value + '" ';
     if(params.max) {
         ret += ' max="' + params.max + '" ';
     }
@@ -892,15 +1056,15 @@ function number(value, params) {
 }
 
 function text(value) {
-    return '<input type="text" value="' + value + '">';
+    return '<input class="param-input" type="text" value="' + value + '">';
 }
 
 function alphanum(value) {
-    return '<input type="text" value="' + value + '" pattern="[A-Za-z]{3}" >';
+    return '<input class="param-input" type="text" value="' + value + '" pattern="[A-Za-z]{3}" >';
 }
 
 function menu(value, params) {
-    let ret = '<select>';
+    let ret = '<select class="param-select">';
     if(params.list) {
         params.list.forEach(function(el) {
             ret += '<option value="' + el + '"';
@@ -925,7 +1089,7 @@ function menu(value, params) {
 
 function ref(value, params) {
     const ref = contents[params.origin];
-    let ret = '<select>';
+    let ret = '<select class="param-select">';
     if(params.zero) {
         ret += '<option value="0"';
         if(value == "0") {

@@ -622,6 +622,14 @@ table.dates-tarifs td {
   color: var(--gris-500);
 }
 
+.left {
+  text-align: left;
+}
+
+.td-tools {
+  min-width: 70px;
+}
+
 .borded {
   border: 1px solid var(--gris-200) !important;
 }
@@ -741,12 +749,17 @@ table.dates-tarifs .tr-clickable:hover {
 
 #tarifs-manage {
   margin: 0 auto;
-  max-width: 1000px;
+  max-width: 80%;
 }
 
 #param-table {
   overflow-x: auto;
   max-height: 580px;
+}
+
+#table-params {
+  margin: 0 auto;
+  width: 0 !important;
 }
 
 #param-header {

@@ -106,6 +106,7 @@
                     {"type": "alphanum"},
                     {"type": "alphanum"},
                     {"type": "alphanum"},
+                    {"type": "alphanum"},
                     {"type": "txt"},
                     {"type": "menu", "list": ["OUI", "NON"]}
                 ]
@@ -220,7 +221,7 @@
     "coeffprestation": {
         "name": "Coefficients Prestations",
         "numcol": 3,
-        "bidim": true,
+        "bidim": [{"origin": "articlesap", "col": 2, "intitule": [0, 1]}, {"intitule": [1, 2]}],
         "columns": [
             {"type": "none", "origin": "classeclient"},
             {"type": "none", "origin": "classeprestation"},
@@ -237,7 +238,7 @@
     "basecateg": {
         "name": "Tarifs Base",
         "numcol": 3,
-        "bidim": true,
+        "bidim": [{"intitule": [0, 2]}, {"intitule": [0, 1]}],
         "columns": [
             {"type": "none", "origin": "base"},
             {"type": "none", "origin": "categorie"},
