@@ -36,7 +36,6 @@ $(document).on("click", "#save-label", function() {
 
 /** Espace */
 
-let files = {};
 let type = "";
 let date = "";
 let choices = "";
@@ -44,10 +43,8 @@ let first = 0;
 let readPos = 0;
 
 function reset() {
-    files = {};
     contents = {};
     ids = {};
-    sessionStorage.removeItem("files");
     sessionStorage.removeItem("contents");
     sessionStorage.removeItem("ids");
     $('#tarifs-files').html("");
@@ -193,17 +190,15 @@ $(document).on("click", "#dates-center", function() {
     displayDates();
 });
 
-let tmpContent = "";
 $(document).on("click", ".csv", function() {
     $('#tarifs-desktop').css("display", "none");
     $('#tarifs-files').html("");
     const id = $(this).attr('id');
-    tmpContent = contents[id];
     const parameters = mandatoryCsvs[id];
     let html = '<div id="param-header"><svg id="param-info" data-id="' + id + '" class="icon icon-selectable date-left" aria-hidden="true">' +
                         '<use xlink:href="#info"></use>' +
                     '</svg>';
-    html += '<svg id="manage-remove" class="icon icon-selectable date-right" aria-hidden="true">' +
+    html += '<svg class="icon icon-selectable date-right manage-remove" aria-hidden="true">' +
                     '<use xlink:href="#x"></use>' +
                 '</svg></div>';
     html += '<div id="param-table"><table class="table" data-id="' + id + '" id="table-params">';
@@ -211,7 +206,7 @@ $(document).on("click", ".csv", function() {
         const dim0 = contents[parameters.columns[0].origin];
         const dim1 = contents[parameters.columns[1].origin];
         html += '<tr><th></th><th></th><th colspan="' + (dim1.length-1) + '">' + paramtext["table-"+id+"-"+1] + '</th></tr>';
-        html += '<tr><th></th><th></th>';
+        html += '<tr id="dim1"><td class="border-around-no"></td><td class="border-around-no"></td>';
         let num = 0;
         for(const key1 in dim1) {
             if(num > 0) {
@@ -225,7 +220,7 @@ $(document).on("click", ".csv", function() {
                     line = contents[parameters.bidim[0].origin][dim1[key1][0]];
                 }
                     */
-                html += '<td class="border-around-black">' + line[positions[0]] + " - " + line[positions[1]] + '</td>';
+                html += '<td class="border-around-black cell" data-id="' + line[0] + '">' + line[positions[0]] + " - " + line[positions[1]] + '</td>';
             }
             num++;
         };
@@ -233,24 +228,24 @@ $(document).on("click", ".csv", function() {
         num = 0
         for(const key0 in dim0) {
             if(num > 0) {
-                html += '<tr>';
+                html += '<tr class="values">';
                 if(num == 1) {
                     html += '<th rowspan="' + (dim0.length-1) + '" class="vert-th">' + paramtext["table-"+id+"-"+0] + '</th>';
                 }
                 const positions = parameters.bidim[1].intitule;
                 let line = dim0[key0];
-                html += '<td class="border-around-black">' + line[positions[0]] + " - " + line[positions[1]] + '</td>';
+                html += '<td class="border-around-black dim0" data-id="' + line[0] + '">' + line[positions[0]] + " - " + line[positions[1]] + '</td>';
                 let num1 = 0;
                 for(const key1 in dim1) {
                     if(num1 > 0) {
                         let value = "";
-                        for(const line of tmpContent) {
+                        for(const line of contents[id]) {
                             if((line[0] == dim0[key0][0]) && (line[1] == dim1[key1][0])) {
                                 value = line[2];
                                 break;
                             }
                         };
-                        html += '<td class="border-around">' + number(value, parameters.columns[2]) + '</td>';
+                        html += '<td class="border-around cell">' + number(value, parameters.columns[2]) + '</td>';
                     }
                     num1++;
                 };
@@ -266,13 +261,13 @@ $(document).on("click", ".csv", function() {
         }
         html += '</tr>';
         let num = 0;
-        tmpContent.forEach(function(line) {
+        contents[id].forEach(function(line) {
             if(["paramfact", "plateforme"].includes(id) ||(num > 0)) {
                 html += '<tr class="values" id="line-' + num + '">';
                 let num1 = 0;
                 line.forEach(function(cell) {
                     let paramCol = parameters.columns[num1];
-                    html += '<td class="border-around">';
+                    html += '<td class="border-around cell">';
                     if(paramCol.type == "specific") {
                         paramCol = paramCol.lines[num];
                     }
@@ -306,7 +301,7 @@ $(document).on("click", ".csv", function() {
                     if(num > 1) {
                         html += lineUp();
                     }
-                    if(num < (tmpContent.length-1)) {
+                    if(num < (contents[id].length-1)) {
                         html += lineDown();
                     }
                     html += lineRemove() + '</td>';
@@ -323,6 +318,7 @@ $(document).on("click", ".csv", function() {
         }
     }
     html += '</table></div>';
+    html += '<div class="center-tile"><div class="tile tight-tile manage-remove">Annuler</div><div id="param-save" class="tile tight-tile">Enregistrer les modifications</div></div>';
     $('#tarifs-manage').html(html);
 });
 
@@ -398,6 +394,65 @@ $(document).on("click", "#line-plus", function() {
     tr.after(html);
 });
 
+
+$(document).on("click", "#param-save", function() {
+    const name = $('#table-params').data('id');
+    const parameters = mandatoryCsvs[name];
+    let newContent = [];
+    let titles = [];
+    for(let i = 0; i < parameters.numCol; i++) {
+        titles[i] = paramtext["table-"+name+"-"+i];
+    }
+    newContent[0] = titles;
+    const lines = $('.values');
+    if(parameters.bidim) {
+        const dim1 = $('#dim1').find('.cell');
+        let num = 1;
+        for(let i = 0; i < lines.length; i++) {
+            const cells = $(lines[i]).find('.cell');
+            for(let j = 0; j < cells.length; j++) {
+                const input = $(cells[j]).find('input');
+                if($(input).val() !== "") {
+                    let line = [];
+                    line[0] = $(lines[i]).find('.dim0').data('id');
+                    line[1] = $(dim1[j]).data('id');
+                    line[2] = $(input).val();
+                    newContent[num] = line;
+                    num++;
+                }
+            }
+        }
+    }
+    else {
+        for(let i = 0; i < lines.length; i++) {
+            let line = [];
+            const cells = $(lines[i]).find('.cell');
+            for(let j = 0; j < cells.length; j++) {
+                const input = $(cells[j]).find('input');
+                if(input.length > 0) {
+                    line[j] = $(input).val();
+                    continue;
+                }
+                const select = $(cells[j]).find('select');
+                if(select.length > 0) {
+                    const selected = $(select).find('option:selected');
+                    line[j] = $(selected).attr('value');
+                    continue;
+                }
+                line[j]= $(cells[j]).html();
+            }
+            newContent[i+1] = line;
+        }
+    }
+    if(mandatoryCsvs[name].tests) {
+        console.log(internalCheck(name, newContent));
+    }
+    contents[name] = newContent;
+    $('#tarifs-desktop').css("display", "block");
+    $('#tarifs-manage').html("");
+    displayFiles();
+});
+
 $(document).on("input", ".param-input", function() {
     $(this).attr('value',$(this).val());
 });
@@ -470,7 +525,7 @@ $(document).on("click", ".modal-ok", function() {
     $('#info-modal').css("display", "none");
 });
 
-$(document).on("click", "#manage-remove", function() {
+$(document).on("click", ".manage-remove", function() {
     $('#tarifs-desktop').css("display", "block");
     $('#tarifs-manage').html("");
     displayFiles();
@@ -498,9 +553,7 @@ $("#tarifs-read").on("click", function() {
 $(document).on("click", "#read-dates .clickable", function() {
     const key = $(this).data('key');
     $.post("controller/openTarifs.php", {plate: plateforme, type: key.split("-")[0], date: key.split("-")[1]}, function (data) {
-        files = JSON.parse(data);
-        sessionStorage.setItem("files", data);
-        extract();
+        extract(JSON.parse(data));
         sessionStorage.setItem("contents", JSON.stringify(contents));
         $('#tarifs-select').html("");
         $("#tarifs-read").removeClass('selected-tile');
@@ -544,15 +597,12 @@ $("#tarifs-import").on("change", function(e) {
             json += '"'+result[0]+'":"'+result[1]+'"';
         });
         json += "}";
-        files = JSON.parse(json);
-        extract();
+        extract(JSON.parse(json));
 
         if(runCheck(checkMandatory()) || runCheck(checkAuthorized()) || runCheck(checkColumnsNumbers()) || runCheck(checkPlateFact(false))) {
-            files = {};
             contents = {};
         }
         else {
-            sessionStorage.setItem("files", JSON.stringify(json));
             sessionStorage.setItem("contents", JSON.stringify(contents));
             displayFiles();
             $('#tarifs-cancel').removeClass('desactived-tile');
@@ -664,6 +714,7 @@ function applyTarifs(date) {
             categprix.push([ccKey, caKey, bcLine[2]]);
         });
     });
+    /*
     files["categprix.csv"] = btoa(Papa.unparse(categprix, {delimiter: ";", skipEmptyLines: true}));
     const enc_files = JSON.stringify(files);
     $.post("controller/applyTarifs.php", {plate: plateforme, date: date, files: enc_files}, function (data) {
@@ -675,6 +726,7 @@ function applyTarifs(date) {
             $('#message').html(data);
         }
     });
+    */
 }
 
 
@@ -704,26 +756,27 @@ function runCheck(res) {
 }
 
 $(document).on("click", "#tarifs-save", function() {
+    /*
     const enc_files = JSON.stringify(files);
     $.post("controller/saveTarifs.php", {plate: plateforme, files: enc_files}, function (data) {
         window.location.href = "controller/download.php?type=js-tarifs&name="+data+"&plate="+plateforme;
         $('#tarifs-save').addClass('desactived-tile');
     });
+    */
 });
 
 
 /** files manipulation */
 
 let contents = {};
+let optCsvs = {};
+let pdfs = {};
+let optPdfs = {}
 let ids = {};
 let checks = {};
 
 let mandatoryCsvs = JSON.parse($('#parameters').val());
-/*
-$.getJSON( "./parameters.json", function( data ) {
-    mandatoryCsvs = data;
-});
-*/
+
 const optionalCsvs = ["categprix"];
 const mandatoryPdfs = {"logo": {
                             name: "Logo PDF"
@@ -734,10 +787,25 @@ const optionalPdfs = {"grille": {
                         }
                     };
 
-function extract() {
+function extract(files) {
     Object.keys(mandatoryCsvs).forEach(function(filename) {
         if(Object.keys(files).includes(filename + ".csv")) {
             contents[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
+        }
+    });
+    optionalCsvs.forEach(function(filename) {
+        if(Object.keys(files).includes(filename + ".csv")) {
+            optCsvs[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
+        }
+    });
+    Object.keys(mandatoryPdfs).forEach(function(filename) {
+        if(Object.keys(files).includes(filename + ".pdf")) {
+            pdfs[filename] = files[filename + ".pdf"];
+        }
+    });
+    Object.keys(optionalPdfs).forEach(function(filename) {
+        if(Object.keys(files).includes(filename + ".pdf")) {
+            optPdfs[filename] = files[filename + ".pdf"];
         }
     });
 }
@@ -745,12 +813,12 @@ function extract() {
 function checkMandatory() {
     let missing = [];
     Object.keys(mandatoryCsvs).forEach(function(mandatory) {
-        if(!Object.keys(files).includes(mandatory + ".csv")) {
+        if(!Object.keys(contents).includes(mandatory)) {
             missing.push(mandatory + ".csv");
         }
     });
     Object.keys(mandatoryPdfs).forEach(function(mandatory) {
-        if(!Object.keys(files).includes(mandatory + ".pdf")) {
+        if(!Object.keys(pdfs).includes(mandatory)) {
             missing.push(mandatory + ".pdf");
         }
     });
@@ -766,11 +834,28 @@ function checkMandatory() {
 
 function checkAuthorized() {
     let polluting = [];
-    Object.keys(files).forEach(function(fn) {
+    Object.keys(contents).forEach(function(fn) {
         const filename = fn.split(".")[0];
-        if(!Object.keys(mandatoryCsvs).includes(filename) && !Object.keys(mandatoryPdfs).includes(filename)
-            && !optionalCsvs.includes(filename) && !Object.keys(optionalPdfs).includes(filename)) {
-            polluting.push(filename);
+        if(!Object.keys(mandatoryCsvs).includes(filename)) {
+            polluting.push(filename+".csv");
+        }
+    });
+    Object.keys(pdfs).forEach(function(fn) {
+        const filename = fn.split(".")[0];
+        if(!Object.keys(mandatoryPdfs).includes(filename)) {
+            polluting.push(filename+".pdf");
+        }
+    });
+    Object.keys(optCsvs).forEach(function(fn) {
+        const filename = fn.split(".")[0];
+        if(!optionalCsvs.includes(filename)) {
+            polluting.push(filename+".csv");
+        }
+    });
+    Object.keys(optPdfs).forEach(function(fn) {
+        const filename = fn.split(".")[0];
+        if(!Object.keys(optionalPdfs).includes(filename)) {
+            polluting.push(filename+".pdf");
         }
     });
     if(polluting.length > 0) {
@@ -780,7 +865,7 @@ function checkAuthorized() {
             if(num > 0) {
                 list += ", ";
             }
-            list += pollute+".csv";
+            list += pollute;
             num++;
         });
         let verbe = "est";
@@ -845,7 +930,7 @@ function checkPlateFact(verify) {
                             result += "L’étiquette [Grille-Plateforme] dans plateforme.csv ne peut prendre comme valeur que OUI ou NON <br />";
                         }
                     }
-                    if(line[2] == "OUI" && !Object.keys(files).includes("grille.pdf")) {
+                    if(line[2] == "OUI" && !Object.keys(optPdfs).includes("grille")) {
                         result += "il manque la grille de tarifs mentionnée dans le fichier " + filename + ".csv <br />";
                     }
                 }
@@ -864,9 +949,73 @@ function checkPlateFact(verify) {
     return result;
 }
 
+function internalCheck(filename, conTest) {
+    let resTest = "";
+    const columns = mandatoryCsvs[filename].columns;
+    mandatoryCsvs[filename].tests.forEach(function(test) {
+        let header = true;
+        let i = 1;
+        let column = "";
+        conTest.forEach(function(line) {
+            if(header) {
+                header = false;
+                if(test.type == "unique") {
+                    arrayIds = {};
+                    test.id.forEach(function(col) {
+                        if(column != "") {
+                            column += " | ";
+                        }
+                        column += line[col];
+                    });
+                }
+                else {
+                    column = line[test.col];
+                }
+            }
+            else {
+                let error = switchTest(columns, test, line, i, column);
+                if(error != "") {
+                    if(resTest == "") {
+                        resTest += messages[filename + test.msg] + "<br />";
+                        resTest += "Fichier : " + filename + ".csv<br />";
+                        resTest += "Colonne : '" + column + "'<br />";
+                    }
+                    resTest += "Erreur ligne " + i + " : '" + error + "'<br />";
+                }
+            }
+            i++;
+        });
+        if((test.type == "unique") && !(test.noindex)) {
+            ids[filename] = arrayIds;
+        }
+        if(test.type == "should") {
+            Object.keys(ids[test.id[0]]).forEach(function(id0) {
+                Object.keys(ids[test.id[1]]).forEach(function(id1) {
+                    if(filename == "coeffprestation") {
+                        const prestLine = contents["classeprestation"][ids["classeprestation"][id1]];
+                        if(prestLine[2] != "OUI") {
+                            return;
+                        }
+                    }
+                    const id = id0 + "_" + id1;
+                    if(!(Object.keys(arrayIds).includes(id))) {
+                        if(resTest == "") {
+                            resTest += messages[filename + test.msg] + "<br />";
+                            resTest += "Fichier : " + filename + ".csv<br />";
+                            resTest += "Colonne : '" + column + "'<br />";
+                        }
+                        resTest += "Le couple '" + id1 + "' et '" + id0 + "' n'existe pas <br />";
+                    }
+                });
+            });
+        }
+    });
+    return resTest;
+}
+
 function checkColumns() {
     let result = "";
-    Object.keys(contents).forEach(function(filename) {
+    Object.keys(mandatoryCsvs).forEach(function(filename) {
         if("paramfact" == filename) {
             checks[filename] = "green-file";
             $('#'+filename).addClass('green-file');
@@ -875,71 +1024,9 @@ function checkColumns() {
         if(result != "") {
             return;
         }
-
         if(mandatoryCsvs[filename].tests) {
-            const columns = mandatoryCsvs[filename].columns;
-            mandatoryCsvs[filename].tests.forEach(function(test) {
-                let header = true;
-                let i = 1;
-                let resTest = "";
-                let column = "";
-                contents[filename].forEach(function(line) {
-                    if(header) {
-                        header = false;
-                        if(test.type == "unique") {
-                            arrayIds = {};
-                            test.id.forEach(function(col) {
-                                if(column != "") {
-                                    column += " | ";
-                                }
-                                column += line[col];
-                            });
-                        }
-                        else {
-                            column = line[test.col];
-                        }
-                    }
-                    else {
-                        let error = switchTest(columns, test, line, i, column);
-                        if(error != "") {
-                            if(resTest == "") {
-                                resTest += messages[filename + test.msg] + "<br />";
-                                resTest += "Fichier : " + filename + ".csv<br />";
-                                resTest += "Colonne : '" + column + "'<br />";
-                            }
-                            resTest += "Erreur ligne " + i + " : '" + error + "'<br />";
-                        }
-                    }
-                    i++;
-                });
-                if((test.type == "unique") && !(test.noindex)) {
-                    ids[filename] = arrayIds;
-                }
-                if(test.type == "should") {
-                    Object.keys(ids[test.id[0]]).forEach(function(id0) {
-                        Object.keys(ids[test.id[1]]).forEach(function(id1) {
-                            if(filename == "coeffprestation") {
-                                const prestLine = contents["classeprestation"][ids["classeprestation"][id1]];
-                                if(prestLine[2] != "OUI") {
-                                    return;
-                                }
-                            }
-                            const id = id0 + "_" + id1;
-                            if(!(Object.keys(arrayIds).includes(id))) {
-                                if(resTest == "") {
-                                    resTest += messages[filename + test.msg] + "<br />";
-                                    resTest += "Fichier : " + filename + ".csv<br />";
-                                    resTest += "Colonne : '" + column + "'<br />";
-                                }
-                                resTest += "Le couple '" + id1 + "' et '" + id0 + "' n'existe pas <br />";
-                            }
-                        });
-                    });
-                }
-                result += resTest;
-            });
+            result += internalCheck(filename, contents[filename]);
         }
-
         if(result != "") {
             checks[filename] = "red-file";
             $('#'+filename).addClass('red-file');
@@ -955,7 +1042,11 @@ function checkColumns() {
     return result;
 }
 
+let errors = [];
+
 function switchTest(columns, test, line, i, column) {
+    console.log(test.type);
+    console.log(line[test.col]);
     switch(test.type) {
         case "in":
             if(columns[test.col].list) {
@@ -1006,7 +1097,6 @@ function switchTest(columns, test, line, i, column) {
                     return line[test.col];
                 }
             }
-            break;
             break;
         case "unique":
             let id = "";
@@ -1124,8 +1214,7 @@ function ref(value, params) {
 
 /** Start */
 
-if(sessionStorage.getItem("files")) {
-    files = JSON.parse(sessionStorage.getItem("files"));
+if(sessionStorage.getItem("contents")) {
     contents = JSON.parse(sessionStorage.getItem("contents"));
     displayFiles();
     $('#tarifs-cancel').removeClass('desactived-tile');

@@ -754,7 +754,7 @@ table.dates-tarifs .tr-clickable:hover {
 
 #param-table {
   overflow-x: auto;
-  max-height: 580px;
+  max-height: 500px;
 }
 
 #table-params {
@@ -772,6 +772,11 @@ table.dates-tarifs .tr-clickable:hover {
 
 .border-around {
   border: 1px solid var(--gris-200);
+}
+
+.border-around-no {
+  border: 0 !important;
+
 }
 
 .border-around-black {
