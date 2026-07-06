@@ -1,5 +1,5 @@
-import * as inputs from "./custom-inputs.js";
-import * as tests from "./tarifs-tests.js";
+import * as inputs from "../custom-inputs.js";
+import * as tests from "./tests.js";
 
 const paramtext = JSON.parse($('#paramtext').val());
 

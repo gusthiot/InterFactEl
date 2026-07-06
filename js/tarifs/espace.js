@@ -1,5 +1,5 @@
-import * as dates from "./tarifs-dates.js";
-import * as tables from "./tarifs-tables.js";
+import * as dates from "./dates.js";
+import * as tables from "./tables.js";
 
 const plateforme = $('#plate').val();
 const m0 = $('#m0').val();

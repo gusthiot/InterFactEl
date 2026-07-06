@@ -1,4 +1,4 @@
-import * as tables from "./tarifs-tables.js";
+import * as tables from "./tables.js";
 
 const plateforme = $('#plate').val();
 
