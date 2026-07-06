@@ -47,7 +47,6 @@ $(document).on("change", "#from", function () {
     {
         if(parseInt($(this).val()) >= parseInt(from)) {
             next += '<option value="'+$(this).val()+'"';
-            if(to) console.log(to, $(this).val());
             if(to && (to == $(this).val())) {
                 blank = false;
                 next += ' selected ';

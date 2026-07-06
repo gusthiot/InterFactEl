@@ -282,6 +282,11 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
         <script src="js/jszip.min.js"></script>
         <script src="js/papaparse.min.js"></script>
         <link rel="stylesheet" href="css/jquery-ui.min.css">
-        <script src="js/tarifs.js"></script>
+        <script src="js/tarifs-liste.js"></script>
+        <script src="js/custom-inputs.js" type="module"></script>
+        <script src="js/tarifs-tests.js" type="module"></script>
+        <script src="js/tarifs-dates.js" type="module"></script>
+        <script src="js/tarifs-tables.js" type="module"></script>
+        <script src="js/tarifs-espace.js" type="module"></script>
 	</body>
 </html>
