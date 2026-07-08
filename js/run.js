@@ -130,7 +130,6 @@ $('#resend').on('click', function () {
         $.post("controller/selectBills.php", Object.assign({}, postDir, {type: "resend-bills"}), function (data) {
             $('#prefa-content').html(data);
         });
-
     }
 } );
 

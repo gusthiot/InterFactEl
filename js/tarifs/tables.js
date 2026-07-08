@@ -1,3 +1,8 @@
+/* TODO
+    - validity input
+    - tuiles pdf
+    - apply/remove tarifs
+*/
 import * as inputs from "../custom-inputs.js";
 import * as tests from "./tests.js";
 
@@ -12,18 +17,26 @@ let checks = {};
 
 if(sessionStorage.getItem("contents")) {
     contents = JSON.parse(sessionStorage.getItem("contents"));
+    pdfs = JSON.parse(sessionStorage.getItem("pdfs"));
+    optPdfs = JSON.parse(sessionStorage.getItem("optPdfs"));
     displayFiles();
     $('#tarifs-cancel').removeClass('desactived-tile');
 }
 
-if(sessionStorage.getItem("ids") && sessionStorage.getItem("checks")) {
-    ids = JSON.parse(sessionStorage.getItem("ids"));
+if(sessionStorage.getItem("checks")) {
     checks = JSON.parse(sessionStorage.getItem("checks"));
+    displayChecks();
+}
+
+function displayChecks() {
     let result = true;
     Object.keys(checks).forEach(function(filename) {
-        $('#'+filename).addClass(checks[filename]);
-        if(checks[filename] != "green-file") {
+        if(Object.keys(checks[filename].errors).length > 0) {
+            $('#'+filename).addClass('red-file');
             result = false;
+        }
+        if(checks[filename].ok) {
+            $('#'+filename).addClass('green-file');
         }
     });
     if(result) {
@@ -41,20 +54,33 @@ export function displayFiles() {
             filesList += '<div id="' + key + '" class="file tile pdf">' + dict[key].name + "</div>";
         });
     });
+    $('#message').html("");
     $('#tarifs-files').html(filesList);
     $('#tarifs-save').removeClass('desactived-tile');
     $('#tarifs-check').removeClass('desactived-tile');
 }
 
 export function firstChecks(verify) {
-    return tests.firstChecks(contents, pdfs, optCsvs, optPdfs, verify);
+    return runCheck(tests.checkMandatory(contents, pdfs)) ||
+        runCheck(tests.checkAuthorized(contents, pdfs, optCsvs, optPdfs)) ||
+        runCheck(tests.checkColumnsNumbers(contents)) ||
+        runCheck(tests.checkPlateFact(contents, optPdfs, verify));
+}
+
+function runCheck(res) {
+    if(res != "") {
+        $('#message').html(res);
+        return true;
+    }
+    return false;
 }
 
 export function checkColumns() {
     const results = tests.checkColumns(contents, ids);
     checks = results.checks;
     ids = results.ids;
-    return tests.runCheck(results.result);
+    sessionStorage.setItem("checks", JSON.stringify(checks));
+    return runCheck(results.result);
 }
 
 export function removeContents() {
@@ -63,6 +89,8 @@ export function removeContents() {
 
 export function saveContents() {
     sessionStorage.setItem("contents", JSON.stringify(contents));
+    sessionStorage.setItem("pdfs", JSON.stringify(pdfs));
+    sessionStorage.setItem("optPdfs", JSON.stringify(optPdfs));
 }
 
 export function extract(files, check) {
@@ -94,9 +122,15 @@ export function extract(files, check) {
 
 export function reset() {
     contents = {};
+    optCsvs = {};
+    pdfs = {};
+    optPdfs = {}
     ids = {};
+    checks = {};
     sessionStorage.removeItem("contents");
-    sessionStorage.removeItem("ids");
+    sessionStorage.removeItem("pdfs");
+    sessionStorage.removeItem("optPdfs");
+    sessionStorage.removeItem("checks");
     $('#tarifs-files').html("");
     $('#tarifs-select').html("");
     $('#message').html("");
@@ -133,9 +167,6 @@ $(document).on("click", ".csv", function() {
                 let line = dim1[key1];
                 /*
                 if(parameters.bidim[0].origin) {
-                    console.log(contents[parameters.bidim[0].origin]);
-                    console.log(parameters.bidim[0].col);
-                    console.log(dim1[key1][parameters.bidim[0].col]);
                     line = contents[parameters.bidim[0].origin][dim1[key1][0]];
                 }
                     */
@@ -186,7 +217,13 @@ $(document).on("click", ".csv", function() {
                 let num1 = 0;
                 line.forEach(function(cell) {
                     let paramCol = parameters.columns[num1];
-                    html += '<td class="border-around cell">';
+                    let color = "";
+                    let data = "";
+                    if(checks[id] && checks[id]["errors"] && checks[id]["errors"]["row-"+num] && checks[id]["errors"]["row-"+num]["col-"+num1]) {
+                        color = "background-red";
+                        data = 'data-msg="' + checks[id]["errors"]["row-"+num]["col-"+num1] + '"';
+                    }
+                    html += '<td class="border-around ' + color + ' cell" ' + data + '>';
                     if(paramCol.type == "specific") {
                         paramCol = paramCol.lines[num];
                     }
@@ -220,10 +257,16 @@ $(document).on("click", ".csv", function() {
     $('#tarifs-manage').html(html);
 });
 
+
+$(document).on("click", ".background-red", function() {
+    $('#message').html($(this).data('msg'));
+});
+
 $(document).on("click", ".manage-remove", function() {
     $('#tarifs-desktop').css("display", "block");
     $('#tarifs-manage').html("");
-    tests.displayFiles();
+    displayFiles();
+    displayChecks();
 });
 
 $(document).on("click", "#line-plus", function() {
@@ -259,13 +302,16 @@ $(document).on("click", "#line-plus", function() {
     tr.after(html);
 });
 
+let newContent = [];
+let newIds = {};
+let newErrors = {};
 
 $(document).on("click", "#param-save", function() {
     const name = $('#table-params').data('id');
     const parameters = tests.mandatoryCsvs[name];
-    let newContent = [];
+    newContent = [];
     let titles = [];
-    for(let i = 0; i < parameters.numCol; i++) {
+    for(let i = 0; i < parameters.numcol; i++) {
         titles[i] = paramtext["table-"+name+"-"+i];
     }
     newContent[0] = titles;
@@ -311,12 +357,62 @@ $(document).on("click", "#param-save", function() {
     }
     if(tests.mandatoryCsvs[name].tests) {
         const results = tests.internalCheck(name, newContent, contents, ids);
-        ids = results.ids;
+        if(runCheck(results.result)) {
+            newIds = results.ids;
+            newErrors = results.errors;
+            $('#error-modal').addClass("show");
+            $('#error-modal').data("name", name);
+            $('#error-modal').css("display", "block");
+        }
+        else {
+            checks[name] = {};
+            checks[name].errors = {};
+            checks[name].ok = false;
+            removeGoodChecks();
+            ids = results.ids;
+            contents[name] = newContent;
+            $('#tarifs-desktop').css("display", "block");
+            $('#tarifs-manage').html("");
+            displayFiles();
+            displayChecks();
+        }
     }
+});
+
+function removeGoodChecks() {
+    Object.keys(checks).forEach(function(name) {
+        if(checks[name].ok) {
+            checks[name].ok = false;
+        }
+    });
+    sessionStorage.removeItem("checks");
+}
+
+$(document).on("click", "#cancel-modal", function() {
+    $('#error-modal').removeClass("show");
+    $('#error-modal').css("display", "none");
+});
+
+$(document).on("click", "#modal-correct", function() {
+    $('#error-modal').removeClass("show");
+    $('#error-modal').css("display", "none");
+
+});
+
+$(document).on("click", "#modal-save", function() {
+    $('#error-modal').removeClass("show");
+    $('#error-modal').css("display", "none");
+    const name = $('#error-modal').data("name");
+    checks[name] = {};
+    checks[name].errors = newErrors;
+    checks[name].ok = false;
+    removeGoodChecks();
+    ids = newIds;
     contents[name] = newContent;
     $('#tarifs-desktop').css("display", "block");
     $('#tarifs-manage').html("");
-    tests.displayFiles();
+    displayFiles();
+    displayChecks();
 });
 
 $(document).on("input", ".param-input", function() {

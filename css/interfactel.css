@@ -783,6 +783,11 @@ table.dates-tarifs .tr-clickable:hover {
   border: 1px solid black !important;
 }
 
+.background-red {
+  background-color: var(--groseille);
+  cursor: pointer;
+}
+
 /** reporting **/
 
 #report-tiles {

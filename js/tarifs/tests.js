@@ -13,19 +13,7 @@ export const optionalPdfs = {"grille": {
                         }
                     };
 
-export function firstChecks(contents, pdfs, optCsvs, optPdfs, verify) {
-    return runCheck(checkMandatory(contents, pdfs)) || runCheck(checkAuthorized(contents, pdfs, optCsvs, optPdfs)) || runCheck(checkColumnsNumbers(contents)) || runCheck(checkPlateFact(contents, optPdfs, verify));
-}
-
-export function runCheck(res) {
-    if(res != "") {
-        $('#message').html(res);
-        return true;
-    }
-    return false;
-}
-
-function checkMandatory(contents, pdfs) {
+export function checkMandatory(contents, pdfs) {
     let missing = [];
     Object.keys(mandatoryCsvs).forEach(function(mandatory) {
         if(!Object.keys(contents).includes(mandatory)) {
@@ -47,28 +35,24 @@ function checkMandatory(contents, pdfs) {
     return "";
 }
 
-function checkAuthorized(contents, pdfs, optCsvs, optPdfs) {
+export function checkAuthorized(contents, pdfs, optCsvs, optPdfs) {
     let polluting = [];
-    Object.keys(contents).forEach(function(fn) {
-        const filename = fn.split(".")[0];
+    Object.keys(contents).forEach(function(filename) {
         if(!Object.keys(mandatoryCsvs).includes(filename)) {
             polluting.push(filename+".csv");
         }
     });
-    Object.keys(pdfs).forEach(function(fn) {
-        const filename = fn.split(".")[0];
+    Object.keys(pdfs).forEach(function(filename) {
         if(!Object.keys(mandatoryPdfs).includes(filename)) {
             polluting.push(filename+".pdf");
         }
     });
-    Object.keys(optCsvs).forEach(function(fn) {
-        const filename = fn.split(".")[0];
+    Object.keys(optCsvs).forEach(function(filename) {
         if(!optionalCsvs.includes(filename)) {
             polluting.push(filename+".csv");
         }
     });
-    Object.keys(optPdfs).forEach(function(fn) {
-        const filename = fn.split(".")[0];
+    Object.keys(optPdfs).forEach(function(filename) {
         if(!Object.keys(optionalPdfs).includes(filename)) {
             polluting.push(filename+".pdf");
         }
@@ -92,7 +76,7 @@ function checkAuthorized(contents, pdfs, optCsvs, optPdfs) {
     return "";
 }
 
-function checkColumnsNumbers(contents) {
+export function checkColumnsNumbers(contents) {
     let result = "";
     Object.keys(mandatoryCsvs).forEach(function(filename) {
         $('#'+filename).removeClass('red-file');
@@ -110,7 +94,7 @@ function checkColumnsNumbers(contents) {
     return result;
 }
 
-function checkPlateFact(contents, optPdfs, verify) {
+export function checkPlateFact(contents, optPdfs, verify) {
     let result = "";
     const names = ["paramfact", "plateforme"];
     names.forEach(function(filename) {
@@ -164,10 +148,12 @@ function checkPlateFact(contents, optPdfs, verify) {
 
 export function checkColumns(contents, ids) {
     let result = "";
-    let checks = [];
+    let checks = {};
     Object.keys(mandatoryCsvs).forEach(function(filename) {
+        checks[filename] = {};
+        checks[filename].errors = {};
         if("paramfact" == filename) {
-            checks[filename] = "green-file";
+            checks[filename].ok = true;
             $('#'+filename).addClass('green-file');
             return;
         }
@@ -178,33 +164,32 @@ export function checkColumns(contents, ids) {
             const results = internalCheck(filename, contents[filename], contents, ids);
             result += results.result;
             ids = results.ids;
+            checks[filename].errors = results.errors;
         }
         if(result != "") {
-            checks[filename] = "red-file";
+            checks[filename].ok = false;
             $('#'+filename).addClass('red-file');
-            return result;
         }
-
-        checks[filename] = "green-file";
-        $('#'+filename).addClass('green-file');
-
+        else {
+            checks[filename].ok = true;
+            $('#'+filename).addClass('green-file');
+        }
     });
-    sessionStorage.setItem("ids", JSON.stringify(ids));
-    sessionStorage.setItem("checks", JSON.stringify(checks));
     return {"result": result, "checks": checks, "ids": ids};
 }
 
 let arrayIds = {};
 
 export function internalCheck(filename, conTest, contents, ids) {
-    let resTest = "";
+    let result = "";
+    let errors = {};
     mandatoryCsvs[filename].tests.forEach(function(test) {
-        let header = true;
-        let i = 1;
+        let resTest = "";
+        let i = 0;
         let column = "";
+        let colNum = [];
         conTest.forEach(function(line) {
-            if(header) {
-                header = false;
+            if(i == 0) {
                 if(test.type == "unique") {
                     arrayIds = {};
                     test.id.forEach(function(col) {
@@ -213,21 +198,29 @@ export function internalCheck(filename, conTest, contents, ids) {
                         }
                         column += line[col];
                     });
+                    colNum = test.id;
                 }
                 else {
                     column = line[test.col];
+                    colNum = [test.col];
                 }
             }
             else {
                 const columns = mandatoryCsvs[filename].columns;
                 let error = switchTest(columns, test, line, i, column, contents, ids);
                 if(error != "") {
+                    if(!errors["row-"+i]) {
+                        errors["row-"+i] = {};
+                    }
+                    colNum.forEach(function(col) {
+                        errors["row-"+i]["col-"+col] = messages[filename + test.msg];
+                    });
                     if(resTest == "") {
                         resTest += messages[filename + test.msg] + "<br />";
                         resTest += "Fichier : " + filename + ".csv<br />";
                         resTest += "Colonne : '" + column + "'<br />";
                     }
-                    resTest += "Erreur ligne " + i + " : '" + error + "'<br />";
+                    resTest += "Erreur ligne " + (i+1) + " : '" + error + "'<br />";
                 }
             }
             i++;
@@ -236,10 +229,10 @@ export function internalCheck(filename, conTest, contents, ids) {
             ids[filename] = arrayIds;
         }
         if(test.type == "should") {
-            Object.keys(ids[test.id[0]]).forEach(function(id0) {
-                Object.keys(ids[test.id[1]]).forEach(function(id1) {
+            Object.keys(retrieveIds(test.id[0], contents, ids)).forEach(function(id0) {
+                Object.keys(retrieveIds(test.id[1], contents, ids)).forEach(function(id1) {
                     if(filename == "coeffprestation") {
-                        const prestLine = contents["classeprestation"][ids["classeprestation"][id1]];
+                        const prestLine = contents["classeprestation"][retrieveIds("classeprestation", contents, ids)[id1]];
                         if(prestLine[2] != "OUI") {
                             return;
                         }
@@ -256,8 +249,37 @@ export function internalCheck(filename, conTest, contents, ids) {
                 });
             });
         }
+        result += resTest;
     });
-    return {"result": resTest, "ids": ids};
+    return {"result": result, "ids": ids, "errors": errors};
+}
+
+function retrieveIds(filename, contents, ids) {
+    if(ids[filename]) {
+        return ids[filename];
+    }
+    let i = 0;
+    arrayIds = {};
+    let pos = "";
+    mandatoryCsvs[filename].tests.forEach(function(test) {
+        if((test.type == "unique") && !test.noindex) {
+            pos = test.id;
+        }
+    });
+    contents[filename].forEach(function(line) {
+        if(i > 0) {
+            let id = "";
+            pos.forEach(function(col) {
+                if(id != "") {
+                    id += "_";
+                }
+                id += line[col];
+            });
+            arrayIds[id] = i;
+        }
+        i++;
+    });
+    return arrayIds;
 }
 
 function switchTest(columns, test, line, i, column, contents, ids) {
@@ -275,14 +297,14 @@ function switchTest(columns, test, line, i, column, contents, ids) {
             }
             break;
         case "ref":
-            if(!(((Object.keys(ids[columns[test.col].origin])).includes(line[test.col])) ||
+            if(!(((Object.keys(retrieveIds(columns[test.col].origin, contents, ids))).includes(line[test.col])) ||
                 (columns[test.col].zero && (line[test.col] == 0)))) {
                 return line[test.col];
             }
             break;
         case "ext":
             const idExt = line[test.col];
-            const extLine = contents[test.extName][ids[test.extName][idExt]];
+            const extLine = contents[test.extName][retrieveIds(test.extName, contents, ids)[idExt]];
             if(extLine[test.extCol] != test.extValue) {
                 return line[test.col];
             }
@@ -307,7 +329,7 @@ function switchTest(columns, test, line, i, column, contents, ids) {
                 return line[test.col];
             }
             if(test.special) {
-                const catLine = contents["categorie"][ids["categorie"][line[1]]];
+                const catLine = contents["categorie"][retrieveIds("categorie", contents, ids)[line[1]]];
                 if((Math.floor(Math.log10(line[test.col])) + 1) > (9 - catLine[4])) {
                     return line[test.col];
                 }
@@ -325,13 +347,13 @@ function switchTest(columns, test, line, i, column, contents, ids) {
                 return id;
             }
             else {
-                arrayIds[id] = i-1;
+                arrayIds[id] = i;
             }
             break;
         case "itemk":
             if(line[test.col] > 0) {
                 const idCat = line[test.col];
-                const cateLine = contents["categorie"][ids["categorie"][idCat]];
+                const cateLine = contents["categorie"][retrieveIds("categorie", contents, ids)[idCat]];
                 if(cateLine[6] != column) {
                     return idCat;
                 }
