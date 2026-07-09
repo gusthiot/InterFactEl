@@ -1,6 +1,4 @@
 /* TODO
-    - validity input
-    - tuiles pdf
     - apply/remove tarifs
 */
 import * as inputs from "../custom-inputs.js";
@@ -31,7 +29,7 @@ if(sessionStorage.getItem("checks")) {
 function displayChecks() {
     let result = true;
     Object.keys(checks).forEach(function(filename) {
-        if(Object.keys(checks[filename].errors).length > 0) {
+        if(checks[filename].errors && (Object.keys(checks[filename].errors).length > 0)) {
             $('#'+filename).addClass('red-file');
             result = false;
         }
@@ -75,8 +73,8 @@ function runCheck(res) {
     return false;
 }
 
-export function checkColumns() {
-    const results = tests.checkColumns(contents, ids);
+export function checkTables() {
+    const results = tests.checkColumns(contents, pdfs, optPdfs, ids);
     checks = results.checks;
     ids = results.ids;
     sessionStorage.setItem("checks", JSON.stringify(checks));
@@ -143,6 +141,74 @@ export function reset() {
     $("#tarifs-load").removeClass('selected-tile');
 }
 
+$(document).on("click", ".pdf", function() {
+    $('#tarifs-desktop').css("display", "none");
+    $('#tarifs-files').html("");
+    const id = $(this).attr('id');
+    let html = '<div id="param-header"><svg id="param-info" data-id="' + id + '" class="icon icon-selectable date-left" aria-hidden="true">' +
+                        '<use xlink:href="#info"></use>' +
+                    '</svg>';
+    html += '<svg class="icon icon-selectable date-right manage-remove" aria-hidden="true">' +
+                    '<use xlink:href="#x"></use>' +
+                '</svg></div>';
+    if(id == "grille") {
+        if(contents['plateforme'][7][2] == "OUI") {
+            html += '<div>' + tests.messages[id + "01"] + '</div>';
+            let title = "Ajouter";
+            if(optPdfs.grille) {
+                title = "Remplacer";
+            }
+            html += '<div class="center-tile">' +
+                        '<input id="replace-grille" type="file" name="replace-grille" class="pdf-file" accept=".pdf">' +
+                        '<label class="tile tight-tile" for="replace-grille">' + title + ' la grille</label>' +
+                    '</div>';
+        }
+        else {
+            html += '<div>' + tests.messages[id + "02"] + '</div>';
+            if(optPdfs.grille) {
+                html += '<div class="center-tile">' +
+                            '<div id="delete-grille" class="tile tight-tile">Effacer la grille</div>' +
+                        '</div>';
+            }
+        }
+    }
+    else {
+        html += '<div>' + tests.messages[id + "01"] + '</div>';
+        html += '<div class="center-tile">' +
+                    '<input id="replace-logo" type="file" name="replace-logo" class="pdf-file" accept=".pdf">' +
+                    '<label class="tile tight-tile" for="replace-logo">Remplacer le logo</label>' +
+                '</div>';
+    }
+    $('#tarifs-manage').html(html);
+});
+
+$(document).on("click", "#delete-grille", function() {
+    delete optPdfs.grille;
+    closeTable();
+});
+
+$(document).on("change", ".pdf-file", function() {
+    const id = $(this).attr('id');
+    const fileReader = new FileReader();
+    fileReader.onload = function () {
+        if(id == 'replace-logo') {
+            pdfs['logo'] = fileReader.result.split(',')[1];
+        }
+        else {
+            optPdfs['grille'] = fileReader.result.split(',')[1];
+        }
+    };
+    fileReader.readAsDataURL($(this).prop('files')[0]);
+    closeTable();
+});
+
+function closeTable() {
+    $('#tarifs-desktop').css("display", "block");
+    $('#tarifs-manage').html("");
+    displayFiles();
+    displayChecks();
+}
+
 $(document).on("click", ".csv", function() {
     $('#tarifs-desktop').css("display", "none");
     $('#tarifs-files').html("");
@@ -154,7 +220,7 @@ $(document).on("click", ".csv", function() {
     html += '<svg class="icon icon-selectable date-right manage-remove" aria-hidden="true">' +
                     '<use xlink:href="#x"></use>' +
                 '</svg></div>';
-    html += '<div id="param-table"><table class="table" data-id="' + id + '" id="table-params">';
+    html += '<div id="param-table"><form id="csv-form"><table class="table" data-id="' + id + '" id="table-params">';
     if(parameters.bidim) {
         const dim0 = contents[parameters.columns[0].origin];
         const dim1 = contents[parameters.columns[1].origin];
@@ -163,14 +229,24 @@ $(document).on("click", ".csv", function() {
         let num = 0;
         for(const key1 in dim1) {
             if(num > 0) {
-                const positions = parameters.bidim[0].intitule;
                 let line = dim1[key1];
-                /*
-                if(parameters.bidim[0].origin) {
-                    line = contents[parameters.bidim[0].origin][dim1[key1][0]];
+                if(id == "coeffprestation") {
+                    if(line[3] != "OUI") {
+                        num++;
+                        continue;
+                    }
                 }
-                    */
-                html += '<td class="border-around-black cell" data-id="' + line[0] + '">' + line[positions[0]] + " - " + line[positions[1]] + '</td>';
+                const positions = parameters.bidim[0].intitule;
+                let line1 = "";
+                if(positions[0] == "codeD") {
+                    const idSap = dim1[key1][2];
+                    line1 = contents["articlesap"][tests.retrieveIds("articlesap", contents, ids)[idSap]][2];
+                }
+                else {
+                    line1 = line[positions[0]];
+                }
+
+                html += '<td class="border-around-black cell" data-id="' + line[0] + '">' + line1 + " - " + line[positions[1]] + '</td>';
             }
             num++;
         };
@@ -184,10 +260,21 @@ $(document).on("click", ".csv", function() {
                 }
                 const positions = parameters.bidim[1].intitule;
                 let line = dim0[key0];
-                html += '<td class="border-around-black dim0" data-id="' + line[0] + '">' + line[positions[0]] + " - " + line[positions[1]] + '</td>';
+                let intitule = line[positions[0]];
+                if(positions.length > 1) {
+                    intitule += " - " + line[positions[1]];
+                }
+                html += '<td class="border-around-black dim0" data-id="' + line[0] + '">' + intitule + '</td>';
                 let num1 = 0;
                 for(const key1 in dim1) {
                     if(num1 > 0) {
+                        let prestLine = dim1[key1];
+                        if(id == "coeffprestation") {
+                            if(prestLine[3] != "OUI") {
+                                num1++;
+                                continue;
+                            }
+                        }
                         let value = "";
                         for(const line of contents[id]) {
                             if((line[0] == dim0[key0][0]) && (line[1] == dim1[key1][0])) {
@@ -252,21 +339,21 @@ $(document).on("click", ".csv", function() {
                     '</svg></td></tr>';
         }
     }
-    html += '</table></div>';
+    html += '</table></form></div>';
     html += '<div class="center-tile"><div class="tile tight-tile manage-remove">Annuler</div><div id="param-save" class="tile tight-tile">Enregistrer les modifications</div></div>';
     $('#tarifs-manage').html(html);
 });
 
+$(document).on('input propertychange', '.param-input', function() {
+    document.forms["csv-form"].reportValidity();
+});
 
 $(document).on("click", ".background-red", function() {
     $('#message').html($(this).data('msg'));
 });
 
 $(document).on("click", ".manage-remove", function() {
-    $('#tarifs-desktop').css("display", "block");
-    $('#tarifs-manage').html("");
-    displayFiles();
-    displayChecks();
+    closeTable();
 });
 
 $(document).on("click", "#line-plus", function() {
@@ -310,11 +397,13 @@ $(document).on("click", "#param-save", function() {
     const name = $('#table-params').data('id');
     const parameters = tests.mandatoryCsvs[name];
     newContent = [];
-    let titles = [];
-    for(let i = 0; i < parameters.numcol; i++) {
-        titles[i] = paramtext["table-"+name+"-"+i];
+    if(!["paramfact", "plateforme"].includes(name)) {
+        let titles = [];
+        for(let i = 0; i < parameters.numcol; i++) {
+            titles[i] = paramtext["table-"+name+"-"+i];
+        }
+        newContent[0] = titles;
     }
-    newContent[0] = titles;
     const lines = $('.values');
     if(parameters.bidim) {
         const dim1 = $('#dim1').find('.cell');
@@ -325,10 +414,10 @@ $(document).on("click", "#param-save", function() {
                 const input = $(cells[j]).find('input');
                 if($(input).val() !== "") {
                     let line = [];
-                    line[0] = $(lines[i]).find('.dim0').data('id');
-                    line[1] = $(dim1[j]).data('id');
+                    line[0] = $(lines[i]).find('.dim0').data('id').toString();
+                    line[1] = $(dim1[j]).data('id').toString();
                     line[2] = $(input).val();
-                    newContent[num] = line;
+                    newContent.push(line);
                     num++;
                 }
             }
@@ -352,7 +441,7 @@ $(document).on("click", "#param-save", function() {
                 }
                 line[j]= $(cells[j]).html();
             }
-            newContent[i+1] = line;
+            newContent.push(line);
         }
     }
     if(tests.mandatoryCsvs[name].tests) {
@@ -371,11 +460,12 @@ $(document).on("click", "#param-save", function() {
             removeGoodChecks();
             ids = results.ids;
             contents[name] = newContent;
-            $('#tarifs-desktop').css("display", "block");
-            $('#tarifs-manage').html("");
-            displayFiles();
-            displayChecks();
+            closeTable();
         }
+    }
+    else {
+        contents[name] = newContent;
+        closeTable();
     }
 });
 
@@ -409,10 +499,7 @@ $(document).on("click", "#modal-save", function() {
     removeGoodChecks();
     ids = newIds;
     contents[name] = newContent;
-    $('#tarifs-desktop').css("display", "block");
-    $('#tarifs-manage').html("");
-    displayFiles();
-    displayChecks();
+    closeTable();
 });
 
 $(document).on("input", ".param-input", function() {
@@ -430,24 +517,36 @@ $(document).on("click", "#line-up", function() {
     const tr = $(this).closest('tr');
     const cont = tr.html();
     const tools = tr.find('.td-tools').html();
+    const numLine = tr.find('.num-line').html();
     const cont1 = tr.prev().html();
     const tools1 = tr.prev().find('.td-tools').html();
+    const numLine1 = tr.prev().find('.num-line').html();
     tr.html(cont1);
     tr.prev().html(cont);
     tr.find('.td-tools').html(tools);
     tr.prev().find('.td-tools').html(tools1);
+    if(numLine && numLine1) {
+        tr.find('.num-line').html(numLine);
+        tr.prev().find('.num-line').html(numLine1);
+    }
 });
 
 $(document).on("click", "#line-down", function() {
     const tr = $(this).closest('tr');
     const cont = tr.html();
     const tools = tr.find('.td-tools').html();
+    const numLine = tr.find('.num-line').html();
     const cont1 = tr.next().html();
     const tools1 = tr.next().find('.td-tools').html();
+    const numLine1 = tr.next().find('.num-line').html();
     tr.html(cont1);
     tr.next().html(cont);
     tr.find('.td-tools').html(tools);
     tr.next().find('.td-tools').html(tools1);
+    if(numLine && numLine1) {
+        tr.find('.num-line').html(numLine);
+        tr.next().find('.num-line').html(numLine1);
+    }
 });
 
 $(document).on("click", "#line-remove", function() {

@@ -140,7 +140,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
             <input type="hidden" name="parameters" id="parameters" value="<?php echo htmlentities($parameters); ?>" />
             <div id="head">
                 <div id="div-logo">
-                    <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
+                    <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo-epfl"/></a>
                 </div>
                 <div id="div-path">
                     <p><a href="index.php">Accueil</a> > Tarifs <?= $name ?></p>

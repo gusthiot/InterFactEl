@@ -12,7 +12,7 @@ export function input(paramCol, cell, num) {
         case "ref":
             return ref(cell, paramCol);
         case "line":
-            return num;
+            return '<div class="num-line">' + num + '</div>';
         default:
             return cell;
     }
@@ -25,6 +25,9 @@ export function number(value, params) {
     }
     if(params.int) {
         ret += ' step="1" ';
+    }
+    else {
+        ret += ' step="any" ';
     }
     if(params.zero) {
         ret += ' min="0" ';
@@ -41,7 +44,7 @@ export function text(value) {
 }
 
 export function alphanum(value) {
-    return '<input class="param-input" type="text" value="' + value + '" pattern="[A-Za-z]{3}" >';
+    return '<input class="param-input" type="text" value="' + value + '" pattern="[A-Za-z0-9]*" >';
 }
 
 export function menu(value, params) {

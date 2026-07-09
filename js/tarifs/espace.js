@@ -122,7 +122,7 @@ $("#tarifs-check").on("click", function() {
     if(tables.firstChecks(true)) {
         return;
     }
-    if(tables.checkColumns()) {
+    if(tables.checkTables()) {
         return;
     }
     $('#tarifs-load').removeClass('desactived-tile');

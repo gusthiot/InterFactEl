@@ -54,7 +54,7 @@ function displayTile(array $tiles): void
             <input type="hidden" name="disabled" id="disabled" value="<?= $disabled ?>" />
             <div id="head">
                 <div id="div-logo">
-                    <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
+                    <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo-epfl"/></a>
                 </div>
                 <div id="div-path">
                     <p class="title"><a href="index.php">Accueil</a> > Statistiques <?= $name ?></p>

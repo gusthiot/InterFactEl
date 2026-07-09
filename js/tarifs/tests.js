@@ -146,7 +146,7 @@ export function checkPlateFact(contents, optPdfs, verify) {
     return result;
 }
 
-export function checkColumns(contents, ids) {
+export function checkColumns(contents, pdfs, optPdfs, ids) {
     let result = "";
     let checks = {};
     Object.keys(mandatoryCsvs).forEach(function(filename) {
@@ -175,6 +175,31 @@ export function checkColumns(contents, ids) {
             $('#'+filename).addClass('green-file');
         }
     });
+    Object.keys(mandatoryPdfs).forEach(function(filename) {
+        checks[filename] = {};
+        checks[filename].errors = {};
+        if(pdfs[filename]) {
+            checks[filename].ok = true;
+            $('#'+filename).addClass('green-file');
+        }
+        else {
+            checks[filename].ok = false;
+            $('#'+filename).addClass('red-file');
+        }
+    });
+    Object.keys(optionalPdfs).forEach(function(filename) {
+        checks[filename] = {};
+        checks[filename].errors = {};
+        if(optPdfs[filename]) {
+            checks[filename].ok = true;
+            $('#'+filename).addClass('green-file');
+        }
+        else {
+            checks[filename].ok = false;
+            $('#'+filename).addClass('red-file');
+        }
+    });
+
     return {"result": result, "checks": checks, "ids": ids};
 }
 
@@ -233,18 +258,18 @@ export function internalCheck(filename, conTest, contents, ids) {
                 Object.keys(retrieveIds(test.id[1], contents, ids)).forEach(function(id1) {
                     if(filename == "coeffprestation") {
                         const prestLine = contents["classeprestation"][retrieveIds("classeprestation", contents, ids)[id1]];
-                        if(prestLine[2] != "OUI") {
+                        if(prestLine[3] != "OUI") {
                             return;
                         }
                     }
                     const id = id0 + "_" + id1;
-                    if(!(Object.keys(arrayIds).includes(id))) {
+                    if(!Object.keys(arrayIds).includes(id)) {
                         if(resTest == "") {
                             resTest += messages[filename + test.msg] + "<br />";
                             resTest += "Fichier : " + filename + ".csv<br />";
                             resTest += "Colonne : '" + column + "'<br />";
                         }
-                        resTest += "Le couple '" + id1 + "' et '" + id0 + "' n'existe pas <br />";
+                        resTest += "Le couple '" + id0 + "' et '" + id1 + "' n'existe pas <br />";
                     }
                 });
             });
@@ -254,12 +279,12 @@ export function internalCheck(filename, conTest, contents, ids) {
     return {"result": result, "ids": ids, "errors": errors};
 }
 
-function retrieveIds(filename, contents, ids) {
+export function retrieveIds(filename, contents, ids) {
     if(ids[filename]) {
         return ids[filename];
     }
     let i = 0;
-    arrayIds = {};
+    let aIds = {};
     let pos = "";
     mandatoryCsvs[filename].tests.forEach(function(test) {
         if((test.type == "unique") && !test.noindex) {
@@ -275,11 +300,11 @@ function retrieveIds(filename, contents, ids) {
                 }
                 id += line[col];
             });
-            arrayIds[id] = i;
+            aIds[id] = i;
         }
         i++;
     });
-    return arrayIds;
+    return aIds;
 }
 
 function switchTest(columns, test, line, i, column, contents, ids) {

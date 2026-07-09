@@ -62,7 +62,7 @@ function uploaderTile(string $action, string $title, string $icon): string
         <div class="container-fluid">
             <div id="head">
                 <div id="div-logo">
-                    <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo"/></a>
+                    <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo-epfl"/></a>
                 </div>
                 <div id="div-path">
                     <p>Accueil</p>
