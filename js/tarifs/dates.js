@@ -191,22 +191,7 @@ function removeTarifs(date) {
 }
 
 function applyTarifs(date) {
-    console.log("to be improved");
-    /*
-    let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];
-    Object.keys(ids["classeclient"]).forEach(function(ccKey) {
-        const ccLine = contents["classeclient"][ids["classeclient"][ccKey]];
-        const idBase = ccLine[8];
-        Object.keys(ids["categorie"]).forEach(function(caKey) {
-            const idBaseCateg = idBase+"_"+caKey;
-            const bcLine = contents["basecateg"][ids["basecateg"][idBaseCateg]];
-            categprix.push([ccKey, caKey, bcLine[2]]);
-        });
-    });
-
-    files["categprix.csv"] = btoa(Papa.unparse(categprix, {delimiter: ";", skipEmptyLines: true}));
-    const enc_files = JSON.stringify(files);
-    $.post("controller/applyTarifs.php", {plate: plateforme, date: date, files: enc_files}, function (data) {
+    $.post("controller/applyTarifs.php", {plate: plateforme, date: date, files: tables.getEncFiles()}, function (data) {
         if(data == "ok") {
             tables.reset();
             window.location.href = "tarifs.php?plateforme="+plateforme;
@@ -215,5 +200,4 @@ function applyTarifs(date) {
             $('#message').html(data);
         }
     });
-    */
 }

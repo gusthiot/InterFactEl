@@ -1,6 +1,3 @@
-/* TODO
-    - apply/remove tarifs
-*/
 import * as inputs from "../custom-inputs.js";
 import * as tests from "./tests.js";
 
@@ -460,11 +457,13 @@ $(document).on("click", "#param-save", function() {
             removeGoodChecks();
             ids = results.ids;
             contents[name] = newContent;
+            sessionStorage.setItem("contents", JSON.stringify(contents));
             closeTable();
         }
     }
     else {
         contents[name] = newContent;
+        sessionStorage.setItem("contents", JSON.stringify(contents));
         closeTable();
     }
 });
@@ -499,6 +498,7 @@ $(document).on("click", "#modal-save", function() {
     removeGoodChecks();
     ids = newIds;
     contents[name] = newContent;
+    sessionStorage.setItem("contents", JSON.stringify(contents));
     closeTable();
 });
 
@@ -515,39 +515,30 @@ $(document).on("input", ".param-select", function() {
 
 $(document).on("click", "#line-up", function() {
     const tr = $(this).closest('tr');
-    const cont = tr.html();
-    const tools = tr.find('.td-tools').html();
-    const numLine = tr.find('.num-line').html();
-    const cont1 = tr.prev().html();
-    const tools1 = tr.prev().find('.td-tools').html();
-    const numLine1 = tr.prev().find('.num-line').html();
-    tr.html(cont1);
-    tr.prev().html(cont);
-    tr.find('.td-tools').html(tools);
-    tr.prev().find('.td-tools').html(tools1);
-    if(numLine && numLine1) {
-        tr.find('.num-line').html(numLine);
-        tr.prev().find('.num-line').html(numLine1);
-    }
+    trToggle(tr, tr.prev());
 });
 
 $(document).on("click", "#line-down", function() {
     const tr = $(this).closest('tr');
+    trToggle(tr, tr.next());
+});
+
+function trToggle(tr, tr1) {
     const cont = tr.html();
     const tools = tr.find('.td-tools').html();
     const numLine = tr.find('.num-line').html();
-    const cont1 = tr.next().html();
-    const tools1 = tr.next().find('.td-tools').html();
-    const numLine1 = tr.next().find('.num-line').html();
+    const cont1 = tr1.html();
+    const tools1 = tr1.find('.td-tools').html();
+    const numLine1 = tr1.find('.num-line').html();
     tr.html(cont1);
-    tr.next().html(cont);
+    tr1.html(cont);
     tr.find('.td-tools').html(tools);
-    tr.next().find('.td-tools').html(tools1);
+    tr1.find('.td-tools').html(tools1);
     if(numLine && numLine1) {
         tr.find('.num-line').html(numLine);
-        tr.next().find('.num-line').html(numLine1);
+        tr1.find('.num-line').html(numLine1);
     }
-});
+}
 
 $(document).on("click", "#line-remove", function() {
     const tr = $(this).closest('tr');
@@ -584,3 +575,31 @@ $(document).on("click", ".modal-ok", function() {
     $('#info-modal').removeClass("show");
     $('#info-modal').css("display", "none");
 });
+
+export function getEncFiles() {
+    let files = {};
+    Object.keys(contents).forEach(function(name) {
+        files[name+".csv"] = btoa(Papa.unparse(contents[name], {delimiter: ";", skipEmptyLines: true}));
+    });
+
+    let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];
+    const ccIds = tests.retrieveIds("classeclient", contents, ids);
+    Object.keys(ccIds).forEach(function(ccKey) {
+        const ccLine = contents["classeclient"][ccIds[ccKey]];
+        const idBase = ccLine[8];
+        Object.keys(tests.retrieveIds("categorie", contents, ids)).forEach(function(caKey) {
+            const idBaseCateg = idBase+"_"+caKey;
+            const bcLine = contents["basecateg"][tests.retrieveIds("basecateg", contents, ids)[idBaseCateg]];
+            categprix.push([ccKey, caKey, bcLine[2]]);
+        });
+    });
+    files["categprix.csv"] = btoa(Papa.unparse(categprix, {delimiter: ";", skipEmptyLines: true}));
+
+    Object.keys(pdfs).forEach(function(name) {
+        files[name+".pdf"] = pdfs[name];
+    });
+    Object.keys(optPdfs).forEach(function(name) {
+        files[name+".pdf"] = optPdfs[name];
+    });
+    return JSON.stringify(files);
+}
