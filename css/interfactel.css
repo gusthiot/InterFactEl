@@ -416,7 +416,6 @@ input[type="file"] {
   min-width: 100%;
 }
 
-
 .scroll-message div span,
 .scroll-message div:after {
   position: relative;
@@ -444,6 +443,16 @@ input[type="file"] {
 @keyframes defilement2 {
   0% { margin-left: 100%; }
   100% { margin-left: 0%; }
+}
+
+#supervision-files {
+  display: none;
+  flex-wrap: wrap;
+}
+
+#supervision-manage {
+  margin: 0 auto;
+  max-width: 80%;
 }
 
 /** facturation **/
@@ -752,17 +761,17 @@ table.dates-tarifs .tr-clickable:hover {
   max-width: 80%;
 }
 
-#param-table {
+#tableur-table {
   overflow-x: auto;
   max-height: 500px;
 }
 
-#table-params {
+#table-tableur {
   margin: 0 auto;
   width: 0 !important;
 }
 
-#param-header {
+#tableur-header {
   height: 30px;
 }
 

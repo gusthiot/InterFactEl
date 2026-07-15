@@ -1,4 +1,4 @@
-import * as inputs from "../custom-inputs.js";
+import * as customTableur from "../custom-tableur.js";
 import * as tests from "./tests.js";
 
 const paramtext = JSON.parse($('#paramtext').val());
@@ -9,6 +9,7 @@ let pdfs = {};
 let optPdfs = {}
 let ids = {};
 let checks = {};
+const tableur = new customTableur.CustomTableur(tests.messages, tests.mandatoryCsvs, paramtext, closeTable);
 
 if(sessionStorage.getItem("contents")) {
     contents = JSON.parse(sessionStorage.getItem("contents"));
@@ -26,6 +27,8 @@ if(sessionStorage.getItem("checks")) {
 function displayChecks() {
     let result = true;
     Object.keys(checks).forEach(function(filename) {
+        $('#'+filename).removeClass('red-file');
+        $('#'+filename).removeClass('green-file');
         if(checks[filename].errors && (Object.keys(checks[filename].errors).length > 0)) {
             $('#'+filename).addClass('red-file');
             result = false;
@@ -140,28 +143,19 @@ export function reset() {
 
 $(document).on("click", ".pdf", function() {
     $('#tarifs-desktop').css("display", "none");
-    $('#tarifs-files').html("");
-    const id = $(this).attr('id');
-    let html = '<div id="param-header"><svg id="param-info" data-id="' + id + '" class="icon icon-selectable date-left" aria-hidden="true">' +
-                        '<use xlink:href="#info"></use>' +
-                    '</svg>';
-    html += '<svg class="icon icon-selectable date-right manage-remove" aria-hidden="true">' +
-                    '<use xlink:href="#x"></use>' +
-                '</svg></div>';
-    if(id == "grille") {
+    const filename = $(this).attr('id');
+    tableur.init(filename, "pdf");
+    let html = tableur.header();
+    if(filename == "grille") {
         if(contents['plateforme'][7][2] == "OUI") {
-            html += '<div>' + tests.messages[id + "01"] + '</div>';
-            let title = "Ajouter";
+            let title = "Ajouter la grille";
             if(optPdfs.grille) {
-                title = "Remplacer";
+                title = "Remplacer la grille";
             }
-            html += '<div class="center-tile">' +
-                        '<input id="replace-grille" type="file" name="replace-grille" class="pdf-file" accept=".pdf">' +
-                        '<label class="tile tight-tile" for="replace-grille">' + title + ' la grille</label>' +
-                    '</div>';
+            html += uploadPdf(tests.messages[filename + "01"], "replace-grille", titre);
         }
         else {
-            html += '<div>' + tests.messages[id + "02"] + '</div>';
+            html += '<div>' + tests.messages[filename + "02"] + '</div>';
             if(optPdfs.grille) {
                 html += '<div class="center-tile">' +
                             '<div id="delete-grille" class="tile tight-tile">Effacer la grille</div>' +
@@ -170,14 +164,18 @@ $(document).on("click", ".pdf", function() {
         }
     }
     else {
-        html += '<div>' + tests.messages[id + "01"] + '</div>';
-        html += '<div class="center-tile">' +
-                    '<input id="replace-logo" type="file" name="replace-logo" class="pdf-file" accept=".pdf">' +
-                    '<label class="tile tight-tile" for="replace-logo">Remplacer le logo</label>' +
-                '</div>';
+        html += uploadPdf(tests.messages[filename + "01"], "replace-logo", "Remplacer le logo");
     }
     $('#tarifs-manage').html(html);
 });
+
+function uploadPdf(message, id, titre) {
+    return '<div>' + message + '</div>' +
+            '<div class="center-tile">' +
+                '<input id="' + id + '" type="file" name="' + id + '" class="pdf-file" accept=".pdf">' +
+                '<label class="tile tight-tile" for="' + id + '">' + titre + '</label>' +
+            '</div>';
+}
 
 $(document).on("click", "#delete-grille", function() {
     delete optPdfs.grille;
@@ -202,270 +200,74 @@ $(document).on("change", ".pdf-file", function() {
 function closeTable() {
     $('#tarifs-desktop').css("display", "block");
     $('#tarifs-manage').html("");
-    displayFiles();
     displayChecks();
 }
 
 $(document).on("click", ".csv", function() {
     $('#tarifs-desktop').css("display", "none");
-    $('#tarifs-files').html("");
-    const id = $(this).attr('id');
-    const parameters = tests.mandatoryCsvs[id];
-    let html = '<div id="param-header"><svg id="param-info" data-id="' + id + '" class="icon icon-selectable date-left" aria-hidden="true">' +
-                        '<use xlink:href="#info"></use>' +
-                    '</svg>';
-    html += '<svg class="icon icon-selectable date-right manage-remove" aria-hidden="true">' +
-                    '<use xlink:href="#x"></use>' +
-                '</svg></div>';
-    html += '<div id="param-table"><form id="csv-form"><table class="table" data-id="' + id + '" id="table-params">';
+    const filename = $(this).attr('id');
+    const parameters = tests.mandatoryCsvs[filename];
+    tableur.init(filename, "csv", contents);
+    let html = "";
     if(parameters.bidim) {
-        const dim0 = contents[parameters.columns[0].origin];
-        const dim1 = contents[parameters.columns[1].origin];
-        html += '<tr><th></th><th></th><th colspan="' + (dim1.length-1) + '">' + paramtext["table-"+id+"-"+1] + '</th></tr>';
-        html += '<tr id="dim1"><td class="border-around-no"></td><td class="border-around-no"></td>';
-        let num = 0;
-        for(const key1 in dim1) {
-            if(num > 0) {
-                let line = dim1[key1];
-                if(id == "coeffprestation") {
-                    if(line[3] != "OUI") {
-                        num++;
-                        continue;
-                    }
-                }
-                const positions = parameters.bidim[0].intitule;
-                let line1 = "";
-                if(positions[0] == "codeD") {
-                    const idSap = dim1[key1][2];
-                    line1 = contents["articlesap"][tests.retrieveIds("articlesap", contents, ids)[idSap]][2];
-                }
-                else {
-                    line1 = line[positions[0]];
-                }
-
-                html += '<td class="border-around-black cell" data-id="' + line[0] + '">' + line1 + " - " + line[positions[1]] + '</td>';
-            }
-            num++;
-        };
-        html += '</tr>';
-        num = 0
-        for(const key0 in dim0) {
-            if(num > 0) {
-                html += '<tr class="values">';
-                if(num == 1) {
-                    html += '<th rowspan="' + (dim0.length-1) + '" class="vert-th">' + paramtext["table-"+id+"-"+0] + '</th>';
-                }
-                const positions = parameters.bidim[1].intitule;
-                let line = dim0[key0];
-                let intitule = line[positions[0]];
-                if(positions.length > 1) {
-                    intitule += " - " + line[positions[1]];
-                }
-                html += '<td class="border-around-black dim0" data-id="' + line[0] + '">' + intitule + '</td>';
-                let num1 = 0;
-                for(const key1 in dim1) {
-                    if(num1 > 0) {
-                        let prestLine = dim1[key1];
-                        if(id == "coeffprestation") {
-                            if(prestLine[3] != "OUI") {
-                                num1++;
-                                continue;
-                            }
-                        }
-                        let value = "";
-                        for(const line of contents[id]) {
-                            if((line[0] == dim0[key0][0]) && (line[1] == dim1[key1][0])) {
-                                value = line[2];
-                                break;
-                            }
-                        };
-                        html += '<td class="border-around cell">' + inputs.number(value, parameters.columns[2]) + '</td>';
-                    }
-                    num1++;
-                };
-                html += '</tr>';
-            }
-            num++;
-        };
+        const sapIds = tests.retrieveIds("articlesap", contents, ids);
+        html = tableur.bidimTableur(sapIds);
     }
     else {
-        html += '<tr>';
-        for (let i = 0; i < parameters.numcol; i++) {
-            html += '<th>' + paramtext["table-"+id+"-"+i] + '</th>';
-        }
-        html += '</tr>';
-        let num = 0;
-        contents[id].forEach(function(line) {
-            if(["paramfact", "plateforme"].includes(id) ||(num > 0)) {
-                html += '<tr class="values" id="line-' + num + '">';
-                let num1 = 0;
-                line.forEach(function(cell) {
-                    let paramCol = parameters.columns[num1];
-                    let color = "";
-                    let data = "";
-                    if(checks[id] && checks[id]["errors"] && checks[id]["errors"]["row-"+num] && checks[id]["errors"]["row-"+num]["col-"+num1]) {
-                        color = "background-red";
-                        data = 'data-msg="' + checks[id]["errors"]["row-"+num]["col-"+num1] + '"';
-                    }
-                    html += '<td class="border-around ' + color + ' cell" ' + data + '>';
-                    if(paramCol.type == "specific") {
-                        paramCol = paramCol.lines[num];
-                    }
-                    html += inputs.input(paramCol, cell, num);
-                    html += '</td>';
-                    num1++;
-                });
-                if(parameters.tools) {
-                    html += '<td class="border-around td-tools">';
-                    if(num > 1) {
-                        html += inputs.lineUp();
-                    }
-                    if(num < (contents[id].length-1)) {
-                        html += inputs.lineDown();
-                    }
-                    html += inputs.lineRemove() + '</td>';
-                }
-                html += '</tr>';
-            }
-            num++;
-        });
-        if(parameters.tools) {
-            html += '<tr><td class="border-around left" colspan="' + (parameters.numcol + 1) + '">' +
-                    '<svg id="line-plus" class="icon icon-selectable" aria-hidden="true">' +
-                        '<use xlink:href="#plus"></use>' +
-                    '</svg></td></tr>';
-        }
+        html = tableur.unidimTableur();
+
     }
-    html += '</table></form></div>';
-    html += '<div class="center-tile"><div class="tile tight-tile manage-remove">Annuler</div><div id="param-save" class="tile tight-tile">Enregistrer les modifications</div></div>';
     $('#tarifs-manage').html(html);
+    if(checks[filename] && checks[filename].errors) {
+        tableur.displayErrors(checks[filename].errors);
+    }
 });
 
-$(document).on('input propertychange', '.param-input', function() {
-    document.forms["csv-form"].reportValidity();
-});
+let saveContent = [];
+let saveIds = {};
+let saveErrors = {};
+let saveFilename = "";
 
-$(document).on("click", ".background-red", function() {
-    $('#message').html($(this).data('msg'));
-});
-
-$(document).on("click", ".manage-remove", function() {
-    closeTable();
-});
-
-$(document).on("click", "#line-plus", function() {
-    const table = $(this).closest('table');
-    const name = table.data('id');
-    const tr = $(this).closest('tr').prev();
-    let num = 1;
-    if(tr.hasClass('values')) {
-        const tab = tr.attr('id').split("-");
-        num = parseInt(tab[1]) + 1;
-    }
-    let html = '<tr class="values" id="line-' + num + '">';
-    let num1 = 0;
-    const parameters = tests.mandatoryCsvs[name];
-    parameters.columns.forEach(function(paramCol) {
-        let cell = "";
-        html += '<td class="border-around cell">';
-        html += inputs.input(paramCol, cell, num);
-        html += '</td>';
-        num1++;
-    });
-    html += '<td class="border-around td-tools">';
-    if(tr.hasClass('values')) {
-        html += inputs.lineUp();
-        let tools = "";
-        if(tr.prev().hasClass('values')) {
-            tools += inputs.lineUp();
-        }
-        tools += inputs.lineDown() + inputs.lineRemove();
-        tr.find('.td-tools').html(tools);
-    }
-    html += inputs.lineRemove() + '</td></tr>';
-    tr.after(html);
-});
-
-let newContent = [];
-let newIds = {};
-let newErrors = {};
-
-$(document).on("click", "#param-save", function() {
-    const name = $('#table-params').data('id');
-    const parameters = tests.mandatoryCsvs[name];
-    newContent = [];
-    if(!["paramfact", "plateforme"].includes(name)) {
-        let titles = [];
-        for(let i = 0; i < parameters.numcol; i++) {
-            titles[i] = paramtext["table-"+name+"-"+i];
-        }
-        newContent[0] = titles;
-    }
-    const lines = $('.values');
-    if(parameters.bidim) {
-        const dim1 = $('#dim1').find('.cell');
-        let num = 1;
-        for(let i = 0; i < lines.length; i++) {
-            const cells = $(lines[i]).find('.cell');
-            for(let j = 0; j < cells.length; j++) {
-                const input = $(cells[j]).find('input');
-                if($(input).val() !== "") {
-                    let line = [];
-                    line[0] = $(lines[i]).find('.dim0').data('id').toString();
-                    line[1] = $(dim1[j]).data('id').toString();
-                    line[2] = $(input).val();
-                    newContent.push(line);
-                    num++;
-                }
-            }
-        }
-    }
-    else {
-        for(let i = 0; i < lines.length; i++) {
-            let line = [];
-            const cells = $(lines[i]).find('.cell');
-            for(let j = 0; j < cells.length; j++) {
-                const input = $(cells[j]).find('input');
-                if(input.length > 0) {
-                    line[j] = $(input).val();
-                    continue;
-                }
-                const select = $(cells[j]).find('select');
-                if(select.length > 0) {
-                    const selected = $(select).find('option:selected');
-                    line[j] = $(selected).attr('value');
-                    continue;
-                }
-                line[j]= $(cells[j]).html();
-            }
-            newContent.push(line);
-        }
-    }
-    if(tests.mandatoryCsvs[name].tests) {
-        const results = tests.internalCheck(name, newContent, contents, ids);
+$(document).on("saved", "#tableur-table", function(event, newContent, filename) {
+    if(tests.mandatoryCsvs[filename].tests) {
+        const results = tests.internalCheck(filename, newContent, contents, ids);
         if(runCheck(results.result)) {
-            newIds = results.ids;
-            newErrors = results.errors;
-            $('#error-modal').addClass("show");
-            $('#error-modal').data("name", name);
-            $('#error-modal').css("display", "block");
+            saveContent = newContent;
+            saveIds = results.ids;
+            saveErrors = results.errors;
+            saveFilename = filename;
+            tableur.displayErrors(results.errors);
+            $("#tableur-table").trigger("error");
         }
         else {
-            checks[name] = {};
-            checks[name].errors = {};
-            checks[name].ok = false;
+            checks[filename] = {};
+            checks[filename].errors = {};
+            checks[filename].ok = false;
             removeGoodChecks();
             ids = results.ids;
-            contents[name] = newContent;
+            contents[filename] = newContent;
+            sessionStorage.setItem("checks", JSON.stringify(checks));
             sessionStorage.setItem("contents", JSON.stringify(contents));
             closeTable();
         }
     }
     else {
-        contents[name] = newContent;
+        contents[filename] = newContent;
         sessionStorage.setItem("contents", JSON.stringify(contents));
         closeTable();
     }
+});
+
+$(document).on("save-anyway", "#tableur-table", function() {
+    checks[saveFilename] = {};
+    checks[saveFilename].errors = saveErrors;
+    checks[saveFilename].ok = false;
+    removeGoodChecks();
+    ids = saveIds;
+    contents[saveFilename] = saveContent;
+    sessionStorage.setItem("checks", JSON.stringify(checks));
+    sessionStorage.setItem("contents", JSON.stringify(contents));
+    closeTable();
 });
 
 function removeGoodChecks() {
@@ -474,107 +276,7 @@ function removeGoodChecks() {
             checks[name].ok = false;
         }
     });
-    sessionStorage.removeItem("checks");
 }
-
-$(document).on("click", "#cancel-modal", function() {
-    $('#error-modal').removeClass("show");
-    $('#error-modal').css("display", "none");
-});
-
-$(document).on("click", "#modal-correct", function() {
-    $('#error-modal').removeClass("show");
-    $('#error-modal').css("display", "none");
-
-});
-
-$(document).on("click", "#modal-save", function() {
-    $('#error-modal').removeClass("show");
-    $('#error-modal').css("display", "none");
-    const name = $('#error-modal').data("name");
-    checks[name] = {};
-    checks[name].errors = newErrors;
-    checks[name].ok = false;
-    removeGoodChecks();
-    ids = newIds;
-    contents[name] = newContent;
-    sessionStorage.setItem("contents", JSON.stringify(contents));
-    closeTable();
-});
-
-$(document).on("input", ".param-input", function() {
-    $(this).attr('value',$(this).val());
-});
-
-$(document).on("input", ".param-select", function() {
-    const oldSelected = $(this).find('option[selected]');
-    oldSelected.removeAttr('selected');
-    const newSelected = $(this).find('option[value="' + $(this).find(":selected").val() + '"]');
-    newSelected.attr('selected', true);
-});
-
-$(document).on("click", "#line-up", function() {
-    const tr = $(this).closest('tr');
-    trToggle(tr, tr.prev());
-});
-
-$(document).on("click", "#line-down", function() {
-    const tr = $(this).closest('tr');
-    trToggle(tr, tr.next());
-});
-
-function trToggle(tr, tr1) {
-    const cont = tr.html();
-    const tools = tr.find('.td-tools').html();
-    const numLine = tr.find('.num-line').html();
-    const cont1 = tr1.html();
-    const tools1 = tr1.find('.td-tools').html();
-    const numLine1 = tr1.find('.num-line').html();
-    tr.html(cont1);
-    tr1.html(cont);
-    tr.find('.td-tools').html(tools);
-    tr1.find('.td-tools').html(tools1);
-    if(numLine && numLine1) {
-        tr.find('.num-line').html(numLine);
-        tr1.find('.num-line').html(numLine1);
-    }
-}
-
-$(document).on("click", "#line-remove", function() {
-    const tr = $(this).closest('tr');
-    nextTr(tr, 0);
-});
-
-function nextTr(tr, level) {
-    if(tr.next().hasClass('values')) {
-        tr.html(tr.next().html());
-        nextTr(tr.next(), level++);
-    }
-    else {
-        if((level == 0) && (tr.prev().hasClass('values'))) {
-            let tools = "";
-            if(tr.prev().prev().hasClass('values')) {
-                tools +=inputs.lineUp();
-            }
-            tools += inputs.lineRemove();
-            tr.prev().find('.td-tools').html(tools);
-        }
-        tr.remove();
-    }
-}
-
-$(document).on("click", "#param-info", function() {
-    const id = $(this).data('id');
-    $('#csv-modal-title').html("Informations concernant le fichier " + id + ".csv");
-    $('#csv-modal-body').html(tests.messages[id + "00"]);
-    $('#info-modal').addClass("show");
-    $('#info-modal').css("display", "block");
-});
-
-$(document).on("click", ".modal-ok", function() {
-    $('#info-modal').removeClass("show");
-    $('#info-modal').css("display", "none");
-});
 
 export function getEncFiles() {
     let files = {};

@@ -257,43 +257,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                         </div>
                     </div>
                 </div>
-                <div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="info-modal-title" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" id="info-modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="csv-modal-title">Titre</h5>
-                                    <button type="button" class="close modal-ok" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                            </div>
-                            <div class="modal-body" id="csv-modal-body">
-                                Body
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary modal-ok">OK</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal fade" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="error-modal-title" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" id="error-modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="wrong-modal-title">Problème de consistance</h5>
-                                    <button type="button" class="close" id="cancel-modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                            </div>
-                            <div class="modal-body" id="wrong-modal-body">
-                                Des erreurs sont présentes dans le présent fichier, voulez-vous le corriger ou le sauver en l'état ?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" id="modal-correct">Corriger</button>
-                                <button type="button" class="btn btn-primary" id="modal-save">Sauver</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php include('./includes/tableurModals.inc'); ?>
             </div>
         </div>
         <?php include("includes/footer.inc");?>
@@ -302,7 +266,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
         <script src="js/papaparse.min.js"></script>
         <link rel="stylesheet" href="css/jquery-ui.min.css">
         <script src="js/tarifs/liste.js"></script>
-        <script src="js/custom-inputs.js" type="module"></script>
+        <script src="js/custom-tableur.js" type="module"></script>
         <script src="js/tarifs/tests.js" type="module"></script>
         <script src="js/tarifs/dates.js" type="module"></script>
         <script src="js/tarifs/tables.js" type="module"></script>

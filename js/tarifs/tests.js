@@ -152,11 +152,6 @@ export function checkColumns(contents, pdfs, optPdfs, ids) {
     Object.keys(mandatoryCsvs).forEach(function(filename) {
         checks[filename] = {};
         checks[filename].errors = {};
-        if("paramfact" == filename) {
-            checks[filename].ok = true;
-            $('#'+filename).addClass('green-file');
-            return;
-        }
         if(result != "") {
             return;
         }
@@ -178,6 +173,9 @@ export function checkColumns(contents, pdfs, optPdfs, ids) {
     Object.keys(mandatoryPdfs).forEach(function(filename) {
         checks[filename] = {};
         checks[filename].errors = {};
+        if(result != "") {
+            return;
+        }
         if(pdfs[filename]) {
             checks[filename].ok = true;
             $('#'+filename).addClass('green-file');
@@ -190,6 +188,9 @@ export function checkColumns(contents, pdfs, optPdfs, ids) {
     Object.keys(optionalPdfs).forEach(function(filename) {
         checks[filename] = {};
         checks[filename].errors = {};
+        if(result != "") {
+            return;
+        }
         if(optPdfs[filename]) {
             checks[filename].ok = true;
             $('#'+filename).addClass('green-file');
