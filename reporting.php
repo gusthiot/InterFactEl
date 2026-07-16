@@ -1,6 +1,7 @@
 <?php
 
 require_once("assets/Lock.php");
+require_once("assets/Plateforme.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
@@ -17,7 +18,8 @@ if(!isset($_GET["plateforme"])) {
 $plateforme = $_GET['plateforme'];
 checkPlateforme("reporting", $plateforme);
 
-$name = DATA_GEST['reporting'][$plateforme];
+$plateformes = new Plateforme();
+$name = $plateformes->getName($plateforme);
 $dir = DATA.$plateforme;
 
 include("includes/lock.inc");

@@ -5,6 +5,7 @@ require_once("../assets/Lock.php");
 require_once("../assets/Label.php");
 require_once("../assets/Sap.php");
 require_once("../includes/Zip.php");
+require_once("../assets/Plateforme.php");
 require_once("../includes/Tarifs.php");
 require_once("../session.inc");
 
@@ -103,7 +104,8 @@ if(isset($_GET['type'])) {
                     elseif($type==="modif") {
                         // modification file (journal, client, modifications) of a run
                         if(isset($_GET['pre'])) {
-                            $name = DATA_GEST['facturation'][$_GET['plate']];
+                            $plateformes = new Plateforme();
+                            $name = $plateformes->getName($_GET['plate']);
                             $filename = $_GET['pre']."_".$name."_".$_GET['year']."_".$_GET['month']."_".$_GET['version'];
                             readCsv($dirRun."/".$filename.".csv");
                         }

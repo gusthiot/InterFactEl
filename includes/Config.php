@@ -31,7 +31,12 @@ class Config
                 if(file_exists($tmpDir.ParamText::NAME)) {
                     self::addMsg($msg, self::checkColumns($tmpDir, ParamText::NAME, 2, false, ParamText::LABELS));
                 }
-
+                if(file_exists($tmpDir.Plateforme::NAME)) {
+                    self::addMsg($msg, self::checkColumns($tmpDir, Plateforme::NAME, 5));
+                }
+                if(file_exists($tmpDir.Personnel::NAME)) {
+                    self::addMsg($msg, self::checkColumns($tmpDir, Personnel::NAME, 4));
+                }
             }
             State::delDir($tmpDir);
             return $msg;

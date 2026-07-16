@@ -5,6 +5,7 @@ require_once("assets/Unused.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");
 require_once("assets/Message.php");
+require_once("assets/Plateforme.php");
 require_once("includes/State.php");
 require_once("includes/Tarifs.php");
 require_once("session.inc");
@@ -34,7 +35,9 @@ if(file_exists($dir)) {
         }
     }
 }
-$name = DATA_GEST['facturation'][$plateforme];
+
+$plateformes = new Plateforme();
+$name = $plateformes->getName($plateforme);
 $messages = new Message();
 $m0 = "";
 

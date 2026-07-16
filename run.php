@@ -4,6 +4,7 @@ require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Lock.php");
 require_once("assets/Message.php");
+require_once("assets/Plateforme.php");
 require_once("session.inc");
 
 /**
@@ -23,7 +24,9 @@ $month = $_GET['month'];
 $version = $_GET['version'];
 $run = $_GET['run'];
 $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
-$name = DATA_GEST['facturation'][$plateforme];
+
+$plateformes = new Plateforme();
+$name = $plateformes->getName($plateforme);
 
 $messages = new Message();
 $label = Label::load($dir);

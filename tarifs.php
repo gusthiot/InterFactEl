@@ -7,6 +7,7 @@ require_once("assets/Lock.php");
 require_once("assets/Label.php");
 require_once("assets/Sap.php");
 require_once("assets/Message.php");
+require_once("assets/Plateforme.php");
 require_once("assets/ParamText.php");
 require_once("assets/Parameters.php");
 require_once("includes/State.php");
@@ -26,7 +27,9 @@ if(!isset($_GET["plateforme"])) {
 $plateforme = $_GET['plateforme'];
 checkPlateforme("tarifs", $plateforme);
 
-$name = DATA_GEST['tarifs'][$plateforme];
+$plateformes = new Plateforme();
+$name = $plateformes->getName($plateforme);
+
 $dir = DATA.$plateforme;
 $available = false;
 $state = new State($dir);

@@ -49,7 +49,10 @@ class ParamText extends Csv
                     "table-categorie-1", "table-categorie-2", "table-categorie-3", "table-categorie-4", "table-categorie-5", "table-categorie-6", "table-groupe-0", "table-groupe-1",
                     "table-groupe-2", "table-groupe-3", "table-groupe-4", "table-groupe-5", "table-groupe-6", "table-groupe-7", "table-groupe-8", "table-coeffprestation-0",
                     "table-coeffprestation-1", "table-coeffprestation-2", "table-basecateg-0", "table-basecateg-1", "table-basecateg-2", "table-categprix-0", "table-categprix-1",
-                    "table-categprix-2"];
+                    "table-categprix-2", "table-listeplateforme-0", "table-listeplateforme-1", "table-listeplateforme-2", "table-listeplateforme-3", "table-listeplateforme-4",
+                    "table-personnel-0", "table-personnel-1", "table-personnel-2", "table-personnel-3", "table-gestionnaire-0", "table-gestionnaire-1", "table-gestionnaire-2",
+                    "table-gestionnaire-3", "table-gestionnaire-4", "table-gestionnaire-5", "table-gestionnaire-6", "table-gestionnaire-7", "table-gestionnaire-8", "table-gestionnaire-9",
+                    "table-superviseur-0"];
 
     /**
      * Array containing the parameters, by specific keys

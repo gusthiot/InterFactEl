@@ -27,7 +27,11 @@ class Message extends Csv
                         "coeffprestation00", "coeffprestation01", "coeffprestation02", "coeffprestation03", "coeffprestation04", "coeffprestation05",
                         "basecateg00", "basecateg01", "basecateg02", "basecateg03", "basecateg04", "basecateg05",
                         "logo00", "logo01",
-                        "grille00", "grille01", "grille02"];
+                        "grille00", "grille01", "grille02",
+                        "listepltf00", "listepltf01",
+                        "personnel00", "personnel01", "personnel02",
+                        "gestionnaire00", "gestionnaire01", "gestionnaire02", "gestionnaire03", "gestionnaire04", "gestionnaire05", "gestionnaire06",
+                        "superviseur00", "superviseur01"];
 
     /**
      * Array containing the messages, by specific keys

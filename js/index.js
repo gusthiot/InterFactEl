@@ -1,3 +1,4 @@
+import * as customTableur from "./custom-tableur.js";
 
 function zipError() {
     $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
@@ -79,4 +80,25 @@ $('#modal-save').on('click', function () {
     $.post("controller/saveMessages.php", {content: content}, function () {
         window.location.href = "index.php";
     });
+});
+
+$('.manage-files').on('click', function () {
+    if($('#supervision-files').css("display") == "flex") {
+        $('#supervision-files').css("display", "none");
+    }
+    else {
+        $('#supervision-files').css("display", "flex");
+    }
+});
+
+$(document).on("click", ".file", function () {
+    $('#index-canevas').css("display", "none");
+    const id = $(this).attr('id');
+    let html = '<div id="super-header"><svg id="super-info" data-id="' + id + '" class="icon icon-selectable date-left" aria-hidden="true">' +
+                        '<use xlink:href="#info"></use>' +
+                    '</svg>';
+    html += '<svg class="icon icon-selectable date-right tableur-remove" aria-hidden="true">' +
+                    '<use xlink:href="#x"></use>' +
+                '</svg></div>';
+    $('#supervision-manage').html(html);
 });

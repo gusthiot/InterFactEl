@@ -4,6 +4,8 @@ require_once("../includes/Zip.php");
 require_once("../includes/State.php");
 require_once("../assets/Message.php");
 require_once("../assets/ParamText.php");
+require_once("../assets/Plateforme.php");
+require_once("../assets/Personnel.php");
 require_once("../session.inc");
 
 /**

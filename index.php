@@ -2,6 +2,7 @@
 
 require_once("assets/Lock.php");
 require_once("assets/Scroll.php");
+require_once("assets/Plateforme.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
@@ -45,6 +46,8 @@ function uploaderTile(string $action, string $title, string $icon): string
                 </svg>
             </label>';
 }
+
+$plateformes = new Plateforme();
 
 /**
  * Main page
@@ -95,6 +98,7 @@ function uploaderTile(string $action, string $title, string $icon): string
                 <div class="text-center"><?= $dlTxt ?></div>
             <?php }
             ?>
+            <div id="supervision-manage"></div>
             <div id="index-canevas">
             <?php
                 if(IS_SUPER) {
@@ -110,8 +114,15 @@ function uploaderTile(string $action, string $title, string $icon): string
                                         <input type="file" name="zip_file" id="zip-config" accept=".zip">
                                     </form>';
                             echo uploaderTile($action, "Upload CONFIG <br > files", "upload-cloud");
+                            echo tile("manage-files", "<p>Edition des <br />fichiers</p>", "edit");
                             echo tile('manage-message" data-toggle="modal" data-target="#scroll-modal', "<p>Gestion du <br />bandeau défilant</p>", "message-square");
                         ?>
+                    </div>
+                    <div id="supervision-files">
+                        <div id="plateforme" class="file tile csv">Plateformes</div>
+                        <div id="personnel" class="file tile csv">Personnel</div>
+                        <div id="gestionnaire" class="file tile csv">Gestionnaire</div>
+                        <div id="superviseur" class="file tile csv">Superviseur</div>
                     </div>
                 </div>
                 <div class="modal fade" id="scroll-modal" tabindex="-1" role="dialog" aria-labelledby="scroll-modal-title" aria-hidden="true">
@@ -159,7 +170,7 @@ function uploaderTile(string $action, string $title, string $icon): string
                         </div>
                     </div>
                 </div>
-            <?php
+                <?php
                 }
                 if(DATA_GEST) {
                     ?>
@@ -172,7 +183,8 @@ function uploaderTile(string $action, string $title, string $icon): string
                                 <h5>Facturation</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach(DATA_GEST['facturation'] as $plateforme => $name) {
+                                foreach(DATA_GEST['facturation'] as $plateforme => $order) { // watabout order ??
+                                    $name = $plateformes->getName($plateforme);
                                     $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
                                     $input = '<input type="hidden" id="plate-fact" value="'.$plateforme.'" />';
                                     echo tile("facturation", $title, "dollar-sign", $input);
@@ -188,7 +200,7 @@ function uploaderTile(string $action, string $title, string $icon): string
                                 <h5>Tarifs</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach(DATA_GEST['tarifs'] as $plateforme => $name) {
+                                foreach(DATA_GEST['tarifs'] as $plateforme => $order) {
                                     $available = false;
                                     if(file_exists(DATA.$plateforme)) {
                                         $available = true;
@@ -198,6 +210,7 @@ function uploaderTile(string $action, string $title, string $icon): string
                                         }
                                     }
                                     if($available) {
+                                        $name = $plateformes->getName($plateforme);
                                         $input = '<input type="hidden" id="plate-tarifs" value="'.$plateforme.'" />';
                                         $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
                                         echo tile("tarifs", $title, "settings", $input);
@@ -214,7 +227,8 @@ function uploaderTile(string $action, string $title, string $icon): string
                                 <h5>Statistiques</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach(DATA_GEST['reporting'] as $plateforme => $name) {
+                                foreach(DATA_GEST['reporting'] as $plateforme => $order) {
+                                    $name = $plateformes->getName($plateforme);
                                     $input = '<input type="hidden" id="plate-report" value="'.$plateforme.'" />';
                                     $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
                                     echo tile("reporting", $title, "book", $input);
@@ -228,26 +242,27 @@ function uploaderTile(string $action, string $title, string $icon): string
                     </div>
                     <?php
                 }
-            ?>
-            <div class="index-primary">
-                <h3>Outils</h3>
-                <div class="tiles">
-                    <?php
-                        $action = '<form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >
-                                    <input type="file" name="zip_file" id="zip-view" accept=".zip">
-                                </form>';
-                        echo uploaderTile($action, "Visionner Tickets", "eye");
-                        $action = '<form action="controller/uploadPrepa.php" method="post" id="form-simu" enctype="multipart/form-data" >
-                                    <input type="hidden" name="type" id="type" value="SIMU">
-                                    <input id="SIMU" type="file" name="SIMU" '. $disabled.' class="zip-simu lockable" accept=".zip">
-                                </form>';
-                        echo uploaderTile($action, "Simulation", "activity");
-                    ?>
+                ?>
+                <div class="index-primary">
+                    <h3>Outils</h3>
+                    <div class="tiles">
+                        <?php
+                            $action = '<form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >
+                                        <input type="file" name="zip_file" id="zip-view" accept=".zip">
+                                    </form>';
+                            echo uploaderTile($action, "Visionner Tickets", "eye");
+                            $action = '<form action="controller/uploadPrepa.php" method="post" id="form-simu" enctype="multipart/form-data" >
+                                        <input type="hidden" name="type" id="type" value="SIMU">
+                                        <input id="SIMU" type="file" name="SIMU" '. $disabled.' class="zip-simu lockable" accept=".zip">
+                                    </form>';
+                            echo uploaderTile($action, "Simulation", "activity");
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>
         <?php include("includes/footer.inc");?>
-        <script src="js/index.js"></script>
-
+        <script src="js/custom-tableur.js" type="module"></script>
+        <script src="js/index.js" type="module"></script>
 	</body>
 </html>

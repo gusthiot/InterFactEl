@@ -31,7 +31,7 @@ class Gestionnaire extends Csv
     function __construct()
     {
         $this->gestionnaires = [];
-        $lines = self::extract(CONFIG.self::NAME);
+        $lines = self::extract(CONFIG.self::NAME, true);
         foreach($lines as $line) {
             if(!array_key_exists($line[0], $this->gestionnaires)) {
                 foreach(self::RIGHTS as $name=>$pos) {
@@ -40,8 +40,8 @@ class Gestionnaire extends Csv
             }
 
             foreach(self::RIGHTS as $name=>$pos) {
-                if(self::hasRight($line[3], $pos)) {
-                    $this->gestionnaires[$line[0]][$name][$line[1]] = $line[2];
+                if(self::hasRight($line[2], $pos) && ($line[3] > 0)) {
+                    $this->gestionnaires[$line[0]][$name][$line[1]] = $line[3];
                 }
             }
         }

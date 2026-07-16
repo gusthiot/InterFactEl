@@ -26,7 +26,7 @@ class Superviseur extends Csv
     function __construct()
     {
         $this->superviseurs = [];
-        $lines = self::extract(CONFIG.self::NAME);
+        $lines = self::extract(CONFIG.self::NAME, true);
         foreach($lines as $line) {
             $this->superviseurs[] = $line[0];
         }
