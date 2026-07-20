@@ -1,0 +1,66 @@
+{
+    "listeplateforme": {
+        "name": "Plateformes",
+        "numcol": 5,
+        "tools": true,
+        "columns": [
+            {"type": "alphanum"},
+            {"type": "alphanum"},
+            {"type": "txt"},
+            {"type": "alphanum"},
+            {"type": "alphanum"}
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"}
+        ]
+    },
+    "personnel": {
+        "name": "Personnel",
+        "numcol": 4,
+        "tools": true,
+        "columns": [
+            {"type": "alphanum"},
+            {"type": "txt"},
+            {"type": "txt"},
+            {"type": "alphanum"}
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "unique", "id": [3], "msg": "02"}
+        ]
+    },
+    "gestionnaire": {
+        "name": "Gestionnaire",
+        "numcol": 6,
+        "tools": true,
+        "columns": [
+            {"type": "ref", "origin": "personnel", "intitule": 1},
+            {"type": "ref", "origin": "listeplateforme", "intitule": 1},
+            {"type": "droit"},
+            {"type": "droit"},
+            {"type": "droit"},
+            {"type": "line", "zero": true, "int": true}
+        ],
+        "tests": [
+            {"type": "ref", "col": 0, "msg": "01"},
+            {"type": "ref", "col": 1, "msg": "02"},
+            {"type": "unique", "id": [0, 1], "msg": "03"},
+            {"type": "droit", "col": [2, 3, 4], "msg": "04"},
+            {"type": "num", "col": 5, "msg": "05"},
+            {"type": "unique", "noindex": true, "id": [5], "msg": "06"}
+        ]
+    },
+    "superviseur": {
+        "name": "Superviseur",
+        "numcol": 1,
+        "tools": true,
+        "himself": true,
+        "columns": [
+            {"type": "ref", "origin": "personnel", "intitule": 1}
+        ],
+        "tests": [
+            {"type": "ref", "col": 0, "msg": "01"},
+            {"type": "unique", "id": [0], "msg": "02"}
+        ]
+    }
+}

@@ -74,8 +74,8 @@ export class CustomTableur {
         });
 
         $(document).on("click", "#tableur-info", () => {
-            $('#file-modal-title').html("Informations concernant le fichier " + filename + "." + extension);
-            $('#file-modal-body').html(messages[filename + "00"]);
+            $('#file-modal-title').html("Informations concernant le fichier " + this.filename + "." + this.extension);
+            $('#file-modal-body').html(this.messages[this.filename + "00"]);
             $('#info-modal').addClass("show");
             $('#info-modal').css("display", "block");
         });

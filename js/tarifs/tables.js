@@ -2,6 +2,7 @@ import * as customTableur from "../custom-tableur.js";
 import * as tests from "./tests.js";
 
 const paramtext = JSON.parse($('#paramtext').val());
+const messages = JSON.parse($('#messages').val());
 
 let contents = {};
 let optCsvs = {};
@@ -9,7 +10,7 @@ let pdfs = {};
 let optPdfs = {}
 let ids = {};
 let checks = {};
-const tableur = new customTableur.CustomTableur(tests.messages, tests.mandatoryCsvs, paramtext, closeTable);
+const tableur = new customTableur.CustomTableur(messages, tests.mandatoryCsvs, paramtext, closeTable);
 
 if(sessionStorage.getItem("contents")) {
     contents = JSON.parse(sessionStorage.getItem("contents"));
@@ -58,11 +59,11 @@ export function displayFiles() {
     $('#tarifs-check').removeClass('desactived-tile');
 }
 
-export function firstChecks(verify) {
+export function firstChecks(plateforme, verify) {
     return runCheck(tests.checkMandatory(contents, pdfs)) ||
         runCheck(tests.checkAuthorized(contents, pdfs, optCsvs, optPdfs)) ||
         runCheck(tests.checkColumnsNumbers(contents)) ||
-        runCheck(tests.checkPlateFact(contents, optPdfs, verify));
+        runCheck(tests.checkPlateFact(plateforme, messages, contents, optPdfs, verify));
 }
 
 function runCheck(res) {
@@ -74,7 +75,7 @@ function runCheck(res) {
 }
 
 export function checkTables() {
-    const results = tests.checkColumns(contents, pdfs, optPdfs, ids);
+    const results = tests.checkColumns(messages, contents, pdfs, optPdfs, ids);
     checks = results.checks;
     ids = results.ids;
     sessionStorage.setItem("checks", JSON.stringify(checks));
@@ -91,7 +92,7 @@ export function saveContents() {
     sessionStorage.setItem("optPdfs", JSON.stringify(optPdfs));
 }
 
-export function extract(files, check) {
+export function extract(plateforme, files, check) {
     Object.keys(tests.mandatoryCsvs).forEach(function(filename) {
         if(Object.keys(files).includes(filename + ".csv")) {
             contents[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
@@ -113,7 +114,7 @@ export function extract(files, check) {
         }
     });
 
-    if(check && tests.firstChecks(contents, pdfs, optCsvs, optPdfs, false)) {
+    if(check && tests.firstChecks(plateforme, contents, pdfs, optCsvs, optPdfs, false)) {
         return;
     }
 }
@@ -152,10 +153,10 @@ $(document).on("click", ".pdf", function() {
             if(optPdfs.grille) {
                 title = "Remplacer la grille";
             }
-            html += uploadPdf(tests.messages[filename + "01"], "replace-grille", titre);
+            html += uploadPdf(messages[filename + "01"], "replace-grille", titre);
         }
         else {
-            html += '<div>' + tests.messages[filename + "02"] + '</div>';
+            html += '<div>' + messages[filename + "02"] + '</div>';
             if(optPdfs.grille) {
                 html += '<div class="center-tile">' +
                             '<div id="delete-grille" class="tile tight-tile">Effacer la grille</div>' +
@@ -164,7 +165,7 @@ $(document).on("click", ".pdf", function() {
         }
     }
     else {
-        html += uploadPdf(tests.messages[filename + "01"], "replace-logo", "Remplacer le logo");
+        html += uploadPdf(messages[filename + "01"], "replace-logo", "Remplacer le logo");
     }
     $('#tarifs-manage').html(html);
 });
@@ -230,7 +231,7 @@ let saveFilename = "";
 
 $(document).on("saved", "#tableur-table", function(event, newContent, filename) {
     if(tests.mandatoryCsvs[filename].tests) {
-        const results = tests.internalCheck(filename, newContent, contents, ids);
+        const results = tests.internalCheck(messages, filename, newContent, contents, ids);
         if(runCheck(results.result)) {
             saveContent = newContent;
             saveIds = results.ids;

@@ -1,5 +1,3 @@
-const plateforme = $('#plate').val();
-export const messages = JSON.parse($('#messages').val());
 
 export const mandatoryCsvs = JSON.parse($('#parameters').val());
 
@@ -94,7 +92,7 @@ export function checkColumnsNumbers(contents) {
     return result;
 }
 
-export function checkPlateFact(contents, optPdfs, verify) {
+export function checkPlateFact(plateforme, messages, contents, optPdfs, verify) {
     let result = "";
     const names = ["paramfact", "plateforme"];
     names.forEach(function(filename) {
@@ -146,7 +144,7 @@ export function checkPlateFact(contents, optPdfs, verify) {
     return result;
 }
 
-export function checkColumns(contents, pdfs, optPdfs, ids) {
+export function checkColumns(messages, contents, pdfs, optPdfs, ids) {
     let result = "";
     let checks = {};
     Object.keys(mandatoryCsvs).forEach(function(filename) {
@@ -156,7 +154,7 @@ export function checkColumns(contents, pdfs, optPdfs, ids) {
             return;
         }
         if(mandatoryCsvs[filename].tests) {
-            const results = internalCheck(filename, contents[filename], contents, ids);
+            const results = internalCheck(messages, filename, contents[filename], contents, ids);
             result += results.result;
             ids = results.ids;
             checks[filename].errors = results.errors;
@@ -206,7 +204,7 @@ export function checkColumns(contents, pdfs, optPdfs, ids) {
 
 let arrayIds = {};
 
-export function internalCheck(filename, conTest, contents, ids) {
+export function internalCheck(messages, filename, conTest, contents, ids) {
     let result = "";
     let errors = {};
     mandatoryCsvs[filename].tests.forEach(function(test) {

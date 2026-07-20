@@ -22,7 +22,7 @@
                 "map": {"STD": "STD - article prestation", "OVH": "OVH - article overhead"}
             },
             {"type": "alphanum"},
-            {"type": "line"},
+            {"type": "line", "zero": true, "int": true},
             {"type": "txt"},
             {"type": "num", "int": true},
             {"type": "num", "zero": true, "int": true},

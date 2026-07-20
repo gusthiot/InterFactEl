@@ -2,7 +2,10 @@
 
 require_once("assets/Lock.php");
 require_once("assets/Scroll.php");
+require_once("assets/Message.php");
 require_once("assets/Plateforme.php");
+require_once("assets/ParamText.php");
+require_once("assets/Config.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
@@ -49,6 +52,11 @@ function uploaderTile(string $action, string $title, string $icon): string
 
 $plateformes = new Plateforme();
 
+$messages = new Message();
+$paramtext = new ParamText();
+
+$config = Config::load('./');
+
 /**
  * Main page
  */
@@ -63,6 +71,10 @@ $plateformes = new Plateforme();
 
     <body>
         <div class="container-fluid">
+            <input type="hidden" name="messages" id="messages" value="<?php echo htmlentities(json_encode($messages->getMessages()),ENT_QUOTES); ?>" />
+            <input type="hidden" name="paramtext" id="paramtext" value="<?php echo htmlentities(json_encode($paramtext->getParams()),ENT_QUOTES); ?>" />
+            <input type="hidden" name="config" id="config" value="<?php echo htmlentities($config); ?>" />
+            <input type="hidden" name="contents" id="contents" value="<?php echo htmlentities($contents); ?>" />
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo-epfl"/></a>
@@ -260,6 +272,7 @@ $plateformes = new Plateforme();
                     </div>
                 </div>
             </div>
+            <?php include('./includes/tableurModals.inc'); ?>
         </div>
         <?php include("includes/footer.inc");?>
         <script src="js/custom-tableur.js" type="module"></script>

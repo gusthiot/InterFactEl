@@ -44,9 +44,9 @@ if(!$available) {
     header('Location: index.php');
     exit;
 }
-$messages = new Message();
 $version = Version::load('./');
 
+$messages = new Message();
 $paramtext = new ParamText();
 
 $parameters = Parameters::load('./');

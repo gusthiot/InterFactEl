@@ -24,7 +24,7 @@ $("#tarifs-read").on("click", function() {
 $(document).on("click", "#read-dates .clickable", function() {
     const key = $(this).data('key');
     $.post("controller/openTarifs.php", {plate: plateforme, type: key.split("-")[0], date: key.split("-")[1]}, function (data) {
-        tables.extract(JSON.parse(data));
+        tables.extract(plateforme, JSON.parse(data));
         tables.saveContents();
         $('#tarifs-select').html("");
         $('#tarifs-cancel').removeClass('desactived-tile');
@@ -69,9 +69,9 @@ $("#tarifs-import").on("change", function(e) {
             json += '"'+result[0]+'":"'+result[1]+'"';
         });
         json += "}";
-        tables.extract(JSON.parse(json));
+        tables.extract(plateforme, JSON.parse(json));
 
-        if(tables.firstChecks(false)) {
+        if(tables.firstChecks(plateforme, false)) {
             tables.removeContents();
         }
         else {
@@ -119,7 +119,7 @@ $("#tarifs-cancel").on("click", function() {
 
 $("#tarifs-check").on("click", function() {
 
-    if(tables.firstChecks(true)) {
+    if(tables.firstChecks(plateforme, true)) {
         return;
     }
     if(tables.checkTables()) {

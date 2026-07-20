@@ -1,5 +1,12 @@
 import * as customTableur from "./custom-tableur.js";
 
+const paramtext = JSON.parse($('#paramtext').val());
+const messages = JSON.parse($('#messages').val());
+const configs = JSON.parse($('#config').val());
+const contents = JSON.parse($('#contents').val());
+
+const tableur = new customTableur.CustomTableur(messages, configs, paramtext, closeTable);
+
 function zipError() {
     $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
                             'Vous devez uploader une archive zip !'+
@@ -91,14 +98,16 @@ $('.manage-files').on('click', function () {
     }
 });
 
-$(document).on("click", ".file", function () {
+function closeTable() {
+    $('#index-canevas').css("display", "block");
+    $('#supervision-manage').html("");
+}
+
+$(document).on("click", ".csv", function() {
     $('#index-canevas').css("display", "none");
-    const id = $(this).attr('id');
-    let html = '<div id="super-header"><svg id="super-info" data-id="' + id + '" class="icon icon-selectable date-left" aria-hidden="true">' +
-                        '<use xlink:href="#info"></use>' +
-                    '</svg>';
-    html += '<svg class="icon icon-selectable date-right tableur-remove" aria-hidden="true">' +
-                    '<use xlink:href="#x"></use>' +
-                '</svg></div>';
-    $('#supervision-manage').html(html);
+    const filename = $(this).attr('id');
+    tableur.init(filename, "csv");
+    $('#supervision-manage').html(tableur.header());
+    //tableur.init(filename, "csv", contents);
+    //$('#supervision-manage').html(tableur.unidimTableur());
 });
