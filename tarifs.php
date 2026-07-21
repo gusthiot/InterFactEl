@@ -136,11 +136,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
     </head>
 
     <body>
-        <div class="container-fluid">
-            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
-            <input type="hidden" name="messages" id="messages" value="<?php echo htmlentities(json_encode($messages->getMessages()),ENT_QUOTES); ?>" />
-            <input type="hidden" name="paramtext" id="paramtext" value="<?php echo htmlentities(json_encode($paramtext->getParams()),ENT_QUOTES); ?>" />
-            <input type="hidden" name="parameters" id="parameters" value="<?php echo htmlentities($parameters); ?>" />
+        <div class="container-fluid" id="container" data-plateforme="<?= $plateforme ?>">
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo-epfl"/></a>
@@ -208,9 +204,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                         </div>
                     </div>
                     <!-- Espace -->
-                    <div class="tab-pane fade" id="tarifs-space" role="tabpanel" aria-labelledby="space-tab">
-                        <input type="hidden" name="m0" id="m0" value="<?= $m0 ?>" />
-                        <input type="hidden" name="status" id="status" value="<?= $status ?>" />
+                    <div class="tab-pane fade" id="tarifs-space" data-m0="<?= $m0 ?>" data-status="<?= $status ?>" role="tabpanel" aria-labelledby="space-tab">
                         <div id="tarifs-desktop">
                             <div id="tarifs-top">
                                 <div id="tarifs-left">

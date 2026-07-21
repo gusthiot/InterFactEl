@@ -37,8 +37,14 @@ else {
 $clients = json_decode(Ticket::load($dir), true);
 ksort($clients);
 
-?>
+if(isset($_GET["unique"])) {
+    $data = 'data-unique="'.$unique.'"';
+}
+else {
+    $data = 'data-plateforme="'.$plateforme.'" data-year="'.$year.'" data-month="'.$month.'" data-version="'.$version.'" data-run="'.$run.'"';
+}
 
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -54,16 +60,6 @@ ksort($clients);
     </head>
 
     <body>
-        <?php if(isset($_GET["unique"])) { ?>
-            <input type="hidden" id="unique" value="<?= $unique ?>" />
-        <?php }
-        else { ?>
-            <input type="hidden" id="plate" value="<?= $plateforme ?>" />
-            <input type="hidden" id="year" value="<?= $year ?>" />
-            <input type="hidden" id="month" value="<?= $month ?>" />
-            <input type="hidden" id="version" value="<?= $version ?>" />
-            <input type="hidden" id="run" value="<?= $run ?>" />
-        <?php } ?>
         <div id="combo">
             <select name="client" id="selector">
             <?php
@@ -75,7 +71,7 @@ ksort($clients);
             ?>
             </select>
         </div>
-        <div class="reveal">
+        <div class="reveal" id="main" <?= $data ?> >
             <div class="slides">
             <?php
             foreach($clients as $client) {

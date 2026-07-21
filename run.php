@@ -52,7 +52,7 @@ include("includes/lock.inc");
     </head>
 
     <body>
-        <div class="container-fluid">
+        <div class="container-fluid" id="container" data-plateforme="<?= $plateforme ?>" data-year="<?= $year ?>" data-month="<?= $month ?>" data-version="<?= $version ?>" data-run="<?= $run ?>">
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo-epfl"/></a>
@@ -65,12 +65,6 @@ include("includes/lock.inc");
             <div class="title <?php if(TEST_MODE) echo TEST_MODE; ?>">
                 <h1 class="text-center p-1"><?= $label ?></h1>
             </div>
-            <input type="hidden" id="plate" value="<?= $plateforme ?>" />
-            <input type="hidden" id="year" value="<?= $year ?>" />
-            <input type="hidden" id="month" value="<?= $month ?>" />
-            <input type="hidden" id="version" value="<?= $version ?>" />
-            <input type="hidden" id="run" value="<?= $run ?>" />
-
             <div id="actions">
                 <?php
 

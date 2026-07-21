@@ -1,5 +1,4 @@
-
-export const mandatoryCsvs = JSON.parse($('#parameters').val());
+let mandatoryCsvs = {};
 
 export const optionalCsvs = ["categprix"];
 export const mandatoryPdfs = {"logo": {
@@ -10,6 +9,14 @@ export const optionalPdfs = {"grille": {
                             name: "Grille PDF"
                         }
                     };
+
+export function setMandatoryCsvs(parameters) {
+    mandatoryCsvs = parameters;
+}
+
+export function getMandatoryCsvs() {
+    return mandatoryCsvs;
+}
 
 export function checkMandatory(contents, pdfs) {
     let missing = [];

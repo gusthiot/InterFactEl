@@ -1,5 +1,5 @@
 
-const plateforme = $('#plate').val();
+const plateforme = $('#container').data('plateforme');
 
 $("#list-tab").on("click", function() {
     window.location.href = "tarifs.php?plateforme="+plateforme;

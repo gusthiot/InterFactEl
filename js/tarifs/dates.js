@@ -1,6 +1,6 @@
 import * as tables from "./tables.js";
 
-const plateforme = $('#plate').val();
+const plateforme = $('#container').data('plateforme');
 
 let choices = "";
 let first = 0;

@@ -1,11 +1,22 @@
 import * as customTableur from "./custom-tableur.js";
 
-const paramtext = JSON.parse($('#paramtext').val());
-const messages = JSON.parse($('#messages').val());
-const configs = JSON.parse($('#config').val());
-const contents = JSON.parse($('#contents').val());
 
-const tableur = new customTableur.CustomTableur(messages, configs, paramtext, closeTable);
+$.get("controller/getConfigJson.php", function(data){
+    const json = JSON.parse(data);
+    const paramtext = json.paramtext;
+    const messages = json.messages;
+    const configs = json.configs;
+    const contents = json.contents;
+
+    const tableur = new customTableur.CustomTableur(messages, configs, paramtext, closeTable);
+
+    $(document).on("click", ".csv", function() {
+        $('#index-canevas').css("display", "none");
+        const filename = $(this).attr('id');
+        tableur.init(filename, "csv", contents);
+        $('#supervision-manage').html(tableur.unidimTableur());
+    });
+});
 
 function zipError() {
     $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
@@ -102,10 +113,3 @@ function closeTable() {
     $('#index-canevas').css("display", "block");
     $('#supervision-manage').html("");
 }
-
-$(document).on("click", ".csv", function() {
-    $('#index-canevas').css("display", "none");
-    const filename = $(this).attr('id');
-    tableur.init(filename, "csv", contents);
-    $('#supervision-manage').html(tableur.unidimTableur());
-});

@@ -51,9 +51,7 @@ function displayTile(array $tiles): void
     </head>
 
     <body>
-        <div class="container-fluid">
-            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
-            <input type="hidden" name="disabled" id="disabled" value="<?= $disabled ?>" />
+        <div class="container-fluid" id="container" data-plateforme="<?= $plateforme ?>" data-disabled="$disabled">
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo-epfl"/></a>
@@ -66,7 +64,6 @@ function displayTile(array $tiles): void
             <div class="title <?php if(TEST_MODE) echo TEST_MODE; ?>">
                 <h1 class="text-center p-1"><?= $name ?></h1>
             </div>
-            <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
             <?php include("includes/message.inc");
             if(!empty($lockUser)) { ?>
                 <div class="text-center"><?= $dlTxt ?></div>

@@ -1,5 +1,11 @@
-const getDir = "plate="+$('#plate').val()+"&year="+$('#year').val()+"&month="+$('#month').val()+"&version="+$('#version').val()+"&run="+$('#run').val();
-const postDir = {plate: $('#plate').val(), year: $('#year').val(), month: $('#month').val(), version: $('#version').val(), run: $('#run').val()};
+const plateforme = $('#container').data('plateforme');
+const year = $('#container').data('year');
+const month = $('#container').data('month');
+const version = $('#container').data('version');
+const run = $('#container').data('run');
+
+const getDir = "plate="+plateforme+"&year="+year+"&month="+month+"&version="+version+"&run="+run;
+const postDir = {plate: plateforme, year: year, month: month, version: version, run: run};
 
 $('#download-generated').on('click', function () {
     window.location.href = "controller/download.php?type=generated";
@@ -23,7 +29,7 @@ $('#open-label').on('click', function () {
 $(document).on("click", "#save-label", function() {
     const txt = $('#label-area').val();
     $.post("controller/saveLabel.php", Object.assign({}, postDir, {txt: txt, right: "facturation"}), function () {
-        window.location.href = "facturation.php?plateforme="+$('#plate').val();
+        window.location.href = "facturation.php?plateforme="+plateforme;
     });
 } );
 
@@ -87,7 +93,7 @@ $(document).on("click", "#get-client", function() {
 
 $('#invalidate').on('click', function () {
     $.post("controller/invalidate.php", postDir, function () {
-        window.location.href = "facturation.php?plateforme="+$('#plate').val();
+        window.location.href = "facturation.php?plateforme="+plateforme;
     });
 } );
 
@@ -119,7 +125,7 @@ $('#send').on('click', function () {
 
 $('#finalize').on('click', function () {
     $.post("controller/finalize.php", postDir, function () {
-        window.location.href = "facturation.php?plateforme="+$('#plate').val();
+        window.location.href = "facturation.php?plateforme="+plateforme;
     });
 } );
 
@@ -154,7 +160,7 @@ function sending(mode) {
         $(".lockable").prop('disabled', true);
         $('#message').html('<div>Veuillez patienter, cela peut prendre plusieurs minutes...</div><div class="loader"></div>');
         $.post("controller/sendBills.php", Object.assign({}, postDir, {bills: bills, type: $("#sending").val(), mode: mode}), function () {
-            window.location.href = "facturation.php?plateforme="+$('#plate').val();
+            window.location.href = "facturation.php?plateforme="+plateforme;
         });
     }
 }

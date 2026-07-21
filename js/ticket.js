@@ -1,5 +1,6 @@
-
 Reveal.initialize();
+
+const unique = $('#main').data('unique');
 
 function changeClient(sel) {
     Reveal.slide(sel.value, 0);
@@ -16,11 +17,11 @@ Reveal.on('slidechanged', (event) => {
 
 $( document ).ready(function() {
     let getDir = "";
-    if($('#unique').val()) {
-        getDir = "&unique="+$('#unique').val();
+    if(unique) {
+        getDir = "&unique="+unique;
     }
     else {
-        getDir = "&plate="+$('#plate').val()+"&year="+$('#year').val()+"&month="+$('#month').val()+"&version="+$('#version').val()+"&run="+$('#run').val();
+        getDir = "&plate="+$('#main').data('plateforme')+"&year="+$('#main').data('year')+"&month="+$('#main').data('month')+"&version="+$('#main').data('version')+"&run="+$('#main').data('run');
     }
     let click = false;
     $('.pdf').on('click', function () {
@@ -34,9 +35,9 @@ $( document ).ready(function() {
     } );
 
     function deleteDir() {
-        if($('#unique').val() && !click) {
-            window.location.href = "controller/deleteTicket.php?unique="+$('#unique').val(); // firefox
-            $.post("controller/deleteTicket.php", {unique: $('#unique').val()}, function () { // chromium
+        if(unique && !click) {
+            window.location.href = "controller/deleteTicket.php?unique="+unique; // firefox
+            $.post("controller/deleteTicket.php", {unique: unique}, function () { // chromium
                 window.location.href = "index.php";
             });
         }

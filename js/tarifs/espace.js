@@ -1,9 +1,9 @@
 import * as dates from "./dates.js";
 import * as tables from "./tables.js";
 
-const plateforme = $('#plate').val();
-const m0 = $('#m0').val();
-const m0Status = $('#status').val();
+const plateforme = $('#container').data('plateforme');
+const m0 = $('#tarifs-space').data('m0');
+const m0Status = $('#tarifs-space').data('status');
 
 /** Left */
 

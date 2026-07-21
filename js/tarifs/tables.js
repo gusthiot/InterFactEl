@@ -1,8 +1,113 @@
 import * as customTableur from "../custom-tableur.js";
 import * as tests from "./tests.js";
 
-const paramtext = JSON.parse($('#paramtext').val());
-const messages = JSON.parse($('#messages').val());
+let messages = {};
+
+$.get("controller/getParametersJson.php", function(data){
+    const json = JSON.parse(data);
+    const paramtext = json.paramtext;
+    messages = json.messages;
+    const parameters = json.parameters;
+
+    tests.setMandatoryCsvs(parameters);
+
+    const tableur = new customTableur.CustomTableur(messages, parameters, paramtext, closeTable);
+
+    $(document).on("click", ".csv", function() {
+        $('#tarifs-desktop').css("display", "none");
+        const filename = $(this).attr('id');
+        tableur.init(filename, "csv", contents);
+        let html = "";
+        if(parameters[filename].bidim) {
+            const sapIds = tests.retrieveIds("articlesap", contents, ids);
+            html = tableur.bidimTableur(sapIds);
+        }
+        else {
+            html = tableur.unidimTableur();
+
+        }
+        $('#tarifs-manage').html(html);
+        if(checks[filename] && checks[filename].errors) {
+            tableur.displayErrors(checks[filename].errors);
+        }
+    });
+
+    $(document).on("click", ".pdf", function() {
+        $('#tarifs-desktop').css("display", "none");
+        const filename = $(this).attr('id');
+        tableur.init(filename, "pdf");
+        let html = tableur.header();
+        if(filename == "grille") {
+            if(contents['plateforme'][7][2] == "OUI") {
+                let title = "Ajouter la grille";
+                if(optPdfs.grille) {
+                    title = "Remplacer la grille";
+                }
+                html += uploadPdf(messages[filename + "01"], "replace-grille", titre);
+            }
+            else {
+                html += '<div>' + messages[filename + "02"] + '</div>';
+                if(optPdfs.grille) {
+                    html += '<div class="center-tile">' +
+                                '<div id="delete-grille" class="tile tight-tile">Effacer la grille</div>' +
+                            '</div>';
+                }
+            }
+        }
+        else {
+            html += uploadPdf(messages[filename + "01"], "replace-logo", "Remplacer le logo");
+        }
+        $('#tarifs-manage').html(html);
+    });
+
+    let saveContent = [];
+    let saveIds = {};
+    let saveErrors = {};
+    let saveFilename = "";
+
+    $(document).on("saved", "#tableur-table", function(event, newContent, filename) {
+        if(parameters[filename].tests) {
+            const results = tests.internalCheck(messages, filename, newContent, contents, ids);
+            if(runCheck(results.result)) {
+                saveContent = newContent;
+                saveIds = results.ids;
+                saveErrors = results.errors;
+                saveFilename = filename;
+                tableur.displayErrors(results.errors);
+                $("#tableur-table").trigger("error");
+            }
+            else {
+                checks[filename] = {};
+                checks[filename].errors = {};
+                checks[filename].ok = false;
+                removeGoodChecks();
+                ids = results.ids;
+                contents[filename] = newContent;
+                sessionStorage.setItem("checks", JSON.stringify(checks));
+                sessionStorage.setItem("contents", JSON.stringify(contents));
+                closeTable();
+            }
+        }
+        else {
+            contents[filename] = newContent;
+            sessionStorage.setItem("contents", JSON.stringify(contents));
+            closeTable();
+        }
+    });
+
+    $(document).on("save-anyway", "#tableur-table", function() {
+        checks[saveFilename] = {};
+        checks[saveFilename].errors = saveErrors;
+        checks[saveFilename].ok = false;
+        removeGoodChecks();
+        ids = saveIds;
+        contents[saveFilename] = saveContent;
+        sessionStorage.setItem("checks", JSON.stringify(checks));
+        sessionStorage.setItem("contents", JSON.stringify(contents));
+        closeTable();
+    });
+
+});
 
 let contents = {};
 let optCsvs = {};
@@ -10,7 +115,6 @@ let pdfs = {};
 let optPdfs = {}
 let ids = {};
 let checks = {};
-const tableur = new customTableur.CustomTableur(messages, tests.mandatoryCsvs, paramtext, closeTable);
 
 if(sessionStorage.getItem("contents")) {
     contents = JSON.parse(sessionStorage.getItem("contents"));
@@ -45,8 +149,8 @@ function displayChecks() {
 
 export function displayFiles() {
     let filesList = '';
-    Object.keys(tests.mandatoryCsvs).forEach(function(key) {
-        filesList += '<div id="' + key + '" class="file tile csv">' + tests.mandatoryCsvs[key].name + "</div>";
+    Object.keys(tests.getMandatoryCsvs()).forEach(function(key) {
+        filesList += '<div id="' + key + '" class="file tile csv">' + tests.getMandatoryCsvs()[key].name + "</div>";
     });
     [tests.mandatoryPdfs, tests.optionalPdfs].forEach(function(dict) {
         Object.keys(dict).forEach(function(key) {
@@ -93,7 +197,7 @@ export function saveContents() {
 }
 
 export function extract(plateforme, files, check) {
-    Object.keys(tests.mandatoryCsvs).forEach(function(filename) {
+    Object.keys(tests.getMandatoryCsvs()).forEach(function(filename) {
         if(Object.keys(files).includes(filename + ".csv")) {
             contents[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
         }
@@ -142,34 +246,6 @@ export function reset() {
     $("#tarifs-load").removeClass('selected-tile');
 }
 
-$(document).on("click", ".pdf", function() {
-    $('#tarifs-desktop').css("display", "none");
-    const filename = $(this).attr('id');
-    tableur.init(filename, "pdf");
-    let html = tableur.header();
-    if(filename == "grille") {
-        if(contents['plateforme'][7][2] == "OUI") {
-            let title = "Ajouter la grille";
-            if(optPdfs.grille) {
-                title = "Remplacer la grille";
-            }
-            html += uploadPdf(messages[filename + "01"], "replace-grille", titre);
-        }
-        else {
-            html += '<div>' + messages[filename + "02"] + '</div>';
-            if(optPdfs.grille) {
-                html += '<div class="center-tile">' +
-                            '<div id="delete-grille" class="tile tight-tile">Effacer la grille</div>' +
-                        '</div>';
-            }
-        }
-    }
-    else {
-        html += uploadPdf(messages[filename + "01"], "replace-logo", "Remplacer le logo");
-    }
-    $('#tarifs-manage').html(html);
-});
-
 function uploadPdf(message, id, titre) {
     return '<div>' + message + '</div>' +
             '<div class="center-tile">' +
@@ -204,72 +280,6 @@ function closeTable() {
     displayChecks();
 }
 
-$(document).on("click", ".csv", function() {
-    $('#tarifs-desktop').css("display", "none");
-    const filename = $(this).attr('id');
-    const parameters = tests.mandatoryCsvs[filename];
-    tableur.init(filename, "csv", contents);
-    let html = "";
-    if(parameters.bidim) {
-        const sapIds = tests.retrieveIds("articlesap", contents, ids);
-        html = tableur.bidimTableur(sapIds);
-    }
-    else {
-        html = tableur.unidimTableur();
-
-    }
-    $('#tarifs-manage').html(html);
-    if(checks[filename] && checks[filename].errors) {
-        tableur.displayErrors(checks[filename].errors);
-    }
-});
-
-let saveContent = [];
-let saveIds = {};
-let saveErrors = {};
-let saveFilename = "";
-
-$(document).on("saved", "#tableur-table", function(event, newContent, filename) {
-    if(tests.mandatoryCsvs[filename].tests) {
-        const results = tests.internalCheck(messages, filename, newContent, contents, ids);
-        if(runCheck(results.result)) {
-            saveContent = newContent;
-            saveIds = results.ids;
-            saveErrors = results.errors;
-            saveFilename = filename;
-            tableur.displayErrors(results.errors);
-            $("#tableur-table").trigger("error");
-        }
-        else {
-            checks[filename] = {};
-            checks[filename].errors = {};
-            checks[filename].ok = false;
-            removeGoodChecks();
-            ids = results.ids;
-            contents[filename] = newContent;
-            sessionStorage.setItem("checks", JSON.stringify(checks));
-            sessionStorage.setItem("contents", JSON.stringify(contents));
-            closeTable();
-        }
-    }
-    else {
-        contents[filename] = newContent;
-        sessionStorage.setItem("contents", JSON.stringify(contents));
-        closeTable();
-    }
-});
-
-$(document).on("save-anyway", "#tableur-table", function() {
-    checks[saveFilename] = {};
-    checks[saveFilename].errors = saveErrors;
-    checks[saveFilename].ok = false;
-    removeGoodChecks();
-    ids = saveIds;
-    contents[saveFilename] = saveContent;
-    sessionStorage.setItem("checks", JSON.stringify(checks));
-    sessionStorage.setItem("contents", JSON.stringify(contents));
-    closeTable();
-});
 
 function removeGoodChecks() {
     Object.keys(checks).forEach(function(name) {

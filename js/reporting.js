@@ -1,6 +1,6 @@
 
 let hidden = true;
-let plateforme = $('#plate').val();
+const plateforme = $('#container').data('plateforme');
 
 $(".icon-parameters").on("click", function() {
     if(hidden) {
@@ -26,7 +26,7 @@ $("input[name='separator']").on("change", function () {
 let report = "";
 
 $('.select-period').on('click', function () {
-    if($('#disabled').val() == "") {
+    if($('#container').data('disabled') == "") {
         $('.tile').removeClass('selected-tile');
         $($(this).attr('id')).addClass('selected-tile');
         report = $(this).attr('id');
