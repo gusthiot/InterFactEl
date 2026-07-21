@@ -103,14 +103,17 @@ export class CustomTableur {
                 num = parseInt(tab[1]) + 1;
             }
             let html = '<tr class="values" id="line-' + num + '">';
-            let num1 = 0;
-            this.parameters[this.filename].columns.forEach(function(paramCol) {
+            let notitles = false;
+            if(this.parameters[this.filename].notitles) {
+                notitles = true;
+            }
+            for(let numCol = 0; numCol < this.parameters[this.filename].columns.length; numCol++) {
+                const paramCol = this.parameters[this.filename].columns[numCol];
                 let cell = "";
                 html += '<td class="border-around cell">';
-                html += this.input(paramCol, cell, num);
+                html += this.input(paramCol, cell, num, notitles);
                 html += '</td>';
-                num1++;
-            });
+            }
             html += '<td class="border-around td-tools">';
             if(tr.hasClass('values')) {
                 html += this.lineUp();
@@ -220,8 +223,12 @@ export class CustomTableur {
             html += '<th>' + this.paramtext["table-"+this.filename+"-"+i] + '</th>';
         }
         html += '</tr>';
+        let notitles = false;
+        if(this.parameters[this.filename].notitles) {
+            notitles = true;
+        }
         for(let numRow = 0; numRow < this.contents[this.filename].length; numRow++) {
-            if(this.parameters[this.filename].notitles || (numRow > 0)) {
+            if(notitles || (numRow > 0)) {
                 html += '<tr class="values" id="line-' + numRow + '">';
                 for(let numCol = 0; numCol < this.contents[this.filename][numRow].length; numCol++) {
                     let paramCol = this.parameters[this.filename].columns[numCol];
@@ -229,12 +236,12 @@ export class CustomTableur {
                     if(paramCol.type == "specific") {
                         paramCol = paramCol.lines[numRow];
                     }
-                    html += this.input(paramCol, this.contents[this.filename][numRow][numCol], numRow);
+                    html += this.input(paramCol, this.contents[this.filename][numRow][numCol], numRow, notitles);
                     html += '</td>';
                 }
                 if(this.parameters[this.filename].tools) {
                     html += '<td class="border-around td-tools">';
-                    if(numRow > 1) {
+                    if((notitles && (numRow > 0)) || (numRow > 1)) {
                         html += this.lineUp();
                     }
                     if(numRow < (this.contents[this.filename].length-1)) {
@@ -308,7 +315,7 @@ export class CustomTableur {
         return this.templateTableur(html, "bidim");
     }
 
-    input(paramCol, cell, num) {
+    input(paramCol, cell, num, notitles) {
         switch(paramCol.type) {
             case "num":
                 return this.number(cell, paramCol);
@@ -319,7 +326,7 @@ export class CustomTableur {
             case "menu":
                 return this.menu(cell, paramCol);
             case "ref":
-                return this.ref(cell, paramCol);
+                return this.ref(cell, paramCol, notitles);
             case "line":
                 return '<div class="num-line">' + num + '</div>';
             default:
@@ -380,7 +387,7 @@ export class CustomTableur {
         return ret;
     }
 
-    ref(value, params) {
+    ref(value, params, notitles) {
         const ref = this.contents[params.origin];
         let ret = '<select class="tableur-select">';
         if(params.zero) {
@@ -392,17 +399,36 @@ export class CustomTableur {
         }
         let num = 0;
         for(const key in ref) {
-            if(num > 0) {
+            if(num > 0 || notitles) {
+                let refCol = 0;
+                if(params.refCol) {
+                    refCol = params.refCol;
+                }
                 if(params.col && (params.value != ref[key][params.col])) {
                     continue;
                 }
                 ret += '<option value="' + ref[key][0] + '"';
-                if(value == ref[key][0]) {
+                if(value == ref[key][refCol]) {
                     ret += ' selected ';
                 }
                 ret += '>' + ref[key][0];
                 if(params.intitule) {
-                    ret += " - " + ref[key][params.intitule];
+                    if(Array.isArray(params.intitule)) {
+                        params.intitule.forEach(function(pos) {
+                            if(Array.isArray(pos)) {
+                                ret += " -";
+                                pos.forEach(function(posIn) {
+                                    ret += " " + ref[key][posIn];
+                                });
+                            }
+                            else {
+                                ret += " - " + ref[key][pos];
+                            }
+                        });
+                    }
+                    else {
+                        ret += " - " + ref[key][params.intitule];
+                    }
                 }
                 if(params.plus) {
                     ret += params.plus;

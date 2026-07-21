@@ -282,16 +282,16 @@ export function retrieveIds(filename, contents, ids) {
     if(ids[filename]) {
         return ids[filename];
     }
-    let i = 0;
-    let aIds = {};
     let pos = "";
     mandatoryCsvs[filename].tests.forEach(function(test) {
         if((test.type == "unique") && !test.noindex) {
             pos = test.id;
         }
     });
+    let i = 0;
+    let aIds = {};
     contents[filename].forEach(function(line) {
-        if(i > 0) {
+        if(i > 0 || mandatoryCsvs[filename].notitles) {
             let id = "";
             pos.forEach(function(col) {
                 if(id != "") {

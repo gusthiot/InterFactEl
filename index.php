@@ -5,6 +5,7 @@ require_once("assets/Scroll.php");
 require_once("assets/Message.php");
 require_once("assets/Plateforme.php");
 require_once("assets/ParamText.php");
+require_once("assets/Personnel.php");
 require_once("assets/Config.php");
 require_once("includes/State.php");
 require_once("session.inc");
@@ -54,8 +55,16 @@ $plateformes = new Plateforme();
 
 $messages = new Message();
 $paramtext = new ParamText();
+$personnel = new Personnel();
 
 $config = Config::load('./');
+
+$contents = [];
+$contents["listeplateforme"] = $plateformes->getContent();
+$contents["personnel"] = $personnel->getContent();
+$contents["gestionnaire"] = $gestionnaire->getContent();
+$contents["superviseur"] = $superviseur->getContent();
+
 
 /**
  * Main page
@@ -74,7 +83,7 @@ $config = Config::load('./');
             <input type="hidden" name="messages" id="messages" value="<?php echo htmlentities(json_encode($messages->getMessages()),ENT_QUOTES); ?>" />
             <input type="hidden" name="paramtext" id="paramtext" value="<?php echo htmlentities(json_encode($paramtext->getParams()),ENT_QUOTES); ?>" />
             <input type="hidden" name="config" id="config" value="<?php echo htmlentities($config); ?>" />
-            <input type="hidden" name="contents" id="contents" value="<?php echo htmlentities($contents); ?>" />
+            <input type="hidden" name="contents" id="contents" value="<?php echo htmlentities(json_encode($contents,ENT_QUOTES)); ?>" />
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo-epfl"/></a>
@@ -131,7 +140,7 @@ $config = Config::load('./');
                         ?>
                     </div>
                     <div id="supervision-files">
-                        <div id="plateforme" class="file tile csv">Plateformes</div>
+                        <div id="listeplateforme" class="file tile csv">Plateformes</div>
                         <div id="personnel" class="file tile csv">Personnel</div>
                         <div id="gestionnaire" class="file tile csv">Gestionnaire</div>
                         <div id="superviseur" class="file tile csv">Superviseur</div>

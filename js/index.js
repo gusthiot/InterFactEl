@@ -106,8 +106,6 @@ function closeTable() {
 $(document).on("click", ".csv", function() {
     $('#index-canevas').css("display", "none");
     const filename = $(this).attr('id');
-    tableur.init(filename, "csv");
-    $('#supervision-manage').html(tableur.header());
-    //tableur.init(filename, "csv", contents);
-    //$('#supervision-manage').html(tableur.unidimTableur());
+    tableur.init(filename, "csv", contents);
+    $('#supervision-manage').html(tableur.unidimTableur());
 });

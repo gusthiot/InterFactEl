@@ -45,4 +45,12 @@ class Superviseur extends Csv
         }
         return false;
     }
+
+    function getContent() {
+        $content = [];
+        foreach($this->superviseurs as $s) {
+            $content[] = [$s];
+        }
+        return $content;
+    }
 }

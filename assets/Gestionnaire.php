@@ -24,6 +24,7 @@ class Gestionnaire extends Csv
      * @var array
      */
     private array $gestionnaires;
+    private array $gestionnaires2;
 
     /**
      * Class constructor
@@ -31,8 +32,12 @@ class Gestionnaire extends Csv
     function __construct()
     {
         $this->gestionnaires = [];
+        $this->gestionnaires2 = [];
         $lines = self::extract(CONFIG.self::NAME, true);
         foreach($lines as $line) {
+
+            $line2 = [$line[0], $line[1], 0, 0, 0, $line[3]];
+
             if(!array_key_exists($line[0], $this->gestionnaires)) {
                 foreach(self::RIGHTS as $name=>$pos) {
                     $this->gestionnaires[$line[0]][$name] = [];
@@ -42,8 +47,12 @@ class Gestionnaire extends Csv
             foreach(self::RIGHTS as $name=>$pos) {
                 if(self::hasRight($line[2], $pos) && ($line[3] > 0)) {
                     $this->gestionnaires[$line[0]][$name][$line[1]] = $line[3];
+
+                    $line2[$pos+2] = 1;
                 }
             }
+
+            $this->gestionnaires2[] = $line2;
         }
     }
 
@@ -73,4 +82,7 @@ class Gestionnaire extends Csv
         return [];
     }
 
+    function getContent() {
+        return $this->gestionnaires2;
+    }
 }
