@@ -1,7 +1,28 @@
 import * as customTableur from "../custom-tableur.js";
+import * as fileTests from "../file-tests.js";
 import * as tests from "./tests.js";
 
 let messages = {};
+let contents = {};
+let optCsvs = {};
+let pdfs = {};
+let optPdfs = {}
+let ids = {};
+let checks = {};
+let fileTest = undefined;
+
+if(sessionStorage.getItem("contents")) {
+    contents = JSON.parse(sessionStorage.getItem("contents"));
+    pdfs = JSON.parse(sessionStorage.getItem("pdfs"));
+    optPdfs = JSON.parse(sessionStorage.getItem("optPdfs"));
+    displayFiles();
+    $('#tarifs-cancel').removeClass('desactived-tile');
+}
+
+if(sessionStorage.getItem("checks")) {
+    checks = JSON.parse(sessionStorage.getItem("checks"));
+    displayChecks();
+}
 
 $.get("controller/getParametersJson.php", function(data){
     const json = JSON.parse(data);
@@ -13,13 +34,15 @@ $.get("controller/getParametersJson.php", function(data){
 
     const tableur = new customTableur.CustomTableur(messages, parameters, paramtext, closeTable);
 
+    fileTest = new fileTests.FileTests(messages, parameters);
+
     $(document).on("click", ".csv", function() {
         $('#tarifs-desktop').css("display", "none");
         const filename = $(this).attr('id');
         tableur.init(filename, "csv", contents);
         let html = "";
         if(parameters[filename].bidim) {
-            const sapIds = tests.retrieveIds("articlesap", contents, ids);
+            const sapIds = fileTest.retrieveIds("articlesap", contents, ids);
             html = tableur.bidimTableur(sapIds);
         }
         else {
@@ -67,7 +90,7 @@ $.get("controller/getParametersJson.php", function(data){
 
     $(document).on("saved", "#tableur-table", function(event, newContent, filename) {
         if(parameters[filename].tests) {
-            const results = tests.internalCheck(messages, filename, newContent, contents, ids);
+            const results = fileTest.internalCheck(filename, newContent, contents, ids);
             if(runCheck(results.result)) {
                 saveContent = newContent;
                 saveIds = results.ids;
@@ -108,26 +131,6 @@ $.get("controller/getParametersJson.php", function(data){
     });
 
 });
-
-let contents = {};
-let optCsvs = {};
-let pdfs = {};
-let optPdfs = {}
-let ids = {};
-let checks = {};
-
-if(sessionStorage.getItem("contents")) {
-    contents = JSON.parse(sessionStorage.getItem("contents"));
-    pdfs = JSON.parse(sessionStorage.getItem("pdfs"));
-    optPdfs = JSON.parse(sessionStorage.getItem("optPdfs"));
-    displayFiles();
-    $('#tarifs-cancel').removeClass('desactived-tile');
-}
-
-if(sessionStorage.getItem("checks")) {
-    checks = JSON.parse(sessionStorage.getItem("checks"));
-    displayChecks();
-}
 
 function displayChecks() {
     let result = true;
@@ -179,7 +182,7 @@ function runCheck(res) {
 }
 
 export function checkTables() {
-    const results = tests.checkColumns(messages, contents, pdfs, optPdfs, ids);
+    const results = tests.checkColumns(fileTest, contents, pdfs, optPdfs, ids);
     checks = results.checks;
     ids = results.ids;
     sessionStorage.setItem("checks", JSON.stringify(checks));
@@ -296,13 +299,13 @@ export function getEncFiles() {
     });
 
     let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];
-    const ccIds = tests.retrieveIds("classeclient", contents, ids);
+    const ccIds = fileTest.retrieveIds("classeclient", contents, ids);
     Object.keys(ccIds).forEach(function(ccKey) {
         const ccLine = contents["classeclient"][ccIds[ccKey]];
         const idBase = ccLine[8];
-        Object.keys(tests.retrieveIds("categorie", contents, ids)).forEach(function(caKey) {
+        Object.keys(fileTest.retrieveIds("categorie", contents, ids)).forEach(function(caKey) {
             const idBaseCateg = idBase+"_"+caKey;
-            const bcLine = contents["basecateg"][tests.retrieveIds("basecateg", contents, ids)[idBaseCateg]];
+            const bcLine = contents["basecateg"][fileTest.retrieveIds("basecateg", contents, ids)[idBaseCateg]];
             categprix.push([ccKey, caKey, bcLine[2]]);
         });
     });

@@ -266,6 +266,7 @@ $plateformes = new Plateforme();
         </div>
         <?php include("includes/footer.inc");?>
         <script src="js/custom-tableur.js" type="module"></script>
+        <script src="js/file-tests.js" type="module"></script>
         <script src="js/index.js" type="module"></script>
 	</body>
 </html>
