@@ -26,7 +26,7 @@
                     </button>
             </div>
             <div class="modal-body" id="wrong-modal-body">
-                Des erreurs sont présentes dans le présent fichier, voulez-vous le corriger ou le sauver en l'état ?
+                Body
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="error-modal-correct">Corriger</button>

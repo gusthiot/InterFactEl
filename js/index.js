@@ -1,20 +1,52 @@
 import * as customTableur from "./custom-tableur.js";
+import * as fileTests from "./file-tests.js";
 
+let fileTest = undefined;
+let ids = {};
+let contents = {};
 
 $.get("controller/getConfigJson.php", function(data){
     const json = JSON.parse(data);
     const paramtext = json.paramtext;
     const messages = json.messages;
     const configs = json.configs;
-    const contents = json.contents;
+    contents = json.contents;
+
+    Object.keys(contents).forEach(function(name) {
+        let titles = [];
+        for(let numCol = 0; numCol < configs[name].numcol; numCol++) {
+            titles.push(unescape(encodeURIComponent(paramtext["table-"+name+"-"+numCol])));
+        }
+        contents[name].unshift(titles);
+    });
 
     const tableur = new customTableur.CustomTableur(messages, configs, paramtext, closeTable);
+
+    fileTest = new fileTests.FileTests(messages, configs);
 
     $(document).on("click", ".csv", function() {
         $('#index-canevas').css("display", "none");
         const filename = $(this).attr('id');
         tableur.init(filename, "csv", contents);
         $('#supervision-manage').html(tableur.unidimTableur());
+    });
+
+    $(document).on("saved", "#tableur-table", function(event, newContent, filename) {
+        const results = fileTest.internalCheck(filename, newContent, contents, ids);
+        if(runCheck(results.result)) {
+            tableur.displayErrors(results.errors);
+            $("#tableur-table").trigger("error");
+        }
+        else {
+            ids = results.ids;
+            contents[filename] = newContent;
+            $.post("controller/saveConfigFile.php", {name: filename, content: newContent}, function(res) {
+                if(!runCheck(res)) {
+                    closeTable();
+                }
+                console.log("saved");
+            });
+        }
     });
 });
 
@@ -112,4 +144,12 @@ $('.manage-files').on('click', function () {
 function closeTable() {
     $('#index-canevas').css("display", "block");
     $('#supervision-manage').html("");
+}
+
+function runCheck(res) {
+    if(res != "") {
+        $('#message').html(res);
+        return true;
+    }
+    return false;
 }

@@ -10,29 +10,30 @@ let optPdfs = {}
 let ids = {};
 let checks = {};
 let fileTest = undefined;
+let paramtext = undefined;
 
-if(sessionStorage.getItem("contents")) {
-    contents = JSON.parse(sessionStorage.getItem("contents"));
-    pdfs = JSON.parse(sessionStorage.getItem("pdfs"));
-    optPdfs = JSON.parse(sessionStorage.getItem("optPdfs"));
-    displayFiles();
-    $('#tarifs-cancel').removeClass('desactived-tile');
-}
-
-if(sessionStorage.getItem("checks")) {
-    checks = JSON.parse(sessionStorage.getItem("checks"));
-    displayChecks();
-}
 
 $.get("controller/getParametersJson.php", function(data){
     const json = JSON.parse(data);
-    const paramtext = json.paramtext;
+    paramtext = json.paramtext;
     messages = json.messages;
     const parameters = json.parameters;
 
     tests.setMandatoryCsvs(parameters);
 
-    const tableur = new customTableur.CustomTableur(messages, parameters, paramtext, closeTable);
+    if(sessionStorage.getItem("contents")) {
+        contents = JSON.parse(sessionStorage.getItem("contents"));
+        pdfs = JSON.parse(sessionStorage.getItem("pdfs"));
+        optPdfs = JSON.parse(sessionStorage.getItem("optPdfs"));
+        displayFiles();
+        $('#tarifs-cancel').removeClass('desactived-tile');
+    }
+
+    if(sessionStorage.getItem("checks")) {
+        checks = JSON.parse(sessionStorage.getItem("checks"));
+        displayChecks();
+    }
+    const tableur = new customTableur.CustomTableur(messages, parameters, paramtext, closeTable, true);
 
     fileTest = new fileTests.FileTests(messages, parameters);
 
@@ -295,7 +296,15 @@ function removeGoodChecks() {
 export function getEncFiles() {
     let files = {};
     Object.keys(contents).forEach(function(name) {
-        files[name+".csv"] = btoa(Papa.unparse(contents[name], {delimiter: ";", skipEmptyLines: true}));
+        let content = contents[name];
+        if(!tests.getMandatoryCsvs()[name].notitles) {
+            let titles = [];
+            for(let numCol = 0; numCol < tests.getMandatoryCsvs()[name].numcol; numCol++) {
+                titles.push(unescape(encodeURIComponent(paramtext["table-"+name+"-"+numCol])));
+            }
+            content[0] = titles;
+        }
+        files[name+".csv"] = btoa(Papa.unparse(content, {delimiter: ";", skipEmptyLines: true}));
     });
 
     let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];

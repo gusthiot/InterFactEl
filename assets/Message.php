@@ -28,7 +28,7 @@ class Message extends Csv
                         "basecateg00", "basecateg01", "basecateg02", "basecateg03", "basecateg04", "basecateg05",
                         "logo00", "logo01",
                         "grille00", "grille01", "grille02",
-                        "listepltf00", "listepltf01",
+                        "listeplateforme00", "listeplateforme01",
                         "personnel00", "personnel01", "personnel02",
                         "gestionnaire00", "gestionnaire01", "gestionnaire02", "gestionnaire03", "gestionnaire04", "gestionnaire05", "gestionnaire06",
                         "superviseur00", "superviseur01"];

@@ -9,28 +9,27 @@ export class FileTests {
     internalCheck(filename, conTest, contents, ids) {
         let result = "";
         let errors = {};
-        for(let test in this.parameters[filename].tests) {
+        for(let numTest in this.parameters[filename].tests) {
+            const test = this.parameters[filename].tests[numTest];
             let resTest = "";
             let column = "";
             let colNum = [];
+            if(test.type == "unique") {
+                this.arrayIds = {};
+                test.id.forEach(function(col) {
+                    if(column != "") {
+                        column += " | ";
+                    }
+                    column += conTest[0][col];
+                });
+                colNum = test.id;
+            }
+            else {
+                column = conTest[0][test.col];
+                colNum = [test.col];
+            }
             for(let numRow = 0; numRow < conTest.length; numRow++) {
-                if(numRow == 0) {
-                    if(test.type == "unique") {
-                        this.arrayIds = {};
-                        test.id.forEach(function(col) {
-                            if(column != "") {
-                                column += " | ";
-                            }
-                            column += conTest[numRow][col];
-                        });
-                        colNum = test.id;
-                    }
-                    else {
-                        column = conTest[numRow][test.col];
-                        colNum = [test.col];
-                    }
-                }
-                else {
+                if(numRow > 0 || this.parameters[filename].notitles) {
                     const columns = this.parameters[filename].columns;
                     let error = this.switchTest(columns, test, conTest[numRow], numRow, column, contents, ids);
                     if(error != "") {
@@ -38,14 +37,14 @@ export class FileTests {
                             errors["row-"+numRow] = {};
                         }
                         for(let col in colNum) {
-                            errors["row-"+numRow]["col-"+col] = this.messages[filename + test.msg];
+                            errors["row-"+numRow]["col-"+colNum[col]] = this.messages[filename + test.msg];
                         }
                         if(resTest == "") {
                             resTest += this.messages[filename + test.msg] + "<br />";
                             resTest += "Fichier : " + filename + ".csv<br />";
                             resTest += "Colonne : '" + column + "'<br />";
                         }
-                        resTest += "Erreur ligne " + (numRow+1) + " : '" + error + "'<br />";
+                        resTest += "Erreur ligne " + (numRow) + " : '" + error + "'<br />";
                     }
                 }
             }
@@ -53,12 +52,14 @@ export class FileTests {
                 ids[filename] = this.arrayIds;
             }
             if(test.type == "should") {
-                for(let id0 in Object.keys(retrieveIds(test.id[0], contents, ids))) {
-                    for(let id1 in Object.keys(retrieveIds(test.id[1], contents, ids))) {
+                for(let num0 in Object.keys(this.retrieveIds(test.id[0], contents, ids))) {
+                    const id0 = Object.keys(this.retrieveIds(test.id[0], contents, ids))[num0];
+                    for(let num1 in Object.keys(this.retrieveIds(test.id[1], contents, ids))) {
+                        const id1 = Object.keys(this.retrieveIds(test.id[1], contents, ids))[num1];
                         if(filename == "coeffprestation") {
-                            const prestLine = contents["classeprestation"][retrieveIds("classeprestation", contents, ids)[id1]];
+                            const prestLine = contents["classeprestation"][this.retrieveIds("classeprestation", contents, ids)[id1]];
                             if(prestLine[3] != "OUI") {
-                                return;
+                                continue;
                             }
                         }
                         const id = id0 + "_" + id1;
@@ -83,7 +84,8 @@ export class FileTests {
             return ids[filename];
         }
         let pos = "";
-        for(let test in this.parameters[filename].tests) {
+        for(let numTest in this.parameters[filename].tests) {
+            const test = this.parameters[filename].tests[numTest];
             if((test.type == "unique") && !test.noindex) {
                 pos = test.id;
             }
@@ -104,7 +106,7 @@ export class FileTests {
         return aIds;
     }
 
-    switchTest(columns, test, line, i, column, contents, ids) {
+    switchTest(columns, test, line, numRow, column, contents, ids) {
         switch(test.type) {
             case "in":
                 if(columns[test.col].list) {
@@ -119,14 +121,14 @@ export class FileTests {
                 }
                 break;
             case "ref":
-                if(!(((Object.keys(retrieveIds(columns[test.col].origin, contents, ids))).includes(line[test.col])) ||
+                if(!(((Object.keys(this.retrieveIds(columns[test.col].origin, contents, ids))).includes(line[test.col])) ||
                     (columns[test.col].zero && (line[test.col] == 0)))) {
                     return line[test.col];
                 }
                 break;
             case "ext":
                 const idExt = line[test.col];
-                const extLine = contents[test.extName][retrieveIds(test.extName, contents, ids)[idExt]];
+                const extLine = contents[test.extName][this.retrieveIds(test.extName, contents, ids)[idExt]];
                 if(extLine[test.extCol] != test.extValue) {
                     return line[test.col];
                 }
@@ -151,7 +153,7 @@ export class FileTests {
                     return line[test.col];
                 }
                 if(test.special) {
-                    const catLine = contents["categorie"][retrieveIds("categorie", contents, ids)[line[1]]];
+                    const catLine = contents["categorie"][this.retrieveIds("categorie", contents, ids)[line[1]]];
                     if((Math.floor(Math.log10(line[test.col])) + 1) > (9 - catLine[4])) {
                         return line[test.col];
                     }
@@ -169,13 +171,13 @@ export class FileTests {
                     return id;
                 }
                 else {
-                    this.arrayIds[id] = i;
+                    this.arrayIds[id] = numRow;
                 }
                 break;
             case "itemk":
                 if(line[test.col] > 0) {
                     const idCat = line[test.col];
-                    const cateLine = contents["categorie"][retrieveIds("categorie", contents, ids)[idCat]];
+                    const cateLine = contents["categorie"][this.retrieveIds("categorie", contents, ids)[idCat]];
                     if(cateLine[6] != column) {
                         return idCat;
                     }

@@ -2,7 +2,6 @@
     "listeplateforme": {
         "name": "Plateformes",
         "numcol": 5,
-        "notitles": true,
         "tools": true,
         "columns": [
             {"type": "alphanum"},
@@ -18,7 +17,6 @@
     "personnel": {
         "name": "Personnel",
         "numcol": 4,
-        "notitles": true,
         "tools": true,
         "columns": [
             {"type": "alphanum"},
@@ -27,14 +25,13 @@
             {"type": "alphanum"}
         ],
         "tests": [
-            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "unique", "noindex": true, "id": [0], "msg": "01"},
             {"type": "unique", "id": [3], "msg": "02"}
         ]
     },
     "gestionnaire": {
         "name": "Gestionnaire",
         "numcol": 6,
-        "notitles": true,
         "tools": true,
         "columns": [
             {"type": "ref", "origin": "personnel", "refCol": 3, "intitule": [[1, 2], 3]},
@@ -56,7 +53,6 @@
     "superviseur": {
         "name": "Superviseur",
         "numcol": 1,
-        "notitles": true,
         "tools": true,
         "himself": true,
         "columns": [

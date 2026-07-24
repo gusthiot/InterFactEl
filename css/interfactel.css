@@ -775,8 +775,17 @@ table.dates-tarifs .tr-clickable:hover {
   height: 30px;
 }
 
-.vert-th {
-  writing-mode: sideways-lr;
+.span-th {
+  text-align: center;
+  vertical-align: middle;
+  border: 0;
+  display: table-cell;
+}
+
+.vert-span {
+  /* writing-mode: sideways-lr; */
+  writing-mode: vertical-rl;
+  transform: scale(-1);
 }
 
 .border-around {

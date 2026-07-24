@@ -1,12 +1,13 @@
 export class CustomTableur {
 
-    constructor(messages, parameters, paramtext, onClose) {
+    constructor(messages, parameters, paramtext, onClose, saveAnyway=false) {
         this.messages = messages;
         this.parameters = parameters;
         this.paramtext = paramtext;
         this.contents = {};
         this.filename = "";
         this.extension = "";
+        this.saveAnyway = saveAnyway;
 
         $(document).on("click", ".tableur-remove", function() {
             onClose();
@@ -62,7 +63,19 @@ export class CustomTableur {
             $("#tableur-table").trigger("saved", [newContent, this.filename]);
         });
 
-        $(document).on("error", "#tableur-table", function() {
+        $(document).on("error", "#tableur-table", () => {
+            if(this.saveAnyway) {
+                $('#wrong-modal-body').html("Des erreurs sont présentes dans le présent fichier, voulez-vous le corriger ou le sauver en l'état ?");
+                $('#error-modal-correct').html("Corriger");
+                $('#error-modal-save').addClass("show");
+                $('#error-modal-save').css("display", "block");
+            }
+            else {
+                $('#wrong-modal-body').html("Des erreurs sont présentes dans le présent fichier !");
+                $('#error-modal-correct').html("Ok");
+                $('#error-modal-save').removeClass("show");
+                $('#error-modal-save').css("display", "none");
+            }
             $('#error-modal').addClass("show");
             $('#error-modal').css("display", "block");
         });
@@ -264,7 +277,7 @@ export class CustomTableur {
     bidimTableur(sapIds) {
         const dim0 = this.contents[this.parameters[this.filename].columns[0].origin];
         const dim1 = this.contents[this.parameters[this.filename].columns[1].origin];
-        let html = '<tr><th></th><th></th><th colspan="' + (dim1.length-1) + '">' + this.paramtext["table-"+this.filename+"-"+1] + '</th></tr>';
+        let html = '<tr><th></th><th></th><th class="span-th" colspan="' + (dim1.length-1) + '">' + this.paramtext["table-"+this.filename+"-"+1] + '</th></tr>';
         html += '<tr id="dim1"><td class="border-around-no"></td><td class="border-around-no"></td>';
         for(let num1 = 1; num1 < dim1.length; num1++) {
             if(this.filename == "coeffprestation") {
@@ -287,7 +300,7 @@ export class CustomTableur {
         for(let num0 = 1; num0 < dim0.length; num0++) {
             html += '<tr class="values">';
             if(num0 == 1) {
-                html += '<th rowspan="' + (dim0.length-1) + '" class="vert-th">' + this.paramtext["table-"+this.filename+"-"+0] + '</th>';
+                html += '<th rowspan="' + (dim0.length-1) + '" class="span-th"><span class="vert-span">' + this.paramtext["table-"+this.filename+"-"+0] + '</span></th>';
             }
             const positions = this.parameters[this.filename].bidim[1].intitule;
             let intitule = dim0[num0][positions[0]];
@@ -360,7 +373,7 @@ export class CustomTableur {
     }
 
     alphanum(value) {
-        return '<input class="tableur-input" type="text" value="' + value + '" pattern="[A-Za-z0-9]*" >';
+        return '<input class="tableur-input" type="text" value="' + value + '" pattern="[\\w\\d\\-]*" >';
     }
 
     menu(value, params) {
@@ -407,7 +420,7 @@ export class CustomTableur {
                 if(params.col && (params.value != ref[key][params.col])) {
                     continue;
                 }
-                ret += '<option value="' + ref[key][0] + '"';
+                ret += '<option value="' + ref[key][refCol] + '"';
                 if(value == ref[key][refCol]) {
                     ret += ' selected ';
                 }
