@@ -67,7 +67,7 @@ $.get("controller/getParametersJson.php", function(data){
                 if(optPdfs.grille) {
                     title = "Remplacer la grille";
                 }
-                html += uploadPdf(messages[filename + "01"], "replace-grille", titre);
+                html += uploadPdf(messages[filename + "01"], "replace-grille", title);
             }
             else {
                 html += '<div>' + messages[filename + "02"] + '</div>';
@@ -89,9 +89,9 @@ $.get("controller/getParametersJson.php", function(data){
     let saveErrors = {};
     let saveFilename = "";
 
-    $(document).on("saved", "#tableur-table", function(event, newContent, filename) {
+    $(document).on("saved", "#tableur-table", function(event, newContent, filename, dimensions=[]) {
         if(parameters[filename].tests) {
-            const results = fileTest.internalCheck(filename, newContent, contents, ids);
+            const results = fileTest.internalCheck(filename, newContent, contents, ids, dimensions);
             if(runCheck(results.result)) {
                 saveContent = newContent;
                 saveIds = results.ids;

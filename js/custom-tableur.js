@@ -17,8 +17,9 @@ export class CustomTableur {
             let newContent = this.getTitles();
             const lines = $('.values');
             const dim1 = $('#dim1').find('.cell');
+            let cells = "";
             for(let numRow = 0; numRow < lines.length; numRow++) {
-                const cells = $(lines[numRow]).find('.cell');
+                cells = $(lines[numRow]).find('.cell');
                 for(let numCol = 0; numCol < cells.length; numCol++) {
                     const input = $(cells[numCol]).find('input');
                     if($(input).val() !== "") {
@@ -30,7 +31,7 @@ export class CustomTableur {
                     }
                 }
             }
-            $( "#tableur-table").trigger("saved", [newContent, this.filename]);
+            $( "#tableur-table").trigger("saved", [newContent, this.filename, [lines.length, cells.length]]);
         });
 
         $(document).on("click", "#tableur-save-unidim", () => {
@@ -200,6 +201,7 @@ export class CustomTableur {
                     '<svg id="tableur-info" data-id="' + this.filename + '" class="icon icon-selectable date-left" aria-hidden="true">' +
                         '<use xlink:href="#info"></use>' +
                     '</svg>' +
+                    '<span>' + this.parameters[this.filename].name + '</span>' +
                     '<svg class="icon icon-selectable date-right tableur-remove" aria-hidden="true">' +
                         '<use xlink:href="#x"></use>' +
                     '</svg>' +

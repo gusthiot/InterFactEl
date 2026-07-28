@@ -6,7 +6,7 @@ export class FileTests {
         this.arrayIds = {};
     }
 
-    internalCheck(filename, conTest, contents, ids) {
+    internalCheck(filename, conTest, contents, ids, dimensions=[]) {
         let result = "";
         let errors = {};
         for(let numTest in this.parameters[filename].tests) {
@@ -33,18 +33,28 @@ export class FileTests {
                     const columns = this.parameters[filename].columns;
                     let error = this.switchTest(columns, test, conTest[numRow], numRow, column, contents, ids);
                     if(error != "") {
-                        if(!errors["row-"+numRow]) {
-                            errors["row-"+numRow] = {};
+                        let row = numRow;
+                        if(dimensions.length > 0) {
+                            row = Math.floor(numRow/dimensions[1]) + 1;
                         }
-                        for(let col in colNum) {
-                            errors["row-"+numRow]["col-"+colNum[col]] = this.messages[filename + test.msg];
+                        if(!errors["row-"+row]) {
+                            errors["row-"+row] = {};
+                        }
+                        if(dimensions.length > 0) {
+                            let col = numRow % dimensions[1] - 1;
+                            errors["row-"+row]["col-"+col] = this.messages[filename + test.msg];
+                        }
+                        else {
+                            for(let col in colNum) {
+                                errors["row-"+row]["col-"+colNum[col]] = this.messages[filename + test.msg];
+                            }
                         }
                         if(resTest == "") {
                             resTest += this.messages[filename + test.msg] + "<br />";
                             resTest += "Fichier : " + filename + ".csv<br />";
                             resTest += "Colonne : '" + column + "'<br />";
                         }
-                        resTest += "Erreur ligne " + (numRow) + " : '" + error + "'<br />";
+                        resTest += "Erreur ligne " + (row) + " : '" + error + "'<br />";
                     }
                 }
             }

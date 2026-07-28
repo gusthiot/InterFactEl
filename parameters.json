@@ -160,7 +160,7 @@
         "tools": true,
         "columns": [
             {"type": "alphanum"},
-            {"type": "ref", "origin": "articlesap"},
+            {"type": "alphanum"},
             {"type": "txt"},
             {"type": "txt"},
             {"type": "num", "zero": true, "int": true, "max": 8},

@@ -40,11 +40,24 @@ $.get("controller/getConfigJson.php", function(data){
         else {
             ids = results.ids;
             contents[filename] = newContent;
-            $.post("controller/saveConfigFile.php", {name: filename, content: newContent}, function(res) {
+            let content = newContent;
+            if(filename == "gestionnaire") {
+                let titles = [];
+                titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-0"])));
+                titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-1"])));
+                titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-6"])));
+                titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-5"])));
+                content[0] = titles;
+                for(let numRow = 1; numRow < content.length; numRow++) {
+                    const line = content[numRow];
+                    const codage = 4*parseInt(line[2]) + 2*parseInt(line[3]) + parseInt(line[4]);
+                    content[numRow] = [line[0], line[1], codage, line[5]];
+                }
+            }
+            $.post("controller/saveConfigFile.php", {name: filename, content: content}, function(res) {
                 if(!runCheck(res)) {
                     closeTable();
                 }
-                console.log("saved");
             });
         }
     });

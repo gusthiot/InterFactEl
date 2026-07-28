@@ -773,6 +773,7 @@ table.dates-tarifs .tr-clickable:hover {
 
 #tableur-header {
   height: 30px;
+  text-align: center;
 }
 
 .span-th {

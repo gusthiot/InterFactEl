@@ -131,6 +131,5 @@ $("#tarifs-check").on("click", function() {
 $(document).on("click", "#tarifs-save", function() {
     $.post("controller/saveTarifs.php", {plate: plateforme, files: tables.getEncFiles()}, function (data) {
         window.location.href = "controller/download.php?type=js-tarifs&name="+data+"&plate="+plateforme;
-        $('#tarifs-save').addClass('desactived-tile');
     });
 });

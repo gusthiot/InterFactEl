@@ -48,7 +48,7 @@ class Gestionnaire extends Csv
                 if(self::hasRight($line[2], $pos) && ($line[3] > 0)) {
                     $this->gestionnaires[$line[0]][$name][$line[1]] = $line[3];
 
-                    $line2[$pos+2] = 1;
+                    $line2[2-$pos+2] = 1;
                 }
             }
 
