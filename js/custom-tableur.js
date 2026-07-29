@@ -124,11 +124,15 @@ export class CustomTableur {
             for(let numCol = 0; numCol < this.parameters[this.filename].columns.length; numCol++) {
                 const paramCol = this.parameters[this.filename].columns[numCol];
                 let cell = "";
-                html += '<td class="border-around cell">';
+                html += '<td class="border-left';
+                if((numCol == this.contents[this.filename][numRow].length-1) && !this.parameters[this.filename].tools) {
+                    html += ' border-right';
+                }
+                html += ' cell">';
                 html += this.input(paramCol, cell, num, notitles);
                 html += '</td>';
             }
-            html += '<td class="border-around td-tools">';
+            html += '<td class="td-tools">';
             if(tr.hasClass('values')) {
                 html += this.lineUp();
                 let tools = "";
@@ -235,7 +239,10 @@ export class CustomTableur {
     unidimTableur() {
         let html = '<tr>';
         for (let i = 0; i < this.parameters[this.filename].numcol; i++) {
-            html += '<th>' + this.paramtext["table-"+this.filename+"-"+i] + '</th>';
+            html += '<th class="border-bottom">' + this.paramtext["table-"+this.filename+"-"+i] + '</th>';
+        }
+        if(this.parameters[this.filename].tools) {
+            html += '<td class="th-tools"></td>';
         }
         html += '</tr>';
         let notitles = false;
@@ -247,7 +254,11 @@ export class CustomTableur {
                 html += '<tr class="values" id="line-' + numRow + '">';
                 for(let numCol = 0; numCol < this.contents[this.filename][numRow].length; numCol++) {
                     let paramCol = this.parameters[this.filename].columns[numCol];
-                    html += '<td class="border-around cell">';
+                    html += '<td class="border-left';
+                    if((numCol == this.contents[this.filename][numRow].length-1) && !this.parameters[this.filename].tools) {
+                        html += ' border-right';
+                    }
+                    html += ' cell">';
                     if(paramCol.type == "specific") {
                         paramCol = paramCol.lines[numRow];
                     }
@@ -255,7 +266,7 @@ export class CustomTableur {
                     html += '</td>';
                 }
                 if(this.parameters[this.filename].tools) {
-                    html += '<td class="border-around td-tools">';
+                    html += '<td class="td-tools">';
                     if((notitles && (numRow > 0)) || (numRow > 1)) {
                         html += this.lineUp();
                     }
@@ -268,7 +279,8 @@ export class CustomTableur {
             }
         }
         if(this.parameters[this.filename].tools) {
-            html += '<tr><td class="border-around left" colspan="' + (this.parameters[this.filename].numcol + 1) + '">' +
+            html += '<tr><td class="border-left" colspan="' + (this.parameters[this.filename].numcol) + '"></td>' +
+                    '<td class="td-tools">' +
                     '<svg id="line-plus" class="icon icon-selectable" aria-hidden="true">' +
                         '<use xlink:href="#plus"></use>' +
                     '</svg></td></tr>';
@@ -279,8 +291,8 @@ export class CustomTableur {
     bidimTableur(sapIds) {
         const dim0 = this.contents[this.parameters[this.filename].columns[0].origin];
         const dim1 = this.contents[this.parameters[this.filename].columns[1].origin];
-        let html = '<tr><th></th><th></th><th class="span-th" colspan="' + (dim1.length-1) + '">' + this.paramtext["table-"+this.filename+"-"+1] + '</th></tr>';
-        html += '<tr id="dim1"><td class="border-around-no"></td><td class="border-around-no"></td>';
+        let html = '<tr><th></th><th></th><th class="span-th border-bottom-black" colspan="' + (dim1.length-1) + '">' + this.paramtext["table-"+this.filename+"-"+1] + '</th></tr>';
+        html += '<tr id="dim1"><td class="border-around-no"></td><td class="border-bottom-right-black"></td>';
         for(let num1 = 1; num1 < dim1.length; num1++) {
             if(this.filename == "coeffprestation") {
                 if(dim1[num1][3] != "OUI") {
@@ -296,20 +308,20 @@ export class CustomTableur {
             else {
                 line1 = dim1[num1][positions[0]];
             }
-            html += '<td class="border-around-black cell" data-id="' + dim1[num1][0] + '">' + line1 + " - " + dim1[num1][positions[1]] + '</td>';
+            html += '<td class="border-bottom-right-black cell" data-id="' + dim1[num1][0] + '">' + line1 + " - " + dim1[num1][positions[1]] + '</td>';
         };
         html += '</tr>';
         for(let num0 = 1; num0 < dim0.length; num0++) {
             html += '<tr class="values">';
             if(num0 == 1) {
-                html += '<th rowspan="' + (dim0.length-1) + '" class="span-th"><span class="vert-span">' + this.paramtext["table-"+this.filename+"-"+0] + '</span></th>';
+                html += '<th rowspan="' + (dim0.length-1) + '" class="span-th border-right-black"><span class="vert-span">' + this.paramtext["table-"+this.filename+"-"+0] + '</span></th>';
             }
             const positions = this.parameters[this.filename].bidim[1].intitule;
             let intitule = dim0[num0][positions[0]];
             if(positions.length > 1) {
                 intitule += " - " + dim0[num0][positions[1]];
             }
-            html += '<td class="border-around-black dim0" data-id="' + dim0[num0][0] + '">' + intitule + '</td>';
+            html += '<td class="border-bottom-right-black dim0" data-id="' + dim0[num0][0] + '">' + intitule + '</td>';
             for(let num1 = 1; num1 < dim1.length; num1++) {
                 if(this.filename == "coeffprestation") {
                     if(dim1[num1][3] != "OUI") {
@@ -323,7 +335,7 @@ export class CustomTableur {
                         break;
                     }
                 };
-                html += '<td class="border-around cell">' + this.number(value, this.parameters[this.filename].columns[2]) + '</td>';
+                html += '<td class="border-right cell">' + this.number(value, this.parameters[this.filename].columns[2]) + '</td>';
             }
             html += '</tr>';
         }

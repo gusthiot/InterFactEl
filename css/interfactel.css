@@ -635,10 +635,6 @@ table.dates-tarifs td {
   text-align: left;
 }
 
-.td-tools {
-  min-width: 70px;
-}
-
 .borded {
   border: 1px solid var(--gris-200) !important;
 }
@@ -768,12 +764,30 @@ table.dates-tarifs .tr-clickable:hover {
 
 #table-tableur {
   margin: 0 auto;
-  width: 0 !important;
+  width: 1000px !important;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 #tableur-header {
   height: 30px;
   text-align: center;
+}
+
+.td-tools {
+  min-width: 70px;
+  position: sticky;
+  right: 0;
+  background-color: white;
+  border-left: 1px solid var(--gris-200);
+  border-right: 1px solid var(--gris-200);
+}
+
+.th-tools {
+  position: sticky;
+  right: 0;
+  background-color: white;
+  border-bottom: 1px solid var(--gris-200);
 }
 
 .span-th {
@@ -789,17 +803,33 @@ table.dates-tarifs .tr-clickable:hover {
   transform: scale(-1);
 }
 
-.border-around {
-  border: 1px solid var(--gris-200);
+.border-left {
+  border-left: 1px solid var(--gris-200);
+}
+
+.border-right {
+  border-right: 1px solid var(--gris-200);
+}
+
+.border-bottom {
+  border-bottom: 1px solid var(--gris-200);
 }
 
 .border-around-no {
   border: 0 !important;
-
 }
 
-.border-around-black {
-  border: 1px solid black !important;
+.border-bottom-black {
+  border-bottom: 1px solid black !important;
+}
+
+.border-right-black {
+  border-right: 1px solid black !important;
+}
+
+.border-bottom-right-black {
+  border-bottom: 1px solid black !important;
+  border-right: 1px solid black !important;
 }
 
 .background-red {
