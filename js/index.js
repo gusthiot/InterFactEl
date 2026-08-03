@@ -40,7 +40,7 @@ $.get("controller/getConfigJson.php", function(data){
         else {
             ids = results.ids;
             contents[filename] = newContent;
-            let content = newContent;
+            let content = structuredClone(newContent);
             if(filename == "gestionnaire") {
                 let titles = [];
                 titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-0"])));
@@ -48,11 +48,39 @@ $.get("controller/getConfigJson.php", function(data){
                 titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-6"])));
                 titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-5"])));
                 content[0] = titles;
+                let orders = {};
+                let newAdds = {};
                 for(let numRow = 1; numRow < content.length; numRow++) {
                     const line = content[numRow];
+                    if(line[5] == "") {
+                        if(!Object.keys(newAdds).includes(line[0])) {
+                            newAdds[line[0]] = [];
+                        }
+                        newAdds[line[0]].push(numRow);
+                    }
+                    else {
+                        if(!Object.keys(orders).includes(line[0]) || (line[5] > orders[line[0]])) {
+                            orders[line[0]] = line[5];
+                        }
+                    }
                     const codage = 4*parseInt(line[2]) + 2*parseInt(line[3]) + parseInt(line[4]);
                     content[numRow] = [line[0], line[1], codage, line[5]];
                 }
+                Object.keys(newAdds).forEach(function(login) {
+                    newAdds[login].forEach(function(row) {
+                        if(!Object.keys(orders).includes(login)) {
+                            orders[login] = 1;
+                            content[row][3] = 1;
+                            contents[filename][row][5] = 1;
+                        }
+                        else {
+                            const order = parseInt(orders[login]) + 1;
+                            orders[login] = order;
+                            content[row][3] = order;
+                            contents[filename][row][5] = order;
+                        }
+                    });
+                });
             }
             $.post("controller/saveConfigFile.php", {name: filename, content: content}, function(res) {
                 if(!runCheck(res)) {

@@ -20,16 +20,16 @@ class Config
             $msg = Zip::unzip($file, $tmpDir);
             if(empty($msg)) {
                 if(file_exists($tmpDir.Gestionnaire::NAME)) {
-                    self::addMsg($msg, self::checkColumns($tmpDir, Gestionnaire::NAME, 4, true));
+                    self::addMsg($msg, self::checkColumns($tmpDir, Gestionnaire::NAME, 4, true, true, [], true));
                 }
                 if(file_exists($tmpDir.Superviseur::NAME)) {
                     self::addMsg($msg, self::checkColumns($tmpDir, Superviseur::NAME, 1));
                 }
                 if(file_exists($tmpDir.Message::NAME)) {
-                    self::addMsg($msg, self::checkColumns($tmpDir, Message::NAME, 2, false, Message::LABELS));
+                    self::addMsg($msg, self::checkColumns($tmpDir, Message::NAME, 2, false, false, Message::LABELS));
                 }
                 if(file_exists($tmpDir.ParamText::NAME)) {
-                    self::addMsg($msg, self::checkColumns($tmpDir, ParamText::NAME, 2, false, ParamText::LABELS));
+                    self::addMsg($msg, self::checkColumns($tmpDir, ParamText::NAME, 2, false, false, ParamText::LABELS));
                 }
                 if(file_exists($tmpDir.Plateforme::NAME)) {
                     self::addMsg($msg, self::checkColumns($tmpDir, Plateforme::NAME, 5));
@@ -50,23 +50,28 @@ class Config
      * @param string $tmpDir directory were to temporary find the new config files
      * @param string $file file name
      * @param integer $nb the expected number of columns
+     * @param bool $header if csv file has header
      * @param boolean $rights if we also want to check the rights
      * @param array $labels if we also want to check if all the labels exists, and only the expected ones
+     * @param bool $order if we want to check tiles order column
      * @return string error or empty string
      */
-    static function checkColumns(string $tmpDir, string $file, int $nb, bool $rights=false, array $labels=[]): string
+    static function checkColumns(string $tmpDir, string $file, int $nb, bool $header=true, bool $rights=false, array $labels=[], bool $order=false): string
     {
-        $lines = Csv::extract($tmpDir.$file);
+        $lines = Csv::extract($tmpDir.$file, $header);
         $msg = "";
         if(!empty($labels)) {
             $keys = [];
+        }
+        if($order) {
+            $tilesOrder = [];
         }
         foreach($lines as $i=>$line) {
             if(count($line) != $nb) {
                 self::addMsg($msg, "ligne ".$i." de ".$file." n'a pas le bon nombre de champs");
             }
-            if($rights && !((-1 < intval($line[3])) && (intval($line[3]) < 8))) {
-                self::addMsg($msg, "les droits de la ligne ".$i." de ".$file." doivent être entre 0 et 7 inclus");
+            if($rights && !(is_numeric($line[3]) && (-1 < intval($line[3])) && (intval($line[3]) < 8))) {
+                self::addMsg($msg, "les droits de la ligne ".$i." de ".$file." doivent être un nombre entier entre 0 et 7 inclus");
             }
             if(!empty($labels)) {
                 if(in_array($line[0], $keys)) {
@@ -74,6 +79,18 @@ class Config
                 }
                 else {
                     $keys[] = $line[0];
+                }
+            }
+            if($order) {
+                if(!(is_numeric($line[3]) && (0 < intval($line[3])))) {
+                    self::addMsg($msg, "l'ordre de tuile' de la ligne ".$i." de ".$file." doit être un nombre entier > 0");
+                }
+                $couple = $line[0]."-".$line[3];
+                if(in_array($couple, $tilesOrder)) {
+                    self::addMsg($msg, "le couple 'login - ordre de tuile' de la ligne ".$i." de ".$file." n'est pas unique");
+                }
+                else {
+                    $tilesOrder[] = $couple;
                 }
             }
         }

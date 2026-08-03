@@ -33,21 +33,20 @@
         "name": "Gestionnaire",
         "numcol": 6,
         "tools": true,
+        "filter": [0, 1],
         "columns": [
             {"type": "ref", "origin": "personnel", "refCol": 3, "intitule": [[1, 2], 3]},
             {"type": "ref", "origin": "listeplateforme", "intitule": [1, 3]},
-            {"type": "droit"},
-            {"type": "droit"},
-            {"type": "droit"},
-            {"type": "line", "zero": true, "int": true}
+            {"type": "check"},
+            {"type": "check"},
+            {"type": "check"},
+            {"type": "none"}
         ],
         "tests": [
             {"type": "ref", "col": 0, "msg": "01"},
             {"type": "ref", "col": 1, "msg": "02"},
             {"type": "unique", "id": [0, 1], "msg": "03"},
-            {"type": "droit", "col": [2, 3, 4], "msg": "04"},
-            {"type": "num", "col": 5, "msg": "05"},
-            {"type": "unique", "noindex": true, "id": [5], "msg": "06"}
+            {"type": "droit", "col": [2, 3, 4], "msg": "04"}
         ]
     },
     "superviseur": {

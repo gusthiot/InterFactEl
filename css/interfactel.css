@@ -769,7 +769,12 @@ table.dates-tarifs .tr-clickable:hover {
   border-spacing: 0;
 }
 
+.input-filter {
+  margin-left: 20px;
+}
+
 #tableur-header {
+  margin-top: 20px;
   height: 30px;
   text-align: center;
 }

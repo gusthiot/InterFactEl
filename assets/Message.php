@@ -30,7 +30,7 @@ class Message extends Csv
                         "grille00", "grille01", "grille02",
                         "listeplateforme00", "listeplateforme01",
                         "personnel00", "personnel01", "personnel02",
-                        "gestionnaire00", "gestionnaire01", "gestionnaire02", "gestionnaire03", "gestionnaire04", "gestionnaire05", "gestionnaire06",
+                        "gestionnaire00", "gestionnaire01", "gestionnaire02", "gestionnaire03", "gestionnaire04",
                         "superviseur00", "superviseur01"];
 
     /**

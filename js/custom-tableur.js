@@ -34,6 +34,30 @@ export class CustomTableur {
             $( "#tableur-table").trigger("saved", [newContent, this.filename, [lines.length, cells.length]]);
         });
 
+        $(document).on("input", ".input-filter", (evt) => {
+            const lines = $('.values');
+            for(let numRow = 0; numRow < lines.length; numRow++) {
+                const cells = $(lines[numRow]).find('.cell');
+                let show = true;
+                const filters = $('.input-filter');
+                for(let numFil = 0; numFil < filters.length; numFil++) {
+                    const tab = $(filters[numFil]).attr('id').split("-");
+                    const cell = this.getCellValue(cells[tab[1]], true);
+                    if(cell.indexOf($(filters[numFil]).val()) == -1) {
+                        show = false;
+                        break;
+                    }
+                }
+                if(show) {
+                    $(lines[numRow]).css("display", "");
+                }
+                else {
+                    $(lines[numRow]).css("display", "none");
+                }
+
+            }
+        });
+
         $(document).on("click", "#tableur-save-unidim", () => {
             let newContent = this.getTitles();
             const lines = $('.values');
@@ -41,23 +65,7 @@ export class CustomTableur {
                 let line = [];
                 const cells = $(lines[numRow]).find('.cell');
                 for(let numCol = 0; numCol < cells.length; numCol++) {
-                    const input = $(cells[numCol]).find('input');
-                    if(input.length > 0) {
-                        line[numCol] = $(input).val();
-                        continue;
-                    }
-                    const select = $(cells[numCol]).find('select');
-                    if(select.length > 0) {
-                        const selected = $(select).find('option:selected');
-                        line[numCol] = $(selected).attr('value');
-                        continue;
-                    }
-                    const numline = $(cells[numCol]).find('.num-line');
-                    if(numline.length > 0) {
-                        line[numCol] = $(numline).html();
-                        continue;
-                    }
-                    line[numCol]= $(cells[numCol]).html();
+                    line[numCol] = this.getCellValue(cells[numCol]);
                 }
                 newContent.push(line);
             }
@@ -121,11 +129,11 @@ export class CustomTableur {
             if(this.parameters[this.filename].notitles) {
                 notitles = true;
             }
-            for(let numCol = 0; numCol < this.parameters[this.filename].columns.length; numCol++) {
+            for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
                 const paramCol = this.parameters[this.filename].columns[numCol];
                 let cell = "";
                 html += '<td class="border-left';
-                if((numCol == this.contents[this.filename][numRow].length-1) && !this.parameters[this.filename].tools) {
+                if((numCol == this.parameters[this.filename].numcol-1) && !this.parameters[this.filename].tools) {
                     html += ' border-right';
                 }
                 html += ' cell">';
@@ -157,12 +165,44 @@ export class CustomTableur {
     getTitles() {
         if(!this.parameters[this.filename].notitles) {
             let titles = [];
-            for(let i = 0; i < this.parameters[this.filename].numcol; i++) {
-                titles[i] = this.paramtext["table-"+this.filename+"-"+i];
+            for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
+                titles[numCol] = this.paramtext["table-"+this.filename+"-"+numCol];
             }
             return [titles];
         }
         return [];
+    }
+
+    getCellValue(cell, selectText=false) {
+        const input = $(cell).find('input');
+        if(input.length > 0) {
+            if(input.attr('type') == "checkbox") {
+                if(input.attr("checked")) {
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+            else {
+                return $(input).val();
+            }
+        }
+        const select = $(cell).find('select');
+        if(select.length > 0) {
+            const selected = $(select).find('option:selected');
+            if(selectText) {
+                return $(selected).html();
+            }
+            else {
+                return $(selected).attr('value');
+            }
+        }
+        const numline = $(cell).find('.num-line');
+        if(numline.length > 0) {
+            return $(numline).html();
+        }
+        return $(cells[numCol]).html();
     }
 
     trToggle(tr, tr1) {
@@ -238,8 +278,12 @@ export class CustomTableur {
 
     unidimTableur() {
         let html = '<tr>';
-        for (let i = 0; i < this.parameters[this.filename].numcol; i++) {
-            html += '<th class="border-bottom">' + this.paramtext["table-"+this.filename+"-"+i] + '</th>';
+        for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
+            html += '<th class="border-bottom">' + this.paramtext["table-"+this.filename+"-"+numCol];
+            if(this.parameters[this.filename].filter && this.parameters[this.filename].filter.includes(numCol)) {
+                html += ' <input type="text" class="input-filter" id="filter-' + numCol + '" size="10">';
+            }
+            html += '</th>';
         }
         if(this.parameters[this.filename].tools) {
             html += '<td class="th-tools"></td>';
@@ -252,10 +296,10 @@ export class CustomTableur {
         for(let numRow = 0; numRow < this.contents[this.filename].length; numRow++) {
             if(notitles || (numRow > 0)) {
                 html += '<tr class="values" id="line-' + numRow + '">';
-                for(let numCol = 0; numCol < this.contents[this.filename][numRow].length; numCol++) {
+                for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
                     let paramCol = this.parameters[this.filename].columns[numCol];
                     html += '<td class="border-left';
-                    if((numCol == this.contents[this.filename][numRow].length-1) && !this.parameters[this.filename].tools) {
+                    if((numCol == this.parameters[this.filename].numcol-1) && !this.parameters[this.filename].tools) {
                         html += ' border-right';
                     }
                     html += ' cell">';
@@ -350,6 +394,8 @@ export class CustomTableur {
                 return this.text(cell);
             case "alphanum":
                 return this.alphanum(cell);
+            case "check":
+                return this.check(cell);
             case "menu":
                 return this.menu(cell, paramCol);
             case "ref":
@@ -388,6 +434,14 @@ export class CustomTableur {
 
     alphanum(value) {
         return '<input class="tableur-input" type="text" value="' + value + '" pattern="[\\w\\d\\-]*" >';
+    }
+
+    check(value) {
+        let checked = "";
+        if(value > 0) {
+            checked = "checked";
+        }
+        return ' <input type="checkbox" class="tableur-check" ' + checked + '>';
     }
 
     menu(value, params) {
@@ -489,6 +543,15 @@ export class CustomTableur {
 
 $(document).on("input", ".tableur-input", function() {
     $(this).attr('value',$(this).val());
+});
+
+$(document).on("input", ".tableur-check", function() {
+    if($(this).is(":checked")) {
+        $(this).attr('checked', true);
+    }
+    else {
+        $(this).removeAttr('checked');
+    }
 });
 
 $(document).on("input", ".tableur-select", function() {

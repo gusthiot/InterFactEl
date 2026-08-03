@@ -33,7 +33,19 @@ $.get("controller/getParametersJson.php", function(data){
         checks = JSON.parse(sessionStorage.getItem("checks"));
         displayChecks();
     }
-    const tableur = new customTableur.CustomTableur(messages, parameters, paramtext, closeTable, true);
+
+    let allParameters =  {};
+    for(let params in parameters) {
+        allParameters[params] = parameters[params];
+    }
+    for(let params in tests.mandatoryPdfs) {
+        allParameters[params] = tests.mandatoryPdfs[params];
+    }
+    for(let params in tests.optionalPdfs) {
+        allParameters[params] = tests.optionalPdfs[params];
+    }
+
+    const tableur = new customTableur.CustomTableur(messages, allParameters, paramtext, closeTable, true);
 
     fileTest = new fileTests.FileTests(messages, parameters);
 
