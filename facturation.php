@@ -6,6 +6,7 @@ require_once("assets/Sap.php");
 require_once("assets/Lock.php");
 require_once("assets/Message.php");
 require_once("assets/Plateforme.php");
+require_once("assets/ParamZip.php");
 require_once("includes/State.php");
 require_once("includes/Tarifs.php");
 require_once("session.inc");
@@ -22,6 +23,22 @@ if(!isset($_GET["plateforme"])) {
 $plateforme = $_GET['plateforme'];
 checkPlateforme("facturation", $plateforme);
 
+function firstNewTarifs($plateforme)
+{
+    $res = [];
+    $dir = DATA.$plateforme;
+    foreach(globReverse($dir) as $dirYear) {
+        foreach(globReverse($dirYear) as $dirMonth) {
+            if(file_exists($dirMonth."/".ParamZip::NAME)){
+                $year = basename($dirYear);
+                $month = basename($dirMonth);
+                $res = [$month, $year];
+            }
+        }
+    }
+    return $res;
+}
+
 // Check if first facturation, if one is running, which one is the last one
 $dir = DATA.$plateforme;
 $first = true;
@@ -32,6 +49,10 @@ if(file_exists($dir)) {
     if(empty($current)) {
         if(empty($state->getLast())) {
             $first = true;
+            $tbTarifs = firstNewTarifs($plateforme);
+            if(count($tbTarifs) > 0) {
+                $dateTarifs = $tbTarifs[0]."/".$tbTarifs[1];
+            }
         }
     }
 }
@@ -91,6 +112,12 @@ include("includes/lock.inc");
                     <p>Dernière facturation : <?php echo (!empty($state->getLast())) ? $state->getLast() : "aucune";  ?></p>
                     <input type="hidden" name="plate" id="plate" value="<?= $plateforme ?>" />
                     <input type="hidden" name="type" id="type" value="SAP">
+                    <?php
+                    if($first && count($tbTarifs) > 0) {
+                        echo '<input type="hidden" name="month" id="month" value="'.$tbTarifs[0].'" />';
+                        echo '<input type="hidden" name="year" id="year" value="'.$tbTarifs[1].'">';
+                    }
+                    ?>
                     <div id="buttons">
                         <div class="but-col">
                             <?php
@@ -107,6 +134,15 @@ include("includes/lock.inc");
                                         <div><button type="button" id="destroy" <?= $disabled ?> class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button>
                                         </div>
                                     <?php }
+                                }
+                                else {
+                                    if(count($tbTarifs) > 0) {
+                                        $des = "desactived-tile";
+                                        if(empty($current) && empty($disabled) && !Unused::exists($dir."/".$state->getLastYear()."/".$state->getLastMonth())) {
+                                            $des = "";
+                                        }
+                                        echo uploader("Facturation Pro Forma : ".$dateTarifs, "FIRST-PF", $des);
+                                    }
                                 }
                                 if(IS_SUPER && TEST_MODE) {
                                     $choices = [];
@@ -137,8 +173,8 @@ include("includes/lock.inc");
                         <div class="but-col">
                             <?php
                                 if($first) {
-                                    if(DATA_GEST['tarifs'] && array_key_exists($plateforme, DATA_GEST['tarifs'])) {
-                                        echo uploader("Préparer 1ère facturation", "FIRST", "");
+                                    if(count($tbTarifs) > 0) {
+                                        echo uploader("Préparer 1ère facturation : ".$dateTarifs, "FIRST", "");
                                     }
                                 }
                                 else {

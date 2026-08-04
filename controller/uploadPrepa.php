@@ -18,6 +18,7 @@ require_once("../session.inc");
  */
 if(isset($_POST['type'])) {
     $type = $_POST['type'];
+    $paramtext = new ParamText();
 
     if($type != "SIMU") {
         if(!isset($_POST['plate'])) {
@@ -59,21 +60,7 @@ if(isset($_POST['type'])) {
                             if(!copy(CONFIG.ParamText::NAME, $tmpDir.ParamText::NAME)) {
                                 $msg .= "erreur de copie de ".ParamText::NAME;
                             }
-                            if($type == "FIRST") {
-                                // if you need to upload all data, we need ton check consistancy
-                                $result = new Result($tmpDir);
-                                $paramedit = new ParamEdit($tmpDir);
-                                if($plateforme !== $paramedit->getParam('Platform')) {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.4');
-                                }
-                                elseif($plateforme !== $result->getParam('Platform')) {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.5');
-                                }
-                                elseif(!State::isNextToOrSameAs($result->getParam('Month'), $result->getParam('Year'), $paramedit->getParam('Month'), $paramedit->getParam('Year'))) {
-                                    $msg = $messages->getMessage('msg3')."<br/>".$messages->getMessage('msg3.6');
-                                }
-                            }
-                            elseif($type == "SIMU") {
+                            if($type == "SIMU") {
                                 $result = new Result($tmpDir);
                                 $paramedit = new ParamEdit($tmpDir);
                                 if($paramedit->getParam('Type') !== "SIMU") {
@@ -88,36 +75,50 @@ if(isset($_POST['type'])) {
                                 $plateforme = $paramedit->getParam('Platform');
                             }
                             else {
-                                // with previous internal data, consistancy should be guaranteed
-                                $state = new State(DATA.$plateforme);
-                                $dirOut = $state->getLastPath()."/OUT/";
-                                foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
-                                    if($file == ParamText::NAME) {
-                                        continue;
-                                    }
-                                    if(!copy($dirOut.$file, $tmpDir.$file)) {
-                                        $msg .= "erreur de copie de ".$file;
-                                        break;
-                                    }
+                                if($type == "FIRST" || $type == "FIRST-PF") {
+                                    $year = $_POST['year'];
+                                    $month = $_POST['month'];
+                                    $year_1 = State::getPreviousYear($year, $month);
+                                    $month_1 = State::getPreviousMonth($year, $month);
+                                    $version = Version::load('../');
+                                    $vl = $version["version-logiciel"][2];
+                                    $array = [["FactEl", $paramtext->getParam('res-factel'), $vl], ["Platform", $paramtext->getParam('res-pltf'), $plateforme], ["Year", $paramtext->getParam('res-year'), $year_1], ["Month", $paramtext->getParam('res-month'), $month_1], ["Version", $paramtext->getParam('res-version'), 0] , ["Folder", $paramtext->getParam('res-folder'), 0], ["Type", $paramtext->getParam('res-type'), "SAP"]];
+                                    Csv::write($tmpDir."/".Result::NAME, $array);
+                                    $array = [[$paramtext->getParam('proj-id'), $paramtext->getParam('platf-code'), $paramtext->getParam('item-idclass'), $paramtext->getParam('subsid-alrdygrant')]];
+                                    Csv::write($tmpDir."/granted_".$year_1."_".$month_1.".csv", $array);
+                                    $array = [[$paramtext->getParam('year'), $paramtext->getParam('month'), $paramtext->getParam('day'), $paramtext->getParam('week-nbr'), $paramtext->getParam('platf-code'), $paramtext->getParam('client-code'), $paramtext->getParam('user-id')]];
+                                    Csv::write($tmpDir."/User-labo_".$year_1."_".$month_1.".csv", $array);
                                 }
-                                if(!copy($state->getLastPath()."/sap.csv", $tmpDir."sap.csv")) {
-                                    $msg .= "erreur de copie de ".$file;
+                                else {
+                                    $state = new State(DATA.$plateforme);
+                                    $dirOut = $state->getLastPath()."/OUT/";
+                                    foreach(array_diff(scandir($dirOut), ['.', '..']) as $file) {
+                                        if($file == ParamText::NAME) {
+                                            continue;
+                                        }
+                                        if(!copy($dirOut.$file, $tmpDir.$file)) {
+                                            $msg .= "erreur de copie de ".$file;
+                                            break;
+                                        }
+                                    }
+                                    if(!copy($state->getLastPath()."/sap.csv", $tmpDir."sap.csv")) {
+                                        $msg .= "erreur de copie de ".$file;
+                                    }
+                                    if($type == "REDO") {
+                                        $year = $state->getLastYear();
+                                        $month = $state->getLastMonth();
+                                    }
+                                    else {
+                                        $year = $state->getNextYear();
+                                        $month = $state->getNextMonth();
+                                    }
                                 }
 
                                 $wm = "";
                                 $tyfact = "SAP";
-                                if($type == "PROFORMA") {
-                                    $paramtext = new ParamText();
+                                if($type == "PROFORMA" || $type == "FIRST-PF") {
                                     $wm = $paramtext->getParam('filigr-prof');
                                     $tyfact = "PROFORMA";
-                                }
-                                if($type == "REDO") {
-                                    $year = $state->getLastYear();
-                                    $month = $state->getLastMonth();
-                                }
-                                else {
-                                    $year = $state->getNextYear();
-                                    $month = $state->getNextMonth();
                                 }
                                 $array = [["Platform", $plateforme], ["Year", $year], ["Month", $month], ["Type", $tyfact], ["Watermark", $wm]];
                                 Csv::write($tmpDir."/".ParamEdit::NAME, $array);
@@ -125,6 +126,11 @@ if(isset($_POST['type'])) {
                                 $paramFile = DATA.$plateforme."/".$year."/".$month."/".ParamZip::NAME;
                                 if(file_exists($paramFile)) {
                                     $msg .= Zip::unzip($paramFile, $tmpDir);
+                                }
+                                else {
+                                    if($type == "FIRST" || $type == "FIRST-PF") {
+                                        $msg .= "erreur : parametres.zip absent pour ce mois";
+                                    }
                                 }
                             }
                             if(empty($msg)) {
@@ -147,7 +153,7 @@ if(isset($_POST['type'])) {
                         else {
                             $_SESSION['alert-danger'] = $msg;
                         }
-                        State::delDir($tmpDir);
+                        //State::delDir($tmpDir);
                     }
                     else {
                         $errors= error_get_last();

@@ -13,7 +13,7 @@ class Message extends Csv
      */
     const NAME = "message.csv";
 
-    const LABELS = ["msg1", "msg2", "msg3", "msg3.1", "msg3.2", "msg3.3", "msg3.4", "msg3.5", "msg3.6", "msg4", "msg5", "msg6", "msg7", "msg8", "msg9", "msg10",
+    const LABELS = ["msg1", "msg2", "msg3", "msg3.1", "msg3.2", "msg3.3", "msg4", "msg5", "msg6", "msg7", "msg8", "msg9", "msg10",
                         "paramfact00",
                         "plateforme00", "plateforme01", "plateforme02",
                         "articlesap00", "articlesap01", "articlesap02", "articlesap03", "articlesap04",

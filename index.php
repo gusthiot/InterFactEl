@@ -57,7 +57,6 @@ function tarifsExists($plateforme)
 {
     $dir = DATA.$plateforme;
     foreach(globReverse($dir) as $dirYear) {
-        $year = basename($dirYear);
         foreach(globReverse($dirYear) as $dirMonth) {
             if(Lock::exists($dirMonth, 'month')) {
                 return true;
