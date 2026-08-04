@@ -3,6 +3,7 @@
 require_once("assets/Lock.php");
 require_once("assets/Scroll.php");
 require_once("assets/Plateforme.php");
+require_once("assets/ParamZip.php");
 require_once("includes/State.php");
 require_once("session.inc");
 
@@ -15,11 +16,16 @@ include("includes/lock.inc");
  * @param string $title tile title
  * @param string $icon tile icon
  * @param string $input hidden input value if any
+ * @param bool $desactive if tile is active or not
  * @return string
  */
-function tile(string $class, string $title, string $icon, string $input=""): string
+function tile(string $class, string $title, string $icon, string $input="", bool $desactive=false): string
 {
-    return '<div class="tile big-tile '.$class.'">
+    $desactived = "";
+    if($desactive) {
+        $desactived = "desactived-tile";
+    }
+    return '<div class="tile '.$desactived.' big-tile '.$class.'">
                 '.$input.'
                 '.$title.'
                 <svg class="icon feather icon-tile" aria-hidden="true">
@@ -45,6 +51,23 @@ function uploaderTile(string $action, string $title, string $icon): string
                     <use xlink:href="#'.$icon.'"></use>
                 </svg>
             </label>';
+}
+
+function tarifsExists($plateforme)
+{
+    $dir = DATA.$plateforme;
+    foreach(globReverse($dir) as $dirYear) {
+        $year = basename($dirYear);
+        foreach(globReverse($dirYear) as $dirMonth) {
+            if(Lock::exists($dirMonth, 'month')) {
+                return true;
+            }
+            if(file_exists($dirMonth."/".ParamZip::NAME)){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 $plateformes = new Plateforme();
@@ -185,11 +208,15 @@ $plateformes = new Plateforme();
                                 <h5>Facturation</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach(DATA_GEST['facturation'] as $plateforme => $order) { // watabout order ??
+                                foreach($gestionnaire->getPlateformes(USER) as $plateforme => $rights) {
+                                    $desactive = true;
+                                    if($rights['facturation'] && tarifsExists($plateforme)) {
+                                        $desactive = false;
+                                    }
                                     $name = $plateformes->getName($plateforme);
                                     $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
                                     $input = '<input type="hidden" id="plate-fact" value="'.$plateforme.'" />';
-                                    echo tile("facturation", $title, "dollar-sign", $input);
+                                    echo tile("facturation", $title, "dollar-sign", $input, $desactive);
                                 }
                                 ?>
                                 </div>
@@ -202,21 +229,16 @@ $plateformes = new Plateforme();
                                 <h5>Tarifs</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach(DATA_GEST['tarifs'] as $plateforme => $order) {
-                                    $available = false;
-                                    if(file_exists(DATA.$plateforme)) {
-                                        $available = true;
-                                        $state = new State(DATA.$plateforme);
-                                        if(empty($state->getLast())) {
-                                            $available = false;
-                                        }
+                                foreach($gestionnaire->getPlateformes(USER) as $plateforme => $rights) {
+
+                                    $desactive = true;
+                                    if($rights['tarifs']) {
+                                        $desactive = false;
                                     }
-                                    if($available) {
-                                        $name = $plateformes->getName($plateforme);
-                                        $input = '<input type="hidden" id="plate-tarifs" value="'.$plateforme.'" />';
-                                        $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
-                                        echo tile("tarifs", $title, "settings", $input);
-                                    }
+                                    $name = $plateformes->getName($plateforme);
+                                    $input = '<input type="hidden" id="plate-tarifs" value="'.$plateforme.'" />';
+                                    $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
+                                    echo tile("tarifs", $title, "settings", $input, $desactive);
                                 }
                                 ?>
                                 </div>

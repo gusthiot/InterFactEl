@@ -31,19 +31,7 @@ $plateformes = new Plateforme();
 $name = $plateformes->getName($plateforme);
 
 $dir = DATA.$plateforme;
-$available = false;
 $state = new State($dir);
-if(file_exists($dir)) {
-    $available = true;
-    if(empty($state->getLast())) {
-        $available = false;
-    }
-}
-if(!$available) {
-    $_SESSION['alert-danger'] = "Les tarifs de cette plateforme ne peuvent pas être modifiés !";
-    header('Location: index.php');
-    exit;
-}
 $version = Version::load('./');
 
 $messages = new Message();
@@ -195,10 +183,19 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                                     }
                                 }
                                 if(empty($m0)) {
-                                    $m = $state->getNextMonth();
-                                    $y = $state->getNextYear();
-                                    $m0Dis = $m."/".$y;
-                                    $m0 = $y.$m;
+                                    $state = new State($dir);
+                                    if(empty($state->getLast())) {
+                                        $m0Dis = "--/--";
+                                        $m0 = date('Y').State::addToMonth(date('m'), -9);
+                                        $status = 0;
+                                    }
+                                    else {
+                                        $m = $state->getNextMonth();
+                                        $y = $state->getNextYear();
+                                        $m0Dis = $m."/".$y;
+                                        $m0 = $y.$m;
+                                        $status = 0;
+                                    }
                                 }
                             ?></table>
                         </div>
@@ -214,6 +211,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                                             Importer
                                         </label>
                                         <div id="tarifs-read" class="tile mini-tile">Lire</div>
+                                        <div id="tarifs-create" class="tile mini-tile">Créer</div>
                                     </div>
                                 </div>
                                 <div id="tarifs-center">

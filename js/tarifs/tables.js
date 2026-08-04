@@ -180,7 +180,7 @@ export function displayFiles() {
 }
 
 export function firstChecks(plateforme, verify) {
-    return runCheck(tests.checkMandatory(contents, pdfs)) ||
+    return //runCheck(tests.checkMandatory(contents, pdfs)) ||
         runCheck(tests.checkAuthorized(contents, pdfs, optCsvs, optPdfs)) ||
         runCheck(tests.checkColumnsNumbers(contents)) ||
         runCheck(tests.checkPlateFact(plateforme, messages, contents, optPdfs, verify));
@@ -212,10 +212,36 @@ export function saveContents() {
     sessionStorage.setItem("optPdfs", JSON.stringify(optPdfs));
 }
 
+export function emptyContents() {
+    Object.keys(tests.getMandatoryCsvs()).forEach(function(filename) {
+        contents[filename] = emptyContent(filename);
+    });
+}
+
+function emptyContent(filename) {
+    if(tests.getMandatoryCsvs()[filename].tools || tests.getMandatoryCsvs()[filename].bidim) {
+        return [];
+    }
+    else {
+        let content = [];
+        tests.getMandatoryCsvs()[filename].labels.forEach(function(label) {
+            let line = [label];
+            for(let numCol = 1; numCol < tests.getMandatoryCsvs()[filename].numcol; numCol++) {
+                line.push("");
+            }
+            content.push(line);
+        });
+        return content;
+    }
+}
+
 export function extract(plateforme, files, check) {
     Object.keys(tests.getMandatoryCsvs()).forEach(function(filename) {
         if(Object.keys(files).includes(filename + ".csv")) {
             contents[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
+        }
+        else {
+            contents[filename] = emptyContent(filename);
         }
     });
     tests.optionalCsvs.forEach(function(filename) {

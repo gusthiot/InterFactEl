@@ -17,7 +17,7 @@ export function setMandatoryCsvs(parameters) {
 export function getMandatoryCsvs() {
     return mandatoryCsvs;
 }
-
+/*
 export function checkMandatory(contents, pdfs) {
     let missing = [];
     Object.keys(mandatoryCsvs).forEach(function(mandatory) {
@@ -38,7 +38,7 @@ export function checkMandatory(contents, pdfs) {
         return 'il manque " '+ list +'" dans les paramètres';
     }
     return "";
-}
+}*/
 
 export function checkAuthorized(contents, pdfs, optCsvs, optPdfs) {
     let polluting = [];

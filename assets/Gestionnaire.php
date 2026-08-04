@@ -23,36 +23,52 @@ class Gestionnaire extends Csv
      *
      * @var array
      */
-    private array $gestionnaires;
-    private array $gestionnaires2;
+    private array $rights;
+
+    private array $content;
+
+    private array $plateformes;
 
     /**
      * Class constructor
      */
     function __construct()
     {
-        $this->gestionnaires = [];
-        $this->gestionnaires2 = [];
+        $this->rights = [];
+        $this->content = [];
+        $this->plateformes = [];
         $lines = self::extract(CONFIG.self::NAME, true);
         foreach($lines as $line) {
 
             $line2 = [$line[0], $line[1], 0, 0, 0, $line[3]];
 
-            if(!array_key_exists($line[0], $this->gestionnaires)) {
+            if(!array_key_exists($line[0], $this->rights)) {
                 foreach(self::RIGHTS as $name=>$pos) {
-                    $this->gestionnaires[$line[0]][$name] = [];
+                    $this->rights[$line[0]][$name] = [];
+                }
+            }
+
+            if(!array_key_exists($line[0], $this->plateformes)) {
+                $this->plateformes[$line[0]] = [];
+            }
+
+            if(!array_key_exists($line[1], $this->plateformes[$line[0]])) {
+                $this->plateformes[$line[0]][$line[1]] = [];
+                foreach(self::RIGHTS as $name=>$pos) {
+                    $this->plateformes[$line[0]][$line[1]][$name] = 0;
                 }
             }
 
             foreach(self::RIGHTS as $name=>$pos) {
                 if(self::hasRight($line[2], $pos) && ($line[3] > 0)) {
-                    $this->gestionnaires[$line[0]][$name][$line[1]] = $line[3];
+                    $this->rights[$line[0]][$name][$line[1]] = $line[3];
 
+                    $this->plateformes[$line[0]][$line[1]][$name] = 1;
                     $line2[2-$pos+2] = 1;
                 }
             }
 
-            $this->gestionnaires2[] = $line2;
+            $this->content[] = $line2;
         }
     }
 
@@ -74,15 +90,23 @@ class Gestionnaire extends Csv
      * @param string $login user by its login surname
      * @return array
      */
-    function getGestionnaire(string $login): array
+    function getRights(string $login): array
     {
-        if(array_key_exists($login, $this->gestionnaires)) {
-            return $this->gestionnaires[$login];
+        if(array_key_exists($login, $this->rights)) {
+            return $this->rights[$login];
+        }
+        return [];
+    }
+
+    function getPlateformes(string $login): array
+    {
+        if(array_key_exists($login, $this->plateformes)) {
+            return $this->plateformes[$login];
         }
         return [];
     }
 
     function getContent() {
-        return $this->gestionnaires2;
+        return $this->content;
     }
 }

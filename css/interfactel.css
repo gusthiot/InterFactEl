@@ -227,6 +227,12 @@ input[type="file"] {
   margin: 10px;
 }
 
+.desactived-tile {
+  opacity: 0.5;
+  cursor: none;
+  pointer-events: none;
+}
+
 .red-tile {
   background-color: white;
   color: var(--groseille);
@@ -272,12 +278,6 @@ input[type="file"] {
 .selected-red-tile {
   background-color: var(--groseille) !important;
   color: white !important;
-}
-
-.desactived-tile {
-  opacity: 0.5;
-  cursor: none;
-  pointer-events: none;
 }
 
 .tile:hover {

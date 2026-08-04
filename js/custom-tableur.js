@@ -202,7 +202,7 @@ export class CustomTableur {
         if(numline.length > 0) {
             return $(numline).html();
         }
-        return $(cells[numCol]).html();
+        return $(cell).html();
     }
 
     trToggle(tr, tr1) {

@@ -42,7 +42,7 @@ if(!isset($_SESSION['separator'])) {
  */
 $superviseur = new Superviseur();
 $gestionnaire = new Gestionnaire();
-define( 'DATA_GEST', $gestionnaire->getGestionnaire(USER) );
+define( 'DATA_GEST', $gestionnaire->getRights(USER) );
 if(!DATA_GEST) {
     $_SESSION['alert-info'] = "Vous n'avez aucun droit de gestion";
 }
