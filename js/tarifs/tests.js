@@ -1,6 +1,5 @@
 let mandatoryCsvs = {};
 
-export const optionalCsvs = ["categprix"];
 export const mandatoryPdfs = {"logo": {
                             name: "Logo PDF"
                         }
@@ -17,30 +16,8 @@ export function setMandatoryCsvs(parameters) {
 export function getMandatoryCsvs() {
     return mandatoryCsvs;
 }
-/*
-export function checkMandatory(contents, pdfs) {
-    let missing = [];
-    Object.keys(mandatoryCsvs).forEach(function(mandatory) {
-        if(!Object.keys(contents).includes(mandatory)) {
-            missing.push(mandatory + ".csv");
-        }
-    });
-    Object.keys(mandatoryPdfs).forEach(function(mandatory) {
-        if(!Object.keys(pdfs).includes(mandatory)) {
-            missing.push(mandatory + ".pdf");
-        }
-    });
-    if(missing.length > 0) {
-        let list = "";
-        missing.forEach( function(miss) {
-            list += miss+" ";
-        });
-        return 'il manque " '+ list +'" dans les paramètres';
-    }
-    return "";
-}*/
 
-export function checkAuthorized(contents, pdfs, optCsvs, optPdfs) {
+export function checkAuthorized(contents, pdfs, optPdfs) {
     let polluting = [];
     Object.keys(contents).forEach(function(filename) {
         if(!Object.keys(mandatoryCsvs).includes(filename)) {
@@ -50,11 +27,6 @@ export function checkAuthorized(contents, pdfs, optCsvs, optPdfs) {
     Object.keys(pdfs).forEach(function(filename) {
         if(!Object.keys(mandatoryPdfs).includes(filename)) {
             polluting.push(filename+".pdf");
-        }
-    });
-    Object.keys(optCsvs).forEach(function(filename) {
-        if(!optionalCsvs.includes(filename)) {
-            polluting.push(filename+".csv");
         }
     });
     Object.keys(optPdfs).forEach(function(filename) {
@@ -72,11 +44,11 @@ export function checkAuthorized(contents, pdfs, optCsvs, optPdfs) {
             list += pollute;
             num++;
         });
-        let verbe = "est";
+        let verbe = "sera";
         if(num > 1) {
-            verbe = "sont";
+            verbe = "seront";
         }
-        return '" ' + list +'" ' + verbe + ' de trop dans le dossier importé';
+        return '" ' + list +'" ne ' + verbe + ' pas pris en compte';
     }
     return "";
 }
@@ -99,7 +71,7 @@ export function checkColumnsNumbers(contents) {
     return result;
 }
 
-export function checkPlateFact(plateforme, messages, contents, optPdfs, verify) {
+export function checkPlateFact(plateforme, messages, contents, optPdfs) {
     let result = "";
     const names = ["paramfact", "plateforme"];
     names.forEach(function(filename) {
@@ -115,25 +87,15 @@ export function checkPlateFact(plateforme, messages, contents, optPdfs, verify) 
             if(filename == "plateforme") {
                 if(line[0] == mandatoryCsvs[filename].labels[0]) {
                     if(line[2] != plateforme) {
-                        if(verify) {
-                            result += messages["plateforme01"] + " <br />";
-                        }
-                        else {
-                            result +=  "L’étiquette [Id-Plateforme] dans plateforme.csv ne correspond pas à la plateforme de travail <br />";
-                        }
+                        result += messages["plateforme01"] + " <br />";
                     }
                 }
                 if(line[0] == mandatoryCsvs[filename].labels[7]) {
                     if(!["OUI", "NON"].includes(line[2])) {
-                        if(verify) {
-                            result += messages["plateforme02"] + " <br />";
-                        }
-                        else {
-                            result += "L’étiquette [Grille-Plateforme] dans plateforme.csv ne peut prendre comme valeur que OUI ou NON <br />";
-                        }
+                        result += messages["plateforme02"] + " <br />";
                     }
                     if(line[2] == "OUI" && !Object.keys(optPdfs).includes("grille")) {
-                        result += "il manque la grille de tarifs mentionnée dans le fichier " + filename + ".csv <br />";
+                        result += messages["grille01"] + " <br />";
                     }
                 }
             }
@@ -151,7 +113,7 @@ export function checkPlateFact(plateforme, messages, contents, optPdfs, verify) 
     return result;
 }
 
-export function checkColumns(fileTest, contents, pdfs, optPdfs, ids) {
+export function checkColumns(fileTest, contents, pdfs, optPdfs, ids, messages) {
     let result = "";
     let checks = {};
     Object.keys(mandatoryCsvs).forEach(function(filename) {

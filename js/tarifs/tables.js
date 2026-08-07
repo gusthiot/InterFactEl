@@ -4,7 +4,6 @@ import * as tests from "./tests.js";
 
 let messages = {};
 let contents = {};
-let optCsvs = {};
 let pdfs = {};
 let optPdfs = {}
 let ids = {};
@@ -179,11 +178,13 @@ export function displayFiles() {
     $('#tarifs-check').removeClass('desactived-tile');
 }
 
-export function firstChecks(plateforme, verify) {
-    return //runCheck(tests.checkMandatory(contents, pdfs)) ||
-        runCheck(tests.checkAuthorized(contents, pdfs, optCsvs, optPdfs)) ||
-        runCheck(tests.checkColumnsNumbers(contents)) ||
-        runCheck(tests.checkPlateFact(plateforme, messages, contents, optPdfs, verify));
+export function importChecks(plateforme) {
+    return runCheck(tests.checkColumnsNumbers(contents)) ||
+        runCheck(tests.checkPlateFact(plateforme, messages, contents, optPdfs));
+}
+
+export function authorizedCheck() {
+    $('#message').html(tests.checkAuthorized(contents, pdfs, optPdfs));
 }
 
 function runCheck(res) {
@@ -212,13 +213,13 @@ export function saveContents() {
     sessionStorage.setItem("optPdfs", JSON.stringify(optPdfs));
 }
 
-export function emptyContents() {
+export function emptyContents(plateforme) {
     Object.keys(tests.getMandatoryCsvs()).forEach(function(filename) {
-        contents[filename] = emptyContent(filename);
+        contents[filename] = emptyContent(filename, plateforme);
     });
 }
 
-function emptyContent(filename) {
+function emptyContent(filename, plateforme) {
     if(tests.getMandatoryCsvs()[filename].tools || tests.getMandatoryCsvs()[filename].bidim) {
         return [];
     }
@@ -227,7 +228,12 @@ function emptyContent(filename) {
         tests.getMandatoryCsvs()[filename].labels.forEach(function(label) {
             let line = [label];
             for(let numCol = 1; numCol < tests.getMandatoryCsvs()[filename].numcol; numCol++) {
-                line.push("");
+                if((filename == "plateforme") && (label == "Id-Plateforme") && (numCol == 2)) {
+                    line.push(plateforme);
+                }
+                else {
+                    line.push("");
+                }
             }
             content.push(line);
         });
@@ -241,12 +247,7 @@ export function extract(plateforme, files, check) {
             contents[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
         }
         else {
-            contents[filename] = emptyContent(filename);
-        }
-    });
-    tests.optionalCsvs.forEach(function(filename) {
-        if(Object.keys(files).includes(filename + ".csv")) {
-            optCsvs[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
+            contents[filename] = emptyContent(filename, plateforme);
         }
     });
     Object.keys(tests.mandatoryPdfs).forEach(function(filename) {
@@ -259,15 +260,10 @@ export function extract(plateforme, files, check) {
             optPdfs[filename] = files[filename + ".pdf"];
         }
     });
-
-    if(check && tests.firstChecks(plateforme, contents, pdfs, optCsvs, optPdfs, false)) {
-        return;
-    }
 }
 
 export function reset() {
     contents = {};
-    optCsvs = {};
     pdfs = {};
     optPdfs = {}
     ids = {};

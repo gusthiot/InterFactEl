@@ -103,7 +103,7 @@
             {
                 "type": "specific",
                 "lines": [
-                    {"type": "alphanum"},
+                    {"type": "none"},
                     {"type": "alphanum"},
                     {"type": "alphanum"},
                     {"type": "alphanum"},
@@ -188,7 +188,7 @@
     },
     "groupe": {
         "name": "Groupes",
-        "numcol": 9,
+        "numcol": 10,
         "tools": true,
         "columns": [
             {"type": "alphanum"},

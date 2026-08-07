@@ -71,10 +71,11 @@ $("#tarifs-import").on("change", function(e) {
         json += "}";
         tables.extract(plateforme, JSON.parse(json));
 
-        if(tables.firstChecks(plateforme, false)) {
+        if(tables.importChecks(plateforme, false)) {
             tables.removeContents();
         }
         else {
+            tables.authorizedCheck();
             tables.saveContents();
             tables.displayFiles();
             $('#tarifs-cancel').removeClass('desactived-tile');
@@ -84,7 +85,7 @@ $("#tarifs-import").on("change", function(e) {
 
 $("#tarifs-create").on("click", function() {
     tables.reset();
-    tables.emptyContents();
+    tables.emptyContents(plateforme);
     tables.displayFiles();
 });
 
@@ -124,14 +125,9 @@ $("#tarifs-cancel").on("click", function() {
 });
 
 $("#tarifs-check").on("click", function() {
-
-    if(tables.firstChecks(plateforme, true)) {
-        return;
+    if(!tables.checkTables()) {
+        $('#tarifs-load').removeClass('desactived-tile');
     }
-    if(tables.checkTables()) {
-        return;
-    }
-    $('#tarifs-load').removeClass('desactived-tile');
 });
 
 $(document).on("click", "#tarifs-save", function() {
