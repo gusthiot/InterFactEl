@@ -192,6 +192,7 @@
         "tools": true,
         "columns": [
             {"type": "alphanum"},
+            {"type": "txt"},
             {"type": "menu", "list": ["OUI", "NON"]},
             {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K1", "intitule": 2},
             {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K2", "intitule": 2},
@@ -203,21 +204,44 @@
         ],
         "tests": [
             {"type": "unique", "id": [0], "msg": "01"},
-            {"type": "in", "col": 1, "msg": "02"},
-            {"type": "ref", "col": 2, "msg": "03"},
+            {"type": "in", "col": 2, "msg": "02"},
             {"type": "ref", "col": 3, "msg": "03"},
             {"type": "ref", "col": 4, "msg": "03"},
             {"type": "ref", "col": 5, "msg": "03"},
             {"type": "ref", "col": 6, "msg": "03"},
             {"type": "ref", "col": 7, "msg": "03"},
             {"type": "ref", "col": 8, "msg": "03"},
-            {"type": "itemk", "col": 2, "msg": "04"},
+            {"type": "ref", "col": 9, "msg": "03"},
             {"type": "itemk", "col": 3, "msg": "04"},
             {"type": "itemk", "col": 4, "msg": "04"},
             {"type": "itemk", "col": 5, "msg": "04"},
             {"type": "itemk", "col": 6, "msg": "04"},
             {"type": "itemk", "col": 7, "msg": "04"},
-            {"type": "itemk", "col": 8, "msg": "04"}
+            {"type": "itemk", "col": 8, "msg": "04"},
+            {"type": "itemk", "col": 9, "msg": "04"}
+        ]
+    },
+    "ciseau": {
+        "name": "Ciseaux Horaires",
+        "numcol": 6,
+        "tools": true,
+        "columns": [
+            {"type": "ref", "origin": "groupe", "col": 2, "value": "OUI", "intitule": 1},
+            {"type": "num", "zero": true},
+            {"type": "num", "zero": true, "max": 100},
+            {"type": "num", "zero": true},
+            {"type": "num", "zero": true, "max": 100},
+            {"type": "num", "zero": true}
+        ],
+        "tests": [
+            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "ref", "col": 0, "msg": "02"},
+            {"type": "ext", "col": 0, "extCol": 2, "extValue": "OUI", "extName": "groupe", "msg": "03"},
+            {"type": "num", "col": 1, "msg": "04"},
+            {"type": "num", "col": 2, "msg": "05"},
+            {"type": "num", "col": 3, "msg": "06"},
+            {"type": "num", "col": 4, "msg": "07"},
+            {"type": "num", "col": 5, "msg": "08"}
         ]
     },
     "coeffprestation": {

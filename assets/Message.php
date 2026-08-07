@@ -24,6 +24,7 @@ class Message extends Csv
                         "classeprestation00", "classeprestation01", "classeprestation02", "classeprestation03", "classeprestation04", "classeprestation05", "classeprestation06", "classeprestation07",
                         "categorie00", "categorie01", "categorie02", "categorie03", "categorie04", "categorie05",
                         "groupe00", "groupe01", "groupe02", "groupe03", "groupe04",
+                        "ciseau00", "ciseau01", "ciseau02", "ciseau03", "ciseau04", "ciseau05", "ciseau06", "ciseau07", "ciseau08",
                         "coeffprestation00", "coeffprestation01", "coeffprestation02", "coeffprestation03", "coeffprestation04", "coeffprestation05",
                         "basecateg00", "basecateg01", "basecateg02", "basecateg03", "basecateg04", "basecateg05",
                         "logo00", "logo01",
