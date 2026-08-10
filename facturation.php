@@ -49,14 +49,15 @@ if(file_exists($dir)) {
     if(empty($current)) {
         if(empty($state->getLast())) {
             $first = true;
-            $tbTarifs = firstNewTarifs($plateforme);
-            if(count($tbTarifs) > 0) {
-                $dateTarifs = $tbTarifs[0]."/".$tbTarifs[1];
-            }
         }
     }
 }
-
+if($first) {
+    $tbTarifs = firstNewTarifs($plateforme);
+    if(count($tbTarifs) > 0) {
+        $dateTarifs = $tbTarifs[0]."/".$tbTarifs[1];
+    }
+}
 $plateformes = new Plateforme();
 $name = $plateformes->getName($plateforme);
 $messages = new Message();

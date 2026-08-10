@@ -197,14 +197,6 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     }
 
     if($sap->status() == 4) {
-        $state = new State(DATA.$plateforme);
-        if(empty($state->getLast())) {
-            $dirTarifs = DATA.$plateforme."/".$year."/".$month."/";
-            $msg = Tarifs::saveFirst($dir, $dirTarifs);
-            if(!empty($msg)) {
-                $res .= $msg;
-            }
-        }
 
         Lock::save($dir, 'run', Lock::STATES['finalized']);
         $sep = strrpos($dir, "/");

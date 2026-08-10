@@ -85,6 +85,7 @@ function displayDates() {
 }
 
 $(document).on("click", "#dates-remove", function() {
+    $('#tarifs-files').show();
     $('#tarifs-select').html("");
 });
 

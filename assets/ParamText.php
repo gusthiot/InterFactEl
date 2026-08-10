@@ -57,7 +57,8 @@ class ParamText extends Csv
                     "table-listeplateforme-0", "table-listeplateforme-1", "table-listeplateforme-2", "table-listeplateforme-3", "table-listeplateforme-4",
                     "table-personnel-0", "table-personnel-1", "table-personnel-2", "table-personnel-3",
                     "table-gestionnaire-0", "table-gestionnaire-1", "table-gestionnaire-2", "table-gestionnaire-3", "table-gestionnaire-4", "table-gestionnaire-5", "table-gestionnaire-6",
-                    "table-superviseur-0"];
+                    "table-superviseur-0",
+                    "cae-annee-fact", "cae-mois-fact", "cae-id-compte", "cae-id-user", "cae-id-machine", "cae-login", "cae-HP", "cae-HC", "cae-DRUN", "cae-DOP", "cae-id-operator", "cae-rem-operator", "cae-rem-staff", "cae-validation", "cae-id-validator"];
 
     /**
      * Array containing the parameters, by specific keys

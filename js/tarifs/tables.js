@@ -360,5 +360,6 @@ export function getEncFiles() {
     Object.keys(optPdfs).forEach(function(name) {
         files[name+".pdf"] = optPdfs[name];
     });
+    console.log(files);
     return JSON.stringify(files);
 }

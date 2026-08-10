@@ -27,43 +27,43 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
     $messages = new Message();
 
     $first = Tarifs::firstDate($dir);
+    if($first != "") {
+        while($date >= $first) {
 
-    while($date >= $first) {
+            $month = substr($date, 4, 2);
+            $year = substr($date, 0, 4);
 
-        $month = substr($date, 4, 2);
-        $year = substr($date, 0, 4);
+            $dirMonth = $dir."/".$year."/".$month;
+            if(Lock::exists($dirMonth, 'month')) {
+                break;
+            }
 
-        $dirMonth = $dir."/".$year."/".$month;
-        if(Lock::exists($dirMonth, 'month')) {
-            break;
-        }
+            $label = Tarifs::label($dirMonth);
 
-        $label = Tarifs::label($dirMonth);
-
-        if(Tarifs::v0_exists($dirMonth)) {
-            if($m0 == $date) {
-                $status = $_POST["status"];
-                $status < 4 ? $warning = $messages->getMessage('msg10') : $warning = "";
-                Unused::exists($dirMonth) ? $diode = 1 : $diode = 0;
-                in_array($status, [5, 7]) ? $clic = 1 : $clic = 0;
-                $choices["remove-".$year.$month] = [$month." ".$year, $label, $clic, $diode, 0, $warning];
+            if(Tarifs::v0_exists($dirMonth)) {
+                if($m0 == $date) {
+                    $status = $_POST["status"];
+                    $status < 4 ? $warning = $messages->getMessage('msg10') : $warning = "";
+                    Unused::exists($dirMonth) ? $diode = 1 : $diode = 0;
+                    in_array($status, [5, 7]) ? $clic = 1 : $clic = 0;
+                    $choices["remove-".$year.$month] = [$month." ".$year, $label, $clic, $diode, 0, $warning];
+                }
+                else {
+                    $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, ""];
+                }
             }
             else {
-                $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, ""];
+                if(Unused::exists($dirMonth)) {
+                    $warning = Tarifs::warning9($dirMonth, $version);
+                    $choices["remove-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, $warning];
+                }
+                else {
+                    $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, ""];
+                }
             }
+            $date = State::decreaseDate($date);
         }
-        else {
-            if(Unused::exists($dirMonth)) {
-                $warning = Tarifs::warning9($dirMonth, $version);
-                $choices["remove-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, $warning];
-            }
-            else {
-                $choices["remove-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, ""];
-            }
-        }
-        $date = State::decreaseDate($date);
     }
 
     echo json_encode($choices);
-
 }

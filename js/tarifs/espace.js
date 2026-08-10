@@ -92,10 +92,10 @@ $("#tarifs-create").on("click", function() {
 /** Right */
 
 $("#tarifs-load").on("click", function() {
+    $('#tarifs-files').hide();
     $.post("controller/getLoadDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
         let first = 0;
         const choices = JSON.parse(data);
-        console.log(choices);
         if(Object.keys(choices).length > 6) {
             first = Object.keys(choices).length - 6;
         }

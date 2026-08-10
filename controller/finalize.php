@@ -26,15 +26,6 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
     $dir = DATA.$plateforme."/".$year."/".$month."/".$version."/".$run;
     $dirPrevMonth = DATA.$plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
 
-    $state = new State(DATA.$plateforme);
-    $dirTarifs = DATA.$plateforme."/".$year."/".$month;
-    if(empty($state->getLast())) {
-        $msg = Tarifs::saveFirst($dir, $dirTarifs);
-        if(!empty($msg)) {
-            $_SESSION['alert-danger'] = $msg;
-        }
-    }
-
     $sap = new Sap($dir);
     $status = $sap->status();
     Lock::save($dir, 'run', Lock::STATES['finalized']);

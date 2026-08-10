@@ -11,29 +11,9 @@ class Tarifs
     /**
      * The names of the authorized and needed parameters files
      */
-    const FILES = ["articlesap.csv", "categorie.csv", "categprix.csv", "classeclient.csv", "classeprestation.csv", "coeffprestation.csv",
-        "groupe.csv", "overhead.csv", "paramfact.csv", "paramtext.csv", "partenaire.csv", "plateforme.csv", "logo.pdf", "grille.pdf",
-        "base.csv", "basecateg.csv", "categkitem.csv"];
+    const FILES = ["articlesap.csv", "base.csv", "basecateg.csv", "categorie.csv", "categprix.csv", "ciseau.csv", "classeclient.csv", "classeprestation.csv",
+        "coeffprestation.csv", "groupe.csv", "overhead.csv", "paramfact.csv", "partenaire.csv", "plateforme.csv", "logo.pdf", "grille.pdf"];
 
-    /**
-     * Saves the first parameters archive, when it's the first finalized facturation
-     *
-     * @param string $dir directory containing the facturation parameters files
-     * @param string $dirTarifs directory where to save the new created archive
-     * @return string empty, or error
-     */
-    static function saveFirst(string $dir, string $dirTarifs): string
-    {
-        $in = $dir."/IN/";
-        $msg = self::createZip($dirTarifs, $in);
-        if(empty($msg)) {
-            if(!Label::save($dirTarifs, "New")) {
-                return "Problème avec le label";
-            }
-            return "";
-        }
-        return $msg;
-    }
 
     /**
      * Suppresses an archive
@@ -280,6 +260,6 @@ class Tarifs
                 return basename($dirYear).basename($dirMonth);
             }
         }
-        return date('Y').State::addToMonth(date('m'), -9);
+        return "";
     }
 }
