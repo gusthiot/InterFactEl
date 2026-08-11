@@ -53,6 +53,7 @@ if(isset($_POST["plate"]) && isset($_POST["year"]) && isset($_POST["month"]) && 
         $_SESSION['alert-warning'] = "info vide ? ";
     }
 
+    $dirTarifs = DATA.$plateforme."/".$year."/".$month;
     Tarifs::finalize($dirTarifs);
 
     $txt = date('Y-m-d H:i:s')." | ".USER." | ".$year.", ".$month.", ".$version.", ".$run." | ".$run." | Finalisation manuelle | ".$status." | ".$status;

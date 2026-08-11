@@ -51,7 +51,7 @@ function displayTile(array $tiles): void
     </head>
 
     <body>
-        <div class="container-fluid" id="container" data-plateforme="<?= $plateforme ?>" data-disabled="$disabled">
+        <div class="container-fluid" id="container" data-plateforme="<?= $plateforme ?>" data-disabled="<?= $disabled ?>">
             <div id="head">
                 <div id="div-logo">
                     <a href="index.php"><img src="icons/epfl-logo.png" alt="Logo EPFL" id="logo-epfl"/></a>

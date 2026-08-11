@@ -129,7 +129,9 @@ include("includes/lock.inc");
                                     if(empty($current) && empty($disabled) && !Unused::exists($dir."/".$state->getLastYear()."/".$state->getLastMonth())) {
                                         $des = "";
                                     }
-                                    echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $des);
+                                    if(!empty($state->getLast())) {
+                                        echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $des);
+                                    }
                                     if(IS_SUPER && TEST_MODE) {
                                         ?>
                                         <div><button type="button" id="destroy" <?= $disabled ?> class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button>
@@ -186,8 +188,10 @@ include("includes/lock.inc");
                                             $desFact = "";
                                         }
                                     }
+                                    if(!empty($state->getLast())) {
                                     echo uploader("Refaire factures : ".$state->getLastMonth()."/".$state->getLastYear(), "REDO", $desRef);
                                     echo uploader("Facturation nouveau mois : ".$state->getNextMonth()."/".$state->getNextYear(), "MONTH", $desFact);
+                                    }
                                 }
                             ?>
                         </div>

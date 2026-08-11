@@ -129,7 +129,7 @@ class ReportConsommables extends Report
         foreach($consosArray as $line) {
             $prestation = $this->prestations[$line[2]];
             if(!array_key_exists($line[2], $this->tabs["consos"]["results"])) {
-                $this->tabs["consos"]["results"][$line[2]] = [];
+                $this->tabs["consos"]["results"][$line[2]] = ["mois" => []];
                 foreach($this->tabs["consos"]["dimensions"] as $dimension) {
                     $this->tabs["consos"]["results"][$line[2]][$dimension] = $prestation[$dimension];
                 }
@@ -137,9 +137,16 @@ class ReportConsommables extends Report
                     $this->tabs["consos"]["results"][$line[2]][$operation] = 0;
                 }
             }
+
+            if(!array_key_exists($this->monthly, $this->tabs["consos"]["results"][$line[2]]["mois"])) {
+                $this->tabs["consos"]["results"][$line[2]]["mois"][$this->monthly] = 0;
+            }
+
             foreach($this->tabs["consos"]["operations"] as $operation) {
                 $this->tabs["consos"]["results"][$line[2]][$operation] += $line[3];
+                $this->tabs["consos"]["results"][$line[2]]["mois"][$this->monthly] += $line[3];
             }
+
         }
     }
 
