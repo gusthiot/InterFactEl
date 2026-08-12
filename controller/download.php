@@ -4,9 +4,12 @@ require_once("../assets/ParamZip.php");
 require_once("../assets/Lock.php");
 require_once("../assets/Label.php");
 require_once("../assets/Sap.php");
-require_once("../includes/Zip.php");
+require_once("../assets/Message.php");
+require_once("../assets/ParamText.php");
 require_once("../assets/Plateforme.php");
+require_once("../includes/Zip.php");
 require_once("../includes/Tarifs.php");
+require_once("../includes/State.php");
 require_once("../session.inc");
 
 /**
@@ -22,7 +25,13 @@ if(isset($_GET['type'])) {
             header('Location: ../index.php');
             exit;
         }
-        readZip($type, $tmpFile, CONFIG);
+        $tmpDir = TEMP.'config_'.time().'/';
+        if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
+            copy(CONFIG.Message::NAME, $tmpDir.Message::NAME);
+            copy(CONFIG.Paramtext::NAME, $tmpDir.Paramtext::NAME);
+        }
+        readZip($type, $tmpFile, $tmpDir);
+        State::delDir($tmpDir);
     }
     elseif($type==="generated") {
         // prefacturation, only for the user running it

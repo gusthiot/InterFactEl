@@ -58,9 +58,6 @@ function tarifsExists($plateforme)
     $dir = DATA.$plateforme;
     foreach(globReverse($dir) as $dirYear) {
         foreach(globReverse($dirYear) as $dirMonth) {
-            if(Lock::exists($dirMonth, 'month')) {
-                return true;
-            }
             if(file_exists($dirMonth."/".ParamZip::NAME)){
                 return true;
             }
@@ -129,22 +126,32 @@ $plateformes = new Plateforme();
 
                 <div class="index-primary">
                     <h3>Supervision</h3>
-                    <div class="tiles">
-                        <?php
-                            echo tile("download-config", "<p>Download CONFIG <br /> files</p>", "download-cloud");
-                            $action = '<form action="controller/uploadConfig.php" method="post" id="form-config" enctype="multipart/form-data" >
-                                        <input type="file" name="zip_file" id="zip-config" accept=".zip">
-                                    </form>';
-                            echo uploaderTile($action, "Upload CONFIG <br > files", "upload-cloud");
-                            echo tile("manage-files", "<p>Edition des <br />fichiers</p>", "edit");
-                            echo tile('manage-message" data-toggle="modal" data-target="#scroll-modal', "<p>Gestion du <br />bandeau défilant</p>", "message-square");
-                        ?>
+                    <div class="index-secondary">
+                        <h5>Configuration</h5>
+                        <div class="tiles">
+                            <?php
+                                echo tile("download-config", "<p>Sauvegarder les <br /> fichiers CONFIG </p>", "download-cloud");
+                                $action = '<form action="controller/uploadConfig.php" method="post" id="form-config" enctype="multipart/form-data" >
+                                            <input type="file" name="zip_file" id="zip-config" accept=".zip">
+                                        </form>';
+                                echo uploaderTile($action, "Charger les <br /> fichiers CONFIG ", "upload-cloud");
+                            ?>
+                        </div>
                     </div>
-                    <div id="supervision-files">
-                        <div id="listeplateforme" class="file tile csv">Plateformes</div>
-                        <div id="personnel" class="file tile csv">Personnel</div>
-                        <div id="gestionnaire" class="file tile csv">Gestionnaire</div>
-                        <div id="superviseur" class="file tile csv">Superviseur</div>
+                    <div class="index-secondary">
+                        <h5>Administration</h5>
+                        <div class="tiles">
+                            <?php
+                                echo tile("manage-files", "<p>Gestion des <br /> droits </p>", "edit");
+                                echo tile('manage-message" data-toggle="modal" data-target="#scroll-modal', "<p>Gestion du <br />bandeau défilant</p>", "message-square");
+                            ?>
+                        </div>
+                        <div id="supervision-files">
+                            <div id="listeplateforme" class="file tile csv">Plateformes</div>
+                            <div id="personnel" class="file tile csv">Personnel</div>
+                            <div id="gestionnaire" class="file tile csv">Gestionnaire</div>
+                            <div id="superviseur" class="file tile csv">Superviseur</div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal fade" id="scroll-modal" tabindex="-1" role="dialog" aria-labelledby="scroll-modal-title" aria-hidden="true">
@@ -209,7 +216,8 @@ $plateformes = new Plateforme();
                                 <?php
                                 foreach($gestionnaire->getPlateformes(USER) as $plateforme => $rights) {
                                     $desactive = true;
-                                    if($rights['facturation'] && tarifsExists($plateforme)) {
+                                    $state = new State(DATA.$plateforme);
+                                    if($rights['facturation'] && (!empty($state->getLast()) || tarifsExists($plateforme))) {
                                         $desactive = false;
                                     }
                                     $name = $plateformes->getName($plateforme);
