@@ -1,6 +1,6 @@
-import * as customTableur from "../custom-tableur.js";
+import * as tablesEditor from "../tables-editor.js";
 import * as fileTests from "../file-tests.js";
-import * as tests from "./tests.js";
+import * as tests from "../tables-tests.js";
 
 let messages = {};
 let contents = {};
@@ -44,7 +44,7 @@ $.get("controller/getParametersJson.php", function(data){
         allParameters[params] = tests.optionalPdfs[params];
     }
 
-    const tableur = new customTableur.CustomTableur(messages, allParameters, paramtext, closeTable, true);
+    const tableur = new tablesEditor.CustomTableur(messages, allParameters, paramtext, closeTable, true);
 
     fileTest = new fileTests.FileTests(messages, parameters);
 
