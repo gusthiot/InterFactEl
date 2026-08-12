@@ -1,6 +1,6 @@
-import * as tablesEditor from "../tables-editor.js";
+import * as tablesEditor from "./tables-editor.js";
 import * as fileTests from "../file-tests.js";
-import * as tests from "../tables-tests.js";
+import * as tests from "./tables-tests.js";
 
 let messages = {};
 let contents = {};
