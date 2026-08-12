@@ -1,4 +1,4 @@
-import * as dates from "./dates.js";
+import * as dates from "../tables/tables-dates.js";
 import * as tables from "../tables/tables.js";
 
 const plateforme = $('#container').data('plateforme');

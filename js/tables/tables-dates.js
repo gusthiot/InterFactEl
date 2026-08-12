@@ -1,4 +1,4 @@
-import * as tables from "../tables/tables.js";
+import * as tables from "./tables.js";
 
 const plateforme = $('#container').data('plateforme');
 
