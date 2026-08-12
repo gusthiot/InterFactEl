@@ -1908,9 +1908,9 @@
             "prefix": "articlesap",
             "columns": {
                 "item-idsap": 0,
-                "item-codeD": 1,
-                "item-order": 2,
-                "item-labelcode": 3
+                "item-codeD": 2,
+                "item-order": 3,
+                "item-labelcode": 4
             }
         },
         "user": {
