@@ -1,5 +1,7 @@
-import * as customTableur from "./custom-tableur.js";
-import * as fileTests from "./file-tests.js";
+'use strict';
+
+import TablesEditor from "./tables/tables-editor.js";
+import FileTests from "./tables/file-tests.js";
 
 let fileTest = undefined;
 let ids = {};
@@ -20,9 +22,9 @@ $.get("controller/getConfigJson.php", function(data){
         contents[name].unshift(titles);
     });
 
-    const tableur = new customTableur.CustomTableur(messages, configs, paramtext, closeTable);
+    const tableur = new TablesEditor(messages, configs, paramtext);
 
-    fileTest = new fileTests.FileTests(messages, configs);
+    fileTest = new FileTests(messages, configs);
 
     $(document).on("click", ".csv", function() {
         $('#index-canevas').css("display", "none");
@@ -180,6 +182,14 @@ $('.manage-files').on('click', function () {
     else {
         $('#supervision-files').css("display", "flex");
     }
+});
+
+$(document).on("click", ".tableur-remove", function() {
+    closeTable();
+});
+
+$(document).on("close", "#tables-editor", () => {
+    closeTable();
 });
 
 function closeTable() {

@@ -1,3 +1,5 @@
+'use strict';
+
 Reveal.initialize();
 
 const unique = $('#main').data('unique');

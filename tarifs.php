@@ -201,39 +201,8 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                         </div>
                     </div>
                     <!-- Espace -->
-                    <div class="tab-pane fade" id="tarifs-space" data-m0="<?= $m0 ?>" data-status="<?= $status ?>" role="tabpanel" aria-labelledby="space-tab">
-                        <div id="tarifs-desktop">
-                            <div id="tarifs-top">
-                                <div id="tarifs-left">
-                                    <div class="tarifs-column">
-                                        <label class="tile mini-tile" for="tarifs-import">
-                                            <input id="tarifs-import" type="file" name="tarifs-import" class="zip-file lockable" accept=".zip" />
-                                            Importer
-                                        </label>
-                                        <div id="tarifs-read" class="tile mini-tile">Lire</div>
-                                        <div id="tarifs-create" class="tile mini-tile">Créer</div>
-                                    </div>
-                                </div>
-                                <div id="tarifs-center">
-                                    <div id="tarifs-select"></div>
-                                    <div id="tarifs-files"></div>
-                                </div>
-                                <div id="tarifs-right">
-                                    <div class="tarifs-column">
-                                        <div id="tarifs-load" class="tile mini-tile desactived-tile">Ecrire</div>
-                                        <div id="tarifs-remove" class="tile mini-tile">Effacer</div>
-                                    </div>
-                                </div>
-                            </div>
-                                <?= $m0Dis." | status : ".$status ?>
-
-                            <div id="tarifs-bottom">
-                                <div id="tarifs-cancel" class="tile mini-tile desactived-tile">Annuler</div>
-                                <div id="tarifs-save" class="tile mini-tile desactived-tile">Sauvegarder</div>
-                                <div id="tarifs-check" class="tile mini-tile desactived-tile">Vérifier</div>
-                            </div>
-                        </div>
-                        <div id="tarifs-manage"></div>
+                    <div class="tab-pane fade" id="tarifs-space" data-m0="<?= $m0 ?>" data-m0dis="<?= $m0Dis ?>" data-status="<?= $status ?>" role="tabpanel" aria-labelledby="space-tab">
+                        <?php include('./includes/tableurMenus.inc'); ?>
                     </div>
                 </div>
                 <div class="modal fade" id="save-modal" tabindex="-1" role="dialog" aria-labelledby="save-modal-title" aria-hidden="true">
@@ -256,16 +225,15 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
             </div>
         </div>
         <?php include("includes/footer.inc");?>
+        <link rel="stylesheet" href="css/jquery-ui.min.css">
         <script src="js/jquery-ui.min.js"></script>
         <script src="js/jszip.min.js"></script>
         <script src="js/papaparse.min.js"></script>
-        <link rel="stylesheet" href="css/jquery-ui.min.css">
-        <script src="js/tarifs/liste.js"></script>
-        <script src="js/tarifs/espace.js" type="module"></script>
-        <script src="js/file-tests.js" type="module"></script>
+        <script src="js/tarifs.js" type="module"></script>
         <script src="js/tables/tables.js" type="module"></script>
         <script src="js/tables/tables-editor.js" type="module"></script>
         <script src="js/tables/tables-tests.js" type="module"></script>
         <script src="js/tables/tables-dates.js" type="module"></script>
+        <script src="js/tables/file-tests.js" type="module"></script>
 	</body>
 </html>

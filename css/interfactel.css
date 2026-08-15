@@ -669,7 +669,7 @@ table.dates-tarifs .tr-clickable:hover {
   text-align: center;
 }
 
-#tarifs-select {
+#tables-dates {
   margin: 0 auto;
   max-width: 700px;
 }
@@ -680,13 +680,13 @@ table.dates-tarifs .tr-clickable:hover {
   text-align: center;
 }
 
-#tarifs-top {
+#tables-top {
   width: 100%;
   display: flex;
   justify-content: space-between;
 }
 
-.tarifs-column {
+.tables-column {
   margin: auto;
   padding: 10px;
   border: 1px solid var(--noir);
@@ -695,11 +695,11 @@ table.dates-tarifs .tr-clickable:hover {
   flex-direction: column;
 }
 
-#tarifs-center {
+#tables-center {
   width: 100%;
 }
 
-#tarifs-bottom {
+#tables-bottom {
   margin: auto;
   padding: 10px;
   width: 510px;
@@ -717,7 +717,7 @@ table.dates-tarifs .tr-clickable:hover {
   justify-content: center;
 }
 
-#tarifs-files {
+#tables-files {
   margin: 0 auto;
   max-width: 1000px;
   padding: 20px;
@@ -752,7 +752,7 @@ table.dates-tarifs .tr-clickable:hover {
   color: var(--chartreuse) !important;
 }
 
-#tarifs-manage {
+#tables-editor {
   margin: 0 auto;
   max-width: 80%;
 }

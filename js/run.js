@@ -1,3 +1,5 @@
+'use strict';
+
 const plateforme = $('#container').data('plateforme');
 const year = $('#container').data('year');
 const month = $('#container').data('month');

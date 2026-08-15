@@ -1,3 +1,4 @@
+'use strict';
 
 let hidden = true;
 const plateforme = $('#container').data('plateforme');

@@ -1,3 +1,5 @@
+'use strict';
+
 $('#historique-div').hide();
 
 $('#open-historique').on('click', function () {

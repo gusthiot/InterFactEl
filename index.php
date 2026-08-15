@@ -295,9 +295,9 @@ $plateformes = new Plateforme();
         </div>
         <?php include("includes/footer.inc");?>
         <script src="js/index.js" type="module"></script>
-        <script src="js/file-tests.js" type="module"></script>
         <script src="js/tables/tables.js" type="module"></script>
         <script src="js/tables/tables-editor.js" type="module"></script>
         <script src="js/tables/tables-tests.js" type="module"></script>
+        <script src="js/tables/file-tests.js" type="module"></script>
 	</body>
 </html>

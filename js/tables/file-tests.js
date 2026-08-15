@@ -1,4 +1,6 @@
-export class FileTests {
+'use strict';
+
+export default class FileTests {
 
     constructor(messages, parameters) {
         this.messages = messages;

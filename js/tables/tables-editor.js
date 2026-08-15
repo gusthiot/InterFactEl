@@ -1,6 +1,8 @@
-export class CustomTableur {
+'use strict';
 
-    constructor(messages, parameters, paramtext, onClose, saveAnyway=false) {
+export default class TablesEditor {
+
+    constructor(messages, parameters, paramtext, saveAnyway=false) {
         this.messages = messages;
         this.parameters = parameters;
         this.paramtext = paramtext;
@@ -10,7 +12,7 @@ export class CustomTableur {
         this.saveAnyway = saveAnyway;
 
         $(document).on("click", ".tableur-remove", function() {
-            onClose();
+            $('#tables-editor').trigger("close");
         });
 
         $(document).on("click", "#tableur-save-bidim", () => {
@@ -34,7 +36,7 @@ export class CustomTableur {
             $( "#tableur-table").trigger("saved", [newContent, this.filename, [lines.length, cells.length]]);
         });
 
-        $(document).on("input", ".input-filter", (evt) => {
+        $(document).on("input", ".input-filter", () => {
             const lines = $('.values');
             for(let numRow = 0; numRow < lines.length; numRow++) {
                 const cells = $(lines[numRow]).find('.cell');
