@@ -69,6 +69,14 @@ if(isset($_POST["plate"]) && isset($_POST["type"])) {
             }
         }
     }
+    if(!empty($open)) {
+        $infos = Info::load($open[2]."/".$open[3]);
+        $factel = $infos["FactEl"][2];
+        if(floatval($factel) >= $vMin) {
+            $choices[$open[0].$open[1]] = [$open[0], $open[1], $factel];
+        }
+    }
+
     if(count($choices) > 0) {
         $html = '<div id="dates">
                     <div id="first">
