@@ -347,6 +347,8 @@ export default class Tables {
                 for(let numCol = 1; numCol < this.mandatoryCsvs[filename].numcol; numCol++) {
                     if((filename == "plateforme") && (label == "Id-Plateforme") && (numCol == 2)) {
                         line.push(plateforme);
+                    } else if((filename == "plateforme") && (label == "Grille-Plateforme") && (numCol == 2)) {
+                        line.push("NON");
                     }
                     else {
                         line.push("");
