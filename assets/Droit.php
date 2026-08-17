@@ -3,13 +3,13 @@
 /**
  *
  */
-class Config
+class Droit
 {
 
     /**
      * The json file name
      */
-    const NAME = "config.json";
+    const NAME = "droit.json";
 
     /**
      * Extracts the json file content in an encoded string
@@ -19,13 +19,13 @@ class Config
      */
     static function load(string $dir): string
     {
-        $config = "";
+        $droits = "";
         $name = $dir."/".self::NAME;
         if((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
-            $config = fread($open, filesize($name));
+            $droits = fread($open, filesize($name));
             fclose($open);
         }
-        return $config;
+        return $droits;
     }
 
 }

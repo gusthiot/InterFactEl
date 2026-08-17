@@ -2,22 +2,22 @@
 
 import Tables from "./tables/tables.js";
 
-$.get("controller/getConfigJson.php", function(data){
+$.get("controller/getDroitJson.php", function(data){
     const json = JSON.parse(data);
     const paramtext = json.paramtext;
-    const configs = json.configs;
+    const droits = json.droits;
     const contents = json.contents;
 
     Object.keys(contents).forEach(function(name) {
         let titles = [];
-        for(let numCol = 0; numCol < configs[name].numcol; numCol++) {
+        for(let numCol = 0; numCol < droits[name].numcol; numCol++) {
             titles.push(unescape(encodeURIComponent(paramtext["table-"+name+"-"+numCol])));
         }
         contents[name].unshift(titles);
     });
 
     const table = new Tables({
-            "mandatoryCsvs": configs,
+            "mandatoryCsvs": droits,
             "mandatoryPdfs": {},
             "optionalPdfs": {},
             "messages": json.messages,
@@ -40,7 +40,7 @@ $.get("controller/getConfigJson.php", function(data){
         const gestionnaire = table.getContent("gestionnaire");
         let content = [];
         let titles = [];
-        for(let numCol = 0; numCol < configs["gestionnaire"].numcol; numCol++) {
+        for(let numCol = 0; numCol < droits["gestionnaire"].numcol; numCol++) {
             titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-"+numCol])));
         }
         content.push(titles);
@@ -112,8 +112,8 @@ $.get("controller/getConfigJson.php", function(data){
     }
 
     $(document).on("button-save", "#tables-desktop", function() {
-        $.post("controller/saveConfigs.php", {files: getEncFiles()}, function (data) {
-            window.location.href = "controller/download.php?type=js-configs&name="+data;
+        $.post("controller/saveDroits.php", {files: getEncFiles()}, function (data) {
+            window.location.href = "controller/download.php?type=js-droits&name="+data;
         });
 
     });
