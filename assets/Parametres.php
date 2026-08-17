@@ -3,13 +3,13 @@
 /**
  *
  */
-class Parameters
+class Parametres
 {
 
     /**
      * The json file name
      */
-    const NAME = "parameters.json";
+    const NAME = "parametres.json";
 
     /**
      * Extracts the json file content in an encoded string
@@ -19,13 +19,13 @@ class Parameters
      */
     static function load(string $dir): string
     {
-        $parameters = "";
+        $parametres = "";
         $name = $dir."/".self::NAME;
         if((file_exists($name)) && (($open = fopen($name, "r")) !== false)) {
-            $parameters = fread($open, filesize($name));
+            $parametres = fread($open, filesize($name));
             fclose($open);
         }
-        return $parameters;
+        return $parametres;
     }
 
 }

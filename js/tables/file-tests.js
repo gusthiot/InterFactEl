@@ -2,9 +2,9 @@
 
 export default class FileTests {
 
-    constructor(messages, parameters) {
+    constructor(messages, parametres) {
         this.messages = messages;
-        this.parameters = parameters;
+        this.parametres = parametres;
         this.arrayIds = {};
     }
 
@@ -12,8 +12,8 @@ export default class FileTests {
         let result = "";
         let errors = {};
         if(conTest.length > 0) {
-            for(let numTest in this.parameters[filename].tests) {
-                const test = this.parameters[filename].tests[numTest];
+            for(let numTest in this.parametres[filename].tests) {
+                const test = this.parametres[filename].tests[numTest];
                 let resTest = "";
                 let column = "";
                 let colNum = [];
@@ -32,8 +32,8 @@ export default class FileTests {
                     colNum = [test.col];
                 }
                 for(let numRow = 0; numRow < conTest.length; numRow++) {
-                    if(numRow > 0 || this.parameters[filename].notitles) {
-                        const columns = this.parameters[filename].columns;
+                    if(numRow > 0 || this.parametres[filename].notitles) {
+                        const columns = this.parametres[filename].columns;
                         let error = this.switchTest(columns, test, conTest[numRow], numRow, column, contents, ids);
                         if(error != "") {
                             let row = numRow;
@@ -101,15 +101,15 @@ export default class FileTests {
             return ids[filename];
         }
         let pos = "";
-        for(let numTest in this.parameters[filename].tests) {
-            const test = this.parameters[filename].tests[numTest];
+        for(let numTest in this.parametres[filename].tests) {
+            const test = this.parametres[filename].tests[numTest];
             if((test.type == "unique") && !test.noindex) {
                 pos = test.id;
             }
         }
         let aIds = {};
         for(let numRow = 0; numRow < contents[filename].length; numRow++) {
-            if(numRow > 0 || this.parameters[filename].notitles) {
+            if(numRow > 0 || this.parametres[filename].notitles) {
                 let id = "";
                 pos.forEach(function(col) {
                     if(id != "") {

@@ -6,12 +6,12 @@ import TablesTests from "./tables-tests.js";
 
 export default class Tables {
 
-    constructor(parameters, noRemove=false) {
-        this.mandatoryCsvs = parameters.mandatoryCsvs;
-        this.mandatoryPdfs = parameters.mandatoryPdfs;
-        this.optionalPdfs = parameters.optionalPdfs;
-        this.messages = parameters.messages;
-        this.paramtext = parameters.paramtext;
+    constructor(parametres, noRemove=false) {
+        this.mandatoryCsvs = parametres.mandatoryCsvs;
+        this.mandatoryPdfs = parametres.mandatoryPdfs;
+        this.optionalPdfs = parametres.optionalPdfs;
+        this.messages = parametres.messages;
+        this.paramtext = parametres.paramtext;
 
         this.tablesTest = new TablesTests({
             mandatoryCsvs: this.mandatoryCsvs,
@@ -45,18 +45,18 @@ export default class Tables {
             this.displayChecks();
         }
 
-        let allParameters =  {};
+        let allParametres =  {};
         for(let params in this.mandatoryCsvs) {
-            allParameters[params] = this.mandatoryCsvs[params];
+            allParametres[params] = this.mandatoryCsvs[params];
         }
         for(let params in this.mandatoryPdfs) {
-            allParameters[params] = this.mandatoryPdfs[params];
+            allParametres[params] = this.mandatoryPdfs[params];
         }
         for(let params in this.optionalPdfs) {
-            allParameters[params] = this.optionalPdfs[params];
+            allParametres[params] = this.optionalPdfs[params];
         }
 
-        this.tableur = new TablesEditor(this.messages, allParameters, this.paramtext, true);
+        this.tableur = new TablesEditor(this.messages, allParametres, this.paramtext, true);
 
         this.save = {"content": [], "ids": {}, "errors": {}, "filename": ""};
 

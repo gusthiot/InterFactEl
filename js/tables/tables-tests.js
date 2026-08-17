@@ -2,10 +2,10 @@
 
 export default class TablesTests {
 
-    constructor(parameters) {
-        this.mandatoryCsvs = parameters.mandatoryCsvs;
-        this.mandatoryPdfs = parameters.mandatoryPdfs;
-        this.optionalPdfs = parameters.optionalPdfs;
+    constructor(parametres) {
+        this.mandatoryCsvs = parametres.mandatoryCsvs;
+        this.mandatoryPdfs = parametres.mandatoryPdfs;
+        this.optionalPdfs = parametres.optionalPdfs;
     }
 
     checkAuthorized(contents, pdfs, optPdfs) {

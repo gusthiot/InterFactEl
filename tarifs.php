@@ -9,7 +9,7 @@ require_once("assets/Sap.php");
 require_once("assets/Message.php");
 require_once("assets/Plateforme.php");
 require_once("assets/ParamText.php");
-require_once("assets/Parameters.php");
+require_once("assets/Parametres.php");
 require_once("includes/State.php");
 require_once("includes/Tarifs.php");
 require_once("session.inc");
@@ -37,7 +37,7 @@ $version = Version::load('./');
 $messages = new Message();
 $paramtext = new ParamText();
 
-$parameters = Parameters::load('./');
+$parametres = Parametres::load('./');
 
 $m0 = "";
 $m0Dis = "";

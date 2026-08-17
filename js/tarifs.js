@@ -50,11 +50,11 @@ const optionalPdfs = {"grille": {
                         }
                     };
 
-$.get("controller/getParametersJson.php", function(data){
+$.get("controller/getParametresJson.php", function(data){
     const json = JSON.parse(data);
 
     const table = new Tables({
-            "mandatoryCsvs": json.parameters,
+            "mandatoryCsvs": json.parametres,
             "mandatoryPdfs": mandatoryPdfs,
             "optionalPdfs": optionalPdfs,
             "messages": json.messages,

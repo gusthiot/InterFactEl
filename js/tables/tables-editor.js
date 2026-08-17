@@ -2,9 +2,9 @@
 
 export default class TablesEditor {
 
-    constructor(messages, parameters, paramtext, saveAnyway=false) {
+    constructor(messages, parametres, paramtext, saveAnyway=false) {
         this.messages = messages;
-        this.parameters = parameters;
+        this.parametres = parametres;
         this.paramtext = paramtext;
         this.contents = {};
         this.filename = "";
@@ -128,14 +128,14 @@ export default class TablesEditor {
             }
             let html = '<tr class="values" id="line-' + num + '">';
             let notitles = false;
-            if(this.parameters[this.filename].notitles) {
+            if(this.parametres[this.filename].notitles) {
                 notitles = true;
             }
-            for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
-                const paramCol = this.parameters[this.filename].columns[numCol];
+            for(let numCol = 0; numCol < this.parametres[this.filename].numcol; numCol++) {
+                const paramCol = this.parametres[this.filename].columns[numCol];
                 let cell = "";
                 html += '<td class="border-left';
-                if((numCol == this.parameters[this.filename].numcol-1) && !this.parameters[this.filename].tools) {
+                if((numCol == this.parametres[this.filename].numcol-1) && !this.parametres[this.filename].tools) {
                     html += ' border-right';
                 }
                 html += ' cell">';
@@ -165,9 +165,9 @@ export default class TablesEditor {
     }
 
     getTitles() {
-        if(!this.parameters[this.filename].notitles) {
+        if(!this.parametres[this.filename].notitles) {
             let titles = [];
-            for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
+            for(let numCol = 0; numCol < this.parametres[this.filename].numcol; numCol++) {
                 titles[numCol] = this.paramtext["table-"+this.filename+"-"+numCol];
             }
             return [titles];
@@ -247,7 +247,7 @@ export default class TablesEditor {
                     '<svg id="tableur-info" data-id="' + this.filename + '" class="icon icon-selectable date-left" aria-hidden="true">' +
                         '<use xlink:href="#info"></use>' +
                     '</svg>' +
-                    '<span>' + this.parameters[this.filename].name + '</span>' +
+                    '<span>' + this.parametres[this.filename].name + '</span>' +
                     '<svg class="icon icon-selectable date-right tableur-remove" aria-hidden="true">' +
                         '<use xlink:href="#x"></use>' +
                     '</svg>' +
@@ -280,28 +280,28 @@ export default class TablesEditor {
 
     unidimTableur() {
         let html = '<tr>';
-        for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
+        for(let numCol = 0; numCol < this.parametres[this.filename].numcol; numCol++) {
             html += '<th class="border-bottom">' + this.paramtext["table-"+this.filename+"-"+numCol];
-            if(this.parameters[this.filename].filter && this.parameters[this.filename].filter.includes(numCol)) {
+            if(this.parametres[this.filename].filter && this.parametres[this.filename].filter.includes(numCol)) {
                 html += ' <input type="text" class="input-filter" id="filter-' + numCol + '" size="10">';
             }
             html += '</th>';
         }
-        if(this.parameters[this.filename].tools) {
+        if(this.parametres[this.filename].tools) {
             html += '<td class="th-tools"></td>';
         }
         html += '</tr>';
         let notitles = false;
-        if(this.parameters[this.filename].notitles) {
+        if(this.parametres[this.filename].notitles) {
             notitles = true;
         }
         for(let numRow = 0; numRow < this.contents[this.filename].length; numRow++) {
             if(notitles || (numRow > 0)) {
                 html += '<tr class="values" id="line-' + numRow + '">';
-                for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
-                    let paramCol = this.parameters[this.filename].columns[numCol];
+                for(let numCol = 0; numCol < this.parametres[this.filename].numcol; numCol++) {
+                    let paramCol = this.parametres[this.filename].columns[numCol];
                     html += '<td class="border-left';
-                    if((numCol == this.parameters[this.filename].numcol-1) && !this.parameters[this.filename].tools) {
+                    if((numCol == this.parametres[this.filename].numcol-1) && !this.parametres[this.filename].tools) {
                         html += ' border-right';
                     }
                     html += ' cell">';
@@ -311,7 +311,7 @@ export default class TablesEditor {
                     html += this.input(paramCol, this.contents[this.filename][numRow][numCol], numRow, notitles);
                     html += '</td>';
                 }
-                if(this.parameters[this.filename].tools) {
+                if(this.parametres[this.filename].tools) {
                     html += '<td class="td-tools">';
                     if((notitles && (numRow > 0)) || (numRow > 1)) {
                         html += this.lineUp();
@@ -324,8 +324,8 @@ export default class TablesEditor {
                 html += '</tr>';
             }
         }
-        if(this.parameters[this.filename].tools) {
-            html += '<tr><td class="border-left" colspan="' + (this.parameters[this.filename].numcol) + '"></td>' +
+        if(this.parametres[this.filename].tools) {
+            html += '<tr><td class="border-left" colspan="' + (this.parametres[this.filename].numcol) + '"></td>' +
                     '<td class="td-tools">' +
                     '<svg id="line-plus" class="icon icon-selectable" aria-hidden="true">' +
                         '<use xlink:href="#plus"></use>' +
@@ -335,8 +335,8 @@ export default class TablesEditor {
     }
 
     bidimTableur(sapIds) {
-        const dim0 = this.contents[this.parameters[this.filename].columns[0].origin];
-        const dim1 = this.contents[this.parameters[this.filename].columns[1].origin];
+        const dim0 = this.contents[this.parametres[this.filename].columns[0].origin];
+        const dim1 = this.contents[this.parametres[this.filename].columns[1].origin];
         let html = '<tr><th></th><th></th><th class="span-th border-bottom-black" colspan="' + (dim1.length-1) + '">' + this.paramtext["table-"+this.filename+"-"+1] + '</th></tr>';
         html += '<tr id="dim1"><td class="border-around-no"></td><td class="border-bottom-right-black"></td>';
         for(let num1 = 1; num1 < dim1.length; num1++) {
@@ -345,7 +345,7 @@ export default class TablesEditor {
                     continue;
                 }
             }
-            const positions = this.parameters[this.filename].bidim[0].intitule;
+            const positions = this.parametres[this.filename].bidim[0].intitule;
             let line1 = "";
             if(positions[0] == "codeD") {
                 const idSap = dim1[num1][2];
@@ -362,7 +362,7 @@ export default class TablesEditor {
             if(num0 == 1) {
                 html += '<th rowspan="' + (dim0.length-1) + '" class="span-th border-right-black"><span class="vert-span">' + this.paramtext["table-"+this.filename+"-"+0] + '</span></th>';
             }
-            const positions = this.parameters[this.filename].bidim[1].intitule;
+            const positions = this.parametres[this.filename].bidim[1].intitule;
             let intitule = dim0[num0][positions[0]];
             if(positions.length > 1) {
                 intitule += " - " + dim0[num0][positions[1]];
@@ -381,7 +381,7 @@ export default class TablesEditor {
                         break;
                     }
                 };
-                html += '<td class="border-right cell">' + this.number(value, this.parameters[this.filename].columns[2]) + '</td>';
+                html += '<td class="border-right cell">' + this.number(value, this.parametres[this.filename].columns[2]) + '</td>';
             }
             html += '</tr>';
         }
