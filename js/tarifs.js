@@ -41,7 +41,6 @@ const m0Dis = $('#tarifs-space').data('m0dis');
 
 $("#tables-sub").html(m0Dis + " | status : " + m0Status);
 
-
 const mandatoryPdfs = {"logo": {
                             name: "Logo PDF"
                         }
@@ -51,26 +50,82 @@ const optionalPdfs = {"grille": {
                         }
                     };
 
-let table = {};
-let paramtext = {};
-let messages = {};
-
-const tarifsDates = new TarifsDates(plateforme, table);
-
 $.get("controller/getParametersJson.php", function(data){
     const json = JSON.parse(data);
-    paramtext = json.paramtext;
-    messages = json.messages;
-    const mandatoryCsvs = json.parameters;
 
-    table = new Tables({
-            "mandatoryCsvs": mandatoryCsvs,
+    const table = new Tables({
+            "mandatoryCsvs": json.parameters,
             "mandatoryPdfs": mandatoryPdfs,
             "optionalPdfs": optionalPdfs,
-            "messages": messages,
-            "paramtext": paramtext
+            "messages": json.messages,
+            "paramtext": json.paramtext
         });
+
+    const tarifsDates = new TarifsDates(plateforme, table);
+
+    $(document).on("button-read", "#tables-desktop", function() {
+        $.post("controller/getReadDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
+            let first = 0;
+            const dataParsed = JSON.parse(data);
+            let readPos = parseInt(dataParsed[1]);
+            if(readPos > 5) {
+                first = readPos - 5;
+            }
+            tarifsDates.loadDates(dataParsed[0], first, readPos, "read");
+        });
+    });
+
+    $(document).on("read", "#tables-dates", function(event, key) {
+        $.post("controller/openTarifs.php", {plate: plateforme, type: key.split("-")[0], date: key.split("-")[1]}, function (data) {
+            table.extract(JSON.parse(data), plateforme);
+            table.saveContents();
+            table.displayFiles();
+        });
+    });
+
+    $(document).on("button-import", "#tables-desktop", function(event, json) {
+        table.extract(JSON.parse(json), plateforme);
+
+        if(table.columnsCheck() || table.plateFactCheck(plateforme)) {
+            table.removeContents();
+        }
+        else {
+            table.authorizedCheck();
+            table.saveContents();
+            table.displayFiles();
+            $('#tables-cancel').removeClass('desactived-tile');
+        }
+    });
+
+    $(document).on("button-create", "#tables-desktop", function() {
+        table.emptyContents(plateforme);
+        table.displayFiles();
+    });
+
+    $(document).on("button-load", "#tables-desktop", function() {
+        $.post("controller/getLoadDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
+            let first = 0;
+            const choices = JSON.parse(data);
+            if(Object.keys(choices).length > 6) {
+                first = Object.keys(choices).length - 6;
+            }
+            tarifsDates.loadDates(choices, first, 0, "load");
+        });
+    });
+
+    $(document).on("button-remove", "#tables-desktop", function() {
+        $.post("controller/getRemoveDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
+            let first = 0;
+            const choices = JSON.parse(data);
+            if(Object.keys(choices).length > 6) {
+                first = Object.keys(choices).length - 6;
+            }
+            tarifsDates.loadDates(choices, first, 0, "remove");
+        });
+    });
+
 });
+
 
 $(document).on("remove", "#tables-dates", function(event, date) {
     removeTarifs(date);
@@ -117,132 +172,7 @@ function applyTarifs(date) {
     });
 }
 
-/** Left */
-
-$("#tables-read").on("click", function() {
-    table.reset();
-    $.post("controller/getReadDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
-        let first = 0;
-        const dataParsed = JSON.parse(data);
-        let readPos = parseInt(dataParsed[1]);
-        if(readPos > 5) {
-            first = readPos - 5;
-        }
-        tarifsDates.loadDates(dataParsed[0], first, readPos, "read");
-        $("#tables-read").addClass('selected-tile');
-    });
-});
-
-$(document).on("click", "#dates-read .clickable", function() {
-    const key = $(this).data('key');
-    $.post("controller/openTarifs.php", {plate: plateforme, type: key.split("-")[0], date: key.split("-")[1]}, function (data) {
-        table.extract(plateforme, JSON.parse(data));
-        table.saveContents();
-        $('#tables-dates').html("");
-        $('#tables-cancel').removeClass('desactived-tile');
-        $("#tables-read").removeClass('selected-tile');
-        tables.displayFiles();
-    });
-});
-
-async function blobToBase64(blob) {
-  return new Promise((resolve, _) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result.split(',')[1]);
-    reader.readAsDataURL(blob);
-  });
-}
-
-$("#tables-import").on("change", function(e) {
-    table.reset();
-    JSZip.loadAsync(e.target.files[0]).then(function(zip) {
-        const promises = Object.keys(zip.files).map(function (fileName) {
-            const file = zip.files[fileName];
-            return file.async("blob").then(function (blob) {
-                return blobToBase64(blob).then(function (result) {
-                    return [
-                        fileName,
-                        result
-                    ];
-                });
-            });
-        });
-        return Promise.all(promises);
-    }).then(function (results) {
-        let json = " {";
-        let isFirst = 1;
-        results.forEach(function(result) {
-            if(isFirst == 1) {
-                isFirst = 0;
-            }
-            else {
-                json += ",";
-            }
-            json += '"'+result[0]+'":"'+result[1]+'"';
-        });
-        json += "}";
-        table.extract(plateforme, JSON.parse(json));
-
-        if(table.importChecks(plateforme, false)) {
-            table.removeContents();
-        }
-        else {
-            table.authorizedCheck();
-            table.saveContents();
-            table.displayFiles();
-            $('#tables-cancel').removeClass('desactived-tile');
-        }
-    });
-});
-
-$("#tables-create").on("click", function() {
-    table.reset();
-    table.emptyContents(plateforme);
-    table.displayFiles();
-});
-
-/** Right */
-
-$("#tables-load").on("click", function() {
-    $('#tables-files').hide();
-    $.post("controller/getLoadDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
-        let first = 0;
-        const choices = JSON.parse(data);
-        if(Object.keys(choices).length > 6) {
-            first = Object.keys(choices).length - 6;
-        }
-        tarifsDates.loadDates(choices, first, 0, "load");
-        $("#tables-load").addClass('selected-tile');
-    });
-});
-
-$("#tables-remove").on("click", function() {
-    table.reset();
-    $.post("controller/getRemoveDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
-        let first = 0;
-        const choices = JSON.parse(data);
-        if(Object.keys(choices).length > 6) {
-            first = Object.keys(choices).length - 6;
-        }
-        tarifsDates.loadDates(choices, first, 0, "remove");
-        $('#tables-cancel').removeClass('desactived-tile');
-        $("#tables-remove").addClass('selected-tile');
-    });
-});
-
-/** Bottom */
-
-$("#tables-cancel").on("click", function() {
-    table.reset();
-});
-
-$("#tables-check").on("click", function() {
-    if(!table.checkTables()) {
-        $('#tables-load').removeClass('desactived-tile');
-    }
-});
-
-$(document).on("click", "#tables-save", function() {
+$(document).on("button-save", "#tables-desktop", function() {
     $.post("controller/saveTarifs.php", {plate: plateforme, files: getEncFiles()}, function (data) {
         window.location.href = "controller/download.php?type=js-tarifs&name="+data+"&plate="+plateforme;
     });

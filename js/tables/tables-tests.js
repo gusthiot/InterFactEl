@@ -101,59 +101,59 @@ export default class TablesTests {
     }
 
     checkColumns(fileTest, contents, pdfs, optPdfs, ids, messages) {
-        let result = "";
+        let ret = {"result": "", "checks": {}, "ids": {}};
         let checks = {};
         for(let filename in this.mandatoryCsvs) {
-            checks[filename] = {};
-            checks[filename].errors = {};
-            if(result != "") {
-                return;
+            ret.checks[filename] = {};
+            ret.checks[filename].errors = {};
+            if(ret.result != "") {
+                return ret;
             }
             if(this.mandatoryCsvs[filename].tests) {
                 const results = fileTest.internalCheck(filename, contents[filename], contents, ids);
-                result += results.result;
-                ids = results.ids;
-                checks[filename].errors = results.errors;
+                ret.result += results.result;
+                ret.ids = results.ids;
+                ret.checks[filename].errors = results.errors;
             }
-            if(result != "") {
-                checks[filename].ok = false;
+            if(ret.result != "") {
+                ret.checks[filename].ok = false;
                 $('#'+filename).addClass('red-file');
             }
             else {
-                checks[filename].ok = true;
+                ret.checks[filename].ok = true;
                 $('#'+filename).addClass('green-file');
             }
         }
         for(let filename in this.mandatoryPdfs) {
-            checks[filename] = {};
-            checks[filename].errors = {};
-            if(result != "") {
-                return;
+            ret.checks[filename] = {};
+            ret.checks[filename].errors = {};
+            if(ret.result != "") {
+                return ret;
             }
             if(pdfs[filename]) {
-                checks[filename].ok = true;
+                ret.checks[filename].ok = true;
                 $('#'+filename).addClass('green-file');
             }
             else {
-                checks[filename].ok = false;
+                ret.checks[filename].ok = false;
                 $('#'+filename).addClass('red-file');
             }
         }
         for(let filename in this.optionalPdfs) {
-            checks[filename] = {};
-            checks[filename].errors = {};
-            if(result != "") {
-                return;
+            ret.checks[filename] = {};
+            ret.checks[filename].errors = {};
+            if(ret.result != "") {
+                return ret;
             }
             if(optPdfs[filename]) {
-                checks[filename].ok = true;
+                ret.checks[filename].ok = true;
                 $('#'+filename).addClass('green-file');
             }
             else {
-                checks[filename].ok = false;
+                ret.checks[filename].ok = false;
                 $('#'+filename).addClass('red-file');
             }
         }
-        return {"result": result, "checks": checks, "ids": ids};
+        return ret;
     }
 }

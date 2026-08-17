@@ -202,7 +202,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                     </div>
                     <!-- Espace -->
                     <div class="tab-pane fade" id="tarifs-space" data-m0="<?= $m0 ?>" data-m0dis="<?= $m0Dis ?>" data-status="<?= $status ?>" role="tabpanel" aria-labelledby="space-tab">
-                        <?php include('./includes/tableurMenus.inc'); ?>
+                        <?php include('includes/tableurMenus.inc'); ?>
                     </div>
                 </div>
                 <div class="modal fade" id="save-modal" tabindex="-1" role="dialog" aria-labelledby="save-modal-title" aria-hidden="true">
@@ -221,19 +221,11 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                         </div>
                     </div>
                 </div>
-                <?php include('./includes/tableurModals.inc'); ?>
+                <?php include('includes/tableurModals.inc'); ?>
             </div>
         </div>
         <?php include("includes/footer.inc");?>
-        <link rel="stylesheet" href="css/jquery-ui.min.css">
-        <script src="js/jquery-ui.min.js"></script>
-        <script src="js/jszip.min.js"></script>
-        <script src="js/papaparse.min.js"></script>
         <script src="js/tarifs.js" type="module"></script>
-        <script src="js/tables/tables.js" type="module"></script>
-        <script src="js/tables/tables-editor.js" type="module"></script>
-        <script src="js/tables/tables-tests.js" type="module"></script>
-        <script src="js/tables/tables-dates.js" type="module"></script>
-        <script src="js/tables/file-tests.js" type="module"></script>
+        <?php include('includes/tableurScripts.inc'); ?>
 	</body>
 </html>

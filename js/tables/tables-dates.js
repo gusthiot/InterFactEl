@@ -51,11 +51,19 @@ export default class TarifsDates {
             this.displayDates();
         });
 
+        $(document).on("click", "#dates-read .clickable", (evt) => {
+            const key = $(evt.currentTarget).data('key');
+            $("#tables-dates").trigger("read", [key]);
+            $('#tables-dates').html("");
+            $('#tables-cancel').removeClass('desactived-tile');
+            $("#tables-read").removeClass('selected-tile');
+        });
+
         $(document).on("click", "#dates-remove .clickable", (evt) => {
             const key = $(evt.currentTarget).data('key');
             this.date = key.split("-")[1];
             $('#save-modal').addClass("show");
-            $('#save-modal').css("display", "block");
+            $('#save-modal').show();
         });
 
         $(document).on("click", "#dates-load .clickable", (evt) => {
@@ -64,7 +72,7 @@ export default class TarifsDates {
             this.date = key.split("-")[1];
             if(this.type == "replace") {
                 $('#save-modal').addClass("show");
-                $('#save-modal').css("display", "block");
+                $('#save-modal').show();
             }
             else {
                 $('#tables-dates').trigger("apply", [this.date]);
@@ -74,7 +82,7 @@ export default class TarifsDates {
 
         $(document).on("click", "#modal-no", () => {
             $('#save-modal').removeClass("show");
-            $('#save-modal').css("display", "none");
+            $('#save-modal').hide();
             if(this.type == "replace") {
                 $('#tables-dates').trigger("apply", [this.date]);
                 //this.applyTarifs();
@@ -87,7 +95,7 @@ export default class TarifsDates {
 
         $(document).on("click", "#modal-yes", () => {
             $('#save-modal').removeClass("show");
-            $('#save-modal').css("display", "none");
+            $('#save-modal').hide();
             $('#tables-dates').trigger("save", [this.date, this.type]);
         });
 
@@ -176,5 +184,5 @@ $(document).on("click", "#dates-remove", function() {
 
 $(document).on("click", "#close-modal", function() {
     $('#save-modal').removeClass("show");
-    $('#save-modal').css("display", "none");
+    $('#save-modal').hide();
 });

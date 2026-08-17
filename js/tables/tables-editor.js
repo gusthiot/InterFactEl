@@ -54,7 +54,7 @@ export default class TablesEditor {
                     $(lines[numRow]).css("display", "");
                 }
                 else {
-                    $(lines[numRow]).css("display", "none");
+                    $(lines[numRow]).hide();
                 }
 
             }
@@ -79,21 +79,21 @@ export default class TablesEditor {
                 $('#wrong-modal-body').html("Des erreurs sont présentes dans le présent fichier, voulez-vous le corriger ou le sauver en l'état ?");
                 $('#error-modal-correct').html("Corriger");
                 $('#error-modal-save').addClass("show");
-                $('#error-modal-save').css("display", "block");
+                $('#error-modal-save').show();
             }
             else {
                 $('#wrong-modal-body').html("Des erreurs sont présentes dans le présent fichier !");
                 $('#error-modal-correct').html("Ok");
                 $('#error-modal-save').removeClass("show");
-                $('#error-modal-save').css("display", "none");
+                $('#error-modal-save').hide();
             }
             $('#error-modal').addClass("show");
-            $('#error-modal').css("display", "block");
+            $('#error-modal').show();
         });
 
         $(document).on("click", "#error-modal-save", function() {
             $('#error-modal').removeClass("show");
-            $('#error-modal').css("display", "none");
+            $('#error-modal').hide();
             $("#tableur-table").trigger("save-anyway");
         });
 
@@ -101,7 +101,7 @@ export default class TablesEditor {
             $('#file-modal-title').html("Informations concernant le fichier " + this.filename + "." + this.extension);
             $('#file-modal-body').html(this.messages[this.filename + "00"]);
             $('#info-modal').addClass("show");
-            $('#info-modal').css("display", "block");
+            $('#info-modal').show();
         });
 
         $(document).on("click", "#line-remove", (evt) => {
@@ -569,17 +569,17 @@ $(document).on('input propertychange', '.tableur-input', function() {
 
 $(document).on("click", ".info-ok", function() {
     $('#info-modal').removeClass("show");
-    $('#info-modal').css("display", "none");
+    $('#info-modal').hide();
 });
 
 $(document).on("click", "#error-modal-cancel", function() {
     $('#error-modal').removeClass("show");
-    $('#error-modal').css("display", "none");
+    $('#error-modal').hide();
 });
 
 $(document).on("click", "#error-modal-correct", function() {
     $('#error-modal').removeClass("show");
-    $('#error-modal').css("display", "none");
+    $('#error-modal').hide();
 });
 
 $(document).on("click", ".background-red", function() {

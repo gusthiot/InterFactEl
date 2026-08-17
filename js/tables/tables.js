@@ -6,7 +6,7 @@ import TablesTests from "./tables-tests.js";
 
 export default class Tables {
 
-    constructor(parameters) {
+    constructor(parameters, noRemove=false) {
         this.mandatoryCsvs = parameters.mandatoryCsvs;
         this.mandatoryPdfs = parameters.mandatoryPdfs;
         this.optionalPdfs = parameters.optionalPdfs;
@@ -18,6 +18,10 @@ export default class Tables {
             mandatoryPdfs: this.mandatoryPdfs,
             optionalPdfs: this.optionalPdfs
         });
+
+        if(noRemove) {
+            $('#tables-remove').hide();
+        }
 
         this.fileTest = new FileTests(this.messages, this.mandatoryCsvs);
 
@@ -57,7 +61,7 @@ export default class Tables {
         this.save = {"content": [], "ids": {}, "errors": {}, "filename": ""};
 
         $(document).on("click", ".csv", (evt) => {
-            $('#tables-desktop').css("display", "none");
+            $('#tables-desktop').hide();
             const filename = $(evt.currentTarget).attr('id');
             this.tableur.init(filename, "csv", this.contents);
             let html = "";
@@ -76,7 +80,7 @@ export default class Tables {
         });
 
         $(document).on("click", ".pdf", (evt) => {
-            $('#tables-desktop').css("display", "none");
+            $('#tables-desktop').hide();
             const filename = $(evt.currentTarget).attr('id');
             this.tableur.init(filename, "pdf");
             let html = this.tableur.header();
@@ -168,6 +172,90 @@ export default class Tables {
         $(document).on("close", "#tables-editor", () => {
             this.closeTable();
         });
+
+        /** Left */
+
+        $("#tables-read").on("click", () => {
+            this.reset();
+            $("#tables-desktop").trigger("button-read");
+            $("#tables-read").addClass('selected-tile');
+        });
+
+        async function blobToBase64(blob) {
+        return new Promise((resolve, _) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result.split(',')[1]);
+            reader.readAsDataURL(blob);
+        });
+        }
+
+        $("#tables-import").on("change", (evt) => {
+            this.reset();
+            JSZip.loadAsync(evt.target.files[0]).then(function(zip) {
+                const promises = Object.keys(zip.files).map(function (fileName) {
+                    const file = zip.files[fileName];
+                    return file.async("blob").then(function (blob) {
+                        return blobToBase64(blob).then(function (result) {
+                            return [
+                                fileName,
+                                result
+                            ];
+                        });
+                    });
+                });
+                return Promise.all(promises);
+            }).then(function (results) {
+                let json = " {";
+                let isFirst = 1;
+                results.forEach(function(result) {
+                    if(isFirst == 1) {
+                        isFirst = 0;
+                    }
+                    else {
+                        json += ",";
+                    }
+                    json += '"'+result[0]+'":"'+result[1]+'"';
+                });
+                json += "}";
+                $("#tables-desktop").trigger("button-import", [json]);
+            });
+        });
+
+        $("#tables-create").on("click", () => {
+            this.reset();
+            $("#tables-desktop").trigger("button-create");
+        });
+
+        /** Right */
+
+        $("#tables-load").on("click", () => {
+            $('#tables-files').hide();
+            $("#tables-desktop").trigger("button-load");
+            $("#tables-load").addClass('selected-tile');
+        });
+
+        $("#tables-remove").on("click", () => {
+            this.reset();
+            $("#tables-desktop").trigger("button-remove");
+            $('#tables-cancel').removeClass('desactived-tile');
+            $("#tables-remove").addClass('selected-tile');
+        });
+
+        /** Bottom */
+
+        $("#tables-cancel").on("click", () => {
+            this.reset();
+        });
+
+        $("#tables-check").on("click", () => {
+            if(!this.checkTables()) {
+                $('#tables-load').removeClass('desactived-tile');
+            }
+        });
+
+        $(document).on("click", "#tables-save", () => {
+            $("#tables-desktop").trigger("button-save");
+        });
     }
 
     displayChecks() {
@@ -204,9 +292,12 @@ export default class Tables {
         $('#tables-check').removeClass('desactived-tile');
     }
 
-    importChecks(plateforme) {
-        return this.runCheck(this.tablesTest.checkColumnsNumbers(this.contents)) ||
-            this.runCheck(this.tablesTest.checkPlateFact(plateforme, this.messages, this.contents, this.optPdfs));
+    plateFactCheck(plateforme) {
+        return this.runCheck(this.tablesTest.checkPlateFact(plateforme, this.messages, this.contents, this.optPdfs));
+    }
+
+    columnsCheck() {
+        return this.runCheck(this.tablesTest.checkColumnsNumbers(this.contents));
     }
 
     authorizedCheck() {
@@ -239,13 +330,13 @@ export default class Tables {
         sessionStorage.setItem("optPdfs", JSON.stringify(this.optPdfs));
     }
 
-    emptyContents(plateforme) {
+    emptyContents(plateforme="") {
         for(let filename in this.mandatoryCsvs) {
             this.contents[filename] = this.emptyContent(filename, plateforme);
         }
     }
 
-    emptyContent(filename, plateforme) {
+    emptyContent(filename, plateforme="") {
         if(this.mandatoryCsvs[filename].tools || this.mandatoryCsvs[filename].bidim) {
             return [];
         }
@@ -267,7 +358,18 @@ export default class Tables {
         }
     }
 
-    extract(plateforme, files, check) {
+    import(contents) {
+        for(let filename in this.mandatoryCsvs) {
+            if(Object.keys(contents).includes(filename)) {
+                this.contents[filename] = contents[filename];
+            }
+            else {
+                this.contents[filename] = this.emptyContent(filename);
+            }
+        }
+    }
+
+    extract(files, plateforme="") {
         for(let filename in this.mandatoryCsvs) {
             if(Object.keys(files).includes(filename + ".csv")) {
                 this.contents[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
@@ -319,7 +421,7 @@ export default class Tables {
     }
 
     closeTable() {
-        $('#tables-desktop').css("display", "block");
+        $('#tables-desktop').show();
         $('#tables-editor').html("");
         this.displayChecks();
     }
@@ -341,9 +443,21 @@ export default class Tables {
         return this.contents[filename];
     }
 
+    getContents() {
+        return this.contents;
+    }
+
+    setContent(filename, content) {
+        this.contents[filename] = content;
+    }
+
     getEncFiles(specials={}) {
         let files = {};
         for(let name in this.contents) {
+            if(Object.hasOwn(specials, name)) {
+                console.log("has "+name);
+                continue;
+            }
             let content = this.contents[name];
             if(!this.mandatoryCsvs[name].notitles) {
                 let titles = [];
@@ -356,7 +470,6 @@ export default class Tables {
         }
 
         for(let name in specials) {
-            console.log(name);
             files[name+".csv"] = btoa(Papa.unparse(specials[name], {delimiter: ";", skipEmptyLines: true}));
         }
 

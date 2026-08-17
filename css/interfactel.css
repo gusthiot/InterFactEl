@@ -445,12 +445,8 @@ input[type="file"] {
   100% { margin-left: 0%; }
 }
 
-#supervision-files {
-  display: none;
-  flex-wrap: wrap;
-}
-
 #supervision-manage {
+  display: none;
   margin: 0 auto;
   max-width: 80%;
 }

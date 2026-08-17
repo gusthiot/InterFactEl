@@ -117,7 +117,14 @@ $plateformes = new Plateforme();
                 <div class="text-center"><?= $dlTxt ?></div>
             <?php }
             ?>
-            <div id="supervision-manage"></div>
+            <div id="supervision-manage">
+                <div class="center-tile">
+                    <div id="back" class="tile tight-tile">
+                        Retour à l'accueil
+                    </div>
+                </div>
+                <?php include('includes/tableurMenus.inc'); ?>
+            </div>
             <div id="index-canevas">
             <?php
                 if(IS_SUPER) {
@@ -145,12 +152,6 @@ $plateformes = new Plateforme();
                                 echo tile("manage-files", "<p>Gestion des <br /> droits </p>", "edit");
                                 echo tile('manage-message" data-toggle="modal" data-target="#scroll-modal', "<p>Gestion du <br />bandeau défilant</p>", "message-square");
                             ?>
-                        </div>
-                        <div id="supervision-files">
-                            <div id="listeplateforme" class="file tile csv">Plateformes</div>
-                            <div id="personnel" class="file tile csv">Personnel</div>
-                            <div id="gestionnaire" class="file tile csv">Gestionnaire</div>
-                            <div id="superviseur" class="file tile csv">Superviseur</div>
                         </div>
                     </div>
                 </div>
@@ -291,13 +292,10 @@ $plateformes = new Plateforme();
                     </div>
                 </div>
             </div>
-            <?php include('./includes/tableurModals.inc'); ?>
+            <?php include('includes/tableurModals.inc'); ?>
         </div>
         <?php include("includes/footer.inc");?>
         <script src="js/index.js" type="module"></script>
-        <script src="js/tables/tables.js" type="module"></script>
-        <script src="js/tables/tables-editor.js" type="module"></script>
-        <script src="js/tables/tables-tests.js" type="module"></script>
-        <script src="js/tables/file-tests.js" type="module"></script>
+        <?php include('includes/tableurScripts.inc'); ?>
 	</body>
 </html>

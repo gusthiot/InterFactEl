@@ -1,18 +1,12 @@
 'use strict';
 
-import TablesEditor from "./tables/tables-editor.js";
-import FileTests from "./tables/file-tests.js";
-
-let fileTest = undefined;
-let ids = {};
-let contents = {};
+import Tables from "./tables/tables.js";
 
 $.get("controller/getConfigJson.php", function(data){
     const json = JSON.parse(data);
     const paramtext = json.paramtext;
-    const messages = json.messages;
     const configs = json.configs;
-    contents = json.contents;
+    const contents = json.contents;
 
     Object.keys(contents).forEach(function(name) {
         let titles = [];
@@ -22,75 +16,121 @@ $.get("controller/getConfigJson.php", function(data){
         contents[name].unshift(titles);
     });
 
-    const tableur = new TablesEditor(messages, configs, paramtext);
+    const table = new Tables({
+            "mandatoryCsvs": configs,
+            "mandatoryPdfs": {},
+            "optionalPdfs": {},
+            "messages": json.messages,
+            "paramtext": paramtext
+        }, true);
 
-    fileTest = new FileTests(messages, configs);
 
-    $(document).on("click", ".csv", function() {
-        $('#index-canevas').css("display", "none");
-        const filename = $(this).attr('id');
-        tableur.init(filename, "csv", contents);
-        $('#supervision-manage').html(tableur.unidimTableur());
+    $(document).on("button-read", "#tables-desktop", function() {
+        table.import(contents);
+        table.saveContents();
+        table.displayFiles();
     });
 
-    $(document).on("saved", "#tableur-table", function(event, newContent, filename) {
-        const results = fileTest.internalCheck(filename, newContent, contents, ids);
-        if(runCheck(results.result)) {
-            tableur.displayErrors(results.errors);
-            $("#tableur-table").trigger("error");
+    function hasRight(right, pos) {
+        return (parseInt(right) & (1 << pos)) > 0 ? 1 : 0;
+    }
+
+    $(document).on("button-import", "#tables-desktop", function(event, json) {
+        table.extract(JSON.parse(json));
+        const gestionnaire = table.getContent("gestionnaire");
+        let content = [];
+        let titles = [];
+        for(let numCol = 0; numCol < configs["gestionnaire"].numcol; numCol++) {
+            titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-"+numCol])));
+        }
+        content.push(titles);
+        for(let numRow = 1; numRow < gestionnaire.length; numRow++) {
+            const line = gestionnaire[numRow];
+            content.push([line[0], line[1], hasRight(line[2], 2), hasRight(line[2], 1) , hasRight(line[2], 0), line[3]]);
+        }
+        table.setContent("gestionnaire", content);
+
+
+        if(table.columnsCheck()) {
+            table.removeContents();
         }
         else {
-            ids = results.ids;
-            contents[filename] = newContent;
-            let content = structuredClone(newContent);
-            if(filename == "gestionnaire") {
-                let titles = [];
-                titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-0"])));
-                titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-1"])));
-                titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-6"])));
-                titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-5"])));
-                content[0] = titles;
-                let orders = {};
-                let newAdds = {};
-                for(let numRow = 1; numRow < content.length; numRow++) {
-                    const line = content[numRow];
-                    if(line[5] == "") {
-                        if(!Object.keys(newAdds).includes(line[0])) {
-                            newAdds[line[0]] = [];
-                        }
-                        newAdds[line[0]].push(numRow);
-                    }
-                    else {
-                        if(!Object.keys(orders).includes(line[0]) || (line[5] > orders[line[0]])) {
-                            orders[line[0]] = line[5];
-                        }
-                    }
-                    const codage = 4*parseInt(line[2]) + 2*parseInt(line[3]) + parseInt(line[4]);
-                    content[numRow] = [line[0], line[1], codage, line[5]];
-                }
-                Object.keys(newAdds).forEach(function(login) {
-                    newAdds[login].forEach(function(row) {
-                        if(!Object.keys(orders).includes(login)) {
-                            orders[login] = 1;
-                            content[row][3] = 1;
-                            contents[filename][row][5] = 1;
-                        }
-                        else {
-                            const order = parseInt(orders[login]) + 1;
-                            orders[login] = order;
-                            content[row][3] = order;
-                            contents[filename][row][5] = order;
-                        }
-                    });
-                });
-            }
-            $.post("controller/saveConfigFile.php", {name: filename, content: content}, function(res) {
-                if(!runCheck(res)) {
-                    closeTable();
-                }
-            });
+            table.authorizedCheck();
+            table.saveContents();
+            table.displayFiles();
+            $('#tables-cancel').removeClass('desactived-tile');
         }
     });
+
+    $(document).on("button-create", "#tables-desktop", function() {
+        table.emptyContents();
+        table.displayFiles();
+    });
+
+    function getEncFiles() {
+        let content = [];
+        let titles = [];
+        titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-0"])));
+        titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-1"])));
+        titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-6"])));
+        titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-5"])));
+        content.push(titles);
+        let orders = {};
+        let newAdds = {};
+        for(let numRow = 1; numRow < table.getContent("classeclient").length; numRow++) {
+            const line = table.getContent("classeclient")[numRow];
+            if(line[5] == "") {
+                if(!Object.keys(newAdds).includes(line[0])) {
+                    newAdds[line[0]] = [];
+                }
+                newAdds[line[0]].push(numRow);
+            }
+            else {
+                if(!Object.keys(orders).includes(line[0]) || (line[5] > orders[line[0]])) {
+                    orders[line[0]] = line[5];
+                }
+            }
+            const codage = 4*parseInt(line[2]) + 2*parseInt(line[3]) + parseInt(line[4]);
+            content.push([line[0], line[1], codage, line[5]]);
+        }
+        Object.keys(newAdds).forEach(function(login) {
+            newAdds[login].forEach(function(row) {
+                if(!Object.keys(orders).includes(login)) {
+                    orders[login] = 1;
+                    content[row][3] = 1;
+                    contents[filename][row][5] = 1;
+                }
+                else {
+                    const order = parseInt(orders[login]) + 1;
+                    orders[login] = order;
+                    content[row][3] = order;
+                    contents[filename][row][5] = order;
+                }
+            });
+        });
+        return table.getEncFiles({"gestionnaire": content});
+    }
+
+    $(document).on("button-save", "#tables-desktop", function() {
+        $.post("controller/saveConfigs.php", {files: getEncFiles()}, function (data) {
+            window.location.href = "controller/download.php?type=js-configs&name="+data;
+        });
+
+    });
+
+    $(document).on("button-load", "#tables-desktop", function() {
+
+        $.post("controller/saveConfigFile.php", {name: filename, content: content}, function(res) {
+            if(!runCheck(res)) {
+                closeTable();
+            }
+        });
+    });
+});
+
+$(document).on("click", "#back", function() {
+    $('#supervision-manage').hide();
+    $('#index-canevas').show();
 });
 
 function zipError() {
@@ -176,26 +216,10 @@ $('#modal-save').on('click', function () {
 });
 
 $('.manage-files').on('click', function () {
-    if($('#supervision-files').css("display") == "flex") {
-        $('#supervision-files').css("display", "none");
-    }
-    else {
-        $('#supervision-files').css("display", "flex");
-    }
+    $('#supervision-manage').show();
+    $('#index-canevas').hide();
 });
 
-$(document).on("click", ".tableur-remove", function() {
-    closeTable();
-});
-
-$(document).on("close", "#tables-editor", () => {
-    closeTable();
-});
-
-function closeTable() {
-    $('#index-canevas').css("display", "block");
-    $('#supervision-manage').html("");
-}
 
 function runCheck(res) {
     if(res != "") {
