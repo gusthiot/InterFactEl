@@ -124,71 +124,71 @@ $.get("controller/getParametresJson.php", function(data){
         });
     });
 
-});
 
 
-$(document).on("remove", "#tables-dates", function(event, date) {
-    removeTarifs(date);
-});
+    $(document).on("remove", "#tables-dates", function(event, date) {
+        removeTarifs(date);
+    });
 
-$(document).on("apply", "#tables-dates", function(event, date) {
-    applyTarifs(date);
-});
+    $(document).on("apply", "#tables-dates", function(event, date) {
+        applyTarifs(date);
+    });
 
-$(document).on("save", "#tables-dates", function(event, date, type) {
-    if(type == "replace") {
-        window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
-        setTimeout(() => { applyTarifs(date); }, 2000);
+    $(document).on("save", "#tables-dates", function(event, date, type) {
+        if(type == "replace") {
+            window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
+            setTimeout(() => { applyTarifs(date); }, 2000);
+        }
+        if(type == "remove") {
+            window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
+            setTimeout(() => { removeTarifs(date); }, 2000);
+        }
+    });
+
+    function removeTarifs(date) {
+        $.post("controller/suppressTarifs.php", {plate: plateforme, date: date}, function (data) {
+            if(data == "ok" || data.includes("not empty")) {
+                table.reset();
+                window.location.href = "tarifs.php?plateforme="+plateforme;
+            }
+            else {
+                $('#message').html(data);
+            }
+        });
+
     }
-    if(type == "remove") {
-        window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
-        setTimeout(() => { removeTarifs(date); }, 2000);
+
+    function applyTarifs(date) {
+        $.post("controller/applyTarifs.php", {plate: plateforme, date: date, files: getEncFiles()}, function (data) {
+            if(data == "ok") {
+                table.reset();
+                window.location.href = "tarifs.php?plateforme="+plateforme;
+            }
+            else {
+                $('#message').html(data);
+            }
+        });
     }
-});
 
-function removeTarifs(date) {
-    console.log(date);
-    $.post("controller/suppressTarifs.php", {plate: plateforme, date: date}, function (data) {
-        if(data == "ok" || data.includes("not empty")) {
-            table.reset();
-            window.location.href = "tarifs.php?plateforme="+plateforme;
-        }
-        else {
-            $('#message').html(data);
-        }
-    });
-
-}
-
-function applyTarifs(date) {
-    $.post("controller/applyTarifs.php", {plate: plateforme, date: date, files: getEncFiles()}, function (data) {
-        if(data == "ok") {
-            table.reset();
-            window.location.href = "tarifs.php?plateforme="+plateforme;
-        }
-        else {
-            $('#message').html(data);
-        }
-    });
-}
-
-$(document).on("button-save", "#tables-desktop", function() {
-    $.post("controller/saveTarifs.php", {plate: plateforme, files: getEncFiles()}, function (data) {
-        window.location.href = "controller/download.php?type=js-tarifs&name="+data+"&plate="+plateforme;
-    });
-});
-
-function getEncFiles() {
-    let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];
-    const ccIds = table.retrieveIds("classeclient");
-    Object.keys(ccIds).forEach(function(ccKey) {
-        const ccLine = table.getContent("classeclient")[ccIds[ccKey]];
-        const idBase = ccLine[8];
-        Object.keys(table.retrieveIds("categorie")).forEach(function(caKey) {
-            const idBaseCateg = idBase+"_"+caKey;
-            const bcLine = table.getContent("basecateg")[table.retrieveIds("basecateg")[idBaseCateg]];
-            categprix.push([ccKey, caKey, bcLine[2]]);
+    $(document).on("button-save", "#tables-desktop", function() {
+        $.post("controller/saveTarifs.php", {plate: plateforme, files: getEncFiles()}, function (data) {
+            window.location.href = "controller/download.php?type=js-tarifs&name="+data+"&plate="+plateforme;
         });
     });
-    return table.getEncFiles({"categprix": categprix});
-}
+
+    function getEncFiles() {
+        let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];
+        const ccIds = table.retrieveIds("classeclient");
+        Object.keys(ccIds).forEach(function(ccKey) {
+            const ccLine = table.getContent("classeclient")[ccIds[ccKey]];
+            const idBase = ccLine[8];
+            Object.keys(table.retrieveIds("categorie")).forEach(function(caKey) {
+                const idBaseCateg = idBase+"_"+caKey;
+                const bcLine = table.getContent("basecateg")[table.retrieveIds("basecateg")[idBaseCateg]];
+                categprix.push([ccKey, caKey, bcLine[2]]);
+            });
+        });
+        return table.getEncFiles({"categprix": categprix});
+    }
+
+});

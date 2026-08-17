@@ -455,7 +455,6 @@ export default class Tables {
         let files = {};
         for(let name in this.contents) {
             if(Object.hasOwn(specials, name)) {
-                console.log("has "+name);
                 continue;
             }
             let content = this.contents[name];

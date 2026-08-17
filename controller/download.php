@@ -33,6 +33,24 @@ if(isset($_GET['type'])) {
         readZip($type, $tmpFile, $tmpDir);
         State::delDir($tmpDir);
     }
+    elseif($type==="js-droits") {
+        // droits zip, only for supervisor
+        if(!IS_SUPER) {
+            header('Location: ../index.php');
+            exit;
+        }
+        if(isset($_GET['name'])) {
+            header('Content-disposition: attachment; filename="droit.zip"');
+            header('Content-type: application/zip');
+            readfile($_GET['name']);
+            ignore_user_abort(true);
+            unlink($_GET['name']);
+        }
+        else {
+            $_SESSION['alert-danger'] = "erreur download";
+            header('Location: ../index.php');
+        }
+    }
     elseif($type==="generated") {
         // prefacturation, only for the user running it
         $fileName = Lock::loadByName("../".USER.".lock");

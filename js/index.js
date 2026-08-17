@@ -77,8 +77,8 @@ $.get("controller/getDroitJson.php", function(data){
         content.push(titles);
         let orders = {};
         let newAdds = {};
-        for(let numRow = 1; numRow < table.getContent("classeclient").length; numRow++) {
-            const line = table.getContent("classeclient")[numRow];
+        for(let numRow = 1; numRow < table.getContent("gestionnaire").length; numRow++) {
+            const line = table.getContent("gestionnaire")[numRow];
             if(line[5] == "") {
                 if(!Object.keys(newAdds).includes(line[0])) {
                     newAdds[line[0]] = [];
@@ -119,11 +119,9 @@ $.get("controller/getDroitJson.php", function(data){
     });
 
     $(document).on("button-load", "#tables-desktop", function() {
-
-        $.post("controller/saveConfigFile.php", {name: filename, content: content}, function(res) {
-            if(!runCheck(res)) {
-                closeTable();
-            }
+        $.post("controller/writeDroits.php", {files: getEncFiles()}, function(res) {
+            table.reset();
+            window.location.href = "index.php";
         });
     });
 });
