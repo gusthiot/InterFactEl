@@ -765,8 +765,24 @@ table.dates-tarifs .tr-clickable:hover {
   border-spacing: 0;
 }
 
+#table-tableur thead tr th {
+  background-color: white;
+  position: sticky;
+  z-index: 100;
+  top: 0;
+}
+
+.tableur-input {
+  width: 100%;
+}
+
 .input-filter {
   margin-left: 20px;
+}
+
+.input-number {
+  text-align:right;
+  min-width: 100px;
 }
 
 #tableur-header {
@@ -788,7 +804,7 @@ table.dates-tarifs .tr-clickable:hover {
   position: sticky;
   right: 0;
   background-color: white;
-  border-bottom: 1px solid var(--gris-200);
+  border-bottom: 1px solid var(--gris-200) !important;
 }
 
 .span-th {

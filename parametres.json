@@ -227,11 +227,11 @@
         "tools": true,
         "columns": [
             {"type": "ref", "origin": "groupe", "col": 2, "value": "OUI", "intitule": 1},
-            {"type": "num", "zero": true},
-            {"type": "num", "zero": true, "max": 100},
-            {"type": "num", "zero": true},
-            {"type": "num", "zero": true, "max": 100},
-            {"type": "num", "zero": true}
+            {"type": "num", "zero": true, "dec": 1},
+            {"type": "num", "zero": true, "dec": 1, "max": 100},
+            {"type": "num", "zero": true, "dec": 1},
+            {"type": "num", "zero": true, "dec": 1, "max": 100},
+            {"type": "num", "zero": true, "dec": 1}
         ],
         "tests": [
             {"type": "unique", "id": [0], "msg": "01"},
@@ -251,7 +251,7 @@
         "columns": [
             {"type": "none", "origin": "classeclient"},
             {"type": "none", "origin": "classeprestation"},
-            {"type": "num", "zero": true}
+            {"type": "num", "zero": true, "dec": 2}
         ],
         "tests": [
             {"type": "ref", "col": 0, "msg": "01"},
@@ -268,7 +268,7 @@
         "columns": [
             {"type": "none", "origin": "base"},
             {"type": "none", "origin": "categorie"},
-            {"type": "num", "zero": true}
+            {"type": "num", "zero": true, "dec": 0, "origin": "categorie", "col": 4}
         ],
         "tests": [
             {"type": "ref", "col": 0, "msg": "01"},

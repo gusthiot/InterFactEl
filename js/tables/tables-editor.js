@@ -133,13 +133,12 @@ export default class TablesEditor {
             }
             for(let numCol = 0; numCol < this.parametres[this.filename].numcol; numCol++) {
                 const paramCol = this.parametres[this.filename].columns[numCol];
-                let cell = "";
                 html += '<td class="border-left';
                 if((numCol == this.parametres[this.filename].numcol-1) && !this.parametres[this.filename].tools) {
                     html += ' border-right';
                 }
                 html += ' cell">';
-                html += this.input(paramCol, cell, num, notitles);
+                html += this.input(paramCol, "", num, notitles);
                 html += '</td>';
             }
             html += '<td class="td-tools">';
@@ -279,7 +278,7 @@ export default class TablesEditor {
     }
 
     unidimTableur() {
-        let html = '<tr>';
+        let html = '<thead><tr>';
         for(let numCol = 0; numCol < this.parametres[this.filename].numcol; numCol++) {
             html += '<th class="border-bottom">' + this.paramtext["table-"+this.filename+"-"+numCol];
             if(this.parametres[this.filename].filter && this.parametres[this.filename].filter.includes(numCol)) {
@@ -288,9 +287,9 @@ export default class TablesEditor {
             html += '</th>';
         }
         if(this.parametres[this.filename].tools) {
-            html += '<td class="th-tools"></td>';
+            html += '<th class="th-tools"></th>';
         }
-        html += '</tr>';
+        html += '</tr></thead><tbody>';
         let notitles = false;
         if(this.parametres[this.filename].notitles) {
             notitles = true;
@@ -331,6 +330,7 @@ export default class TablesEditor {
                         '<use xlink:href="#plus"></use>' +
                     '</svg></td></tr>';
         }
+        html += '</tbody>';
         return this.templateTableur(html, "unidim");
     }
 
@@ -381,7 +381,7 @@ export default class TablesEditor {
                         break;
                     }
                 };
-                html += '<td class="border-right cell">' + this.number(value, this.parametres[this.filename].columns[2]) + '</td>';
+                html += '<td class="border-right cell">' + this.number(value, this.parametres[this.filename].columns[2], dim1[num1][0]) + '</td>';
             }
             html += '</tr>';
         }
@@ -409,24 +409,53 @@ export default class TablesEditor {
         }
     }
 
-    number(value, params) {
-        let ret = '<input class="tableur-input" type="number" size="6" value="' + value + '" ';
+    retrieveIdLine(filename, id) {
+        for(let numRow = 0; numRow < this.contents[filename].length; numRow++) {
+            if(numRow > 0) {
+                if(id == this.contents[filename][numRow][0]) {
+                    return this.contents[filename][numRow];
+                }
+            }
+        }
+        return "";
+    }
+
+    number(value, params, idDec=0) {
+        let ret = '<input class="tableur-input input-number" type="text" ';
+        let dec = 0;
         if(params.max) {
-            ret += ' max="' + params.max + '" ';
+            ret += ' data-max="' + params.max + '" ';
         }
         if(params.int) {
-            ret += ' step="1" ';
+            ret += ' data-dec="0" ';
         }
         else {
-            ret += ' step="any" ';
+            let step = 1;
+            dec = parseInt(params.dec);
+            if(dec > 0) {
+                step = Math.pow(10, -dec);
+            }
+            else {
+                const line = this.retrieveIdLine(params.origin, idDec);
+                if(line != "") {
+                    dec = line[params.col];
+                    step = Math.pow(10, -dec);
+                }
+            }
+            ret += ' data-dec="' + dec + '" ';
         }
         if(params.zero) {
-            ret += ' min="0" ';
+            ret += ' data-min="0" ';
         }
         else {
-            ret += ' min="1" ';
+            ret += ' data-min="1" ';
         }
-        ret += ' >';
+        if(dec > 0) {
+            ret += ' value="' + parseFloat(value).toFixed(dec) + '" >';
+        }
+        else {
+            ret += ' value="' + value + '" >';
+        }
         return ret;
     }
 
@@ -543,7 +572,24 @@ export default class TablesEditor {
     }
 }
 
+function checkValue(cell) {
+        const value = parseFloat($(cell).val());
+        if(isNaN(value)) {
+            return 0;
+        }
+        if(($(cell).data('min') != undefined) && (value < parseFloat($(cell).data('min')))) {
+            return $(cell).data('min');
+        }
+        if(($(cell).data('max') != undefined) && (value < parseFloat($(cell).data('max')))) {
+            return $(cell).data('max');
+        }
+        return value;
+}
+
 $(document).on("input", ".tableur-input", function() {
+    if($(this).hasClass('input-number')) {
+        $(this).val(checkValue(this).toFixed($(this).data('dec')));
+    }
     $(this).attr('value',$(this).val());
 });
 
