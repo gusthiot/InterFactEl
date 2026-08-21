@@ -122,7 +122,7 @@ export default class TablesEditor {
         $(document).on("click", "#line-plus", (evt) => {
             const tr = $(evt.currentTarget).closest('tr').prev();
             let num = 1;
-            if(tr.hasClass('values')) {
+            if((tr.length > 0) && (tr.hasClass('values'))) {
                 const tab = tr.attr('id').split("-");
                 num = parseInt(tab[1]) + 1;
             }
@@ -142,7 +142,7 @@ export default class TablesEditor {
                 html += '</td>';
             }
             html += '<td class="td-tools">';
-            if(tr.hasClass('values')) {
+            if((tr.length > 0) && (tr.hasClass('values'))) {
                 html += this.lineUp();
                 let tools = "";
                 if(tr.prev().hasClass('values')) {
@@ -152,7 +152,12 @@ export default class TablesEditor {
                 tr.find('.td-tools').html(tools);
             }
             html += this.lineRemove() + '</td></tr>';
-            tr.after(html);
+            if(tr.length > 0) {
+                tr.after(html);
+            }
+            else {
+                $(evt.currentTarget).closest('tr').before(html);
+            }
         });
 
     }
@@ -264,6 +269,10 @@ export default class TablesEditor {
 
     displayErrors(errors) {
         const lines = $("#tableur-table").find(".values");
+        const oldErrors = $("#tableur-table").find(".background-red");
+        for(let old of oldErrors) {
+            $(old).removeClass("background-red");
+        }
         Object.keys(errors).forEach(function(keyRow) {
             const numRow = keyRow.split('-')[1];
             const line = lines[numRow-1];
@@ -393,7 +402,7 @@ export default class TablesEditor {
             case "num":
                 return this.number(cell, paramCol);
             case "txt":
-                return this.text(cell);
+                return this.text(cell, paramCol);
             case "alphanum":
                 return this.alphanum(cell);
             case "check":
@@ -421,34 +430,24 @@ export default class TablesEditor {
     }
 
     number(value, params, idDec=0) {
-        let ret = '<input class="tableur-input input-number" type="text" ';
-        let dec = 0;
-        if(params.max) {
-            ret += ' data-max="' + params.max + '" ';
+        let size = "";
+        if(params.small) {
+            size = "input-small";
         }
+        let ret = '<input class="tableur-input input-number ' + size + '" type="text" ';
+        let dec = 0;
         if(params.int) {
             ret += ' data-dec="0" ';
         }
         else {
-            let step = 1;
             dec = parseInt(params.dec);
-            if(dec > 0) {
-                step = Math.pow(10, -dec);
-            }
-            else {
+            if(dec == 0) {
                 const line = this.retrieveIdLine(params.origin, idDec);
                 if(line != "") {
                     dec = line[params.col];
-                    step = Math.pow(10, -dec);
                 }
             }
             ret += ' data-dec="' + dec + '" ';
-        }
-        if(params.zero) {
-            ret += ' data-min="0" ';
-        }
-        else {
-            ret += ' data-min="1" ';
         }
         if(dec > 0) {
             ret += ' value="' + parseFloat(value).toFixed(dec) + '" >';
@@ -459,12 +458,19 @@ export default class TablesEditor {
         return ret;
     }
 
-    text(value) {
-        return '<input class="tableur-input" type="text" value="' + value + '">';
+    text(value, params) {
+        let size = "input-big";
+        if(params.small) {
+            size = "";
+        }
+        if(params.big) {
+            size = "input-big-big";
+        }
+        return '<input class="tableur-input ' + size + '" type="text" value="' + value + '">';
     }
 
     alphanum(value) {
-        return '<input class="tableur-input" type="text" value="' + value + '" pattern="[\\w\\d\\-]*" >';
+        return '<input class="tableur-input input-small alphanum" type="text" value="' + value + '">';
     }
 
     check(value) {
@@ -572,25 +578,32 @@ export default class TablesEditor {
     }
 }
 
-function checkValue(cell) {
-        const value = parseFloat($(cell).val());
-        if(isNaN(value)) {
-            return 0;
-        }
-        if(($(cell).data('min') != undefined) && (value < parseFloat($(cell).data('min')))) {
-            return $(cell).data('min');
-        }
-        if(($(cell).data('max') != undefined) && (value < parseFloat($(cell).data('max')))) {
-            return $(cell).data('max');
-        }
-        return value;
-}
+$(document).on("blur", ".input-number", function() {
+    const dec = parseInt($(this).data('dec'));
+    if(dec > 0) {
+        let value = parseFloat($(this).val());
+        $(this).val(value.toFixed(dec));
+        $(this).attr('value', value.toFixed(dec));
+    }
+});
 
 $(document).on("input", ".tableur-input", function() {
+    let value = $(this).val();
     if($(this).hasClass('input-number')) {
-        $(this).val(checkValue(this).toFixed($(this).data('dec')));
+        const dec = parseInt($(this).data('dec'));
+        if(dec > 0) {
+            value = value.replace(/[^0-9.]/g, '');
+        }
+        else {
+            value = value.replace(/[^0-9]/g, '');
+        }
+        $(this).val(value);
     }
-    $(this).attr('value',$(this).val());
+    if($(this).hasClass('alphanum')) {
+        value = value.replace(/[^\w\d\-]/g, '');
+        $(this).val(value);
+    }
+    $(this).attr('value', value);
 });
 
 $(document).on("input", ".tableur-check", function() {

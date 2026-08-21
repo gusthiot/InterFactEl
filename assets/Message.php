@@ -16,7 +16,7 @@ class Message extends Csv
     const LABELS = ["msg1", "msg2", "msg3", "msg3.1", "msg3.2", "msg3.3", "msg4", "msg5", "msg6", "msg7", "msg8", "msg9", "msg10",
                     "paramfact00",
                     "plateforme00", "plateforme01", "plateforme02",
-                    "articlesap00", "articlesap01", "articlesap02", "articlesap03", "articlesap04",
+                    "articlesap00", "articlesap01", "articlesap02", "articlesap03", "articlesap04", "articlesap05",
                     "overhead00", "overhead01", "overhead02", "overhead03", "overhead04",
                     "base00", "base01",
                     "classeclient00", "classeclient01", "classeclient02", "classeclient03", "classeclient04", "classeclient05", "classeclient06", "classeclient07",
@@ -31,7 +31,7 @@ class Message extends Csv
                     "grille00", "grille01", "grille02",
                     "listeplateforme00", "listeplateforme01",
                     "personnel00", "personnel01", "personnel02",
-                    "gestionnaire00", "gestionnaire01", "gestionnaire02", "gestionnaire03", "gestionnaire04",
+                    "gestionnaire00", "gestionnaire01", "gestionnaire02", "gestionnaire03", "gestionnaire04", "gestionnaire05", "gestionnaire06",
                     "superviseur00", "superviseur01"];
 
     /**

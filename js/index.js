@@ -36,7 +36,9 @@ $.get("controller/getDroitJson.php", function(data){
     }
 
     $(document).on("button-import", "#tables-desktop", function(event, json) {
-        table.extract(JSON.parse(json));
+        const files = JSON.parse(json);
+        $('#message').html(table.authorizedCheck(files));
+        table.extract(files);
         const gestionnaire = table.getContent("gestionnaire");
         let content = [];
         let titles = [];
@@ -55,7 +57,6 @@ $.get("controller/getDroitJson.php", function(data){
             table.removeContents();
         }
         else {
-            table.authorizedCheck();
             table.saveContents();
             table.displayFiles();
             $('#tables-cancel').removeClass('desactived-tile');

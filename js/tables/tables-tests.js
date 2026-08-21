@@ -8,26 +8,25 @@ export default class TablesTests {
         this.optionalPdfs = parametres.optionalPdfs;
     }
 
-    checkAuthorized(contents, pdfs, optPdfs) {
+    checkAuthorized(files) {
         let polluting = [];
-        for(let filename in contents) {
-            if(!Object.keys(this.mandatoryCsvs).includes(filename)) {
-                polluting.push(filename+".csv");
+        for(let filename in files) {
+            const name = filename.split('.')[0];
+            if(Object.keys(this.mandatoryCsvs).includes(name)) {
+                continue;
             }
-        }
-        for(let filename in pdfs) {
-            if(!Object.keys(this.mandatoryPdfs).includes(filename)) {
-                polluting.push(filename+".pdf");
+            if(Object.keys(this.mandatoryPdfs).includes(name)) {
+                continue;
             }
-        }
-        for(let filename in optPdfs) {
-            if(!Object.keys(this.optionalPdfs).includes(filename)) {
-                polluting.push(filename+".pdf");
+            if(Object.keys(this.optionalPdfs).includes(name)) {
+                continue;
             }
+            polluting.push(filename);
         }
         if(polluting.length > 0) {
             let list = "";
-            for(let num = 0; num < polluting.length; num++) {
+            let num = 0;
+            for(; num < polluting.length; num++) {
                 if(num > 0) {
                     list += ", ";
                 }
@@ -83,6 +82,9 @@ export default class TablesTests {
                             result += messages["plateforme02"] + " <br />";
                         }
                         if(line[2] == "OUI" && !Object.keys(optPdfs).includes("grille")) {
+                            result += messages["grille02"] + " <br />";
+                        }
+                        if(line[2] == "NON" && Object.keys(optPdfs).includes("grille")) {
                             result += messages["grille01"] + " <br />";
                         }
                     }
@@ -110,7 +112,12 @@ export default class TablesTests {
                 return ret;
             }
             if(this.mandatoryCsvs[filename].tests) {
-                const results = fileTest.internalCheck(filename, contents[filename], contents, ids);
+                let dimensions = [];
+                if(this.mandatoryCsvs[filename].bidim) {
+                    dimensions = [contents[this.mandatoryCsvs[filename].columns[0].origin].length-1,
+                                contents[this.mandatoryCsvs[filename].columns[1].origin].length-1];
+                }
+                const results = fileTest.internalCheck(filename, contents[filename], contents, ids, dimensions);
                 ret.result += results.result;
                 ret.ids = results.ids;
                 ret.checks[filename].errors = results.errors;

@@ -85,24 +85,24 @@ export default class Tables {
             this.tableur.init(filename, "pdf");
             let html = this.tableur.header();
             if(filename == "grille") {
-                if(this.contents['plateforme'][7][2] == "OUI") {
-                    let title = "Ajouter la grille";
-                    if(this.optPdfs.grille) {
-                        title = "Remplacer la grille";
-                    }
-                    html += this.uploadPdf(this.messages[filename + "01"], "replace-grille", title);
+                if(this.optPdfs.grille) {
+                    html += this.uploadPdf("replace-grille", "Remplacer la grille");
+                    html += '<div class="center-tile">' +
+                                '<div id="delete-grille" class="tile tight-tile">Effacer la grille</div>' +
+                            '</div>';
                 }
                 else {
-                    html += '<div>' + this.messages[filename + "02"] + '</div>';
-                    if(this.optPdfs.grille) {
-                        html += '<div class="center-tile">' +
-                                    '<div id="delete-grille" class="tile tight-tile">Effacer la grille</div>' +
-                                '</div>';
-                    }
+                    html += this.uploadPdf("replace-grille", "Charger une grille");
                 }
             }
             else {
-                html += this.uploadPdf(this.messages[filename + "01"], "replace-logo", "Remplacer le logo");
+                html += '<div>' + this.messages[filename + "01"] + '</div>';
+                if(this.pdfs.logo) {
+                    html += this.uploadPdf("replace-logo", "Remplacer le logo");
+                }
+                else {
+                    html += this.uploadPdf("replace-logo", "Charger un logo");
+                }
             }
             $('#tables-editor').html(html);
         });
@@ -286,7 +286,6 @@ export default class Tables {
                 filesList += '<div id="' + key + '" class="file tile pdf">' + dict[key].name + "</div>";
             }
         }
-        $('#message').html("");
         $('#tables-files').html(filesList);
         $('#tables-save').removeClass('desactived-tile');
         $('#tables-check').removeClass('desactived-tile');
@@ -300,8 +299,8 @@ export default class Tables {
         return this.runCheck(this.tablesTest.checkColumnsNumbers(this.contents));
     }
 
-    authorizedCheck() {
-        $('#message').html(this.tablesTest.checkAuthorized(this.contents, this.pdfs, this.optPdfs));
+    authorizedCheck(files) {
+        $('#message').html(this.tablesTest.checkAuthorized(files));
     }
 
     runCheck(res) {
@@ -343,8 +342,8 @@ export default class Tables {
         else {
             let content = [];
             for(let label of this.mandatoryCsvs[filename].labels) {
-                let line = [label];
-                for(let numCol = 1; numCol < this.mandatoryCsvs[filename].numcol; numCol++) {
+                let line = [label, this.paramtext[filename + "-" + label]];
+                for(let numCol = 2; numCol < this.mandatoryCsvs[filename].numcol; numCol++) {
                     if((filename == "plateforme") && (label == "Id-Plateforme") && (numCol == 2)) {
                         line.push(plateforme);
                     } else if((filename == "plateforme") && (label == "Grille-Plateforme") && (numCol == 2)) {
@@ -414,9 +413,8 @@ export default class Tables {
         $("#tables-load").removeClass('selected-tile');
     }
 
-    uploadPdf(message, id, titre) {
-        return '<div>' + message + '</div>' +
-                '<div class="center-tile">' +
+    uploadPdf(id, titre) {
+        return '<div class="center-tile">' +
                     '<input id="' + id + '" type="file" name="' + id + '" class="pdf-file" accept=".pdf">' +
                     '<label class="tile tight-tile" for="' + id + '">' + titre + '</label>' +
                 '</div>';

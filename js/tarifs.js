@@ -84,13 +84,14 @@ $.get("controller/getParametresJson.php", function(data){
     });
 
     $(document).on("button-import", "#tables-desktop", function(event, json) {
-        table.extract(JSON.parse(json), plateforme);
+        const files = JSON.parse(json);
+        $('#message').html(table.authorizedCheck(files));
+        table.extract(files, plateforme);
 
         if(table.columnsCheck() || table.plateFactCheck(plateforme)) {
             table.removeContents();
         }
         else {
-            table.authorizedCheck();
             table.saveContents();
             table.displayFiles();
             $('#tables-cancel').removeClass('desactived-tile');

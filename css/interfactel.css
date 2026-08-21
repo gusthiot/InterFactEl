@@ -774,15 +774,23 @@ table.dates-tarifs .tr-clickable:hover {
 
 .tableur-input {
   width: 100%;
+  min-width: 100px;
 }
 
 .input-filter {
   margin-left: 20px;
 }
 
-.input-number {
-  text-align:right;
-  min-width: 100px;
+.input-small {
+  min-width: 50px;
+}
+
+.input-big {
+  min-width: 200px;
+}
+
+.input-big-big {
+  min-width: 250px;
 }
 
 #tableur-header {

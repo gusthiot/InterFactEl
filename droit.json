@@ -6,7 +6,7 @@
         "columns": [
             {"type": "alphanum"},
             {"type": "alphanum"},
-            {"type": "txt"},
+            {"type": "txt", "big": true},
             {"type": "alphanum"},
             {"type": "alphanum"}
         ],
@@ -40,13 +40,15 @@
             {"type": "check"},
             {"type": "check"},
             {"type": "check"},
-            {"type": "none"}
+            {"type": "none", "int": true}
         ],
         "tests": [
             {"type": "ref", "col": 0, "msg": "01"},
             {"type": "ref", "col": 1, "msg": "02"},
             {"type": "unique", "id": [0, 1], "msg": "03"},
-            {"type": "droit", "col": [2, 3, 4], "msg": "04"}
+            {"type": "droit", "col": [2, 3, 4], "msg": "04"},
+            {"type": "num", "col": 5, "msg": "05"},
+            {"type": "unique", "noindex": true, "id": [5], "msg": "06"}
         ]
     },
     "superviseur": {

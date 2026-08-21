@@ -6,7 +6,7 @@
         "notitles": true,
         "columns": [
             {"type": "none"},
-            {"type": "txt"},
+            {"type": "none"},
             {"type": "alphanum"},
             {"type": "alphanum"}
         ]
@@ -26,14 +26,15 @@
             {"type": "txt"},
             {"type": "num", "int": true},
             {"type": "num", "zero": true, "int": true},
-            {"type": "txt"},
+            {"type": "txt", "small": true},
             {"type": "txt"}
         ],
         "tests": [
             {"type": "unique", "id": [0], "msg": "01"},
             {"type": "in", "col": 1, "msg": "02"},
             {"type": "num", "col": 3, "msg": "03"},
-            {"type": "unique", "noindex": true, "id": [3], "msg": "04"}
+            {"type": "unique", "noindex": true, "id": [3], "msg": "04"},
+            {"type": "num", "col": 3, "msg": "05"}
         ]
     },
     "overhead": {
@@ -99,7 +100,7 @@
         "notitles": true,
         "columns": [
             {"type": "none"},
-            {"type": "txt"},
+            {"type": "none"},
             {
                 "type": "specific",
                 "lines": [
@@ -142,7 +143,7 @@
             {"type": "menu", "list": ["OUI", "NON"]},
             {"type": "alphanum"},
             {"type": "alphanum"},
-            {"type": "txt"}
+            {"type": "txt", "big": true}
         ],
         "tests": [
             {"type": "unique", "id": [0], "msg": "01"},
@@ -162,8 +163,8 @@
             {"type": "alphanum"},
             {"type": "alphanum"},
             {"type": "txt"},
-            {"type": "txt"},
-            {"type": "num", "zero": true, "int": true, "max": 8},
+            {"type": "txt", "small": true},
+            {"type": "num", "zero": true, "int": true, "max": 8, "small": true},
             {"type": "ref", "origin": "classeprestation", "intitule": 1},
             {
                 "type": "menu",
@@ -192,7 +193,7 @@
         "tools": true,
         "columns": [
             {"type": "alphanum"},
-            {"type": "txt"},
+            {"type": "txt", "big": true},
             {"type": "menu", "list": ["OUI", "NON"]},
             {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K1", "intitule": 2},
             {"type": "ref", "origin": "categorie", "zero": true, "col": 6, "value": "K2", "intitule": 2},
