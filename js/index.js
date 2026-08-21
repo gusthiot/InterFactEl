@@ -8,13 +8,13 @@ $.get("controller/getDroitJson.php", function(data){
     const droits = json.droits;
     const contents = json.contents;
 
-    Object.keys(contents).forEach(function(name) {
+    for(let filename in contents) {
         let titles = [];
-        for(let numCol = 0; numCol < droits[name].numcol; numCol++) {
-            titles.push(unescape(encodeURIComponent(paramtext["table-"+name+"-"+numCol])));
+        for(let numCol = 0; numCol < droits[filename].numcol; numCol++) {
+            titles.push(unescape(encodeURIComponent(paramtext["table-"+filename+"-"+numCol])));
         }
-        contents[name].unshift(titles);
-    });
+        contents[filename].unshift(titles);
+    }
 
     const table = new Tables(json.messages, paramtext, {
                                 "mandatoryCsvs": droits,
@@ -44,7 +44,8 @@ $.get("controller/getDroitJson.php", function(data){
             titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-"+numCol])));
         }
         content.push(titles);
-        for(let numRow = 1; numRow < gestionnaire.length; numRow++) {
+        let len = gestionnaire.length;
+        for(let numRow = 1; numRow < len; numRow++) {
             const line = gestionnaire[numRow];
             content.push([line[0], line[1], hasRight(line[2], 2), hasRight(line[2], 1) , hasRight(line[2], 0), line[3]]);
         }
@@ -76,7 +77,8 @@ $.get("controller/getDroitJson.php", function(data){
         content.push(titles);
         let orders = {};
         let newAdds = {};
-        for(let numRow = 1; numRow < table.getContent("gestionnaire").length; numRow++) {
+        let len = table.getContent("gestionnaire").length;
+        for(let numRow = 1; numRow < len; numRow++) {
             const line = table.getContent("gestionnaire")[numRow];
             if(line[5] === "") {
                 if(!Object.keys(newAdds).includes(line[0])) {
@@ -92,8 +94,8 @@ $.get("controller/getDroitJson.php", function(data){
             const codage = 4*parseInt(line[2]) + 2*parseInt(line[3]) + parseInt(line[4]);
             content.push([line[0], line[1], codage, line[5]]);
         }
-        Object.keys(newAdds).forEach(function(login) {
-            newAdds[login].forEach(function(row) {
+        for(let login in newAdds) {
+            for(let row in newAdds[login]) {
                 if(!Object.keys(orders).includes(login)) {
                     orders[login] = 1;
                     content[row][3] = 1;
@@ -105,8 +107,8 @@ $.get("controller/getDroitJson.php", function(data){
                     content[row][3] = order;
                     contents[filename][row][5] = order;
                 }
-            });
-        });
+            }
+        }
         return table.getEncFiles({"gestionnaire": content});
     }
 

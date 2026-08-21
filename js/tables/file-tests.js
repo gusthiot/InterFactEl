@@ -19,19 +19,20 @@ export default class FileTests {
                 let colNum = [];
                 if(test.type === "unique") {
                     this.arrayIds = {};
-                    test.id.forEach(function(col) {
+                    for(let col of test.id) {
                         if(column != "") {
                             column += " | ";
                         }
                         column += conTest[0][col];
-                    });
+                    }
                     colNum = test.id;
                 }
                 else {
                     column = conTest[0][test.col];
                     colNum = [test.col];
                 }
-                for(let numRow = 0; numRow < conTest.length; numRow++) {
+                let len = conTest.length;
+                for(let numRow = 0; numRow < len; numRow++) {
                     if(numRow > 0 || this.parametres[filename].notitles) {
                         const columns = this.parametres[filename].columns;
                         let error = this.switchTest(columns, test, conTest[numRow], numRow, column, contents, ids);
@@ -108,15 +109,16 @@ export default class FileTests {
             }
         }
         let aIds = {};
-        for(let numRow = 0; numRow < contents[filename].length; numRow++) {
+        let len = contents[filename].length;
+        for(let numRow = 0; numRow < len; numRow++) {
             if(numRow > 0 || this.parametres[filename].notitles) {
                 let id = "";
-                pos.forEach(function(col) {
+                for(let col of pos) {
                     if(id != "") {
                         id += "_";
                     }
                     id += contents[filename][numRow][col];
-                });
+                }
                 aIds[id] = numRow;
             }
         }
@@ -139,7 +141,7 @@ export default class FileTests {
                 break;
             case "ref":
                 if(!(((Object.keys(this.retrieveIds(columns[test.col].origin, contents, ids))).includes(line[test.col])) ||
-                    (columns[test.col].zero && (line[test.col] === 0)))) {
+                    (columns[test.col].zero && (line[test.col] === "0")))) {
                     return line[test.col];
                 }
                 break;
@@ -154,36 +156,37 @@ export default class FileTests {
                 if(line[test.col] === "") {
                     return line[test.col];
                 }
-                if(Number.isNaN(Number(line[test.col]))) {
+                let nb = Number(line[test.col]);
+                if(Number.isNaN(nb)) {
                     return line[test.col];
                 }
-                if(columns[test.col].int && !Number.isInteger(Number(line[test.col]))) {
+                if(columns[test.col].int && !Number.isInteger(nb)) {
                     return line[test.col];
                 }
-                if((line[test.col] < 0)) {
+                if((nb < 0)) {
                     return line[test.col];
                 }
-                if(!columns[test.col].zero && (line[test.col] === 0)) {
+                if(!columns[test.col].zero && (nb === 0)) {
                     return line[test.col];
                 }
-                if(columns[test.col].max && (line[test.col] > columns[test.col].max)) {
+                if(columns[test.col].max && (nb > Number(columns[test.col].max))) {
                     return line[test.col];
                 }
                 if(test.special) {
                     const catLine = contents["categorie"][this.retrieveIds("categorie", contents, ids)[line[1]]];
-                    if((Math.floor(Math.log10(line[test.col])) + 1) > (9 - catLine[4])) {
+                    if(Math.floor(Math.log10(nb) + 1) > (9 - catLine[4])) {
                         return line[test.col];
                     }
                 }
                 break;
             case "unique":
                 let id = "";
-                test.id.forEach(function(col) {
+                for(let col of test.id) {
                     if(id != "") {
                         id += "_";
                     }
                     id += line[col];
-                });
+                }
                 if(Object.keys(this.arrayIds).includes(id)) {
                     return id;
                 }

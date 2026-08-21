@@ -170,10 +170,10 @@ export default class Tables {
             const fileReader = new FileReader();
             fileReader.onload = function () {
                 if(id === 'replace-logo') {
-                    this.pdfs['logo'] = fileReader.result.split(',')[1];
+                    this.pdfs["logo"] = fileReader.result.split(',')[1];
                 }
                 else {
-                    this.optPdfs['grille'] = fileReader.result.split(',')[1];
+                    this.optPdfs["grille"] = fileReader.result.split(',')[1];
                 }
             };
             fileReader.readAsDataURL($(evt.currentTarget).prop('files')[0]);
@@ -218,7 +218,7 @@ export default class Tables {
             }).then(function (results) {
                 let json = " {";
                 let isFirst = 1;
-                results.forEach(function(result) {
+                for(let result of results) {
                     if(isFirst === 1) {
                         isFirst = 0;
                     }
@@ -226,7 +226,7 @@ export default class Tables {
                         json += ",";
                     }
                     json += '"'+result[0]+'":"'+result[1]+'"';
-                });
+                }
                 json += "}";
                 $("#tables-desktop").trigger("button-import", [json]);
             });

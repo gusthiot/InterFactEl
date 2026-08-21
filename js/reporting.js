@@ -168,9 +168,9 @@ function sortTable2(th, type, columnIndex, dir) {
         dir = "asc";
     }
 
-    rows.forEach(function(row) {
+    for(let row of rows) {
         table.querySelector("tbody").appendChild(row);
-    });
+    }
 }
 
 function getTxt(row, column) {

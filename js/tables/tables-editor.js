@@ -274,17 +274,17 @@ export default class TablesEditor {
         for(let old of oldErrors) {
             $(old).removeClass("background-red");
         }
-        Object.keys(errors).forEach(function(keyRow) {
+        for(let keyRow in errors) {
             const numRow = keyRow.split('-')[1];
             const line = lines[numRow-1];
             const cells = $(line).find(".cell");
-            Object.keys(errors[keyRow]).forEach(function(keyCol) {
+            for(let keyCol in errors[keyRow]) {
                 const numCol = keyCol.split('-')[1];
                 const cell = cells[numCol];
                 $(cell).addClass("background-red");
                 $(cell).data("msg", errors[keyRow][keyCol]);
-            });
-        });
+            }
+        }
     }
 
     unidimTableur() {
@@ -485,22 +485,22 @@ export default class TablesEditor {
     menu(value, params) {
         let ret = '<select class="tableur-select">';
         if(params.list) {
-            params.list.forEach(function(el) {
+            for(let el of params.list) {
                 ret += '<option value="' + el + '"';
                 if(value === el) {
                     ret += ' selected ';
                 }
                 ret += '>' + el + '</option>';
-            });
+            }
         }
         else {
-            Object.keys(params.map).forEach(function(key) {
+            for(let key in params.map) {
                 ret += '<option value="' + key + '"';
                 if(value === key) {
                     ret += ' selected ';
                 }
                 ret += '>' + params.map[key] + '</option>';
-            });
+            }
         }
         ret += '</select>';
         return ret;
@@ -533,17 +533,17 @@ export default class TablesEditor {
                 ret += '>' + ref[key][0];
                 if(params.intitule) {
                     if(Array.isArray(params.intitule)) {
-                        params.intitule.forEach(function(pos) {
+                        for(let pos of params.intitule) {
                             if(Array.isArray(pos)) {
                                 ret += " -";
-                                pos.forEach(function(posIn) {
+                                for(let posIn of pos) {
                                     ret += " " + ref[key][posIn];
-                                });
+                                }
                             }
                             else {
                                 ret += " - " + ref[key][pos];
                             }
-                        });
+                        }
                     }
                     else {
                         ret += " - " + ref[key][params.intitule];

@@ -178,15 +178,15 @@ $.get("controller/getParametresJson.php", function(data){
     function getEncFiles() {
         let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];
         const ccIds = table.retrieveIds("classeclient");
-        Object.keys(ccIds).forEach(function(ccKey) {
+        for(let ccKeys in ccIds) {
             const ccLine = table.getContent("classeclient")[ccIds[ccKey]];
             const idBase = ccLine[8];
-            Object.keys(table.retrieveIds("categorie")).forEach(function(caKey) {
+            for(let caKey in table.retrieveIds("categorie")) {
                 const idBaseCateg = idBase+"_"+caKey;
                 const bcLine = table.getContent("basecateg")[table.retrieveIds("basecateg")[idBaseCateg]];
                 categprix.push([ccKey, caKey, bcLine[2]]);
-            });
-        });
+            }
+        }
         return table.getEncFiles({"categprix": categprix});
     }
 

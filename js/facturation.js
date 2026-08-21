@@ -33,9 +33,9 @@ $('#destroy').on('click', function () {
 $('#init-period').on('click', function () {
     let first = '<label for="from">De</label><select id="from" class="custom-select lockable"><option disabled selected></option>';
     const choices = $(this).data('choices');
-    Object.keys(choices).forEach(function(key) {
+    for(let key in choices) {
         first += '<option value="'+key+'">'+choices[key][1]+' '+choices[key][0]+'</option>';
-    });
+    }
     $('#first').html(first + '</select>');
 } );
 
