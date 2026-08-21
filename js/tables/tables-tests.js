@@ -96,12 +96,6 @@ export default class TablesTests {
                         if(!["OUI", "NON"].includes(line[2])) {
                             result += messages["plateforme02"] + " <br />";
                         }
-                        if(line[2] === "OUI" && !Object.keys(optPdfs).includes("grille")) {
-                            result += messages["grille02"] + " <br />";
-                        }
-                        if(line[2] === "NON" && Object.keys(optPdfs).includes("grille")) {
-                            result += messages["grille01"] + " <br />";
-                        }
                     }
                 }
             }
@@ -159,6 +153,7 @@ export default class TablesTests {
             else {
                 ret.checks[filename].ok = false;
                 $('#'+filename).addClass('red-file');
+                ret.result += messages[filename + "01"] + "<br />";
             }
         }
         for(let filename in this.optionalPdfs) {
@@ -167,13 +162,29 @@ export default class TablesTests {
             if(ret.result != "") {
                 return ret;
             }
+            const cond = contents[this.optionalPdfs[filename].test.origin][7][2];
             if(optPdfs[filename]) {
-                ret.checks[filename].ok = true;
-                $('#'+filename).addClass('green-file');
+                if(cond === "OUI") {
+                    ret.checks[filename].ok = true;
+                    $('#'+filename).addClass('green-file');
+                }
+                else {
+                    ret.checks[filename].ok = false;
+                    $('#'+filename).addClass('red-file');
+                    ret.result += messages[filename + "01"] + "<br />";
+                }
             }
             else {
-                ret.checks[filename].ok = false;
-                $('#'+filename).addClass('red-file');
+                if(cond === "NON") {
+                    ret.checks[filename].ok = true;
+                    $('#'+filename).addClass('green-file');
+                }
+                else {
+                    ret.checks[filename].ok = false;
+                    $('#'+filename).addClass('red-file');
+                    ret.result += messages[filename + "02"] + "<br />";
+
+                }
             }
         }
         return ret;

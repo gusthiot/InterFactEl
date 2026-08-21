@@ -46,7 +46,8 @@ const mandatoryPdfs = {"logo": {
                         }
                     };
 const optionalPdfs = {"grille": {
-                            name: "Grille PDF"
+                            name: "Grille PDF",
+                            test: {origin: "plateforme", row: 7, col: 2, msg_yes: "01", msg_no: "02"}
                         }
                     };
 
@@ -178,7 +179,7 @@ $.get("controller/getParametresJson.php", function(data){
     function getEncFiles() {
         let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];
         const ccIds = table.retrieveIds("classeclient");
-        for(let ccKeys in ccIds) {
+        for(let ccKey in ccIds) {
             const ccLine = table.getContent("classeclient")[ccIds[ccKey]];
             const idBase = ccLine[8];
             for(let caKey in table.retrieveIds("categorie")) {

@@ -107,11 +107,11 @@ export default class Tables {
                 }
             }
             else {
-                html += '<div>' + this.messages[filename + "01"] + '</div>';
                 if(this.pdfs.logo) {
                     html += this.uploadPdf("replace-logo", "Remplacer le logo");
                 }
                 else {
+                    html += '<div>' + this.messages[filename + "01"] + '</div>';
                     html += this.uploadPdf("replace-logo", "Charger un logo");
                 }
             }
@@ -323,7 +323,7 @@ export default class Tables {
     }
 
     checkTables() {
-        const results = this.tablesTest.checkColumns(this.fileTest, this.contents, this.pdfs, this.optPdfs, this.ids);
+        const results = this.tablesTest.checkColumns(this.fileTest, this.contents, this.pdfs, this.optPdfs, this.ids, this.messages);
         this.checks = results.checks;
         this.ids = results.ids;
         sessionStorage.setItem("checks", JSON.stringify(this.checks));

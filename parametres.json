@@ -34,7 +34,7 @@
             {"type": "in", "col": 1, "msg": "02"},
             {"type": "num", "col": 3, "msg": "03"},
             {"type": "unique", "noindex": true, "id": [3], "msg": "04"},
-            {"type": "num", "col": 3, "msg": "05"}
+            {"type": "num", "col": 5, "msg": "05"}
         ]
     },
     "overhead": {
