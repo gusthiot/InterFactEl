@@ -2,16 +2,17 @@
 
 export default class TablesEditor {
 
-    constructor(messages, parametres, paramtext, saveAnyway=false) {
+    constructor(messages, parameters, paramtext, saveAnyway=false) {
         this.messages = messages;
-        this.parametres = parametres;
+        this.parameters = parameters;
         this.paramtext = paramtext;
         this.contents = {};
         this.filename = "";
         this.extension = "";
         this.saveAnyway = saveAnyway;
 
-        $(document).on("click", ".tableur-remove", function() {
+        $(document).on("click", ".tableur-remove", () => {
+            $('#message').html("");
             $('#tables-editor').trigger("close");
         });
 
@@ -45,7 +46,7 @@ export default class TablesEditor {
                 for(let numFil = 0; numFil < filters.length; numFil++) {
                     const tab = $(filters[numFil]).attr('id').split("-");
                     const cell = this.getCellValue(cells[tab[1]], true);
-                    if(cell.indexOf($(filters[numFil]).val()) == -1) {
+                    if(cell.indexOf($(filters[numFil]).val()) === -1) {
                         show = false;
                         break;
                     }
@@ -91,7 +92,7 @@ export default class TablesEditor {
             $('#error-modal').show();
         });
 
-        $(document).on("click", "#error-modal-save", function() {
+        $(document).on("click", "#error-modal-save", () => {
             $('#error-modal').removeClass("show");
             $('#error-modal').hide();
             $("#tableur-table").trigger("save-anyway");
@@ -128,13 +129,13 @@ export default class TablesEditor {
             }
             let html = '<tr class="values" id="line-' + num + '">';
             let notitles = false;
-            if(this.parametres[this.filename].notitles) {
+            if(this.parameters[this.filename].notitles) {
                 notitles = true;
             }
-            for(let numCol = 0; numCol < this.parametres[this.filename].numcol; numCol++) {
-                const paramCol = this.parametres[this.filename].columns[numCol];
+            for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
+                const paramCol = this.parameters[this.filename].columns[numCol];
                 html += '<td class="border-left';
-                if((numCol == this.parametres[this.filename].numcol-1) && !this.parametres[this.filename].tools) {
+                if((numCol === this.parameters[this.filename].numcol-1) && !this.parameters[this.filename].tools) {
                     html += ' border-right';
                 }
                 html += ' cell">';
@@ -162,16 +163,16 @@ export default class TablesEditor {
 
     }
 
-    init(filename, extension, contents={}) {
+    loadFile(filename, extension, contents={}) {
         this.contents = contents;
         this.filename = filename;
         this.extension = extension;
     }
 
     getTitles() {
-        if(!this.parametres[this.filename].notitles) {
+        if(!this.parameters[this.filename].notitles) {
             let titles = [];
-            for(let numCol = 0; numCol < this.parametres[this.filename].numcol; numCol++) {
+            for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
                 titles[numCol] = this.paramtext["table-"+this.filename+"-"+numCol];
             }
             return [titles];
@@ -182,7 +183,7 @@ export default class TablesEditor {
     getCellValue(cell, selectText=false) {
         const input = $(cell).find('input');
         if(input.length > 0) {
-            if(input.attr('type') == "checkbox") {
+            if(input.attr('type') === "checkbox") {
                 if(input.attr("checked")) {
                     return 1;
                 }
@@ -234,7 +235,7 @@ export default class TablesEditor {
             this.nextTr(tr.next(), level++);
         }
         else {
-            if((level == 0) && (tr.prev().hasClass('values'))) {
+            if((level === 0) && (tr.prev().hasClass('values'))) {
                 let tools = "";
                 if(tr.prev().prev().hasClass('values')) {
                     tools +=this.lineUp();
@@ -251,7 +252,7 @@ export default class TablesEditor {
                     '<svg id="tableur-info" data-id="' + this.filename + '" class="icon icon-selectable date-left" aria-hidden="true">' +
                         '<use xlink:href="#info"></use>' +
                     '</svg>' +
-                    '<span>' + this.parametres[this.filename].name + '</span>' +
+                    '<span>' + this.parameters[this.filename].name + '</span>' +
                     '<svg class="icon icon-selectable date-right tableur-remove" aria-hidden="true">' +
                         '<use xlink:href="#x"></use>' +
                     '</svg>' +
@@ -288,38 +289,38 @@ export default class TablesEditor {
 
     unidimTableur() {
         let html = '<thead><tr>';
-        for(let numCol = 0; numCol < this.parametres[this.filename].numcol; numCol++) {
+        for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
             html += '<th class="border-bottom">' + this.paramtext["table-"+this.filename+"-"+numCol];
-            if(this.parametres[this.filename].filter && this.parametres[this.filename].filter.includes(numCol)) {
+            if(this.parameters[this.filename].filter && this.parameters[this.filename].filter.includes(numCol)) {
                 html += ' <input type="text" class="input-filter" id="filter-' + numCol + '" size="10">';
             }
             html += '</th>';
         }
-        if(this.parametres[this.filename].tools) {
+        if(this.parameters[this.filename].tools) {
             html += '<th class="th-tools"></th>';
         }
         html += '</tr></thead><tbody>';
         let notitles = false;
-        if(this.parametres[this.filename].notitles) {
+        if(this.parameters[this.filename].notitles) {
             notitles = true;
         }
         for(let numRow = 0; numRow < this.contents[this.filename].length; numRow++) {
             if(notitles || (numRow > 0)) {
                 html += '<tr class="values" id="line-' + numRow + '">';
-                for(let numCol = 0; numCol < this.parametres[this.filename].numcol; numCol++) {
-                    let paramCol = this.parametres[this.filename].columns[numCol];
+                for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
+                    let paramCol = this.parameters[this.filename].columns[numCol];
                     html += '<td class="border-left';
-                    if((numCol == this.parametres[this.filename].numcol-1) && !this.parametres[this.filename].tools) {
+                    if((numCol === this.parameters[this.filename].numcol-1) && !this.parameters[this.filename].tools) {
                         html += ' border-right';
                     }
                     html += ' cell">';
-                    if(paramCol.type == "specific") {
+                    if(paramCol.type === "specific") {
                         paramCol = paramCol.lines[numRow];
                     }
                     html += this.input(paramCol, this.contents[this.filename][numRow][numCol], numRow, notitles);
                     html += '</td>';
                 }
-                if(this.parametres[this.filename].tools) {
+                if(this.parameters[this.filename].tools) {
                     html += '<td class="td-tools">';
                     if((notitles && (numRow > 0)) || (numRow > 1)) {
                         html += this.lineUp();
@@ -332,8 +333,8 @@ export default class TablesEditor {
                 html += '</tr>';
             }
         }
-        if(this.parametres[this.filename].tools) {
-            html += '<tr><td class="border-left" colspan="' + (this.parametres[this.filename].numcol) + '"></td>' +
+        if(this.parameters[this.filename].tools) {
+            html += '<tr><td class="border-left" colspan="' + (this.parameters[this.filename].numcol) + '"></td>' +
                     '<td class="td-tools">' +
                     '<svg id="line-plus" class="icon icon-selectable" aria-hidden="true">' +
                         '<use xlink:href="#plus"></use>' +
@@ -344,19 +345,19 @@ export default class TablesEditor {
     }
 
     bidimTableur(sapIds) {
-        const dim0 = this.contents[this.parametres[this.filename].columns[0].origin];
-        const dim1 = this.contents[this.parametres[this.filename].columns[1].origin];
+        const dim0 = this.contents[this.parameters[this.filename].columns[0].origin];
+        const dim1 = this.contents[this.parameters[this.filename].columns[1].origin];
         let html = '<tr><th></th><th></th><th class="span-th border-bottom-black" colspan="' + (dim1.length-1) + '">' + this.paramtext["table-"+this.filename+"-"+1] + '</th></tr>';
         html += '<tr id="dim1"><td class="border-around-no"></td><td class="border-bottom-right-black"></td>';
         for(let num1 = 1; num1 < dim1.length; num1++) {
-            if(this.filename == "coeffprestation") {
+            if(this.filename === "coeffprestation") {
                 if(dim1[num1][3] != "OUI") {
                     continue;
                 }
             }
-            const positions = this.parametres[this.filename].bidim[0].intitule;
+            const positions = this.parameters[this.filename].bidim[0].intitule;
             let line1 = "";
-            if(positions[0] == "codeD") {
+            if(positions[0] === "codeD") {
                 const idSap = dim1[num1][2];
                 line1 = this.contents["articlesap"][sapIds[idSap]][2];
             }
@@ -368,29 +369,29 @@ export default class TablesEditor {
         html += '</tr>';
         for(let num0 = 1; num0 < dim0.length; num0++) {
             html += '<tr class="values">';
-            if(num0 == 1) {
+            if(num0 === 1) {
                 html += '<th rowspan="' + (dim0.length-1) + '" class="span-th border-right-black"><span class="vert-span">' + this.paramtext["table-"+this.filename+"-"+0] + '</span></th>';
             }
-            const positions = this.parametres[this.filename].bidim[1].intitule;
+            const positions = this.parameters[this.filename].bidim[1].intitule;
             let intitule = dim0[num0][positions[0]];
             if(positions.length > 1) {
                 intitule += " - " + dim0[num0][positions[1]];
             }
             html += '<td class="border-bottom-right-black dim0" data-id="' + dim0[num0][0] + '">' + intitule + '</td>';
             for(let num1 = 1; num1 < dim1.length; num1++) {
-                if(this.filename == "coeffprestation") {
+                if(this.filename === "coeffprestation") {
                     if(dim1[num1][3] != "OUI") {
                         continue;
                     }
                 }
                 let value = "";
                 for(const line of this.contents[this.filename]) {
-                    if((line[0] == dim0[num0][0]) && (line[1] == dim1[num1][0])) {
+                    if((line[0] === dim0[num0][0]) && (line[1] === dim1[num1][0])) {
                         value = line[2];
                         break;
                     }
                 };
-                html += '<td class="border-right cell">' + this.number(value, this.parametres[this.filename].columns[2], dim1[num1][0]) + '</td>';
+                html += '<td class="border-right cell">' + this.number(value, this.parameters[this.filename].columns[2], dim1[num1][0]) + '</td>';
             }
             html += '</tr>';
         }
@@ -421,7 +422,7 @@ export default class TablesEditor {
     retrieveIdLine(filename, id) {
         for(let numRow = 0; numRow < this.contents[filename].length; numRow++) {
             if(numRow > 0) {
-                if(id == this.contents[filename][numRow][0]) {
+                if(id === this.contents[filename][numRow][0]) {
                     return this.contents[filename][numRow];
                 }
             }
@@ -441,7 +442,7 @@ export default class TablesEditor {
         }
         else {
             dec = parseInt(params.dec);
-            if(dec == 0) {
+            if(dec === 0) {
                 const line = this.retrieveIdLine(params.origin, idDec);
                 if(line != "") {
                     dec = line[params.col];
@@ -486,7 +487,7 @@ export default class TablesEditor {
         if(params.list) {
             params.list.forEach(function(el) {
                 ret += '<option value="' + el + '"';
-                if(value == el) {
+                if(value === el) {
                     ret += ' selected ';
                 }
                 ret += '>' + el + '</option>';
@@ -495,7 +496,7 @@ export default class TablesEditor {
         else {
             Object.keys(params.map).forEach(function(key) {
                 ret += '<option value="' + key + '"';
-                if(value == key) {
+                if(value === key) {
                     ret += ' selected ';
                 }
                 ret += '>' + params.map[key] + '</option>';
@@ -510,7 +511,7 @@ export default class TablesEditor {
         let ret = '<select class="tableur-select">';
         if(params.zero) {
             ret += '<option value="0"';
-            if(value == "0") {
+            if(value === "0") {
                 ret += ' selected ';
             }
             ret += '>0 - Aucun</option>';
@@ -526,7 +527,7 @@ export default class TablesEditor {
                     continue;
                 }
                 ret += '<option value="' + ref[key][refCol] + '"';
-                if(value == ref[key][refCol]) {
+                if(value === ref[key][refCol]) {
                     ret += ' selected ';
                 }
                 ret += '>' + ref[key][0];

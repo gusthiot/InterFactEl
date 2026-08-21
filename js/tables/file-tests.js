@@ -17,7 +17,7 @@ export default class FileTests {
                 let resTest = "";
                 let column = "";
                 let colNum = [];
-                if(test.type == "unique") {
+                if(test.type === "unique") {
                     this.arrayIds = {};
                     test.id.forEach(function(col) {
                         if(column != "") {
@@ -52,7 +52,7 @@ export default class FileTests {
                                     errors["row-"+row]["col-"+colNum[col]] = this.messages[filename + test.msg];
                                 }
                             }
-                            if(resTest == "") {
+                            if(resTest === "") {
                                 resTest += this.messages[filename + test.msg] + "<br />";
                                 resTest += "Fichier : " + filename + ".csv<br />";
                                 resTest += "Colonne : '" + column + "'<br />";
@@ -61,15 +61,15 @@ export default class FileTests {
                         }
                     }
                 }
-                if((test.type == "unique") && !(test.noindex)) {
+                if((test.type === "unique") && !(test.noindex)) {
                     ids[filename] = this.arrayIds;
                 }
-                if(test.type == "should") {
+                if(test.type === "should") {
                     for(let num0 in Object.keys(this.retrieveIds(test.id[0], contents, ids))) {
                         const id0 = Object.keys(this.retrieveIds(test.id[0], contents, ids))[num0];
                         for(let num1 in Object.keys(this.retrieveIds(test.id[1], contents, ids))) {
                             const id1 = Object.keys(this.retrieveIds(test.id[1], contents, ids))[num1];
-                            if(filename == "coeffprestation") {
+                            if(filename === "coeffprestation") {
                                 const prestLine = contents["classeprestation"][this.retrieveIds("classeprestation", contents, ids)[id1]];
                                 if(prestLine[3] != "OUI") {
                                     continue;
@@ -77,7 +77,7 @@ export default class FileTests {
                             }
                             const id = id0 + "_" + id1;
                             if(!Object.keys(this.arrayIds).includes(id)) {
-                                if(resTest == "") {
+                                if(resTest === "") {
                                     resTest += this.messages[filename + test.msg] + "<br />";
                                     resTest += "Fichier : " + filename + ".csv<br />";
                                     resTest += "Colonne : '" + column + "'<br />";
@@ -103,7 +103,7 @@ export default class FileTests {
         let pos = "";
         for(let numTest in this.parametres[filename].tests) {
             const test = this.parametres[filename].tests[numTest];
-            if((test.type == "unique") && !test.noindex) {
+            if((test.type === "unique") && !test.noindex) {
                 pos = test.id;
             }
         }
@@ -139,7 +139,7 @@ export default class FileTests {
                 break;
             case "ref":
                 if(!(((Object.keys(this.retrieveIds(columns[test.col].origin, contents, ids))).includes(line[test.col])) ||
-                    (columns[test.col].zero && (line[test.col] == 0)))) {
+                    (columns[test.col].zero && (line[test.col] === 0)))) {
                     return line[test.col];
                 }
                 break;
@@ -151,7 +151,7 @@ export default class FileTests {
                 }
                 break;
             case "num":
-                if(line[test.col] == "") {
+                if(line[test.col] === "") {
                     return line[test.col];
                 }
                 if(Number.isNaN(Number(line[test.col]))) {
@@ -163,7 +163,7 @@ export default class FileTests {
                 if((line[test.col] < 0)) {
                     return line[test.col];
                 }
-                if(!columns[test.col].zero && (line[test.col] == 0)) {
+                if(!columns[test.col].zero && (line[test.col] === 0)) {
                     return line[test.col];
                 }
                 if(columns[test.col].max && (line[test.col] > columns[test.col].max)) {

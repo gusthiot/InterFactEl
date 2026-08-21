@@ -6,18 +6,29 @@ import TablesTests from "./tables-tests.js";
 
 export default class Tables {
 
-    constructor(parametres, noRemove=false) {
-        this.mandatoryCsvs = parametres.mandatoryCsvs;
-        this.mandatoryPdfs = parametres.mandatoryPdfs;
-        this.optionalPdfs = parametres.optionalPdfs;
-        this.messages = parametres.messages;
-        this.paramtext = parametres.paramtext;
+    constructor(messages, paramtext, parameters, noRemove=false) {
+        if(parameters.mandatoryCsvs) {
+            this.mandatoryCsvs = parameters.mandatoryCsvs;
+        }
+        else {
+            this.mandatoryCsvs = {};
+        }
+        if(parameters.mandatoryPdfs) {
+            this.mandatoryPdfs = parameters.mandatoryPdfs;
+        }
+        else {
+            this.mandatoryPdfs = {};
+        }
+        if(parameters.optionalPdfs) {
+            this.optionalPdfs = parameters.optionalPdfs;
+        }
+        else {
+            this.optionalPdfs = {};
+        }
+        this.messages = messages;
+        this.paramtext = paramtext;
 
-        this.tablesTest = new TablesTests({
-            mandatoryCsvs: this.mandatoryCsvs,
-            mandatoryPdfs: this.mandatoryPdfs,
-            optionalPdfs: this.optionalPdfs
-        });
+        this.tablesTest = new TablesTests(parameters);
 
         if(noRemove) {
             $('#tables-remove').hide();
@@ -45,25 +56,25 @@ export default class Tables {
             this.displayChecks();
         }
 
-        let allParametres =  {};
+        let allParameters =  {};
         for(let params in this.mandatoryCsvs) {
-            allParametres[params] = this.mandatoryCsvs[params];
+            allParameters[params] = this.mandatoryCsvs[params];
         }
         for(let params in this.mandatoryPdfs) {
-            allParametres[params] = this.mandatoryPdfs[params];
+            allParameters[params] = this.mandatoryPdfs[params];
         }
         for(let params in this.optionalPdfs) {
-            allParametres[params] = this.optionalPdfs[params];
+            allParameters[params] = this.optionalPdfs[params];
         }
 
-        this.tableur = new TablesEditor(this.messages, allParametres, this.paramtext, true);
+        this.tableur = new TablesEditor(this.messages, allParameters, this.paramtext, true);
 
         this.save = {"content": [], "ids": {}, "errors": {}, "filename": ""};
 
         $(document).on("click", ".csv", (evt) => {
             $('#tables-desktop').hide();
             const filename = $(evt.currentTarget).attr('id');
-            this.tableur.init(filename, "csv", this.contents);
+            this.tableur.loadFile(filename, "csv", this.contents);
             let html = "";
             if(this.mandatoryCsvs[filename].bidim) {
                 const sapIds = this.fileTest.retrieveIds("articlesap", this.contents, this.ids);
@@ -82,9 +93,9 @@ export default class Tables {
         $(document).on("click", ".pdf", (evt) => {
             $('#tables-desktop').hide();
             const filename = $(evt.currentTarget).attr('id');
-            this.tableur.init(filename, "pdf");
+            this.tableur.loadFile(filename, "pdf");
             let html = this.tableur.header();
-            if(filename == "grille") {
+            if(filename === "grille") {
                 if(this.optPdfs.grille) {
                     html += this.uploadPdf("replace-grille", "Remplacer la grille");
                     html += '<div class="center-tile">' +
@@ -158,7 +169,7 @@ export default class Tables {
             const id = $(evt.currentTarget).attr('id');
             const fileReader = new FileReader();
             fileReader.onload = function () {
-                if(id == 'replace-logo') {
+                if(id === 'replace-logo') {
                     this.pdfs['logo'] = fileReader.result.split(',')[1];
                 }
                 else {
@@ -208,7 +219,7 @@ export default class Tables {
                 let json = " {";
                 let isFirst = 1;
                 results.forEach(function(result) {
-                    if(isFirst == 1) {
+                    if(isFirst === 1) {
                         isFirst = 0;
                     }
                     else {
@@ -344,9 +355,9 @@ export default class Tables {
             for(let label of this.mandatoryCsvs[filename].labels) {
                 let line = [label, this.paramtext[filename + "-" + label]];
                 for(let numCol = 2; numCol < this.mandatoryCsvs[filename].numcol; numCol++) {
-                    if((filename == "plateforme") && (label == "Id-Plateforme") && (numCol == 2)) {
+                    if((filename === "plateforme") && (label === "Id-Plateforme") && (numCol === 2)) {
                         line.push(plateforme);
-                    } else if((filename == "plateforme") && (label == "Grille-Plateforme") && (numCol == 2)) {
+                    } else if((filename === "plateforme") && (label === "Grille-Plateforme") && (numCol === 2)) {
                         line.push("NON");
                     }
                     else {

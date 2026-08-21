@@ -2,10 +2,25 @@
 
 export default class TablesTests {
 
-    constructor(parametres) {
-        this.mandatoryCsvs = parametres.mandatoryCsvs;
-        this.mandatoryPdfs = parametres.mandatoryPdfs;
-        this.optionalPdfs = parametres.optionalPdfs;
+    constructor(parameters) {
+        if(parameters.mandatoryCsvs) {
+            this.mandatoryCsvs = parameters.mandatoryCsvs;
+        }
+        else {
+            this.mandatoryCsvs = {};
+        }
+        if(parameters.mandatoryPdfs) {
+            this.mandatoryPdfs = parameters.mandatoryPdfs;
+        }
+        else {
+            this.mandatoryPdfs = {};
+        }
+        if(parameters.optionalPdfs) {
+            this.optionalPdfs = parameters.optionalPdfs;
+        }
+        else {
+            this.optionalPdfs = {};
+        }
     }
 
     checkAuthorized(files) {
@@ -71,20 +86,20 @@ export default class TablesTests {
                 else {
                     result += "le label '" + line[0] + "' est présent plus d'une fois dans  " + filename + ".csv <br />";
                 }
-                if(filename == "plateforme") {
-                    if(line[0] == this.mandatoryCsvs[filename].labels[0]) {
+                if(filename === "plateforme") {
+                    if(line[0] === this.mandatoryCsvs[filename].labels[0]) {
                         if(line[2] != plateforme) {
                             result += messages["plateforme01"] + " <br />";
                         }
                     }
-                    if(line[0] == this.mandatoryCsvs[filename].labels[7]) {
+                    if(line[0] === this.mandatoryCsvs[filename].labels[7]) {
                         if(!["OUI", "NON"].includes(line[2])) {
                             result += messages["plateforme02"] + " <br />";
                         }
-                        if(line[2] == "OUI" && !Object.keys(optPdfs).includes("grille")) {
+                        if(line[2] === "OUI" && !Object.keys(optPdfs).includes("grille")) {
                             result += messages["grille02"] + " <br />";
                         }
-                        if(line[2] == "NON" && Object.keys(optPdfs).includes("grille")) {
+                        if(line[2] === "NON" && Object.keys(optPdfs).includes("grille")) {
                             result += messages["grille01"] + " <br />";
                         }
                     }

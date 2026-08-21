@@ -53,13 +53,11 @@ const optionalPdfs = {"grille": {
 $.get("controller/getParametresJson.php", function(data){
     const json = JSON.parse(data);
 
-    const table = new Tables({
-            "mandatoryCsvs": json.parametres,
-            "mandatoryPdfs": mandatoryPdfs,
-            "optionalPdfs": optionalPdfs,
-            "messages": json.messages,
-            "paramtext": json.paramtext
-        });
+    const table = new Tables(json.messages, json.paramtext, {
+                                "mandatoryCsvs": json.parametres,
+                                "mandatoryPdfs": mandatoryPdfs,
+                                "optionalPdfs": optionalPdfs
+                            });
 
     const tarifsDates = new TarifsDates(plateforme, table);
 
@@ -136,11 +134,11 @@ $.get("controller/getParametresJson.php", function(data){
     });
 
     $(document).on("save", "#tables-dates", function(event, date, type) {
-        if(type == "replace") {
+        if(type === "replace") {
             window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
             setTimeout(() => { applyTarifs(date); }, 2000);
         }
-        if(type == "remove") {
+        if(type === "remove") {
             window.location.href = "controller/download.php?type=zip-tarifs&date="+date+"&plate="+plateforme;
             setTimeout(() => { removeTarifs(date); }, 2000);
         }
@@ -148,7 +146,7 @@ $.get("controller/getParametresJson.php", function(data){
 
     function removeTarifs(date) {
         $.post("controller/suppressTarifs.php", {plate: plateforme, date: date}, function (data) {
-            if(data == "ok" || data.includes("not empty")) {
+            if(data === "ok" || data.includes("not empty")) {
                 table.reset();
                 window.location.href = "tarifs.php?plateforme="+plateforme;
             }
@@ -161,7 +159,7 @@ $.get("controller/getParametresJson.php", function(data){
 
     function applyTarifs(date) {
         $.post("controller/applyTarifs.php", {plate: plateforme, date: date, files: getEncFiles()}, function (data) {
-            if(data == "ok") {
+            if(data === "ok") {
                 table.reset();
                 window.location.href = "tarifs.php?plateforme="+plateforme;
             }

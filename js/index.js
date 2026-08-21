@@ -16,13 +16,11 @@ $.get("controller/getDroitJson.php", function(data){
         contents[name].unshift(titles);
     });
 
-    const table = new Tables({
-            "mandatoryCsvs": droits,
-            "mandatoryPdfs": {},
-            "optionalPdfs": {},
-            "messages": json.messages,
-            "paramtext": paramtext
-        }, true);
+    const table = new Tables(json.messages, paramtext, {
+                                "mandatoryCsvs": droits,
+                                "mandatoryPdfs": {},
+                                "optionalPdfs": {}
+                            }, true);
 
 
     $(document).on("button-read", "#tables-desktop", function() {
@@ -80,7 +78,7 @@ $.get("controller/getDroitJson.php", function(data){
         let newAdds = {};
         for(let numRow = 1; numRow < table.getContent("gestionnaire").length; numRow++) {
             const line = table.getContent("gestionnaire")[numRow];
-            if(line[5] == "") {
+            if(line[5] === "") {
                 if(!Object.keys(newAdds).includes(line[0])) {
                     newAdds[line[0]] = [];
                 }

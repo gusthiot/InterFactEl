@@ -32,7 +32,7 @@ export default class TarifsDates {
         });
 
         $(document).on("click", "#dates-center", () => {
-            if(this.type == "read") {
+            if(this.type === "read") {
                 if(this.readPos > 5) {
                     this.first = readPos - 5;
                 }
@@ -70,26 +70,23 @@ export default class TarifsDates {
             const key = $(evt.currentTarget).data('key');
             this.type = key.split("-")[0];
             this.date = key.split("-")[1];
-            if(this.type == "replace") {
+            if(this.type === "replace") {
                 $('#save-modal').addClass("show");
                 $('#save-modal').show();
             }
             else {
                 $('#tables-dates').trigger("apply", [this.date]);
-                //this.applyTarifs();
             }
         });
 
         $(document).on("click", "#modal-no", () => {
             $('#save-modal').removeClass("show");
             $('#save-modal').hide();
-            if(this.type == "replace") {
+            if(this.type === "replace") {
                 $('#tables-dates').trigger("apply", [this.date]);
-                //this.applyTarifs();
             }
-            if(this.type == "remove") {
+            if(this.type === "remove") {
                 $('#tables-dates').trigger("remove", [this.date]);
-                //this.removeTarifs();
             }
         });
 
@@ -132,18 +129,18 @@ export default class TarifsDates {
                     const label = choice[1];
                     let clickable = "clickable";
                     let trClickable = "tr-clickable";
-                    if(choice[2] == 0) {
+                    if(choice[2] === 0) {
                         clickable = "faded";
                         trClickable = "";
                     }
                     let diode = "";
-                    if(choice[3] == 1) {
+                    if(choice[3] === 1) {
                         diode = '<svg class="icon" aria-hidden="true">' +
                                     '<use xlink:href="#skip-forward"></use>' +
                                 '</svg> ';
                     }
                     let base = "";
-                    if(choice[4] == 1) {
+                    if(choice[4] === 1) {
                         base = '<svg class="icon" aria-hidden="true">' +
                                     '<use xlink:href="#database"></use>' +
                                 '</svg> ';

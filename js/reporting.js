@@ -27,7 +27,7 @@ $("input[name='separator']").on("change", function () {
 let report = "";
 
 $('.select-period').on('click', function () {
-    if($('#container').data('disabled') == "") {
+    if($('#container').data('disabled') === "") {
         $('.tile').removeClass('selected-tile');
         $($(this).attr('id')).addClass('selected-tile');
         report = $(this).attr('id');
@@ -53,7 +53,7 @@ $(document).on("change", "#from", function() {
     {
         if(parseInt($(this).val()) >= parseInt(from)) {
             next += '<option value="'+$(this).val()+'"';
-            if(to && (to == $(this).val())) {
+            if(to && (to === $(this).val())) {
                 blank = false;
                 next += ' selected ';
             }
@@ -104,9 +104,9 @@ $('#download-generated').on('click', function () {
 } );
 
 $(document).on("click", ".sort-text", function() {
-    if($(this).text().includes("Operator") && ($(this).closest('table').attr('id') == "par-staff-date-table")) {
+    if($(this).text().includes("Operator") && ($(this).closest('table').attr('id') === "par-staff-date-table")) {
         sortTable2(this, "text", 2, "asc");
-        if($(this).parent().children().index($(this)) == 0) {
+        if($(this).parent().children().index($(this)) === 0) {
             sortTable2(this, "text", 1, "desc");
         }
         else {
@@ -141,8 +141,8 @@ function sortTable2(th, type, columnIndex, dir) {
     const table = document.getElementById(tabId);
     var rows = Array.prototype.slice.call(table.querySelectorAll("tbody > tr"));
 
-    if(dir == "asc") {
-        if(type == "number") {
+    if(dir === "asc") {
+        if(type === "number") {
             rows.sort(function(rowA, rowB) {
                 return getNum(rowA, columnIndex) - getNum(rowB, columnIndex);
             });
@@ -155,7 +155,7 @@ function sortTable2(th, type, columnIndex, dir) {
         dir = "desc";
     }
     else {
-        if(type == "number") {
+        if(type === "number") {
             rows.sort(function(rowA, rowB) {
                 return getNum(rowB, columnIndex) - getNum(rowA, columnIndex);
             });
