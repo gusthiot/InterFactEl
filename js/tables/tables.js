@@ -51,11 +51,6 @@ export default class Tables {
         this.checks = {};
         this.ids = {};
 
-        if(sessionStorage.getItem("checks")) {
-            this.checks = JSON.parse(sessionStorage.getItem("checks"));
-            this.displayChecks();
-        }
-
         let allParameters =  {};
         for(let params in this.mandatoryCsvs) {
             allParameters[params] = this.mandatoryCsvs[params];
@@ -136,7 +131,6 @@ export default class Tables {
                     this.removeGoodChecks();
                     this.ids = results.ids;
                     this.contents[filename] = newContent;
-                    sessionStorage.setItem("checks", JSON.stringify(this.checks));
                     sessionStorage.setItem("contents", JSON.stringify(this.contents));
                     this.closeTable();
                 }
@@ -155,7 +149,6 @@ export default class Tables {
             this.removeGoodChecks();
             this.ids = this.save.ids;
             this.contents[this.save.filename] = this.save.content;
-            sessionStorage.setItem("checks", JSON.stringify(this.checks));
             sessionStorage.setItem("contents", JSON.stringify(this.contents));
             this.closeTable();
         });
@@ -168,12 +161,14 @@ export default class Tables {
         $(document).on("change", ".pdf-file", (evt) => {
             const id = $(evt.currentTarget).attr('id');
             const fileReader = new FileReader();
-            fileReader.onload = function () {
+            fileReader.onload = () => {
                 if(id === 'replace-logo') {
                     this.pdfs["logo"] = fileReader.result.split(',')[1];
+                    sessionStorage.setItem("pdfs", JSON.stringify(this.pdfs));
                 }
                 else {
                     this.optPdfs["grille"] = fileReader.result.split(',')[1];
+                    sessionStorage.setItem("optPdfs", JSON.stringify(this.optPdfs));
                 }
             };
             fileReader.readAsDataURL($(evt.currentTarget).prop('files')[0]);
@@ -323,10 +318,10 @@ export default class Tables {
     }
 
     checkTables() {
+        this.removeGoodChecks();
         const results = this.tablesTest.checkColumns(this.fileTest, this.contents, this.pdfs, this.optPdfs, this.ids, this.messages);
         this.checks = results.checks;
         this.ids = results.ids;
-        sessionStorage.setItem("checks", JSON.stringify(this.checks));
         return this.runCheck(results.result);
     }
 
