@@ -89,25 +89,25 @@ $.get("controller/getParametresJson.php", function(data){
         const files = JSON.parse(json);
         table.authorizedCheck(files);
         table.extract(files);
-        if(!Object.keys(files).includes("plateforme.csv")) {
-            table.setContent("plateforme", formatOne("plateforme"));
-            table.getContent("plateforme")[0][2] = plateforme;
-            table.getContent("plateforme")[7][2] = "NON";
-        }
-        else {
-            table.setContent("plateforme", formatOne("plateforme", false, table.getContent("plateforme")));
-        }
-        if(!Object.keys(files).includes("paramfact.csv")) {
-            table.setContent("paramfact", formatOne("paramfact"));
-        }
-        else {
-            table.setContent("paramfact", formatOne("paramfact", false, table.getContent("paramfact")));
-
-        }
         if(table.columnsCheck() || table.plateFactCheck(plateforme)) {
             table.removeContents();
         }
         else {
+            if(!Object.keys(files).includes("plateforme.csv")) {
+                table.setContent("plateforme", formatOne("plateforme"));
+                table.getContent("plateforme")[0][2] = plateforme;
+                table.getContent("plateforme")[7][2] = "NON";
+            }
+            else {
+                table.setContent("plateforme", formatOne("plateforme", false, table.getContent("plateforme")));
+            }
+            if(!Object.keys(files).includes("paramfact.csv")) {
+                table.setContent("paramfact", formatOne("paramfact"));
+            }
+            else {
+                table.setContent("paramfact", formatOne("paramfact", false, table.getContent("paramfact")));
+
+            }
             table.saveContents();
             table.displayFiles();
             $('#tables-cancel').removeClass('desactived-tile');

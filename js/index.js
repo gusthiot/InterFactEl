@@ -37,25 +37,25 @@ $.get("controller/getDroitJson.php", function(data){
         const files = JSON.parse(json);
         table.authorizedCheck(files);
         table.extract(files);
-        const gestionnaire = table.getContent("gestionnaire");
-        let content = [];
-        let titles = [];
-        for(let numCol = 0; numCol < droits["gestionnaire"].numcol; numCol++) {
-            titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-"+numCol])));
-        }
-        content.push(titles);
-        let len = gestionnaire.length;
-        for(let numRow = 1; numRow < len; numRow++) {
-            const line = gestionnaire[numRow];
-            content.push([line[0], line[1], hasRight(line[2], 2), hasRight(line[2], 1) , hasRight(line[2], 0), line[3]]);
-        }
-        table.setContent("gestionnaire", content);
 
 
         if(table.columnsCheck()) {
             table.removeContents();
         }
         else {
+            const gestionnaire = table.getContent("gestionnaire");
+            let content = [];
+            let titles = [];
+            for(let numCol = 0; numCol < droits["gestionnaire"].numcol; numCol++) {
+                titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-"+numCol])));
+            }
+            content.push(titles);
+            let len = gestionnaire.length;
+            for(let numRow = 1; numRow < len; numRow++) {
+                const line = gestionnaire[numRow];
+                content.push([line[0], line[1], hasRight(line[2], 2), hasRight(line[2], 1) , hasRight(line[2], 0), line[3]]);
+            }
+            table.setContent("gestionnaire", content);
             table.saveContents();
             table.displayFiles();
             $('#tables-cancel').removeClass('desactived-tile');
