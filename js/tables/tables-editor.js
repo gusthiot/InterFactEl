@@ -12,7 +12,6 @@ export default class TablesEditor {
         this.saveAnyway = saveAnyway;
 
         $(document).on("click", ".tableur-remove", () => {
-            $('#message').html("");
             $('#tables-editor').trigger("close");
         });
 
@@ -643,5 +642,5 @@ $(document).on("click", "#error-modal-correct", function() {
 });
 
 $(document).on("click", ".background-red", function() {
-    $('#message').html($(this).data('msg'));
+    $('#tables-message').html($(this).data('msg'));
 });

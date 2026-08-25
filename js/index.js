@@ -16,7 +16,7 @@ $.get("controller/getDroitJson.php", function(data){
         contents[filename].unshift(titles);
     }
 
-    const table = new Tables(json.messages, paramtext, {
+    const table = new Tables("droit", json.messages, paramtext, {
                                 "mandatoryCsvs": droits,
                                 "mandatoryPdfs": {},
                                 "optionalPdfs": {}
@@ -35,7 +35,7 @@ $.get("controller/getDroitJson.php", function(data){
 
     $(document).on("button-import", "#tables-desktop", function(event, json) {
         const files = JSON.parse(json);
-        $('#message').html(table.authorizedCheck(files));
+        table.authorizedCheck(files);
         table.extract(files);
         const gestionnaire = table.getContent("gestionnaire");
         let content = [];
@@ -219,11 +219,33 @@ $('.manage-files').on('click', function () {
     $('#index-canevas').hide();
 });
 
+for(let tiles of ['.facturation', '.tarifs', '.reporting']) {
 
-function runCheck(res) {
-    if(res != "") {
-        $('#message').html(res);
-        return true;
-    }
-    return false;
+    $(tiles).on('dragstart', function(evt) {
+        evt.originalEvent.dataTransfer.setData("tiles", tiles);
+    });
+
+    $(tiles).on('dragover', function(evt) {
+        for(let zone of $('.drop-zone')) {
+            $(zone).removeClass("drop-zone");
+        }
+        const zones = $(tiles);
+        for(let zone of zones) {
+            if(zone === this) {
+                const origin = evt.originalEvent.dataTransfer.getData("tiles");
+                if($(this).hasClass(origin.replace('.', ''))) {
+                    $(zone).addClass("drop-zone");
+                }
+            }
+        }
+        evt.preventDefault();
+    });
+
+    $(tiles).on('drop', function(evt) {
+        const origin = evt.originalEvent.dataTransfer.getData("tiles");
+        if($(this).hasClass(origin.replace('.', ''))) {
+            console.log(tiles);
+        }
+    });
+
 }

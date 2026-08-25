@@ -9,6 +9,7 @@ export default class FileTests {
     }
 
     internalCheck(filename, conTest, contents, ids, dimensions=[]) {
+        let inIds = structuredClone(ids);
         let result = "";
         let errors = {};
         if(conTest.length > 0) {
@@ -63,7 +64,7 @@ export default class FileTests {
                     }
                 }
                 if((test.type === "unique") && !(test.noindex)) {
-                    ids[filename] = this.arrayIds;
+                    inIds[filename] = this.arrayIds;
                 }
                 if(test.type === "should") {
                     for(let num0 in Object.keys(this.retrieveIds(test.id[0], contents, ids))) {
@@ -94,7 +95,7 @@ export default class FileTests {
         else {
             result = "La table " + filename + " est vide";
         }
-        return {"result": result, "ids": ids, "errors": errors};
+        return {"result": result, "ids": inIds, "errors": errors};
     }
 
     retrieveIds(filename, contents, ids) {

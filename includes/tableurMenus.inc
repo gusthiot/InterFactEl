@@ -1,3 +1,4 @@
+<div id="tables-message"></div>
 <div id="tables-desktop">
     <div id="tables-top">
         <div id="tables-left">

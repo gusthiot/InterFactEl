@@ -53,9 +53,12 @@ const optionalPdfs = {"grille": {
 
 $.get("controller/getParametresJson.php", function(data){
     const json = JSON.parse(data);
+    const paramtext = json.paramtext;
+    const messages = json.messages;
+    const parametres = json.parametres;
 
-    const table = new Tables(json.messages, json.paramtext, {
-                                "mandatoryCsvs": json.parametres,
+    const table = new Tables("parametres", messages, paramtext, {
+                                "mandatoryCsvs": parametres,
                                 "mandatoryPdfs": mandatoryPdfs,
                                 "optionalPdfs": optionalPdfs
                             });
@@ -84,9 +87,23 @@ $.get("controller/getParametresJson.php", function(data){
 
     $(document).on("button-import", "#tables-desktop", function(event, json) {
         const files = JSON.parse(json);
-        $('#message').html(table.authorizedCheck(files));
-        table.extract(files, plateforme);
+        table.authorizedCheck(files);
+        table.extract(files);
+        if(!Object.keys(files).includes("plateforme.csv")) {
+            table.setContent("plateforme", formatOne("plateforme"));
+            table.getContent("plateforme")[0][2] = plateforme;
+            table.getContent("plateforme")[7][2] = "NON";
+        }
+        else {
+            table.setContent("plateforme", formatOne("plateforme", false, table.getContent("plateforme")));
+        }
+        if(!Object.keys(files).includes("paramfact.csv")) {
+            table.setContent("paramfact", formatOne("paramfact"));
+        }
+        else {
+            table.setContent("paramfact", formatOne("paramfact", false, table.getContent("paramfact")));
 
+        }
         if(table.columnsCheck() || table.plateFactCheck(plateforme)) {
             table.removeContents();
         }
@@ -97,8 +114,31 @@ $.get("controller/getParametresJson.php", function(data){
         }
     });
 
+    function formatOne(filename, empty=true, content=[]) {
+        let lines = [];
+        for(let numRow = 0; numRow < parametres[filename].labels.length; numRow++) {
+            const label = parametres[filename].labels[numRow];
+            let line = [label, paramtext[filename + "-" + label]];
+            for(let numCol = 2; numCol < parametres[filename].numcol; numCol++) {
+                if(empty) {
+                    line.push("");
+                }
+                else {
+                    line.push(content[numRow][numCol-1]);
+                }
+            }
+            lines.push(line);
+        }
+        return lines;
+    }
+
     $(document).on("button-create", "#tables-desktop", function() {
-        table.emptyContents(plateforme);
+        table.emptyContents();
+        for(let filename of ["plateforme", "paramfact"]) {
+            table.setContent(filename, formatOne(filename));
+        }
+        table.getContent("plateforme")[0][2] = plateforme;
+        table.getContent("plateforme")[7][2] = "NON";
         table.displayFiles();
     });
 
@@ -177,7 +217,12 @@ $.get("controller/getParametresJson.php", function(data){
     });
 
     function getEncFiles() {
-        let categprix = [["Id-ClasseClient", "Id_Categorie", "Prix unitaire"]];
+        let categprix = [];
+        let titles = [];
+        titles.push(unescape(encodeURIComponent(paramtext["table-categprix-0"])));
+        titles.push(unescape(encodeURIComponent(paramtext["table-categprix-1"])));
+        titles.push(unescape(encodeURIComponent(paramtext["table-categprix-2"])));
+        categprix.push(titles);
         const ccIds = table.retrieveIds("classeclient");
         for(let ccKey in ccIds) {
             const ccLine = table.getContent("classeclient")[ccIds[ccKey]];
@@ -188,7 +233,15 @@ $.get("controller/getParametresJson.php", function(data){
                 categprix.push([ccKey, caKey, bcLine[2]]);
             }
         }
-        return table.getEncFiles({"categprix": categprix});
+        let plateContent = [];
+        for(let line of table.getContent("plateforme")) {
+            plateContent.push([line[0], line[2]]);
+        }
+        let paramfact = [];
+        for(let line of table.getContent("paramfact")) {
+            paramfact.push([line[0], line[2], line[3]]);
+        }
+        return table.getEncFiles({categprix: categprix, plateforme: plateContent, paramfact: paramfact});
     }
 
 });

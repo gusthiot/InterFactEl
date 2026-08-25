@@ -6,7 +6,7 @@ import TablesTests from "./tables-tests.js";
 
 export default class Tables {
 
-    constructor(messages, paramtext, parameters, noRemove=false) {
+    constructor(context, messages, paramtext, parameters, noRemove=false) {
         if(parameters.mandatoryCsvs) {
             this.mandatoryCsvs = parameters.mandatoryCsvs;
         }
@@ -25,6 +25,7 @@ export default class Tables {
         else {
             this.optionalPdfs = {};
         }
+        this.context = context;
         this.messages = messages;
         this.paramtext = paramtext;
 
@@ -40,10 +41,10 @@ export default class Tables {
         this.pdfs = {};
         this.optPdfs = {}
 
-        if(sessionStorage.getItem("contents")) {
-            this.contents = JSON.parse(sessionStorage.getItem("contents"));
-            this.pdfs = JSON.parse(sessionStorage.getItem("pdfs"));
-            this.optPdfs = JSON.parse(sessionStorage.getItem("optPdfs"));
+        if(sessionStorage.getItem(this.context + "contents")) {
+            this.contents = JSON.parse(sessionStorage.getItem(this.context + "contents"));
+            this.pdfs = JSON.parse(sessionStorage.getItem(this.context + "pdfs"));
+            this.optPdfs = JSON.parse(sessionStorage.getItem(this.context + "optPdfs"));
             this.displayFiles();
             $('#tables-cancel').removeClass('desactived-tile');
         }
@@ -131,13 +132,13 @@ export default class Tables {
                     this.removeGoodChecks();
                     this.ids = results.ids;
                     this.contents[filename] = newContent;
-                    sessionStorage.setItem("contents", JSON.stringify(this.contents));
+                    sessionStorage.setItem(this.context + "contents", JSON.stringify(this.contents));
                     this.closeTable();
                 }
             }
             else {
                 this.contents[filename] = newContent;
-                sessionStorage.setItem("contents", JSON.stringify(this.contents));
+                sessionStorage.setItem(this.context + "contents", JSON.stringify(this.contents));
                 this.closeTable();
             }
         });
@@ -149,12 +150,13 @@ export default class Tables {
             this.removeGoodChecks();
             this.ids = this.save.ids;
             this.contents[this.save.filename] = this.save.content;
-            sessionStorage.setItem("contents", JSON.stringify(this.contents));
+            sessionStorage.setItem(this.context + "contents", JSON.stringify(this.contents));
             this.closeTable();
         });
 
         $(document).on("click", "#delete-grille", () => {
             delete this.optPdfs.grille;
+            this.checks["grille"].ok = false;
             this.closeTable();
         });
 
@@ -164,11 +166,13 @@ export default class Tables {
             fileReader.onload = () => {
                 if(id === 'replace-logo') {
                     this.pdfs["logo"] = fileReader.result.split(',')[1];
-                    sessionStorage.setItem("pdfs", JSON.stringify(this.pdfs));
+                    this.checks["logo"].ok = false;
+                    sessionStorage.setItem(this.context + "pdfs", JSON.stringify(this.pdfs));
                 }
                 else {
                     this.optPdfs["grille"] = fileReader.result.split(',')[1];
-                    sessionStorage.setItem("optPdfs", JSON.stringify(this.optPdfs));
+                    this.checks["grille"].ok = false;
+                    sessionStorage.setItem(this.context + "optPdfs", JSON.stringify(this.optPdfs));
                 }
             };
             fileReader.readAsDataURL($(evt.currentTarget).prop('files')[0]);
@@ -306,12 +310,12 @@ export default class Tables {
     }
 
     authorizedCheck(files) {
-        $('#message').html(this.tablesTest.checkAuthorized(files));
+        $('#tables-message').html(this.tablesTest.checkAuthorized(files));
     }
 
     runCheck(res) {
         if(res != "") {
-            $('#message').html(res);
+            $('#tables-message').html(res);
             return true;
         }
         return false;
@@ -330,38 +334,14 @@ export default class Tables {
     }
 
     saveContents() {
-        sessionStorage.setItem("contents", JSON.stringify(this.contents));
-        sessionStorage.setItem("pdfs", JSON.stringify(this.pdfs));
-        sessionStorage.setItem("optPdfs", JSON.stringify(this.optPdfs));
+        sessionStorage.setItem(this.context + "contents", JSON.stringify(this.contents));
+        sessionStorage.setItem(this.context + "pdfs", JSON.stringify(this.pdfs));
+        sessionStorage.setItem(this.context + "optPdfs", JSON.stringify(this.optPdfs));
     }
 
-    emptyContents(plateforme="") {
+    emptyContents() {
         for(let filename in this.mandatoryCsvs) {
-            this.contents[filename] = this.emptyContent(filename, plateforme);
-        }
-    }
-
-    emptyContent(filename, plateforme="") {
-        if(this.mandatoryCsvs[filename].tools || this.mandatoryCsvs[filename].bidim) {
-            return [];
-        }
-        else {
-            let content = [];
-            for(let label of this.mandatoryCsvs[filename].labels) {
-                let line = [label, this.paramtext[filename + "-" + label]];
-                for(let numCol = 2; numCol < this.mandatoryCsvs[filename].numcol; numCol++) {
-                    if((filename === "plateforme") && (label === "Id-Plateforme") && (numCol === 2)) {
-                        line.push(plateforme);
-                    } else if((filename === "plateforme") && (label === "Grille-Plateforme") && (numCol === 2)) {
-                        line.push("NON");
-                    }
-                    else {
-                        line.push("");
-                    }
-                }
-                content.push(line);
-            }
-            return content;
+            this.contents[filename] = [];
         }
     }
 
@@ -371,18 +351,18 @@ export default class Tables {
                 this.contents[filename] = contents[filename];
             }
             else {
-                this.contents[filename] = this.emptyContent(filename);
+                this.contents[filename] = [];
             }
         }
     }
 
-    extract(files, plateforme="") {
+    extract(files) {
         for(let filename in this.mandatoryCsvs) {
             if(Object.keys(files).includes(filename + ".csv")) {
                 this.contents[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
             }
             else {
-                this.contents[filename] = this.emptyContent(filename, plateforme);
+                this.contents[filename] = [];
             }
         }
         for(let filename in this.mandatoryPdfs) {
@@ -409,7 +389,7 @@ export default class Tables {
         sessionStorage.removeItem("checks");
         $('#tables-files').html("");
         $('#tables-dates').html("");
-        $('#message').html("");
+        $('#tables-message').html("");
         $('#tables-load').addClass('desactived-tile');
         $('#tables-save').addClass('desactived-tile');
         $('#tables-check').addClass('desactived-tile');
@@ -427,6 +407,7 @@ export default class Tables {
     }
 
     closeTable() {
+        $('#tables-message').html("");
         $('#tables-desktop').show();
         $('#tables-editor').html("");
         this.displayChecks();
