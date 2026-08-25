@@ -32,6 +32,7 @@
     "gestionnaire": {
         "name": "Gestionnaire",
         "numcol": 6,
+        "numcolfile": 4,
         "tools": true,
         "filter": [0, 1],
         "columns": [

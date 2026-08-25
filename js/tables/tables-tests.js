@@ -61,7 +61,10 @@ export default class TablesTests {
         for(let filename in this.mandatoryCsvs) {
             $('#'+filename).removeClass('red-file');
             $('#'+filename).removeClass('green-file');
-            const number = this.mandatoryCsvs[filename].numcol;
+            let number = this.mandatoryCsvs[filename].numcol;
+            if(this.mandatoryCsvs[filename].numcolfile) {
+                number = this.mandatoryCsvs[filename].numcolfile;
+            }
             for(let num = 0; num < contents[filename].length; num++) {
                 const line = contents[filename][num];
                 if(number != line.length) {

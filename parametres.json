@@ -3,6 +3,7 @@
         "name": "Paramètres SAP",
         "labels": ["code_int", "code_ext", "devise", "modes"],
         "numcol": 4,
+        "numcolfile": 3,
         "notitles": true,
         "columns": [
             {"type": "none"},
@@ -97,6 +98,7 @@
         "name": "Données Plateforme",
         "labels": ["Id-Plateforme", "Code_P", "CF", "Fonds", "Admin", "Abrev-Plateforme", "Intitulé-Plateforme", "Grille-Plateforme"],
         "numcol": 3,
+        "numcolfile": 2,
         "notitles": true,
         "columns": [
             {"type": "none"},
