@@ -77,7 +77,7 @@ $.get("controller/getParametresJson.php", function(data){
         });
     });
 
-    $(document).on("read", "#tables-dates", function(event, key) {
+    $(document).on("read", "#tables-dates", function(evt, key) {
         $.post("controller/openTarifs.php", {plate: plateforme, type: key.split("-")[0], date: key.split("-")[1]}, function (data) {
             table.extract(JSON.parse(data), plateforme);
             table.saveContents();
@@ -85,11 +85,11 @@ $.get("controller/getParametresJson.php", function(data){
         });
     });
 
-    $(document).on("button-import", "#tables-desktop", function(event, json) {
+    $(document).on("button-import", "#tables-desktop", function(evt, json) {
         const files = JSON.parse(json);
         table.authorizedCheck(files);
         table.extract(files);
-        if(table.columnsCheck() || table.plateFactCheck(plateforme)) {
+        if(table.columnsCheck() || table.plateFactCheck(files, plateforme)) {
             table.removeContents();
         }
         else {
@@ -219,9 +219,9 @@ $.get("controller/getParametresJson.php", function(data){
     function getEncFiles() {
         let categprix = [];
         let titles = [];
-        titles.push(unescape(encodeURIComponent(paramtext["table-categprix-0"])));
-        titles.push(unescape(encodeURIComponent(paramtext["table-categprix-1"])));
-        titles.push(unescape(encodeURIComponent(paramtext["table-categprix-2"])));
+        titles.push(encodeURIComponent(paramtext["table-categprix-0"]));
+        titles.push(encodeURIComponent(paramtext["table-categprix-1"]));
+        titles.push(encodeURIComponent(paramtext["table-categprix-2"]));
         categprix.push(titles);
         const ccIds = table.retrieveIds("classeclient");
         for(let ccKey in ccIds) {

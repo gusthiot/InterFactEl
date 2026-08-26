@@ -301,8 +301,8 @@ export default class Tables {
         $('#tables-check').removeClass('desactived-tile');
     }
 
-    plateFactCheck(plateforme) {
-        return this.runCheck(this.tablesTest.checkPlateFact(plateforme, this.messages, this.contents, this.optPdfs));
+    plateFactCheck(files, plateforme) {
+        return this.runCheck(this.tablesTest.checkPlateFact(files, plateforme, this.messages, this.contents));
     }
 
     columnsCheck() {
@@ -448,7 +448,7 @@ export default class Tables {
             if(!this.mandatoryCsvs[name].notitles) {
                 let titles = [];
                 for(let numCol = 0; numCol < this.mandatoryCsvs[name].numcol; numCol++) {
-                    titles.push(unescape(encodeURIComponent(this.paramtext["table-"+name+"-"+numCol])));
+                    titles.push(encodeURIComponent(this.paramtext["table-"+name+"-"+numCol]));
                 }
                 content[0] = titles;
             }

@@ -76,38 +76,40 @@ export default class TablesTests {
         return result;
     }
 
-    checkPlateFact(plateforme, messages, contents, optPdfs) {
+    checkPlateFact(files, plateforme, messages, contents) {
         let result = "";
         const names = ["paramfact", "plateforme"];
         for(let filename of names) {
-            let arrayIds = {};
-            for(let num = 0; num < contents[filename].length; num++) {
-                const line = contents[filename][num];
-                if(!Object.keys(arrayIds).includes(line[0])) {
-                    arrayIds[line[0]] = num;
-                }
-                else {
-                    result += "le label '" + line[0] + "' est présent plus d'une fois dans  " + filename + ".csv <br />";
-                }
-                if(filename === "plateforme") {
-                    if(line[0] === this.mandatoryCsvs[filename].labels[0]) {
-                        if(line[2] != plateforme) {
-                            result += messages["plateforme01"] + " <br />";
+            if(Object.keys(files).includes(filename)) {
+                let arrayIds = {};
+                for(let num = 0; num < contents[filename].length; num++) {
+                    const line = contents[filename][num];
+                    if(!Object.keys(arrayIds).includes(line[0])) {
+                        arrayIds[line[0]] = num;
+                    }
+                    else {
+                        result += "le label '" + line[0] + "' est présent plus d'une fois dans  " + filename + ".csv <br />";
+                    }
+                    if(filename === "plateforme") {
+                        if(line[0] === this.mandatoryCsvs[filename].labels[0]) {
+                            if(line[1] != plateforme) {
+                                result += messages["plateforme01"] + " <br />";
+                            }
+                        }
+                        if(line[0] === this.mandatoryCsvs[filename].labels[7]) {
+                            if(!["OUI", "NON"].includes(line[1])) {
+                                result += messages["plateforme02"] + " <br />";
+                            }
                         }
                     }
-                    if(line[0] === this.mandatoryCsvs[filename].labels[7]) {
-                        if(!["OUI", "NON"].includes(line[2])) {
-                            result += messages["plateforme02"] + " <br />";
-                        }
-                    }
                 }
-            }
-            if(Object.keys(arrayIds).length != this.mandatoryCsvs[filename].labels.length) {
-                result += "le fichier " + filename + " doit contenir " + this.mandatoryCsvs[filename].labels.length + " étiquettes <br />";
-            }
-            for(let label of this.mandatoryCsvs[filename].labels) {
-                if(!Object.keys(arrayIds).includes(label)) {
-                    result += "le fichier " + filename + " doit contenir l'étiquette : '" + label + "' <br />";
+                if(Object.keys(arrayIds).length != this.mandatoryCsvs[filename].labels.length) {
+                    result += "le fichier " + filename + " doit contenir " + this.mandatoryCsvs[filename].labels.length + " étiquettes <br />";
+                }
+                for(let label of this.mandatoryCsvs[filename].labels) {
+                    if(!Object.keys(arrayIds).includes(label)) {
+                        result += "le fichier " + filename + " doit contenir l'étiquette : '" + label + "' <br />";
+                    }
                 }
             }
         }
