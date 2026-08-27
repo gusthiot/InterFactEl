@@ -45,7 +45,7 @@ export default class TablesEditor {
                 for(let numFil = 0; numFil < filters.length; numFil++) {
                     const tab = $(filters[numFil]).attr('id').split("-");
                     const cell = this.getCellValue(cells[tab[1]], true);
-                    if(cell.indexOf($(filters[numFil]).val()) === -1) {
+                    if(cell.toLowerCase().indexOf($(filters[numFil]).val().toLowerCase()) === -1) {
                         show = false;
                         break;
                     }
@@ -133,7 +133,11 @@ export default class TablesEditor {
             }
             for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
                 const paramCol = this.parameters[this.filename].columns[numCol];
-                html += '<td class="border-left';
+                let hidden = "";
+                if(paramCol.type === "hidden") {
+                    hidden = "tables-hidden";
+                }
+                html += '<td class="border-left ' + hidden;
                 if((numCol === this.parameters[this.filename].numcol-1) && !this.parameters[this.filename].tools) {
                     html += ' border-right';
                 }
@@ -288,8 +292,16 @@ export default class TablesEditor {
 
     unidimTableur() {
         let html = '<thead><tr>';
+        let colspan = 0;
         for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
-            html += '<th class="border-bottom">' + this.paramtext["table-"+this.filename+"-"+numCol];
+            let hidden = "";
+            if(this.parameters[this.filename].columns[numCol].type === "hidden") {
+                hidden = "tables-hidden";
+            }
+            else {
+                colspan++;
+            }
+            html += '<th class="border-bottom ' + hidden + '">' + this.paramtext["table-"+this.filename+"-"+numCol];
             if(this.parameters[this.filename].filter && this.parameters[this.filename].filter.includes(numCol)) {
                 html += ' <input type="text" class="input-filter" id="filter-' + numCol + '" size="10">';
             }
@@ -308,7 +320,11 @@ export default class TablesEditor {
                 html += '<tr class="values" id="line-' + numRow + '">';
                 for(let numCol = 0; numCol < this.parameters[this.filename].numcol; numCol++) {
                     let paramCol = this.parameters[this.filename].columns[numCol];
-                    html += '<td class="border-left';
+                    let hidden = "";
+                    if(paramCol.type === "hidden") {
+                        hidden = "tables-hidden";
+                    }
+                    html += '<td class="border-left ' + hidden;
                     if((numCol === this.parameters[this.filename].numcol-1) && !this.parameters[this.filename].tools) {
                         html += ' border-right';
                     }
@@ -333,7 +349,7 @@ export default class TablesEditor {
             }
         }
         if(this.parameters[this.filename].tools) {
-            html += '<tr><td class="border-left" colspan="' + (this.parameters[this.filename].numcol) + '"></td>' +
+            html += '<tr><td class="border-left" colspan="' + colspan + '"></td>' +
                     '<td class="td-tools">' +
                     '<svg id="line-plus" class="icon icon-selectable" aria-hidden="true">' +
                         '<use xlink:href="#plus"></use>' +

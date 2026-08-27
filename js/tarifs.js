@@ -110,6 +110,7 @@ $.get("controller/getParametresJson.php", function(data){
             }
             table.saveContents();
             table.displayFiles();
+            $('#tables-message').html('Importation réussie');
             $('#tables-cancel').removeClass('desactived-tile');
         }
     });

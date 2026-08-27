@@ -73,7 +73,7 @@ function checkGest(string $type): void
 function checkPlateforme(string $type, string $plateforme): void
 {
     checkGest($type);
-    if(!array_key_exists($plateforme, DATA_GEST[$type])) {
+    if(!in_array($plateforme, DATA_GEST[$type])) {
         $_SESSION['alert-danger'] = "Ce numéro de plateforme n'est pas pris en compte !";
         header('Location: index.php');
         exit;

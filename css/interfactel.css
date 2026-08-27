@@ -773,6 +773,10 @@ table.dates-tarifs .tr-clickable:hover {
   border-spacing: 0;
 }
 
+.tables-hidden {
+  display: none;
+}
+
 .dim0 {
   text-align: left;
 }

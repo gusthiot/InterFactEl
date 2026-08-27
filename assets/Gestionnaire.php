@@ -53,17 +53,13 @@ class Gestionnaire extends Csv
             }
 
             if(!array_key_exists($line[1], $this->plateformes[$line[0]])) {
-                $this->plateformes[$line[0]][$line[1]] = [];
-                foreach(self::RIGHTS as $name=>$pos) {
-                    $this->plateformes[$line[0]][$line[1]][$name] = 0;
-                }
+                $this->plateformes[$line[0]][$line[1]] = $line[3];
             }
 
             foreach(self::RIGHTS as $name=>$pos) {
                 if(self::hasRight($line[2], $pos) && ($line[3] > 0)) {
-                    $this->rights[$line[0]][$name][$line[1]] = $line[3];
+                    $this->rights[$line[0]][$name][] = $line[1];
 
-                    $this->plateformes[$line[0]][$line[1]][$name] = 1;
                     $line2[2-$pos+2] = 1;
                 }
             }
@@ -79,7 +75,7 @@ class Gestionnaire extends Csv
      * @param integer $pos specific bit right
      * @return boolean
      */
-    static function hasRight(int $right, int $pos) : bool
+    static function hasRight(int $right, int $pos): bool
     {
         return $right & (1 << $pos);
     }

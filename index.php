@@ -28,7 +28,7 @@ function tile(string $class, string $title, string $icon, string $input="", bool
     $draggable = "";
     $dropClass = "";
     if($num>0) {
-        $draggable = 'draggable="true" data-num="'.$num.'"';
+        $draggable = 'draggable="true"';
     }
     return '<div class="tile '.$desactived.' big-tile '.$class.'" '.$draggable.'>
                 '.$input.'
@@ -72,7 +72,8 @@ function tarifsExists($plateforme)
 }
 
 $plateformes = new Plateforme();
-
+$orders = $gestionnaire->getPlateformes(USER);
+asort($orders);
 
 /**
  * Main page
@@ -221,17 +222,16 @@ $plateformes = new Plateforme();
                                 <h5>Facturation</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach($gestionnaire->getPlateformes(USER) as $plateforme => $rights) {
+                                foreach($orders as $plateforme => $order) {
                                     $desactive = true;
                                     $state = new State(DATA.$plateforme);
-                                    if($rights['facturation'] && (!empty($state->getLast()) || tarifsExists($plateforme))) {
+                                    if(in_array($plateforme, DATA_GEST['facturation']) && (!empty($state->getLast()) || tarifsExists($plateforme))) {
                                         $desactive = false;
                                     }
-                                    //var_dump(DATA_GEST['facturation']);
                                     $name = $plateformes->getName($plateforme);
                                     $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
                                     $input = '<input type="hidden" id="plate-fact" value="'.$plateforme.'" />';
-                                    echo tile("facturation", $title, "dollar-sign", $input, $desactive, 1);
+                                    echo tile("facturation", $title, "dollar-sign", $input, $desactive, $order);
                                 }
                                 ?>
                                 </div>
@@ -244,15 +244,15 @@ $plateformes = new Plateforme();
                                 <h5>Tarifs</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach($gestionnaire->getPlateformes(USER) as $plateforme => $rights) {
+                                foreach($orders as $plateforme => $order) {
                                     $desactive = true;
-                                    if($rights['tarifs']) {
+                                    if(in_array($plateforme, DATA_GEST['tarifs'])) {
                                         $desactive = false;
                                     }
                                     $name = $plateformes->getName($plateforme);
                                     $input = '<input type="hidden" id="plate-tarifs" value="'.$plateforme.'" />';
                                     $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
-                                    echo tile("tarifs", $title, "settings", $input, $desactive, 1);
+                                    echo tile("tarifs", $title, "settings", $input, $desactive, $order);
                                 }
                                 ?>
                                 </div>
@@ -265,15 +265,15 @@ $plateformes = new Plateforme();
                                 <h5>Statistiques</h5>
                                 <div class="tiles">
                                 <?php
-                                foreach($gestionnaire->getPlateformes(USER) as $plateforme => $rights) {
+                                foreach($orders as $plateforme => $order) {
                                     $desactive = true;
-                                    if($rights['reporting']) {
+                                    if(in_array($plateforme, DATA_GEST['reporting'])) {
                                         $desactive = false;
                                     }
                                     $name = $plateformes->getName($plateforme);
                                     $input = '<input type="hidden" id="plate-report" value="'.$plateforme.'" />';
                                     $title = '<p class="num-tile">'.$plateforme.'</p><p class="nom-tile">'.$name.'</p>';
-                                    echo tile("reporting", $title, "book", $input, $desactive, 1);
+                                    echo tile("reporting", $title, "book", $input, $desactive, $order);
                                 }
                                 ?>
                                 </div>

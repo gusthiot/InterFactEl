@@ -11,7 +11,7 @@ $.get("controller/getDroitJson.php", function(data){
     for(let filename in contents) {
         let titles = [];
         for(let numCol = 0; numCol < droits[filename].numcol; numCol++) {
-            titles.push(unescape(encodeURIComponent(paramtext["table-"+filename+"-"+numCol])));
+            titles.push(encodeURIComponent(paramtext["table-"+filename+"-"+numCol]));
         }
         contents[filename].unshift(titles);
     }
@@ -47,7 +47,7 @@ $.get("controller/getDroitJson.php", function(data){
             let content = [];
             let titles = [];
             for(let numCol = 0; numCol < droits["gestionnaire"].numcol; numCol++) {
-                titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-"+numCol])));
+                titles.push(encodeURIComponent(paramtext["table-gestionnaire-"+numCol]));
             }
             content.push(titles);
             let len = gestionnaire.length;
@@ -58,6 +58,7 @@ $.get("controller/getDroitJson.php", function(data){
             table.setContent("gestionnaire", content);
             table.saveContents();
             table.displayFiles();
+            $('#tables-message').html('Importation réussie');
             $('#tables-cancel').removeClass('desactived-tile');
         }
     });
@@ -70,10 +71,10 @@ $.get("controller/getDroitJson.php", function(data){
     function getEncFiles() {
         let content = [];
         let titles = [];
-        titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-0"])));
-        titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-1"])));
-        titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-6"])));
-        titles.push(unescape(encodeURIComponent(paramtext["table-gestionnaire-5"])));
+        titles.push(encodeURIComponent(paramtext["table-gestionnaire-0"]));
+        titles.push(encodeURIComponent(paramtext["table-gestionnaire-1"]));
+        titles.push(encodeURIComponent(paramtext["table-gestionnaire-6"]));
+        titles.push(encodeURIComponent(paramtext["table-gestionnaire-5"]));
         content.push(titles);
         let orders = {};
         let newAdds = {};
@@ -95,17 +96,17 @@ $.get("controller/getDroitJson.php", function(data){
             content.push([line[0], line[1], codage, line[5]]);
         }
         for(let login in newAdds) {
-            for(let row in newAdds[login]) {
+            for(let row of newAdds[login]) {
                 if(!Object.keys(orders).includes(login)) {
                     orders[login] = 1;
                     content[row][3] = 1;
-                    contents[filename][row][5] = 1;
+                    table.contents["gestionnaire"][row][5] = 1;
                 }
                 else {
                     const order = parseInt(orders[login]) + 1;
                     orders[login] = order;
                     content[row][3] = order;
-                    contents[filename][row][5] = order;
+                    table.contents["gestionnaire"][row][5] = order;
                 }
             }
         }
@@ -223,6 +224,7 @@ for(let tiles of ['.facturation', '.tarifs', '.reporting']) {
 
     $(tiles).on('dragstart', function(evt) {
         evt.originalEvent.dataTransfer.setData("tiles", tiles);
+        evt.originalEvent.dataTransfer.setData("plateforme", $(this).find(".num-tile")[0].textContent);
     });
 
     $(tiles).on('dragover', function(evt) {
@@ -242,9 +244,18 @@ for(let tiles of ['.facturation', '.tarifs', '.reporting']) {
     });
 
     $(tiles).on('drop', function(evt) {
-        const origin = evt.originalEvent.dataTransfer.getData("tiles");
-        if($(this).hasClass(origin.replace('.', ''))) {
-            console.log(tiles);
+        const plateDrop = $(this).find(".num-tile")[0].textContent;
+        const origin = evt.originalEvent.dataTransfer.getData("tiles").replace('.', '');
+        const plateDrag = evt.originalEvent.dataTransfer.getData("plateforme");
+        if($(this).hasClass(origin)) {
+            $.post("controller/changeOrder.php", {from: plateDrag, to: plateDrop}, function (data) {
+                if(data === "ok") {
+                    window.location.href = "controller/index.php";
+                }
+                else {
+                    $('#message').html(data);
+                }
+            });
         }
     });
 
