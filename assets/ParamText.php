@@ -59,7 +59,7 @@ class ParamText extends Csv
                     "table-gestionnaire-0", "table-gestionnaire-1", "table-gestionnaire-2", "table-gestionnaire-3", "table-gestionnaire-4", "table-gestionnaire-5", "table-gestionnaire-6",
                     "table-superviseur-0",
                     "paramfact-code_int", "paramfact-code_ext", "paramfact-devise", "paramfact-modes",
-                    "plateforme-Id-Plateforme", "plateforme-Code_P", "plateforme-CF", "plateforme-Fonds", "plateforme-Admin", "plateforme-Abrev-Plateforme", "plateforme-Intitulé-Plateforme", "plateforme-Grille-Plateforme",
+                    "plateforme-Id-Plateforme", "plateforme-Code_P", "plateforme-CF", "plateforme-Fonds", "plateforme-Admin", "plateforme-Abrev-Plateforme", "plateforme-Intitule-Plateforme", "plateforme-Grille-Plateforme",
                     "cae-annee-fact", "cae-mois-fact", "cae-id-compte", "cae-id-user", "cae-id-machine", "cae-login", "cae-HP", "cae-HC", "cae-DRUN", "cae-DOP", "cae-id-operator", "cae-rem-operator", "cae-rem-staff", "cae-validation", "cae-id-validator"];
 
     /**
