@@ -87,30 +87,33 @@ $.get("controller/getParametresJson.php", function(data){
 
     $(document).on("button-import", "#tables-desktop", function(evt, json) {
         const files = JSON.parse(json);
-        table.authorizedCheck(files);
+        const ac = table.authorizedCheck(files);
         table.extract(files);
-        if(table.columnsCheck() || table.plateFactCheck(files, plateforme)) {
-            table.removeContents();
+        const cc = table.columnsCheck();
+        const pfc = table.plateFactCheck(files, plateforme);
+        if((cc != "") || (pfc != "")) {
+            $('#tables-message').html(cc + "<br />" + pfc + "<br />" + ac);
+            table.contents = {};
         }
         else {
             if(!Object.keys(files).includes("plateforme.csv")) {
-                table.setContent("plateforme", formatOne("plateforme"));
-                table.getContent("plateforme")[0][2] = plateforme;
-                table.getContent("plateforme")[7][2] = "NON";
+                table.contents["plateforme"] = formatOne("plateforme");
+                table.contents["plateforme"][0][2] = plateforme;
+                table.contents["plateforme"][7][2] = "NON";
             }
             else {
-                table.setContent("plateforme", formatOne("plateforme", false, table.getContent("plateforme")));
+                table.contents["plateforme"] = formatOne("plateforme", false, table.contents["plateforme"]);
             }
             if(!Object.keys(files).includes("paramfact.csv")) {
-                table.setContent("paramfact", formatOne("paramfact"));
+                table.contents["paramfact"] = formatOne("paramfact");
             }
             else {
-                table.setContent("paramfact", formatOne("paramfact", false, table.getContent("paramfact")));
+                table.contents["paramfact"] = formatOne("paramfact", false, table.contents["paramfact"]);
 
             }
             table.saveContents();
             table.displayFiles();
-            $('#tables-message').html('Importation réussie');
+            $('#tables-message').html('Importation réussie<br/>' + ac);
             $('#tables-cancel').removeClass('desactived-tile');
         }
     });
@@ -136,10 +139,10 @@ $.get("controller/getParametresJson.php", function(data){
     $(document).on("button-create", "#tables-desktop", function() {
         table.emptyContents();
         for(let filename of ["plateforme", "paramfact"]) {
-            table.setContent(filename, formatOne(filename));
+            table.contents[filename] = formatOne(filename);
         }
-        table.getContent("plateforme")[0][2] = plateforme;
-        table.getContent("plateforme")[7][2] = "NON";
+        table.contents["plateforme"][0][2] = plateforme;
+        table.contents["plateforme"][7][2] = "NON";
         table.displayFiles();
     });
 
@@ -226,24 +229,24 @@ $.get("controller/getParametresJson.php", function(data){
         categprix.push(titles);
         const ccIds = table.retrieveIds("classeclient");
         for(let ccKey in ccIds) {
-            const ccLine = table.getContent("classeclient")[ccIds[ccKey]];
+            const ccLine = table.contents["classeclient"][ccIds[ccKey]];
             const idBase = ccLine[8];
             for(let caKey in table.retrieveIds("categorie")) {
                 let price = 0;
                 if(idBase != "0") {
                     const idBaseCateg = idBase+"_"+caKey;
-                    const bcLine = table.getContent("basecateg")[table.retrieveIds("basecateg")[idBaseCateg]];
+                    const bcLine = table.contents["basecateg"][table.retrieveIds("basecateg")[idBaseCateg]];
                     price = bcLine[2];
                 }
                 categprix.push([ccKey, caKey, price]);
             }
         }
         let plateContent = [];
-        for(let line of table.getContent("plateforme")) {
+        for(let line of table.contents["plateforme"]) {
             plateContent.push([line[0], line[2]]);
         }
         let paramfact = [];
-        for(let line of table.getContent("paramfact")) {
+        for(let line of table.contents["paramfact"]) {
             paramfact.push([line[0], line[2], line[3]]);
         }
         return table.getEncFiles({categprix: categprix, plateforme: plateContent, paramfact: paramfact});

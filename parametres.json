@@ -51,7 +51,8 @@
             {"type": "unique", "id": [0], "msg": "01"},
             {"type": "num", "col": 1, "msg": "02"},
             {"type": "ref", "col": 2, "msg": "03"},
-            {"type": "ext", "col": 2, "extCol": 1, "extValue": "OVH", "extName": "articlesap", "msg": "04"}
+            {"type": "ext", "col": 2, "extCol": 1, "extValue": "OVH", "extName": "articlesap", "msg": "04"},
+            {"type": "id0", "col": 0, "msg": "05"}
         ]
     },
     "base": {
@@ -63,7 +64,8 @@
             {"type": "txt"}
         ],
         "tests": [
-            {"type": "unique", "id": [0], "msg": "01"}
+            {"type": "unique", "id": [0], "msg": "01"},
+            {"type": "id0", "col": 0, "msg": "02"}
         ]
     },
     "classeclient": {
@@ -186,7 +188,8 @@
             {"type": "ref", "col": 5, "special": true, "msg": "02"},
             {"type": "ext", "col": 5, "extCol": 3, "extValue": "NON", "extName": "classeprestation", "msg": "03"},
             {"type": "num", "col": 4, "msg": "04"},
-            {"type": "in", "col": 6, "msg": "05"}
+            {"type": "in", "col": 6, "msg": "05"},
+            {"type": "id0", "col": 0, "msg": "06"}
         ]
     },
     "groupe": {

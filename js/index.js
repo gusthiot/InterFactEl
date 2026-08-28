@@ -35,15 +35,16 @@ $.get("controller/getDroitJson.php", function(data){
 
     $(document).on("button-import", "#tables-desktop", function(event, json) {
         const files = JSON.parse(json);
-        table.authorizedCheck(files);
+        const ac = table.authorizedCheck(files);
         table.extract(files);
+        const cc = table.columnsCheck();
 
-
-        if(table.columnsCheck()) {
-            table.removeContents();
+        if(cc != "") {
+            $('#tables-message').html(cc + "<br />" + ac);
+            table.contents = {};
         }
         else {
-            const gestionnaire = table.getContent("gestionnaire");
+            const gestionnaire = table.contents["gestionnaire"];
             let content = [];
             let titles = [];
             for(let numCol = 0; numCol < droits["gestionnaire"].numcol; numCol++) {
@@ -55,10 +56,10 @@ $.get("controller/getDroitJson.php", function(data){
                 const line = gestionnaire[numRow];
                 content.push([line[0], line[1], hasRight(line[2], 2), hasRight(line[2], 1) , hasRight(line[2], 0), line[3]]);
             }
-            table.setContent("gestionnaire", content);
+            table.contents["gestionnaire"] = content;
             table.saveContents();
             table.displayFiles();
-            $('#tables-message').html('Importation réussie');
+            $('#tables-message').html('Importation réussie<br />' + ac);
             $('#tables-cancel').removeClass('desactived-tile');
         }
     });
@@ -78,9 +79,9 @@ $.get("controller/getDroitJson.php", function(data){
         content.push(titles);
         let orders = {};
         let newAdds = {};
-        let len = table.getContent("gestionnaire").length;
+        let len = table.contents["gestionnaire"].length;
         for(let numRow = 1; numRow < len; numRow++) {
-            const line = table.getContent("gestionnaire")[numRow];
+            const line = table.contents["gestionnaire"][numRow];
             if(line[5] === "") {
                 if(!Object.keys(newAdds).includes(line[0])) {
                     newAdds[line[0]] = [];

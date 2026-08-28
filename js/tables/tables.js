@@ -117,7 +117,8 @@ export default class Tables {
         $(document).on("saved", "#tableur-table", (evt, newContent, filename, dimensions=[]) => {
             if(this.mandatoryCsvs[filename].tests) {
                 const results = this.fileTest.internalCheck(filename, newContent, this.contents, this.ids, dimensions);
-                if(this.runCheck(results.result)) {
+                if(results.result != "") {
+                    $('#tables-message').html(results.result);
                     this.save.content = newContent;
                     this.save.ids = results.ids;
                     this.save.errors = results.errors;
@@ -258,7 +259,14 @@ export default class Tables {
         });
 
         $("#tables-check").on("click", () => {
-            if(!this.checkTables()) {
+            this.removeGoodChecks();
+            const results = this.tablesTest.checkColumns(this.fileTest, this.contents, this.pdfs, this.optPdfs, this.ids, this.messages);
+            this.checks = results.checks;
+            this.ids = results.ids;
+            if(results.result != "") {
+                $('#tables-message').html(results.result);
+            }
+            else {
                 $('#tables-load').removeClass('desactived-tile');
             }
         });
@@ -302,35 +310,15 @@ export default class Tables {
     }
 
     plateFactCheck(files, plateforme) {
-        return this.runCheck(this.tablesTest.checkPlateFact(files, plateforme, this.messages, this.contents));
+        return this.tablesTest.checkPlateFact(files, plateforme, this.messages, this.contents);
     }
 
     columnsCheck() {
-        return this.runCheck(this.tablesTest.checkColumnsNumbers(this.contents));
+        return this.tablesTest.checkColumnsNumbers(this.contents);
     }
 
     authorizedCheck(files) {
-        $('#tables-message').html(this.tablesTest.checkAuthorized(files));
-    }
-
-    runCheck(res) {
-        if(res != "") {
-            $('#tables-message').html(res);
-            return true;
-        }
-        return false;
-    }
-
-    checkTables() {
-        this.removeGoodChecks();
-        const results = this.tablesTest.checkColumns(this.fileTest, this.contents, this.pdfs, this.optPdfs, this.ids, this.messages);
-        this.checks = results.checks;
-        this.ids = results.ids;
-        return this.runCheck(results.result);
-    }
-
-    removeContents() {
-        this.contents = {};
+        return this.tablesTest.checkAuthorized(files);
     }
 
     saveContents() {
@@ -424,18 +412,6 @@ export default class Tables {
 
     retrieveIds(filename) {
         return  this.fileTest.retrieveIds(filename, this.contents, this.ids);
-    }
-
-    getContent(filename) {
-        return this.contents[filename];
-    }
-
-    getContents() {
-        return this.contents;
-    }
-
-    setContent(filename, content) {
-        this.contents[filename] = content;
     }
 
     getEncFiles(specials={}) {

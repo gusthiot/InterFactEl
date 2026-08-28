@@ -138,16 +138,17 @@ export default class FileTests {
                 }
                 break;
             case "ref":
-                if(!(((Object.keys(this.retrieveIds(columns[test.col].origin, contents, ids))).includes(line[test.col])) ||
+                if(!((Object.keys(this.retrieveIds(columns[test.col].origin, contents, ids)).includes(line[test.col])) ||
                     (columns[test.col].zero && (line[test.col] === "0")))) {
                     return line[test.col];
                 }
                 break;
             case "ext":
-                const idExt = line[test.col];
-                const extLine = contents[test.extName][this.retrieveIds(test.extName, contents, ids)[idExt]];
-                if(extLine[test.extCol] != test.extValue) {
-                    return line[test.col];
+                if((Object.keys(this.retrieveIds(columns[test.col].origin, contents, ids))).includes(line[test.col])) {
+                    const extLine = contents[test.extName][this.retrieveIds(test.extName, contents, ids)[line[test.col]]];
+                    if(extLine[test.extCol] != test.extValue) {
+                        return line[test.col];
+                    }
                 }
                 break;
             case "num":
@@ -171,6 +172,9 @@ export default class FileTests {
                     return line[test.col];
                 }
                 if(test.special) {
+                    if(!(Object.keys(this.retrieveIds("categorie", contents, ids))).includes(line[1])) {
+                        return line[1];
+                    }
                     const catLine = contents["categorie"][this.retrieveIds("categorie", contents, ids)[line[1]]];
                     if(Math.floor(Math.log10(nb) + 1) > (9 - catLine[4])) {
                         return line[test.col];
@@ -193,13 +197,20 @@ export default class FileTests {
                 }
                 break;
             case "itemk":
-                if(line[test.col] > 0) {
-                    const idCat = line[test.col];
-                    const cateLine = contents["categorie"][this.retrieveIds("categorie", contents, ids)[idCat]];
-                    if(cateLine[6] != column) {
-                        return idCat;
+                if(line[test.col] != "0") {
+                    if((Object.keys(this.retrieveIds("categorie", contents, ids))).includes(line[test.col])) {
+                        const cateLine = contents["categorie"][this.retrieveIds("categorie", contents, ids)[line[test.col]]];
+                        if(cateLine[6] != column) {
+                            return line[test.col];
+                        }
                     }
                 }
+                break;
+            case "id0":
+                if(line[test.col] == "0") {
+                    return line[test.col];
+                }
+                break;
         }
         return "";
     }
