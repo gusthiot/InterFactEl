@@ -92,9 +92,6 @@ export default class FileTests {
                 result += resTest;
             }
         }
-        else {
-            result = "La table " + filename + " est vide";
-        }
         return {"result": result, "ids": inIds, "errors": errors};
     }
 

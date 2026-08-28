@@ -229,9 +229,13 @@ $.get("controller/getParametresJson.php", function(data){
             const ccLine = table.getContent("classeclient")[ccIds[ccKey]];
             const idBase = ccLine[8];
             for(let caKey in table.retrieveIds("categorie")) {
-                const idBaseCateg = idBase+"_"+caKey;
-                const bcLine = table.getContent("basecateg")[table.retrieveIds("basecateg")[idBaseCateg]];
-                categprix.push([ccKey, caKey, bcLine[2]]);
+                let price = 0;
+                if(idBase != "0") {
+                    const idBaseCateg = idBase+"_"+caKey;
+                    const bcLine = table.getContent("basecateg")[table.retrieveIds("basecateg")[idBaseCateg]];
+                    price = bcLine[2];
+                }
+                categprix.push([ccKey, caKey, price]);
             }
         }
         let plateContent = [];

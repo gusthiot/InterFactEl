@@ -82,7 +82,7 @@
             {"type": "menu", "list": ["BONUS", "RABAIS"]},
             {"type": "menu", "list": ["OUI", "NON"]},
             {"type": "ref", "origin": "overhead", "zero": true, "intitule": 1, "plus": "%"},
-            {"type": "ref", "origin": "base", "intitule": 1}
+            {"type": "ref", "origin": "base", "zero": true, "intitule": 1}
         ],
         "tests": [
             {"type": "unique", "id": [0], "msg": "01"},
