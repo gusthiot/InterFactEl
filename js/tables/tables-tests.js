@@ -116,13 +116,12 @@ export default class TablesTests {
         return result;
     }
 
-    checkColumns(fileTest, contents, pdfs, optPdfs, ids, messages) {
-        let ret = {"result": "", "checks": {}, "ids": {}};
-        let checks = {};
+    checkColumns(fileTest, contents, pdfs, optPdfs, ids) {
+        let ret = {"ok": true, "checks": {}, "ids": {}};
         for(let filename in this.mandatoryCsvs) {
             ret.checks[filename] = {};
             ret.checks[filename].errors = {};
-            if(ret.result != "") {
+            if(!ret.ok) {
                 return ret;
             }
             if(this.mandatoryCsvs[filename].tests) {
@@ -132,23 +131,23 @@ export default class TablesTests {
                                 contents[this.mandatoryCsvs[filename].columns[1].origin].length-1];
                 }
                 const results = fileTest.internalCheck(filename, contents[filename], contents, ids, dimensions);
-                ret.result += results.result;
+                ret.ok = results.ok;
                 ret.ids = results.ids;
                 ret.checks[filename].errors = results.errors;
             }
-            if(ret.result != "") {
-                ret.checks[filename].ok = false;
-                $('#'+filename).addClass('red-file');
-            }
-            else {
+            if(ret.ok) {
                 ret.checks[filename].ok = true;
                 $('#'+filename).addClass('green-file');
+            }
+            else {
+                ret.checks[filename].ok = false;
+                $('#'+filename).addClass('red-file');
             }
         }
         for(let filename in this.mandatoryPdfs) {
             ret.checks[filename] = {};
             ret.checks[filename].errors = {};
-            if(ret.result != "") {
+            if(!ret.ok) {
                 return ret;
             }
             if(pdfs[filename]) {
@@ -158,13 +157,13 @@ export default class TablesTests {
             else {
                 ret.checks[filename].ok = false;
                 $('#'+filename).addClass('red-file');
-                ret.result += messages[filename + "01"] + "<br />";
+                ret.ok = false;
             }
         }
         for(let filename in this.optionalPdfs) {
             ret.checks[filename] = {};
             ret.checks[filename].errors = {};
-            if(ret.result != "") {
+            if(!ret.ok) {
                 return ret;
             }
             const cond = contents[this.optionalPdfs[filename].test.origin][7][2];
@@ -176,7 +175,7 @@ export default class TablesTests {
                 else {
                     ret.checks[filename].ok = false;
                     $('#'+filename).addClass('red-file');
-                    ret.result += messages[filename + "01"] + "<br />";
+                    ret.ok = false;
                 }
             }
             else {
@@ -187,7 +186,7 @@ export default class TablesTests {
                 else {
                     ret.checks[filename].ok = false;
                     $('#'+filename).addClass('red-file');
-                    ret.result += messages[filename + "02"] + "<br />";
+                    ret.ok = false;
 
                 }
             }

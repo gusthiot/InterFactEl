@@ -16,7 +16,7 @@ $.get("controller/getDroitJson.php", function(data){
         contents[filename].unshift(titles);
     }
 
-    const table = new Tables("droit", json.messages, paramtext, {
+    const table = new Tables("droit", json.supervisor, json.messages, paramtext, {
                                 "mandatoryCsvs": droits,
                                 "mandatoryPdfs": {},
                                 "optionalPdfs": {}

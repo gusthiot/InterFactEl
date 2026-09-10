@@ -258,13 +258,6 @@
             {"type": "none", "origin": "classeclient"},
             {"type": "none", "origin": "classeprestation"},
             {"type": "num", "zero": true, "dec": 2}
-        ],
-        "tests": [
-            {"type": "ref", "col": 0, "msg": "01"},
-            {"type": "ref", "col": 1, "msg": "02"},
-            {"type": "unique", "id": [0, 1], "msg": "03"},
-            {"type": "should", "id": ["classeclient", "classeprestation"], "msg": "04"},
-            {"type": "ext", "col": 1, "extCol": 3, "extValue": "OUI", "extName": "classeprestation", "msg": "05"}
         ]
     },
     "basecateg": {
@@ -277,11 +270,7 @@
             {"type": "num", "zero": true, "dec": 0, "origin": "categorie", "col": 4}
         ],
         "tests": [
-            {"type": "ref", "col": 0, "msg": "01"},
-            {"type": "ref", "col": 1, "msg": "02"},
-            {"type": "unique", "id": [0, 1], "msg": "03"},
-            {"type": "should", "id": ["base", "categorie"], "msg": "04"},
-            {"type": "num", "col": 2, "special": true, "msg": "05"}
+            {"type": "num", "col": 2, "special": true, "msg": "01"}
         ]
     }
 }

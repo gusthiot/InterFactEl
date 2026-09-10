@@ -19,7 +19,7 @@ if(IS_SUPER) {
     $contents["gestionnaire"] = $gestionnaire->getContent();
     $contents["superviseur"] = $superviseur->getContent();
 
-    $json = ["contents" => $contents, "paramtext" => $paramtext->getParams(), "messages" => $messages->getMessages(), "droits" => json_decode(Droit::load('../'))];
+    $json = ["supervisor" => USER, "contents" => $contents, "paramtext" => $paramtext->getParams(), "messages" => $messages->getMessages(), "droits" => json_decode(Droit::load('../'))];
     echo json_encode($json, ENT_QUOTES);
 }
 else {

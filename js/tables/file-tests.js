@@ -2,20 +2,20 @@
 
 export default class FileTests {
 
-    constructor(messages, parametres) {
+    constructor(messages, parametres, supervisor) {
         this.messages = messages;
         this.parametres = parametres;
+        this.supervisor = supervisor;
         this.arrayIds = {};
     }
 
     internalCheck(filename, conTest, contents, ids, dimensions=[]) {
         let inIds = structuredClone(ids);
-        let result = "";
+        let ok = true;
         let errors = {};
         if(conTest.length > 0) {
             for(let numTest in this.parametres[filename].tests) {
                 const test = this.parametres[filename].tests[numTest];
-                let resTest = "";
                 let column = "";
                 let colNum = [];
                 if(test.type === "unique") {
@@ -54,45 +54,29 @@ export default class FileTests {
                                     errors["row-"+row]["col-"+colNum[col]] = this.messages[filename + test.msg];
                                 }
                             }
-                            if(resTest === "") {
-                                resTest += this.messages[filename + test.msg] + "<br />";
-                                resTest += "Fichier : " + filename + ".csv<br />";
-                                resTest += "Colonne : '" + column + "'<br />";
-                            }
-                            resTest += "Erreur ligne " + (row) + " : '" + error + "'<br />";
+                            ok = false;
                         }
                     }
                 }
                 if((test.type === "unique") && !(test.noindex)) {
                     inIds[filename] = this.arrayIds;
                 }
-                if(test.type === "should") {
-                    for(let num0 in Object.keys(this.retrieveIds(test.id[0], contents, ids))) {
-                        const id0 = Object.keys(this.retrieveIds(test.id[0], contents, ids))[num0];
-                        for(let num1 in Object.keys(this.retrieveIds(test.id[1], contents, ids))) {
-                            const id1 = Object.keys(this.retrieveIds(test.id[1], contents, ids))[num1];
-                            if(filename === "coeffprestation") {
-                                const prestLine = contents["classeprestation"][this.retrieveIds("classeprestation", contents, ids)[id1]];
-                                if(prestLine[3] != "OUI") {
-                                    continue;
+                if(test.type === "self") {
+                    if(!Object.keys(this.arrayIds).includes(this.supervisor)) {
+                        ok = false;
+                        for(let numRow = 0; numRow < len; numRow++) {
+                            for(let col in colNum) {
+                                if(!errors["row-"+numRow]) {
+                                    errors["row-"+numRow] = {};
                                 }
-                            }
-                            const id = id0 + "_" + id1;
-                            if(!Object.keys(this.arrayIds).includes(id)) {
-                                if(resTest === "") {
-                                    resTest += this.messages[filename + test.msg] + "<br />";
-                                    resTest += "Fichier : " + filename + ".csv<br />";
-                                    resTest += "Colonne : '" + column + "'<br />";
-                                }
-                                resTest += "Le couple '" + id0 + "' et '" + id1 + "' n'existe pas <br />";
+                                errors["row-"+numRow]["col-"+colNum[col]] = this.messages[filename + test.msg];
                             }
                         }
                     }
                 }
-                result += resTest;
             }
         }
-        return {"result": result, "ids": inIds, "errors": errors};
+        return {"ok": ok, "ids": inIds, "errors": errors};
     }
 
     retrieveIds(filename, contents, ids) {

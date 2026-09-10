@@ -57,7 +57,7 @@ $.get("controller/getParametresJson.php", function(data){
     const messages = json.messages;
     const parametres = json.parametres;
 
-    const table = new Tables("parametres", messages, paramtext, {
+    const table = new Tables("parametres", "", messages, paramtext, {
                                 "mandatoryCsvs": parametres,
                                 "mandatoryPdfs": mandatoryPdfs,
                                 "optionalPdfs": optionalPdfs

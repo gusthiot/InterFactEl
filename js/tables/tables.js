@@ -6,7 +6,7 @@ import TablesTests from "./tables-tests.js";
 
 export default class Tables {
 
-    constructor(context, messages, paramtext, parameters, noRemove=false) {
+    constructor(context, supervisor, messages, paramtext, parameters, noRemove=false) {
         if(parameters.mandatoryCsvs) {
             this.mandatoryCsvs = parameters.mandatoryCsvs;
         }
@@ -28,6 +28,7 @@ export default class Tables {
         this.context = context;
         this.messages = messages;
         this.paramtext = paramtext;
+        this.supervisor = supervisor;
 
         this.tablesTest = new TablesTests(parameters);
 
@@ -35,7 +36,7 @@ export default class Tables {
             $('#tables-remove').hide();
         }
 
-        this.fileTest = new FileTests(this.messages, this.mandatoryCsvs);
+        this.fileTest = new FileTests(this.messages, this.mandatoryCsvs, this.supervisor);
 
         this.contents = {};
         this.pdfs = {};
@@ -63,7 +64,7 @@ export default class Tables {
             allParameters[params] = this.optionalPdfs[params];
         }
 
-        this.tableur = new TablesEditor(this.messages, allParameters, this.paramtext, true);
+        this.tableur = new TablesEditor(this.messages, allParameters, this.paramtext);
 
         this.save = {"content": [], "ids": {}, "errors": {}, "filename": ""};
 
@@ -117,16 +118,7 @@ export default class Tables {
         $(document).on("saved", "#tableur-table", (evt, newContent, filename, dimensions=[]) => {
             if(this.mandatoryCsvs[filename].tests) {
                 const results = this.fileTest.internalCheck(filename, newContent, this.contents, this.ids, dimensions);
-                if(results.result != "") {
-                    $('#tables-message').html(results.result);
-                    this.save.content = newContent;
-                    this.save.ids = results.ids;
-                    this.save.errors = results.errors;
-                    this.save.filename = filename;
-                    this.tableur.displayErrors(results.errors);
-                    $("#tableur-table").trigger("error");
-                }
-                else {
+                if(results.ok) {
                     this.checks[filename] = {};
                     this.checks[filename].errors = {};
                     this.checks[filename].ok = false;
@@ -135,6 +127,15 @@ export default class Tables {
                     this.contents[filename] = newContent;
                     sessionStorage.setItem(this.context + "contents", JSON.stringify(this.contents));
                     this.closeTable();
+                }
+                else {
+                    $('#tables-message').html(results.result);
+                    this.save.content = newContent;
+                    this.save.ids = results.ids;
+                    this.save.errors = results.errors;
+                    this.save.filename = filename;
+                    this.tableur.displayErrors(results.errors);
+                    $("#tableur-table").trigger("error");
                 }
             }
             else {
@@ -260,13 +261,10 @@ export default class Tables {
 
         $("#tables-check").on("click", () => {
             this.removeGoodChecks();
-            const results = this.tablesTest.checkColumns(this.fileTest, this.contents, this.pdfs, this.optPdfs, this.ids, this.messages);
+            const results = this.tablesTest.checkColumns(this.fileTest, this.contents, this.pdfs, this.optPdfs, this.ids);
             this.checks = results.checks;
             this.ids = results.ids;
-            if(results.result != "") {
-                $('#tables-message').html(results.result);
-            }
-            else {
+            if(results.ok) {
                 $('#tables-load').removeClass('desactived-tile');
             }
         });

@@ -788,6 +788,11 @@ table.dates-tarifs .tr-clickable:hover {
   top: 0;
 }
 
+#tableur-title {
+  font-weight: bold;
+  color: var(--acier);
+}
+
 .tableur-input {
   width: 100%;
   min-width: 100px;

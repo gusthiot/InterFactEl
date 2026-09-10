@@ -2,20 +2,20 @@
 
 export default class TablesEditor {
 
-    constructor(messages, parameters, paramtext, saveAnyway=false) {
+    constructor(messages, parameters, paramtext) {
         this.messages = messages;
         this.parameters = parameters;
         this.paramtext = paramtext;
         this.contents = {};
         this.filename = "";
         this.extension = "";
-        this.saveAnyway = saveAnyway;
 
         $(document).on("click", ".tableur-remove", () => {
             $('#tables-editor').trigger("close");
         });
 
         $(document).on("click", "#tableur-save-bidim", () => {
+            $('#tables-message').html("");
             let newContent = this.getTitles();
             const lines = $('.values');
             const dim1 = $('#dim1').find('.cell');
@@ -61,6 +61,7 @@ export default class TablesEditor {
         });
 
         $(document).on("click", "#tableur-save-unidim", () => {
+            $('#tables-message').html("");
             let newContent = this.getTitles();
             const lines = $('.values');
             for(let numRow = 0; numRow < lines.length; numRow++) {
@@ -75,18 +76,10 @@ export default class TablesEditor {
         });
 
         $(document).on("error", "#tableur-table", () => {
-            if(this.saveAnyway) {
-                $('#wrong-modal-body').html("Des erreurs sont présentes dans le présent fichier, voulez-vous le corriger ou le sauver en l'état ?");
-                $('#error-modal-correct').html("Corriger");
-                $('#error-modal-save').addClass("show");
-                $('#error-modal-save').show();
-            }
-            else {
-                $('#wrong-modal-body').html("Des erreurs sont présentes dans le présent fichier !");
-                $('#error-modal-correct').html("Ok");
-                $('#error-modal-save').removeClass("show");
-                $('#error-modal-save').hide();
-            }
+            $('#wrong-modal-body').html("Des erreurs sont présentes dans la table, voulez-vous la corriger ou la sauver en l'état dans un fichier ?");
+            $('#error-modal-correct').html("Corriger");
+            $('#error-modal-save').addClass("show");
+            $('#error-modal-save').show();
             $('#error-modal').addClass("show");
             $('#error-modal').show();
         });
@@ -255,7 +248,7 @@ export default class TablesEditor {
                     '<svg id="tableur-info" data-id="' + this.filename + '" class="icon icon-selectable date-left" aria-hidden="true">' +
                         '<use xlink:href="#info"></use>' +
                     '</svg>' +
-                    '<span>' + this.parameters[this.filename].name + '</span>' +
+                    '<span id="tableur-title">' + this.parameters[this.filename].name + '</span>' +
                     '<svg class="icon icon-selectable date-right tableur-remove" aria-hidden="true">' +
                         '<use xlink:href="#x"></use>' +
                     '</svg>' +
@@ -498,38 +491,45 @@ export default class TablesEditor {
     }
 
     menu(value, params) {
-        let ret = '<select class="tableur-select">';
+        let options = '';
+        let found = false;
         if(params.list) {
             for(let el of params.list) {
-                ret += '<option value="' + el + '"';
+                options += '<option value="' + el + '"';
                 if(value === el) {
-                    ret += ' selected ';
+                    options += ' selected ';
+                    found = true;
                 }
-                ret += '>' + el + '</option>';
+                options += '>' + el + '</option>';
             }
         }
         else {
             for(let key in params.map) {
-                ret += '<option value="' + key + '"';
+                options += '<option value="' + key + '"';
                 if(value === key) {
-                    ret += ' selected ';
+                    options += ' selected ';
+                    found = true;
                 }
-                ret += '>' + params.map[key] + '</option>';
+                options += '>' + params.map[key] + '</option>';
             }
         }
-        ret += '</select>';
-        return ret;
+        if(!found) {
+            options = '<option disabled selected></option>' + options;
+        }
+        return '<select class="tableur-select">' + options + '</select>';
     }
 
     ref(value, params, notitles) {
         const ref = this.contents[params.origin];
-        let ret = '<select class="tableur-select">';
+        let options = '';
+        let found = false;
         if(params.zero) {
-            ret += '<option value="0"';
+            options += '<option value="0"';
             if(value === "0") {
-                ret += ' selected ';
+                options += ' selected ';
+                found = true;
             }
-            ret += '>0 - Aucun</option>';
+            options += '>0 - Aucun</option>';
         }
         let num = 0;
         for(const key in ref) {
@@ -541,38 +541,42 @@ export default class TablesEditor {
                 if(params.col && (params.value != ref[key][params.col])) {
                     continue;
                 }
-                ret += '<option value="' + ref[key][refCol] + '"';
+                options += '<option value="' + ref[key][refCol] + '"';
                 if(value === ref[key][refCol]) {
-                    ret += ' selected ';
+                    options += ' selected ';
+                    found = true;
                 }
-                ret += '>' + ref[key][0];
+                options += '>' + ref[key][0];
                 if(params.intitule) {
                     if(Array.isArray(params.intitule)) {
                         for(let pos of params.intitule) {
                             if(Array.isArray(pos)) {
-                                ret += " -";
+                                options += " -";
                                 for(let posIn of pos) {
-                                    ret += " " + ref[key][posIn];
+                                    options += " " + ref[key][posIn];
                                 }
                             }
                             else {
-                                ret += " - " + ref[key][pos];
+                                options += " - " + ref[key][pos];
                             }
                         }
                     }
                     else {
-                        ret += " - " + ref[key][params.intitule];
+                        options += " - " + ref[key][params.intitule];
                     }
                 }
                 if(params.plus) {
-                    ret += params.plus;
+                    options += params.plus;
                 }
-                ret += '</option>';
+                options += '</option>';
             }
             num++;
         };
-        ret += '</select>';
-        return ret;
+        if(!found) {
+        console.log(value);
+            options = '<option disabled selected></option>' + options;
+        }
+        return '<select class="tableur-select">' + options + '</select>';
     }
 
     lineUp() {
