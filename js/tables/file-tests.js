@@ -182,7 +182,7 @@ export default class FileTests {
                 break;
             case "itemk":
                 if(line[test.col] != "0") {
-                    if((Object.keys(this.retrieveIds("categorie", contents, ids))).includes(line[test.col])) {
+                    if((Object.values(this.retrieveIds("categorie", contents, ids))).includes(line[test.col])) {
                         const cateLine = contents["categorie"][this.retrieveIds("categorie", contents, ids)[line[test.col]]];
                         if(cateLine[6] != column) {
                             return line[test.col];

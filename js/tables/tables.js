@@ -129,7 +129,6 @@ export default class Tables {
                     this.closeTable();
                 }
                 else {
-                    $('#tables-message').html(results.result);
                     this.save.content = newContent;
                     this.save.ids = results.ids;
                     this.save.errors = results.errors;
@@ -412,6 +411,13 @@ export default class Tables {
         return  this.fileTest.retrieveIds(filename, this.contents, this.ids);
     }
 
+    txtToBase64(txt) {
+        const bytes = new TextEncoder().encode(txt);
+        const binString = Array.from(bytes, (byte) =>
+            String.fromCodePoint(byte),
+        ).join("");
+        return btoa(binString);
+    }
     getEncFiles(specials={}) {
         let files = {};
         for(let name in this.contents) {
@@ -422,15 +428,15 @@ export default class Tables {
             if(!this.mandatoryCsvs[name].notitles) {
                 let titles = [];
                 for(let numCol = 0; numCol < this.mandatoryCsvs[name].numcol; numCol++) {
-                    titles.push(encodeURIComponent(this.paramtext["table-"+name+"-"+numCol]));
+                    titles.push(this.paramtext["table-"+name+"-"+numCol]);
                 }
                 content[0] = titles;
             }
-            files[name+".csv"] = btoa(Papa.unparse(content, {delimiter: ";", skipEmptyLines: true}));
+            files[name+".csv"] = this.txtToBase64(Papa.unparse(content, {delimiter: ";", skipEmptyLines: true}));
         }
 
         for(let name in specials) {
-            files[name+".csv"] = btoa(Papa.unparse(specials[name], {delimiter: ";", skipEmptyLines: true}));
+            files[name+".csv"] = this.txtToBase64(Papa.unparse(specials[name], {delimiter: ";", skipEmptyLines: true}));
         }
 
         for(let name in this.pdfs) {

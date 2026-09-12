@@ -223,9 +223,9 @@ $.get("controller/getParametresJson.php", function(data){
     function getEncFiles() {
         let categprix = [];
         let titles = [];
-        titles.push(encodeURIComponent(paramtext["table-categprix-0"]));
-        titles.push(encodeURIComponent(paramtext["table-categprix-1"]));
-        titles.push(encodeURIComponent(paramtext["table-categprix-2"]));
+        titles.push(paramtext["table-categprix-0"]);
+        titles.push(paramtext["table-categprix-1"]);
+        titles.push(paramtext["table-categprix-2"]);
         categprix.push(titles);
         const ccIds = table.retrieveIds("classeclient");
         for(let ccKey in ccIds) {

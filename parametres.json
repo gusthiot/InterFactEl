@@ -270,6 +270,7 @@
             {"type": "num", "zero": true, "dec": 0, "origin": "categorie", "col": 4}
         ],
         "tests": [
+            {"type": "unique", "id": [0, 1], "msg": "99"},
             {"type": "num", "col": 2, "special": true, "msg": "01"}
         ]
     }

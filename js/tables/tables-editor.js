@@ -270,6 +270,7 @@ export default class TablesEditor {
         for(let old of oldErrors) {
             $(old).removeClass("background-red");
         }
+        let num = 0;
         for(let keyRow in errors) {
             const numRow = keyRow.split('-')[1];
             const line = lines[numRow-1];
@@ -279,6 +280,15 @@ export default class TablesEditor {
                 const cell = cells[numCol];
                 $(cell).addClass("background-red");
                 $(cell).data("msg", errors[keyRow][keyCol]);
+                num++;
+            }
+        }
+        if(num > 0) {
+            if(num > 1) {
+                $('#tables-message').html(num + " erreurs détectées dans la table");
+            }
+            else {
+                $('#tables-message').html("1 erreur détectée dans la table");
             }
         }
     }

@@ -11,7 +11,7 @@ $.get("controller/getDroitJson.php", function(data){
     for(let filename in contents) {
         let titles = [];
         for(let numCol = 0; numCol < droits[filename].numcol; numCol++) {
-            titles.push(encodeURIComponent(paramtext["table-"+filename+"-"+numCol]));
+            titles.push(paramtext["table-"+filename+"-"+numCol]);
         }
         contents[filename].unshift(titles);
     }
@@ -48,7 +48,7 @@ $.get("controller/getDroitJson.php", function(data){
             let content = [];
             let titles = [];
             for(let numCol = 0; numCol < droits["gestionnaire"].numcol; numCol++) {
-                titles.push(encodeURIComponent(paramtext["table-gestionnaire-"+numCol]));
+                titles.push(paramtext["table-gestionnaire-"+numCol]);
             }
             content.push(titles);
             let len = gestionnaire.length;
@@ -72,10 +72,10 @@ $.get("controller/getDroitJson.php", function(data){
     function getEncFiles() {
         let content = [];
         let titles = [];
-        titles.push(encodeURIComponent(paramtext["table-gestionnaire-0"]));
-        titles.push(encodeURIComponent(paramtext["table-gestionnaire-1"]));
-        titles.push(encodeURIComponent(paramtext["table-gestionnaire-6"]));
-        titles.push(encodeURIComponent(paramtext["table-gestionnaire-5"]));
+        titles.push(paramtext["table-gestionnaire-0"]);
+        titles.push(paramtext["table-gestionnaire-1"]);
+        titles.push(paramtext["table-gestionnaire-6"]);
+        titles.push(paramtext["table-gestionnaire-5"]);
         content.push(titles);
         let orders = {};
         let newAdds = {};

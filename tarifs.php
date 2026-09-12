@@ -35,7 +35,6 @@ $state = new State($dir);
 $version = Version::load('./');
 
 $messages = new Message();
-$paramtext = new ParamText();
 
 $parametres = Parametres::load('./');
 
