@@ -47,11 +47,14 @@ export default class FileTests {
                             }
                             if(dimensions.length > 0) {
                                 let col = numRow % dimensions[1] - 1;
-                                errors["row-"+row]["col-"+col] = this.messages[filename + test.msg];
+                                errors["row-"+row]["col-"+col] = this.messages[filename + test.msg] + "<br /> Erreur : '" + error + "'";
                             }
                             else {
                                 for(let col in colNum) {
-                                    errors["row-"+row]["col-"+colNum[col]] = this.messages[filename + test.msg];
+                                    if(error == undefined) {
+                                        error = "champ vide";
+                                    }
+                                    errors["row-"+row]["col-"+colNum[col]] = this.messages[filename + test.msg] + "<br /> Erreur : '" + error + "'";
                                 }
                             }
                             ok = false;
