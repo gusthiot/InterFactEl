@@ -79,11 +79,33 @@ $.get("controller/getParametresJson.php", function(data){
 
     $(document).on("read", "#tables-dates", function(evt, key) {
         $.post("controller/openTarifs.php", {plate: plateforme, type: key.split("-")[0], date: key.split("-")[1]}, function (data) {
-            table.extract(JSON.parse(data), plateforme);
-            table.saveContents();
-            table.displayFiles();
+            const files = JSON.parse(data);
+            table.extract(files);
+            saveAndDisplay(files);
+            $('#tables-message').html('Lecture effectuée');
         });
     });
+
+    function saveAndDisplay(files) {
+        if(!Object.keys(files).includes("plateforme.csv")) {
+            table.contents["plateforme"] = formatOne("plateforme");
+            table.contents["plateforme"][0][2] = plateforme;
+            table.contents["plateforme"][7][2] = "NON";
+        }
+        else {
+            table.contents["plateforme"] = formatOne("plateforme", false, table.contents["plateforme"]);
+        }
+        if(!Object.keys(files).includes("paramfact.csv")) {
+            table.contents["paramfact"] = formatOne("paramfact");
+        }
+        else {
+            table.contents["paramfact"] = formatOne("paramfact", false, table.contents["paramfact"]);
+
+        }
+        table.saveContents();
+        table.displayFiles();
+
+    }
 
     $(document).on("button-import", "#tables-desktop", function(evt, json) {
         const files = JSON.parse(json);
@@ -96,23 +118,7 @@ $.get("controller/getParametresJson.php", function(data){
             table.contents = {};
         }
         else {
-            if(!Object.keys(files).includes("plateforme.csv")) {
-                table.contents["plateforme"] = formatOne("plateforme");
-                table.contents["plateforme"][0][2] = plateforme;
-                table.contents["plateforme"][7][2] = "NON";
-            }
-            else {
-                table.contents["plateforme"] = formatOne("plateforme", false, table.contents["plateforme"]);
-            }
-            if(!Object.keys(files).includes("paramfact.csv")) {
-                table.contents["paramfact"] = formatOne("paramfact");
-            }
-            else {
-                table.contents["paramfact"] = formatOne("paramfact", false, table.contents["paramfact"]);
-
-            }
-            table.saveContents();
-            table.displayFiles();
+            saveAndDisplay(files);
             $('#tables-message').html('Importation réussie<br/>' + ac);
             $('#tables-cancel').removeClass('desactived-tile');
         }

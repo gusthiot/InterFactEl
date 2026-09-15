@@ -98,7 +98,7 @@
     },
     "plateforme": {
         "name": "Données Plateforme",
-        "labels": ["Id-Plateforme", "Code_P", "CF", "Fonds", "Admin", "Abrev-Plateforme", "Intitulé-Plateforme", "Grille-Plateforme"],
+        "labels": ["Id-Plateforme", "Code_P", "CF", "Fonds", "Admin", "Abrev-Plateforme", "Intitule-Plateforme", "Grille-Plateforme"],
         "numcol": 3,
         "numcolfile": 2,
         "notitles": true,
@@ -270,7 +270,7 @@
             {"type": "num", "zero": true, "dec": 0, "origin": "categorie", "col": 4}
         ],
         "tests": [
-            {"type": "unique", "id": [0, 1], "msg": "99"},
+            {"type": "unique", "id": [0, 1], "notest": true},
             {"type": "num", "col": 2, "special": true, "msg": "01"}
         ]
     }

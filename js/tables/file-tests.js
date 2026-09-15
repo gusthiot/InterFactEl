@@ -176,7 +176,7 @@ export default class FileTests {
                     }
                     id += line[col];
                 }
-                if(Object.keys(this.arrayIds).includes(id)) {
+                if(!test.notest && Object.keys(this.arrayIds).includes(id)) {
                     return id;
                 }
                 else {
