@@ -583,7 +583,6 @@ export default class TablesEditor {
             num++;
         };
         if(!found) {
-        console.log(value);
             options = '<option disabled selected></option>' + options;
         }
         return '<select class="tableur-select">' + options + '</select>';

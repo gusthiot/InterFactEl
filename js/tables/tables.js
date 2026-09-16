@@ -30,7 +30,7 @@ export default class Tables {
         this.paramtext = paramtext;
         this.supervisor = supervisor;
 
-        this.tablesTest = new TablesTests(parameters);
+        this.tablesTest = new TablesTests(this.messages, parameters);
 
         if(noRemove) {
             $('#tables-remove').hide();
@@ -85,6 +85,9 @@ export default class Tables {
             if(this.checks[filename] && this.checks[filename].errors) {
                 this.tableur.displayErrors(this.checks[filename].errors);
             }
+            else {
+                $('#tables-message').html("");
+            }
         });
 
         $(document).on("click", ".pdf", (evt) => {
@@ -113,6 +116,12 @@ export default class Tables {
                 }
             }
             $('#tables-editor').html(html);
+            if(this.checks[filename] && this.checks[filename].errors) {
+                $('#tables-message').html(this.checks[filename].errors);
+            }
+            else {
+                $('#tables-message').html("");
+            }
         });
 
         $(document).on("saved", "#tableur-table", (evt, newContent, filename, dimensions=[]) => {
@@ -138,6 +147,7 @@ export default class Tables {
                 }
             }
             else {
+                this.removeGoodChecks();
                 this.contents[filename] = newContent;
                 sessionStorage.setItem(this.context + "contents", JSON.stringify(this.contents));
                 this.closeTable();
@@ -158,6 +168,8 @@ export default class Tables {
         $(document).on("click", "#delete-grille", () => {
             delete this.optPdfs.grille;
             this.checks["grille"].ok = false;
+            this.checks["grille"].errors = {};
+            this.removeGoodChecks();
             this.closeTable();
         });
 
@@ -168,15 +180,18 @@ export default class Tables {
                 if(id === 'replace-logo') {
                     this.pdfs["logo"] = fileReader.result.split(',')[1];
                     this.checks["logo"].ok = false;
+                    this.checks["logo"].errors = {};
                     sessionStorage.setItem(this.context + "pdfs", JSON.stringify(this.pdfs));
                 }
                 else {
                     this.optPdfs["grille"] = fileReader.result.split(',')[1];
                     this.checks["grille"].ok = false;
+                    this.checks["grille"].errors = {};
                     sessionStorage.setItem(this.context + "optPdfs", JSON.stringify(this.optPdfs));
                 }
             };
             fileReader.readAsDataURL($(evt.currentTarget).prop('files')[0]);
+            this.removeGoodChecks();
             this.closeTable();
         });
 

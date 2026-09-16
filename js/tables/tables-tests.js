@@ -2,7 +2,8 @@
 
 export default class TablesTests {
 
-    constructor(parameters) {
+    constructor(messages, parameters) {
+        this.messages = messages;
         if(parameters.mandatoryCsvs) {
             this.mandatoryCsvs = parameters.mandatoryCsvs;
         }
@@ -80,7 +81,7 @@ export default class TablesTests {
         let result = "";
         const names = ["paramfact", "plateforme"];
         for(let filename of names) {
-            if(Object.keys(files).includes(filename)) {
+            if(Object.keys(files).includes(filename+".csv")) {
                 let arrayIds = {};
                 for(let num = 0; num < contents[filename].length; num++) {
                     const line = contents[filename][num];
@@ -109,6 +110,11 @@ export default class TablesTests {
                 for(let label of this.mandatoryCsvs[filename].labels) {
                     if(!Object.keys(arrayIds).includes(label)) {
                         result += "le fichier " + filename + " doit contenir l'étiquette : '" + label + "' <br />";
+                    }
+                }
+                for(let label in arrayIds) {
+                    if(!this.mandatoryCsvs[filename].labels.includes(label)) {
+                        result += "le fichier " + filename + " ne doit pas contenir l'étiquette : '" + label + "' <br />";
                     }
                 }
             }
@@ -156,6 +162,7 @@ export default class TablesTests {
             }
             else {
                 ret.checks[filename].ok = false;
+                ret.checks[filename].errors = this.messages[filename + "01"];
                 $('#'+filename).addClass('red-file');
                 ret.ok = false;
             }
@@ -174,6 +181,7 @@ export default class TablesTests {
                 }
                 else {
                     ret.checks[filename].ok = false;
+                    ret.checks[filename].errors = this.messages[filename + "01"];
                     $('#'+filename).addClass('red-file');
                     ret.ok = false;
                 }
@@ -185,6 +193,7 @@ export default class TablesTests {
                 }
                 else {
                     ret.checks[filename].ok = false;
+                    ret.checks[filename].errors = this.messages[filename + "02"];
                     $('#'+filename).addClass('red-file');
                     ret.ok = false;
 
