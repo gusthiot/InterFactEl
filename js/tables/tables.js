@@ -111,7 +111,6 @@ export default class Tables {
                     html += this.uploadPdf("replace-logo", "Remplacer le logo");
                 }
                 else {
-                    html += '<div>' + this.messages[filename + "01"] + '</div>';
                     html += this.uploadPdf("replace-logo", "Charger un logo");
                 }
             }

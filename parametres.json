@@ -244,10 +244,10 @@
             {"type": "ref", "col": 0, "msg": "02"},
             {"type": "ext", "col": 0, "extCol": 2, "extValue": "OUI", "extName": "groupe", "msg": "03"},
             {"type": "num", "col": 1, "msg": "04"},
-            {"type": "num", "col": 2, "msg": "05"},
-            {"type": "num", "col": 3, "msg": "06"},
-            {"type": "num", "col": 4, "msg": "07"},
-            {"type": "num", "col": 5, "msg": "08"}
+            {"type": "num", "col": 2, "msg": "07"},
+            {"type": "sup", "col": 3, "infCol": 1, "msg": "05"},
+            {"type": "num", "col": 4, "msg": "08"},
+            {"type": "sup", "col": 5, "infCol": 3, "msg": "06"}
         ]
     },
     "coeffprestation": {

@@ -54,7 +54,12 @@ $.get("controller/getDroitJson.php", function(data){
             let len = gestionnaire.length;
             for(let numRow = 1; numRow < len; numRow++) {
                 const line = gestionnaire[numRow];
-                content.push([line[0], line[1], hasRight(line[2], 2), hasRight(line[2], 1) , hasRight(line[2], 0), line[3]]);
+                if((parseInt(line[2]) < 1) || (parseInt(line[2]) > 7)) {
+                    content.push([line[0], line[1], 0, 0, 0, line[3]]);
+                }
+                else {
+                    content.push([line[0], line[1], hasRight(line[2], 2), hasRight(line[2], 1), hasRight(line[2], 0), line[3]]);
+                }
             }
             table.contents["gestionnaire"] = content;
             table.saveContents();

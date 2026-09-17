@@ -110,6 +110,38 @@ export default class FileTests {
         return aIds;
     }
 
+    checkNum(columns, test, line, contents, ids) {
+        if(line[test.col] === "") {
+            return line[test.col];
+        }
+        let nb = Number(line[test.col]);
+        if(Number.isNaN(nb)) {
+            return line[test.col];
+        }
+        if(columns[test.col].int && !Number.isInteger(nb)) {
+            return line[test.col];
+        }
+        if((nb < 0)) {
+            return line[test.col];
+        }
+        if(!columns[test.col].zero && (nb === 0)) {
+            return line[test.col];
+        }
+        if(columns[test.col].max && (nb > Number(columns[test.col].max))) {
+            return line[test.col];
+        }
+        if(test.special) {
+            if(!(Object.keys(this.retrieveIds("categorie", contents, ids))).includes(line[1])) {
+                return line[1];
+            }
+            const catLine = contents["categorie"][this.retrieveIds("categorie", contents, ids)[line[1]]];
+            if(Math.floor(Math.log10(nb) + 1) > (9 - catLine[4])) {
+                return line[test.col];
+            }
+        }
+        return "";
+    }
+
     switchTest(columns, test, line, numRow, column, contents, ids) {
         switch(test.type) {
             case "in":
@@ -139,33 +171,18 @@ export default class FileTests {
                 }
                 break;
             case "num":
-                if(line[test.col] === "") {
-                    return line[test.col];
+                const checkNum = this.checkNum(columns, test, line, contents, ids);
+                if(checkNum != "") {
+                    return checkNum;
                 }
-                let nb = Number(line[test.col]);
-                if(Number.isNaN(nb)) {
-                    return line[test.col];
+                break;
+            case "sup":
+                const checkFirst = this.checkNum(columns, test, line, contents, ids);
+                if(checkFirst != "") {
+                    return checkFirst;
                 }
-                if(columns[test.col].int && !Number.isInteger(nb)) {
+                if(Number(line[test.col]) < Number(line[test.infCol])) {
                     return line[test.col];
-                }
-                if((nb < 0)) {
-                    return line[test.col];
-                }
-                if(!columns[test.col].zero && (nb === 0)) {
-                    return line[test.col];
-                }
-                if(columns[test.col].max && (nb > Number(columns[test.col].max))) {
-                    return line[test.col];
-                }
-                if(test.special) {
-                    if(!(Object.keys(this.retrieveIds("categorie", contents, ids))).includes(line[1])) {
-                        return line[1];
-                    }
-                    const catLine = contents["categorie"][this.retrieveIds("categorie", contents, ids)[line[1]]];
-                    if(Math.floor(Math.log10(nb) + 1) > (9 - catLine[4])) {
-                        return line[test.col];
-                    }
                 }
                 break;
             case "unique":
