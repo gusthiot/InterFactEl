@@ -23,22 +23,6 @@ if(!isset($_GET["plateforme"])) {
 $plateforme = $_GET['plateforme'];
 checkPlateforme("facturation", $plateforme);
 
-function firstNewTarifs($plateforme)
-{
-    $res = [];
-    $dir = DATA.$plateforme;
-    foreach(globReverse($dir) as $dirYear) {
-        foreach(globReverse($dirYear) as $dirMonth) {
-            if(file_exists($dirMonth."/".ParamZip::NAME)){
-                $year = basename($dirYear);
-                $month = basename($dirMonth);
-                $res = [$month, $year];
-            }
-        }
-    }
-    return $res;
-}
-
 // Check if first facturation, if one is running, which one is the last one
 $dir = DATA.$plateforme;
 $first = true;
@@ -63,6 +47,27 @@ $name = $plateformes->getName($plateforme);
 $messages = new Message();
 $m0 = "";
 
+/**
+ * Gets tarifs for a first new facturation, for a given plateforme
+ *
+ * @param string $plateforme
+ * @return array
+ */
+function firstNewTarifs(string $plateforme): array
+{
+    $res = [];
+    $dir = DATA.$plateforme;
+    foreach(globReverse($dir) as $dirYear) {
+        foreach(globReverse($dirYear) as $dirMonth) {
+            if(file_exists($dirMonth."/".ParamZip::NAME)){
+                $year = basename($dirYear);
+                $month = basename($dirMonth);
+                $res = [$month, $year];
+            }
+        }
+    }
+    return $res;
+}
 
 /**
  * Customized tile to upload prepa

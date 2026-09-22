@@ -25,8 +25,18 @@ class Gestionnaire extends Csv
      */
     private array $rights;
 
+    /**
+     * Array containing csv file as extended lines, with 3 columns for rights
+     *
+     * @var array
+     */
     private array $content;
 
+    /**
+     * Array containing user, as key, and plateformes and their positions, as value
+     *
+     * @var array
+     */
     private array $plateformes;
 
     /**
@@ -94,6 +104,12 @@ class Gestionnaire extends Csv
         return [];
     }
 
+    /**
+     * Gets the plateformes for a determined user
+     *
+     * @param string $login user by its login surname
+     * @return array
+     */
     function getPlateformes(string $login): array
     {
         if(array_key_exists($login, $this->plateformes)) {
@@ -102,7 +118,13 @@ class Gestionnaire extends Csv
         return [];
     }
 
-    function getContent() {
+    /**
+     * Gets file content
+     *
+     * @return array
+     */
+    function getContent(): array
+    {
         return $this->content;
     }
 }

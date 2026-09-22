@@ -5,6 +5,9 @@ require_once("../includes/Zip.php");
 require_once("../includes/State.php");
 require_once("../session.inc");
 
+/**
+ * Called to save rights in progress for user
+ */
 if(IS_SUPER) {
     if(isset($_POST["files"])) {
         $files = json_decode($_POST["files"]);

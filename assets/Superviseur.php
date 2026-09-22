@@ -46,7 +46,13 @@ class Superviseur extends Csv
         return false;
     }
 
-    function getContent() {
+    /**
+     * Gets file content
+     *
+     * @return array
+     */
+    function getContent(): array
+    {
         $content = [];
         foreach($this->superviseurs as $s) {
             $content[] = [$s];

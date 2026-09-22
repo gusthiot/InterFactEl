@@ -42,7 +42,13 @@ class Plateforme extends Csv
         return $this->plateformes[$id][1];
     }
 
-    function getContent() {
+    /**
+     * Gets file content
+     *
+     * @return array
+     */
+    function getContent(): array
+    {
         $content = [];
         foreach($this->plateformes as $key => $line) {
             $content[] = $line;

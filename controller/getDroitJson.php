@@ -7,6 +7,9 @@ require_once("../assets/Personnel.php");
 require_once("../assets/Droit.php");
 require_once("../session.inc");
 
+/**
+ * Called to obtain the parameters for rights management
+ */
 if(IS_SUPER) {
     $plateformes = new Plateforme();
     $personnel = new Personnel();

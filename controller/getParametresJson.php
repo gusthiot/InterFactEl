@@ -5,6 +5,9 @@ require_once("../assets/ParamText.php");
 require_once("../assets/Parametres.php");
 require_once("../session.inc");
 
+/**
+ * Called to obtain the parameters for tarifs management
+ */
 $messages = new Message();
 $paramtext = new ParamText();
 

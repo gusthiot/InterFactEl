@@ -3,6 +3,9 @@
 require_once("../assets/Csv.php");
 require_once("../session.inc");
 
+/**
+ * Called to write rights data in used files
+ */
 if(IS_SUPER) {
     if(isset($_POST["files"])) {
         $files = json_decode($_POST["files"]);

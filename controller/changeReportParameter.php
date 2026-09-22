@@ -2,6 +2,9 @@
 
 require_once("../session.inc");
 
+/**
+ * Called to change reports parameters : separator and coding
+ */
 if(isset($_POST["type"]) && isset($_POST["value"]) && isset($_POST["plate"])) {
     $plateforme = $_POST["plate"];
     checkPlateforme("reporting", $plateforme);

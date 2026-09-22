@@ -5,6 +5,9 @@ require_once("../includes/Zip.php");
 require_once("../includes/State.php");
 require_once("../session.inc");
 
+/**
+ * Called to save tarifs in progress for user
+ */
 if(isset($_POST["plate"]) && isset($_POST["files"])) {
 
     $plateforme = $_POST["plate"];

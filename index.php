@@ -58,7 +58,13 @@ function uploaderTile(string $action, string $title, string $icon): string
             </label>';
 }
 
-function tarifsExists($plateforme)
+/**
+ * Checks if tarifs exists for a given plateforme
+ *
+ * @param string $plateforme
+ * @return boolean
+ */
+function tarifsExists(string $plateforme): bool
 {
     $dir = DATA.$plateforme;
     foreach(globReverse($dir) as $dirYear) {

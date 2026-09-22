@@ -8,6 +8,9 @@ require_once("../includes/Tarifs.php");
 require_once("../includes/Zip.php");
 require_once("../session.inc");
 
+/**
+ * Called to obtain tarifs for given plateforme, date and type
+ */
 if(isset($_POST["plate"]) && isset($_POST["date"]) && isset($_POST["type"])) {
 
     $plateforme = $_POST["plate"];

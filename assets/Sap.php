@@ -138,9 +138,9 @@ class Sap extends Csv
      * Displays bills from sap file
      *
      * @param string $parameters parameters for download, get-sap or get-report, and data-name for report
-     * @return void
+     * @return string
      */
-    function displayTable($parameters='id="get-sap"')
+    function displayTable($parameters='id="get-sap"'): string
     {
         $html = '<div class="over"><table class="table factures"><thead><tr>';
         $lines = [];

@@ -2,7 +2,9 @@
 
 require_once("../session.inc");
 
-
+/**
+ * Called to change user plateformes order in gestionnaire file
+ */
 if(DATA_GEST) {
     if(isset($_POST["from"]) && isset($_POST["to"])) {
         $plate = $_POST["from"];

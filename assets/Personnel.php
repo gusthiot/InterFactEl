@@ -32,7 +32,13 @@ class Personnel extends Csv
         }
     }
 
-    function getContent() {
+    /**
+     * Gets file content
+     *
+     * @return array
+     */
+    function getContent(): array
+    {
         $content = [];
         foreach($this->personnes as $key => $line) {
             $content[] = $line;
