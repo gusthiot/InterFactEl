@@ -164,8 +164,8 @@ export default class FileTests {
                 break;
             case "ext":
                 if((Object.keys(this.retrieveIds(columns[test.col].origin, contents, ids))).includes(line[test.col])) {
-                    const extLine = contents[test.extName][this.retrieveIds(test.extName, contents, ids)[line[test.col]]];
-                    if(extLine[test.extCol] != test.extValue) {
+                    const extLine = contents[columns[test.col].origin][this.retrieveIds(columns[test.col].origin, contents, ids)[line[test.col]]];
+                    if(extLine[columns[test.col].col] != columns[test.col].value) {
                         return line[test.col];
                     }
                 }

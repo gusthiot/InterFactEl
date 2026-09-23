@@ -51,7 +51,7 @@
             {"type": "unique", "id": [0], "msg": "01"},
             {"type": "num", "col": 1, "msg": "02"},
             {"type": "ref", "col": 2, "msg": "03"},
-            {"type": "ext", "col": 2, "extCol": 1, "extValue": "OVH", "extName": "articlesap", "msg": "04"},
+            {"type": "ext", "col": 2, "msg": "04"},
             {"type": "id0", "col": 0, "msg": "05"}
         ]
     },
@@ -152,7 +152,7 @@
         "tests": [
             {"type": "unique", "id": [0], "msg": "01"},
             {"type": "ref", "col": 2, "msg": "02"},
-            {"type": "ext", "col": 2, "extCol": 1, "extValue": "STD", "extName": "articlesap", "msg": "03"},
+            {"type": "ext", "col": 2, "msg": "03"},
             {"type": "in", "col": 3, "msg": "04"},
             {"type": "in", "col": 4, "msg": "05"},
             {"type": "in", "col": 5, "msg": "06"},
@@ -169,7 +169,7 @@
             {"type": "txt"},
             {"type": "txt", "small": true},
             {"type": "num", "zero": true, "int": true, "max": 8, "small": true},
-            {"type": "ref", "origin": "classeprestation", "intitule": 1},
+            {"type": "ref", "origin": "classeprestation", "col": 3, "value": "NON", "intitule": 1},
             {
                 "type": "menu",
                 "map": {
@@ -186,7 +186,7 @@
         "tests": [
             {"type": "unique", "id": [0], "msg": "01"},
             {"type": "ref", "col": 5, "special": true, "msg": "02"},
-            {"type": "ext", "col": 5, "extCol": 3, "extValue": "NON", "extName": "classeprestation", "msg": "03"},
+            {"type": "ext", "col": 5, "msg": "03"},
             {"type": "num", "col": 4, "msg": "04"},
             {"type": "in", "col": 6, "msg": "05"},
             {"type": "id0", "col": 0, "msg": "06"}
@@ -242,7 +242,7 @@
         "tests": [
             {"type": "unique", "id": [0], "msg": "01"},
             {"type": "ref", "col": 0, "msg": "02"},
-            {"type": "ext", "col": 0, "extCol": 2, "extValue": "OUI", "extName": "groupe", "msg": "03"},
+            {"type": "ext", "col": 0, "msg": "03"},
             {"type": "num", "col": 1, "msg": "04"},
             {"type": "num", "col": 2, "msg": "07"},
             {"type": "sup", "col": 3, "infCol": 1, "msg": "05"},
