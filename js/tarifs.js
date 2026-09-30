@@ -156,8 +156,14 @@ $.get("controller/getParametresJson.php", function(data){
         $.post("controller/getLoadDates.php", {plate: plateforme, m0: m0, status: m0Status}, function (data) {
             let first = 0;
             const choices = JSON.parse(data);
-            if(Object.keys(choices).length > 6) {
-                first = Object.keys(choices).length - 6;
+            const len = Object.keys(choices).length;
+            if(len > 6) {
+                if(Object.keys(choices)[len-1].includes("201601")) {
+                    first = 6;
+                }
+                else {
+                    first = len - 6;
+                }
             }
             tarifsDates.loadDates(choices, first, 0, "load");
         });

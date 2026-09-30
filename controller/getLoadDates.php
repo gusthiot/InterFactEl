@@ -39,7 +39,12 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
     $date = $maxYear.$maxMonth;
     $first = Tarifs::firstDate($dir);
     if($first == "") {
-        $first = date('Y').State::addToMonth(date('m'), -9);
+        if(TEST_MODE) {
+            $first = "201601";
+        }
+        else {
+            $first = date('Y').State::addToMonth(date('m'), -9);
+        }
     }
 
     while($date >= $first) {
