@@ -44,7 +44,7 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
                         $factel = $infos["FactEl"][2];
                         $vmin = $version["vl-min-relire"][2];
                         if(floatval($factel) >= floatval($vmin)) {
-                            $choices["read-".$year.$month] = [$month." ".$year, "1", 1, 0, 1, ""];
+                            $choices["read-".$year.$month] = [$month." ".$year, $label, 1, 0, 1, ""];
                             break;
                         }
                     }
@@ -55,7 +55,7 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
                     if($m0 == $year.$month) {
                         $status = $_POST["status"];
                         if(Unused::exists($dirMonth)) {
-                            $choices["control-".$year.$month] = [$month." ".$year, "2", 1, 1, 0, ""];
+                            $choices["control-".$year.$month] = [$month." ".$year, $label, 1, 1, 0, ""];
                         }
                         $status > 1 ? $base = 1 : $base = 0;
                         if($status > 3) {
@@ -66,11 +66,11 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
                             $clic = 0;
                             $warning = $messages->getMessage('msg10');
                         }
-                        $choices["read-".$year.$month] = [$month." ".$year, "3", $clic, 0, $base, $warning];
+                        $choices["read-".$year.$month] = [$month." ".$year, $label, $clic, 0, $base, $warning];
                         $m0Nb = count($choices)-1;
                     }
                     else {
-                        $choices["read-".$year.$month] = [$month." ".$year, "4", 0, 0, 1, $messages->getMessage('msg10')];
+                        $choices["read-".$year.$month] = [$month." ".$year, $label, 0, 0, 1, $messages->getMessage('msg10')];
                     }
                 }
                 else {
@@ -78,10 +78,10 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
                         if(Unused::exists($dirMonth)) {
                             $warning = Tarifs::warning9($dirMonth, $version);
                             empty($warning) ? $clic = 1 : $clic = 0;
-                            $choices["control-".$year.$month] = [$month." ".$year, "5", $clic, 1, 0, $warning];
+                            $choices["control-".$year.$month] = [$month." ".$year, $label, $clic, 1, 0, $warning];
                         }
                         else {
-                            $choices["control-".$year.$month] = [$month." ".$year, "6", 0, 0, 0, 0];
+                            $choices["control-".$year.$month] = [$month." ".$year, $label, 0, 0, 0, 0];
                         }
                     }
                 }
