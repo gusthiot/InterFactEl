@@ -358,7 +358,7 @@ export default class Tables {
     extract(files) {
         for(let filename in this.mandatoryCsvs) {
             if(Object.keys(files).includes(filename + ".csv")) {
-                this.contents[filename] = Papa.parse(atob(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
+                this.contents[filename] = Papa.parse(this.decodeBase64(files[filename + ".csv"]), {delimiter: ";", skipEmptyLines: true}).data;
             }
             else {
                 this.contents[filename] = [];
@@ -425,13 +425,14 @@ export default class Tables {
         return  this.fileTest.retrieveIds(filename, this.contents, this.ids);
     }
 
-    txtToBase64(txt) {
-        const bytes = new TextEncoder().encode(txt);
-        const binString = Array.from(bytes, (byte) =>
-            String.fromCodePoint(byte),
-        ).join("");
-        return btoa(binString);
+    decodeBase64(base64) {
+        return new TextDecoder().decode(Uint8Array.fromBase64(base64));
     }
+
+    encodeBase64(str) {
+        return new TextEncoder().encode(str).toBase64();
+    }
+
     getEncFiles(specials={}) {
         let files = {};
         for(let name in this.contents) {
@@ -446,11 +447,11 @@ export default class Tables {
                 }
                 content[0] = titles;
             }
-            files[name+".csv"] = this.txtToBase64(Papa.unparse(content, {delimiter: ";", skipEmptyLines: true}));
+            files[name+".csv"] = this.encodeBase64(Papa.unparse(content, {delimiter: ";", skipEmptyLines: true}));
         }
 
         for(let name in specials) {
-            files[name+".csv"] = this.txtToBase64(Papa.unparse(specials[name], {delimiter: ";", skipEmptyLines: true}));
+            files[name+".csv"] = this.encodeBase64(Papa.unparse(specials[name], {delimiter: ";", skipEmptyLines: true}));
         }
 
         for(let name in this.pdfs) {

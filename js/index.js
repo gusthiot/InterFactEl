@@ -27,6 +27,7 @@ $.get("controller/getDroitJson.php", function(data){
         table.import(contents);
         table.saveContents();
         table.displayFiles();
+        $('#tables-cancel').removeClass('desactived-tile');
     });
 
     function hasRight(right, pos) {
@@ -72,6 +73,7 @@ $.get("controller/getDroitJson.php", function(data){
     $(document).on("button-create", "#tables-desktop", function() {
         table.emptyContents();
         table.displayFiles();
+        $('#tables-cancel').removeClass('desactived-tile');
     });
 
     function getEncFiles() {

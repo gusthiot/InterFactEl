@@ -150,6 +150,7 @@ $.get("controller/getParametresJson.php", function(data){
         table.contents["plateforme"][0][2] = plateforme;
         table.contents["plateforme"][7][2] = "NON";
         table.displayFiles();
+        $('#tables-cancel').removeClass('desactived-tile');
     });
 
     $(document).on("button-load", "#tables-desktop", function() {
