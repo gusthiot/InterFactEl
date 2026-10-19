@@ -17,8 +17,8 @@ error_reporting(ERROR_REPORTING);
  * Authentication Entra
  */
 session_start();
-if(DEV_MODE) {
-    define( 'USER', DEV_MODE );
+if(ENV_MODE == "DEV") {
+    define( 'USER', 'gusthiot' );
 }
 else {
     if(!isset($_SESSION['user']))

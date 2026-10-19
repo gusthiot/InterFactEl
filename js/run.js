@@ -149,10 +149,6 @@ $(document).on("click", "#real", function() {
     sending("REAL");
 } );
 
-$(document).on("click", "#simu", function() {
-    sending("SIMU");
-} );
-
 function sending(mode) {
     let bills = [];
     $.each($("input[name='bills']:checked"), function(){

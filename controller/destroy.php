@@ -5,10 +5,10 @@ require_once("../session.inc");
 /**
  * Called to destroy all the data of a given plateform
  */
-if(TEST_MODE) {
+if(ENV_MODE != "PROD") {
     if(isset($_GET["plate"])) {
         checkPlateforme("facturation", $_GET["plate"]);
-        if(IS_SUPER && TEST_MODE) {
+        if(IS_SUPER && ENV_MODE != "PROD") {
             exec(sprintf("rm -rf %s", escapeshellarg(DATA.$_GET["plate"])));
             $_SESSION['alert-success'] = "données de plateforme correctement effacées";
         }

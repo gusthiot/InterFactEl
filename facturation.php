@@ -108,7 +108,7 @@ include("includes/lock.inc");
                     <p><a href="logout.php">Logout</a></p>
                 </div>
             </div>
-            <div class="title <?php if(TEST_MODE) echo TEST_MODE; ?>">
+            <div class="title <?php if(ENV_MODE != "PROD") echo ENV_MODE; ?>">
                 <h1 class="text-center p-1"><?= $name ?></h1>
             </div>
 
@@ -137,7 +137,7 @@ include("includes/lock.inc");
                                     if(!empty($state->getLast())) {
                                         echo uploader("Facturation Pro Forma : ".$state->getNextMonth()."/".$state->getNextYear(), "PROFORMA", $des);
                                     }
-                                    if(IS_SUPER && TEST_MODE) {
+                                    if(IS_SUPER && ENV_MODE != "PROD") {
                                         ?>
                                         <div><button type="button" id="destroy" <?= $disabled ?> class="btn but-red lockable">Réinitialisation des tests : tout supprimer</button>
                                         </div>
@@ -152,7 +152,7 @@ include("includes/lock.inc");
                                         echo uploader("Facturation Pro Forma : ".$dateTarifs, "FIRST-PF", $des);
                                     }
                                 }
-                                if(IS_SUPER && TEST_MODE) {
+                                if(IS_SUPER && ENV_MODE != "PROD") {
                                     $choices = [];
                                     if($first) {
                                         $title = "Charger une période";

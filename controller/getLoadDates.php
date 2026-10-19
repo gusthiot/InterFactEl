@@ -39,7 +39,7 @@ if(isset($_POST["plate"]) && isset($_POST["m0"]) && isset($_POST["status"])) {
     $date = $maxYear.$maxMonth;
     $first = Tarifs::firstDate($dir);
     if($first == "") {
-        if(TEST_MODE) {
+        if(ENV_MODE != "PROD") {
             $first = "201601";
         }
         else {

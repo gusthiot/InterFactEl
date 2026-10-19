@@ -34,18 +34,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     }
     $bills = $_POST["bills"];
 
-    if(TEST_MODE && (!IS_SUPER || DEV_MODE) && ($mode == "REAL" || $mode == "PRES")) {
-        $_SESSION['alert-danger'] = 'Seule la simulation est disponible';
-        header('Location: ../run.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
-        exit;
-
-    }
-    if(!TEST_MODE && $mode == "SIMU") {
-        $_SESSION['alert-danger'] = 'Pas de simulation en production';
-        header('Location: ../run.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
-        exit;
-    }
-    if(!in_array($mode, ["REAL", "PRES", "SIMU"])) {
+    if(!in_array($mode, ["REAL", "PRES"])) {
         $_SESSION['alert-danger'] = "C'est quoi ce mode...";
         header('Location: ../run.php?plateforme='.$plateforme.'&year='.$year.'&month='.$month.'&version='.$version.'&run='.$run);
         exit;
@@ -255,7 +244,7 @@ else {
  *
  * @param string $data bill data
  * @param string $dir directory where to find attachments
- * @param string $mode REAL/PRES/SIMU, if SAP generates bills or not
+ * @param string $mode REAL/PRES, if SAP generates bills or not
  * @return array SAP answer, or error
  */
 function send(string $data, string $dir, string $mode): array

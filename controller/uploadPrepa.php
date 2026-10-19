@@ -206,7 +206,7 @@ function runPrefa(string $tmpDir, string $path, ParamEdit $paramedit, string $pl
     $year = $paramedit->getParam('Year');
     $type = $paramedit->getParam('Type');
     $dev = "";
-    if(DEV_MODE) {
+    if(ENV_MODE == "DEV") {
         $dev = " -n";
     }
     $version = Version::load('../');
