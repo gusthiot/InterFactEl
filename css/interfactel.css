@@ -214,9 +214,14 @@ input[type="file"] {
   background-color: var(--noir);
 }
 
-.test2 {
+.qual {
   color: white;
   background-color: var(--groseille);
+}
+
+.dev {
+  color: white;
+  background-color: var(--canard);
 }
 
 .tile {

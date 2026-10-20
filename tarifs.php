@@ -133,7 +133,7 @@ function tarifLine(string $year, string $month, string $dirMonth, string $warnin
                     <p><a href="logout.php">Logout</a></p>
                 </div>
             </div>
-            <div class="title <?php if(ENV_MODE != "PROD") echo ENV_MODE; ?>">
+            <div class="title <?php if(ENV_MODE != "PROD") echo strtolower(ENV_MODE); ?>">
                 <h1 class="text-center p-1"><?= $name ?></h1>
             </div>
 

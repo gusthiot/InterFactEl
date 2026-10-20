@@ -104,7 +104,7 @@ asort($orders);
                     <p><a href="logout.php">Logout</a></p>
                 </div>
             </div>
-            <div class="title <?php if(ENV_MODE != "PROD") echo ENV_MODE; ?>">
+            <div class="title <?php if(ENV_MODE != "PROD") echo strtolower(ENV_MODE); ?>">
                 <h1 class="text-center p-1">Interface de facturation</h1>
                 <h6 class="text-center">Welcome <i><?= USER ?></i></h6>
             </div>
