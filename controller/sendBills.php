@@ -67,86 +67,70 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
             $archive = [];
             foreach($bills as $bill) {
                 $archive[$bill] = [$sap_cont[$bill][0], $sap_cont[$bill][1], $sap_cont[$bill][2]];
-                $resArray = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"), $dir, $mode);
-                if(empty($resArray[1] && !empty($resArray[0]))) {
-                    $res = json_decode($resArray[0]);
-                    if($res && property_exists($res, "E_RESULT") && property_exists($res->E_RESULT, "item") && property_exists($res->E_RESULT->item, "IS_ERROR")) {
-                        $infos = Info::load($dir);
-                        if(!empty($infos)) {
-                            if(!empty($res->E_RESULT->item->IS_ERROR)) {
-                                if(property_exists($res->E_RESULT->item, "LOG") && property_exists($res->E_RESULT->item->LOG, "item") && property_exists($res->E_RESULT->item->LOG->item, "MESSAGE")) {
-                                    if($type == "send-bills") {
-                                        $sap_cont[$bill][3] = "ERROR";
-                                        $sap_cont[$bill][4] = "-";
-                                        $sap_cont[$bill][5] = $res->E_RESULT->item->LOG->item->MESSAGE;
+                $result = json_decode(send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"), $dir, $mode), true);
+                if(array_key_exists("status", $result)) {
+                    $infos = Info::load($dir);
+                    if(!empty($infos)) {
+                        if($result["status"] == "SUCCESS") {
+                            if(empty($infos["Sent"][2])) {
+                                $infos["Sent"][2] = date('Y-m-d H:i:s');
+                                $infos["Sent"][3] = USER;
+                                Info::save($dir, $infos);
+                                Tarifs::finalize($dirTarifs);
+                            }
+                            if(file_exists($dirPrevMonth) && !Lock::exists($dirPrevMonth, 'month')) {
+                                foreach(globReverse($dirPrevMonth) as $dirPrevVersion) {
+                                    if(Lock::exists($dirPrevVersion, 'version')) {
+                                        $sep = strrpos($dirPrevVersion, "/");
+                                        Lock::save($dirPrevMonth, 'month', substr($dirPrevVersion, $sep+1));
+                                        break;
                                     }
-                                    $archive[$bill][3] = "ERROR";
-                                    $archive[$bill][4] = "-";
-                                    $archive[$bill][5] = $res->E_RESULT->item->LOG->item->MESSAGE;
                                 }
-                                else {
-                                    $warn .= $bill.": no error message ? <br />";
+                            }
+                            if(array_key_exists("salesOrder", $result)) {
+                                if($mode == "REAL") {
+                                    $sent = "Envoyé en facturation";
                                 }
-                                $kos++;
+                                elseif($mode == "PRES") {
+                                    $sent = "Envoyé en pré-saisie";
+                                }
+                                $sap_cont[$bill][3] = "SENT";
+                                $sap_cont[$bill][4] = $result["salesOrder"];
+                                $sap_cont[$bill][5] = $sent;
+                                $archive[$bill][3] = "SENT";
+                                $archive[$bill][4] = $result["salesOrder"];
+                                $archive[$bill][5] = $sent;
+                                $oks++;
                             }
                             else {
-                                if(empty($infos["Sent"][2])) {
-                                    $infos["Sent"][2] = date('Y-m-d H:i:s');
-                                    $infos["Sent"][3] = USER;
-
-                                    Info::save($dir, $infos);
-
-                                    Tarifs::finalize($dirTarifs);
-                                }
-                                if(file_exists($dirPrevMonth) && !Lock::exists($dirPrevMonth, 'month')) {
-                                    foreach(globReverse($dirPrevMonth) as $dirPrevVersion) {
-                                        if(Lock::exists($dirPrevVersion, 'version')) {
-                                            $sep = strrpos($dirPrevVersion, "/");
-                                            Lock::save($dirPrevMonth, 'month', substr($dirPrevVersion, $sep+1));
-                                            break;
-                                        }
-                                    }
-                                }
-                                if(property_exists($res->E_RESULT->item, "DOC_NUMBER")) {
-                                    if($mode == "REAL") {
-                                        $sent = "Envoyé en facturation";
-                                    }
-                                    elseif($mode == "PRES") {
-                                        $sent = "Envoyé en pré-saisie";
-                                    }
-                                    else {
-                                        $sent = "Envoyé en simulation";
-                                    }
-                                    $sap_cont[$bill][3] = "SENT";
-                                    $sap_cont[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
-                                    $sap_cont[$bill][5] = $sent;
-                                    $archive[$bill][3] = "SENT";
-                                    $archive[$bill][4] = $res->E_RESULT->item->DOC_NUMBER;
-                                    $archive[$bill][5] = $sent;
-                                    $oks++;
-                                }
-                                else {
-                                    $warn .= $bill.": no doc_number ? <br />";
-                                    $kos++;
-                                }
+                                $warn .= $bill.": no salesOrder ? <br />";
+                                $kos++;
                             }
                         }
                         else {
-                            $warn .= $bill.": info vide ? <br />";
+                            if(array_key_exists("salesOrderErrors", $result)) {
+                                if($type == "send-bills") {
+                                    $sap_cont[$bill][3] = "ERROR";
+                                    $sap_cont[$bill][4] = "-";
+                                    $sap_cont[$bill][5] = $result["salesOrderErrors"]["message"];
+                                }
+                                $archive[$bill][3] = "ERROR";
+                                $archive[$bill][4] = "-";
+                                $archive[$bill][5] = $result["salesOrderErrors"]["message"];
+                            }
+                            else {
+                                $warn .= $bill.": no salesOrderErrors ? <br />";
+                            }
                             $kos++;
                         }
                     }
                     else {
-                        $redo[] = $bill;
+                        $warn .= $bill.": info vide ? <br />";
+                        $kos++;
                     }
                 }
                 else {
-                    if(empty($resArray[0])) {
-                        $warn .= "result empty, retry <br />";
-                    }
-                    if(empty(!$resArray[1])) {
-                        $warn .= "error ".$resArray[1].", retry <br />";
-                    }
+                    $warn .= "result empty, retry <br />";
                     $redo[] = $bill;
                 }
             }
@@ -245,12 +229,21 @@ else {
  * @param string $data bill data
  * @param string $dir directory where to find attachments
  * @param string $mode REAL/PRES, if SAP generates bills or not
- * @return array SAP answer, or error
+ * @return string SAP answer
  */
-function send(string $data, string $dir, string $mode): array
+function send(string $data, string $dir, string $mode): string
 {
     $decoded = json_decode($data, true);
-    $decoded["execmode"] = $mode;
+    if($mode == "REAL") {
+        $decoded["SDDocumentReason"] = "900";
+        $decoded["HeaderBillingBlockReason"] = "";
+    }
+    else {
+        $decoded["SDDocumentReason"] = "Z1";
+        $decoded["HeaderBillingBlockReason"] = "Z1";
+    }
+
+    /*
     if(!DEV_MODE) {
         foreach($decoded["attachment"] as $i=>$attachment) {
             $filename = $decoded["attachment"][$i]["filename"];
@@ -264,21 +257,34 @@ function send(string $data, string $dir, string $mode): array
             $decoded["attachment"][$i]["filecontent"] = $data64;
         }
     }
-
+    */
     $encoded = json_encode($decoded);
+
+    /*
     $curl = curl_init();
+
+    $data = file_get_contents($dir."/OUT/grille.pdf");
+    $data64 = base64_encode($data);
+    $_SESSION['alert-info'] = $data64;
+
+    $headers = array("X-API-KEY: " . NEXUS_KEY, "--form 'salesOrder=". $encoded . "'");
+    curl_setopt($curl, CURLOPT_HTTPHEADER,$headers);
     curl_setopt($curl, CURLOPT_POST, 1);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $encoded);
+    //curl_setopt($curl, CURLOPT_GET, 1);
+    //curl_setopt($curl, CURLOPT_POSTFIELDS, $encoded);
 
-    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_setopt($curl, CURLOPT_USERPWD, SAP_USER.":".SAP_PWD);
-
-    curl_setopt($curl, CURLOPT_URL, SAP_URL);
+    curl_setopt($curl, CURLOPT_URL, NEXUS_CUSTOMERS);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
     $result = curl_exec($curl);
 
     curl_close($curl);
+*/
 
-    return [$result, curl_error($curl)];
+//$encoded = '{"SalesOrderType":"ZPLT","SalesOrganization":1028,"DistributionChannel":"20","OrganizationDivision":10,"TransactionCurrency":"CHF","SoldToParty":"1000000420","PurchaseOrderByCustomer":"EXT_2026_09_0_1198","SDDocumentReason":"900","HeaderBillingBlockReason":"","to_Partner":[{"PartnerFunction":"ZM","SCIPER":"999"},{"PartnerFunction":"RE","Customer":"1000000420","to_Address":[{"EmailAddress":"accounts.payable@cern.ch","OrganizationName3":""}]}],"to_Text":[{"LongTextID":"TX06","LongText":"Your ref. : no de commande PC1221165"}],"to_Item":[{"Material":"9010144","SalesOrderItemText":"Services","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609M","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"904.85"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]},{"Material":"9010055","SalesOrderItemText":"Consumables","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609C","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"49.25"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]},{"Material":"9010148","SalesOrderItemText":"No-show penalties","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609R","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"96.5"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]},{"Material":"9010340","SalesOrderItemText":"Overheads 20%","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609OH","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"210.1"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]}]}';
+
+    $cmd = "curl -H 'X-API-KEY: " . NEXUS_KEY . "' " . NEXUS_URL . " --form 'salesOrder=" . $encoded . "'";
+    $result = shell_exec($cmd);
+    $_SESSION['alert-info'] = $result;
+
+    return $result;
 }
