@@ -68,7 +68,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
             foreach($bills as $bill) {
                 $archive[$bill] = [$sap_cont[$bill][0], $sap_cont[$bill][1], $sap_cont[$bill][2]];
                 $result = json_decode(send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"), $dir, $mode), true);
-                if(array_key_exists("status", $result)) {
+                if(!is_null($result) && array_key_exists("status", $result)) {
                     $infos = Info::load($dir);
                     if(!empty($infos)) {
                         if($result["status"] == "SUCCESS") {
@@ -243,21 +243,22 @@ function send(string $data, string $dir, string $mode): string
         $decoded["HeaderBillingBlockReason"] = "Z1";
     }
 
-    /*
-    if(!DEV_MODE) {
-        foreach($decoded["attachment"] as $i=>$attachment) {
-            $filename = $decoded["attachment"][$i]["filename"];
-            if($filename == "grille.pdf") {
-                $data = file_get_contents($dir."/OUT/".$filename);
+    $attachments = "";
+
+    foreach($decoded["files"] as $filename) {
+        if($filename == "grille.pdf") {
+            $file = '"' . $dir . '/OUT/' . $filename . '"';
+            $attachments .= " --form 'attachments=@".$file."'";
+        }
+        else {
+            if(ENV_MODE != "DEV") {
+                $file = '"' . $dir . '/Annexes_PDF/' . $filename . '"';
+                $attachments .= " --form 'attachments=@".$file."'";
             }
-            else {
-                $data = file_get_contents($dir."/Annexes_PDF/".$filename);
-            }
-            $data64 = base64_encode($data);
-            $decoded["attachment"][$i]["filecontent"] = $data64;
         }
     }
-    */
+
+    unset($decoded["files"]);
     $encoded = json_encode($decoded);
 
     /*
@@ -279,12 +280,14 @@ function send(string $data, string $dir, string $mode): string
 
     curl_close($curl);
 */
-
 //$encoded = '{"SalesOrderType":"ZPLT","SalesOrganization":1028,"DistributionChannel":"20","OrganizationDivision":10,"TransactionCurrency":"CHF","SoldToParty":"1000000420","PurchaseOrderByCustomer":"EXT_2026_09_0_1198","SDDocumentReason":"900","HeaderBillingBlockReason":"","to_Partner":[{"PartnerFunction":"ZM","SCIPER":"999"},{"PartnerFunction":"RE","Customer":"1000000420","to_Address":[{"EmailAddress":"accounts.payable@cern.ch","OrganizationName3":""}]}],"to_Text":[{"LongTextID":"TX06","LongText":"Your ref. : no de commande PC1221165"}],"to_Item":[{"Material":"9010144","SalesOrderItemText":"Services","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609M","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"904.85"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]},{"Material":"9010055","SalesOrderItemText":"Consumables","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609C","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"49.25"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]},{"Material":"9010148","SalesOrderItemText":"No-show penalties","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609R","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"96.5"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]},{"Material":"9010340","SalesOrderItemText":"Overheads 20%","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609OH","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"210.1"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]}]}';
 
-    $cmd = "curl -H 'X-API-KEY: " . NEXUS_KEY . "' " . NEXUS_URL . " --form 'salesOrder=" . $encoded . "'";
+    $cmd = "curl -H 'X-API-KEY: " . NEXUS_KEY . "' " . NEXUS_URL . " --form 'salesOrder=" . $encoded . "'" . $attachments;
     $result = shell_exec($cmd);
     $_SESSION['alert-info'] = $result;
+    if(is_null($result)) {
+        return "";
+    }
 
     return $result;
 }
