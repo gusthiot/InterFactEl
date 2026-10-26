@@ -311,7 +311,7 @@ function send(string $data, string $dir, string $mode): array
                     }
                     else {
                         if(array_key_exists("error", $result["salesOrderErrors"]) && array_key_exists("message", $result["salesOrderErrors"]["error"])) {
-                            $return["errorMessage"] = "Internal error : " . $result["salesOrderErrors"]["message"];
+                            $return["errorMessage"] = "Internal error : " . $result["salesOrderErrors"]["message"]["value"];
                         }
                         else {
                             $return["errorMessage"] = "No error message ?";
