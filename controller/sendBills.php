@@ -46,6 +46,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $dirPrevMonth = DATA.$plateforme."/".State::getPreviousYear($year, $month)."/".State::getPreviousMonth($year, $month);
 
     $warn = "";
+    $info = "";
     $error = "";
     $messages = new Message();
     $sap = new Sap($dir);
@@ -67,8 +68,8 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
             $archive = [];
             foreach($bills as $bill) {
                 $archive[$bill] = [$sap_cont[$bill][0], $sap_cont[$bill][1], $sap_cont[$bill][2]];
-                $result = json_decode(send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"), $dir, $mode), true);
-                if(!is_null($result) && array_key_exists("status", $result)) {
+                $result = send(Facture::load($dir."/Factures_JSON/facture_".$bill.".json"), $dir, $mode);
+                if(!empty($result["status"])) {
                     $infos = Info::load($dir);
                     if(!empty($infos)) {
                         if($result["status"] == "SUCCESS") {
@@ -87,7 +88,8 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                                     }
                                 }
                             }
-                            if(array_key_exists("salesOrder", $result)) {
+                            if(!empty($result["salesOrder"])) {
+                                $info .= " order : ".$result["salesOrder"]. "<br />";
                                 if($mode == "REAL") {
                                     $sent = "Envoyé en facturation";
                                 }
@@ -108,15 +110,16 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                             }
                         }
                         else {
-                            if(array_key_exists("salesOrderErrors", $result)) {
+                            if(!empty($result["errorMessage"])) {
+                                $info .= " error : ".$result["errorMessage"]. "<br />";
                                 if($type == "send-bills") {
                                     $sap_cont[$bill][3] = "ERROR";
                                     $sap_cont[$bill][4] = "-";
-                                    $sap_cont[$bill][5] = $result["salesOrderErrors"]["message"];
+                                    $sap_cont[$bill][5] = $result["errorMessage"];
                                 }
                                 $archive[$bill][3] = "ERROR";
                                 $archive[$bill][4] = "-";
-                                $archive[$bill][5] = $result["salesOrderErrors"]["message"];
+                                $archive[$bill][5] = $result["errorMessage"];
                             }
                             else {
                                 $warn .= $bill.": no salesOrderErrors ? <br />";
@@ -130,7 +133,12 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                     }
                 }
                 else {
-                    $warn .= "result empty, retry <br />";
+                    if(!empty($result["errorMessage"])) {
+                        $warn .= $result["errorMessage"] . ", retry <br />";
+                    }
+                    else {
+                        $warn .= "result empty, retry <br />";
+                    }
                     $redo[] = $bill;
                 }
             }
@@ -201,6 +209,9 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     if(!empty($error)) {
         $_SESSION['alert-danger'] = $error;
     }
+    if(!empty($info)) {
+        $_SESSION['alert-info'] = $info;
+    }
     if($oks > 0) {
         if($oks > 1) {
             $_SESSION['alert-success'] = $messages->getMessage('msg6')."<br/>".$oks." factures envoyées avec succès";
@@ -229,9 +240,9 @@ else {
  * @param string $data bill data
  * @param string $dir directory where to find attachments
  * @param string $mode REAL/PRES, if SAP generates bills or not
- * @return string SAP answer
+ * @return array [status, order, error]
  */
-function send(string $data, string $dir, string $mode): string
+function send(string $data, string $dir, string $mode): array
 {
     $decoded = json_decode($data, true);
     if($mode == "REAL") {
@@ -284,10 +295,47 @@ function send(string $data, string $dir, string $mode): string
 
     $cmd = "curl -H 'X-API-KEY: " . NEXUS_KEY . "' " . NEXUS_URL . " --form 'salesOrder=" . $encoded . "'" . $attachments;
     $result = shell_exec($cmd);
-    $_SESSION['alert-info'] = $result;
-    if(is_null($result)) {
-        return "";
-    }
+    $return = ["status" => "", "salesOrder" => "", "errorMessage" => ""];
 
-    return $result;
+    if(!is_null($result)) {
+        $res = json_decode($result, true);
+        if(!is_null($res)) {
+            $return["status"] = $res["status"];
+            if($res["status"] == "SUCCESS") {
+                $return["salesOrder"] = $res["salesOrder"];
+            }
+            else {
+                if(array_key_exists("salesOrderErrors", $result)) {
+                    if(array_key_exists("message", $result["salesOrderErrors"])) {
+                        $return["errorMessage"] = "JSON error : " . $result["salesOrderErrors"]["message"];
+                    }
+                    else {
+                        if(array_key_exists("error", $result["salesOrderErrors"]) && array_key_exists("message", $result["salesOrderErrors"]["error"])) {
+                            $return["errorMessage"] = "Internal error : " . $result["salesOrderErrors"]["message"];
+                        }
+                        else {
+                            $return["errorMessage"] = "No error message ?";
+                        }
+                    }
+                }
+                else {
+                    if(array_key_exists("attachments", $result)) {
+                        $return["errorMessage"] = "Attachments error : ";
+                        foreach($result["attachments"] as $attachment) {
+                            if($attachment["status"] != "CREATED") {
+                                $return["errorMessage"] .= json_encode($attachment);
+                            }
+                        }
+                    }
+                    else {
+                        $return["errorMessage"] = "No error message ?";
+                    }
+                }
+            }
+        }
+        else {
+            $return["errorMessage"] = $res;
+        }
+    }
+    return $return;
 }
