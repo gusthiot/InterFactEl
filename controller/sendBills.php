@@ -302,15 +302,15 @@ function send(string $data, string $dir, string $mode): array
 //$encoded = '{"SalesOrderType":"ZPLT","SalesOrganization":1028,"DistributionChannel":"20","OrganizationDivision":10,"TransactionCurrency":"CHF","SoldToParty":"1000000420","PurchaseOrderByCustomer":"EXT_2026_09_0_1198","SDDocumentReason":"900","HeaderBillingBlockReason":"","to_Partner":[{"PartnerFunction":"ZM","SCIPER":"999"},{"PartnerFunction":"RE","Customer":"1000000420","to_Address":[{"EmailAddress":"accounts.payable@cern.ch","OrganizationName3":""}]}],"to_Text":[{"LongTextID":"TX06","LongText":"Your ref. : no de commande PC1221165"}],"to_Item":[{"Material":"9010144","SalesOrderItemText":"Services","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609M","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"904.85"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]},{"Material":"9010055","SalesOrderItemText":"Consumables","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609C","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"49.25"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]},{"Material":"9010148","SalesOrderItemText":"No-show penalties","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609R","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"96.5"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]},{"Material":"9010340","SalesOrderItemText":"Overheads 20%","RequestedQuantity":"1.0","WBSElement":"90-0265","ZZ1_CODEOP_SDI":"UA202609OH","to_PricingElement":[{"ConditionType":"PPR0","ConditionRateValue":"210.1"}],"to_Text":[{"LongTextID":"TX02","LongText":""}]}]}';
 
     $cmd = "curl -H 'X-API-KEY: " . NEXUS_KEY . "' " . NEXUS_URL . " --form 'salesOrder=" . $encoded . "'" . $attachments;
-    $result = shell_exec($cmd);
+    $res = shell_exec($cmd);
     $return = ["status" => "", "salesOrder" => "", "errorMessage" => ""];
 
-    if(!is_null($result)) {
-        $res = json_decode($result, true);
-        if(!is_null($res)) {
-            $return["status"] = $res["status"];
-            if($res["status"] == "SUCCESS") {
-                $return["salesOrder"] = $res["salesOrder"];
+    if(!is_null($res)) {
+        $result = json_decode($res, true);
+        if(!is_null($result)) {
+            $return["status"] = $result["status"];
+            if($result["status"] == "SUCCESS") {
+                $return["salesOrder"] = $result["salesOrder"];
             }
             else {
                 if(array_key_exists("salesOrderErrors", $result)) {
@@ -319,7 +319,7 @@ function send(string $data, string $dir, string $mode): array
                     }
                     else {
                         if(array_key_exists("error", $result["salesOrderErrors"]) && array_key_exists("message", $result["salesOrderErrors"]["error"])) {
-                            $return["errorMessage"] = "Internal error : " . $result["salesOrderErrors"]["message"]["value"];
+                            $return["errorMessage"] = "Internal error : " . $result["salesOrderErrors"]["error"]["message"]["value"];
                         }
                         else {
                             $return["errorMessage"] = "No error message ?";
