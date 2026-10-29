@@ -246,12 +246,20 @@ function send(string $data, string $dir, string $mode): array
 {
     $decoded = json_decode($data, true);
     if($mode == "REAL") {
-        $decoded["SDDocumentReason"] = "900";
-        $decoded["HeaderBillingBlockReason"] = "";
+        if($decoded["SalesOrderType"] == "ZINT") {
+            $decoded["SDDocumentReason"] = "900";
+        }
+        else {
+            $decoded["HeaderBillingBlockReason"] = "";
+        }
     }
     else {
-        $decoded["SDDocumentReason"] = "Z1";
-        $decoded["HeaderBillingBlockReason"] = "Z1";
+        if($decoded["SalesOrderType"] == "ZINT") {
+            $decoded["SDDocumentReason"] = "Z1";
+        }
+        else {
+            $decoded["HeaderBillingBlockReason"] = "Z1";
+        }
     }
 
     $attachments = "";
