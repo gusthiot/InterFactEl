@@ -228,6 +228,24 @@ $('.manage-files').on('click', function () {
     $('#index-canevas').hide();
 });
 
+let hiddens = []
+for(let bloc of ['supervision', 'gestion', 'tools']) {
+    hiddens[bloc] = false;
+    $('#'+bloc+'-title').on("click", function() {
+        if(hiddens[bloc]) {
+            hiddens[bloc] = false;
+            $('#'+bloc+'-bloc').show();
+            $('#'+bloc+'-icon').attr('xlink:href', "#minus");
+        }
+        else {
+            hiddens[bloc] = true;
+            $('#'+bloc+'-bloc').hide();
+            $('#'+bloc+'-icon').attr('xlink:href', "#plus");
+        }
+    });
+
+}
+
 for(let tiles of ['.facturation', '.tarifs', '.reporting']) {
 
     $(tiles).on('dragstart', function(evt) {

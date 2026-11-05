@@ -72,6 +72,13 @@ function tarifsExists(string $plateforme): bool
             if(file_exists($dirMonth."/".ParamZip::NAME)){
                 return true;
             }
+            foreach(globReverse($dirMonth) as $dirVersion) {
+                foreach(globReverse($dirVersion) as $dirRun) {
+                    if(file_exists($dirRun."/OUT")){
+                        return true;
+                    }
+                }
+            }
         }
     }
     return false;
@@ -145,26 +152,33 @@ asort($orders);
                 ?>
 
                 <div class="index-primary">
-                    <h3>Supervision</h3>
-                    <div class="index-secondary">
-                        <h5>Configuration</h5>
-                        <div class="tiles">
-                            <?php
-                                echo tile("download-config", "<p>Sauvegarder les <br /> fichiers CONFIG </p>", "download-cloud");
-                                $action = '<form action="controller/uploadConfig.php" method="post" id="form-config" enctype="multipart/form-data" >
-                                            <input type="file" name="zip_file" id="zip-config" accept=".zip">
-                                        </form>';
-                                echo uploaderTile($action, "Charger les <br /> fichiers CONFIG ", "upload-cloud");
-                            ?>
+                    <h3 id="supervision-title" class="icon-selectable">
+                        <svg class="icon feather" aria-hidden="true">
+                            <use id="supervision-icon" xlink:href="#minus"></use>
+                        </svg>
+                        Supervision
+                    </h3>
+                    <div id="supervision-bloc">
+                        <div class="index-secondary">
+                            <h5>Configuration</h5>
+                            <div class="tiles">
+                                <?php
+                                    echo tile("download-config", "<p>Sauvegarder les <br /> fichiers CONFIG </p>", "download-cloud");
+                                    $action = '<form action="controller/uploadConfig.php" method="post" id="form-config" enctype="multipart/form-data" >
+                                                <input type="file" name="zip_file" id="zip-config" accept=".zip">
+                                            </form>';
+                                    echo uploaderTile($action, "Charger les <br /> fichiers CONFIG ", "upload-cloud");
+                                ?>
+                            </div>
                         </div>
-                    </div>
-                    <div class="index-secondary">
-                        <h5>Administration</h5>
-                        <div class="tiles">
-                            <?php
-                                echo tile("manage-files", "<p>Gestion des <br /> droits </p>", "edit");
-                                echo tile('manage-message" data-toggle="modal" data-target="#scroll-modal', "<p>Gestion du <br />bandeau défilant</p>", "message-square");
-                            ?>
+                        <div class="index-secondary">
+                            <h5>Administration</h5>
+                            <div class="tiles">
+                                <?php
+                                    echo tile("manage-files", "<p>Gestion des <br /> droits </p>", "edit");
+                                    echo tile('manage-message" data-toggle="modal" data-target="#scroll-modal', "<p>Gestion du <br />bandeau défilant</p>", "message-square");
+                                ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -220,7 +234,13 @@ asort($orders);
                 if(DATA_GEST) {
                     ?>
                     <div class="index-primary">
-                        <h3>Gestion</h3>
+                        <h3 id="gestion-title" class="icon-selectable">
+                            <svg class="icon feather" aria-hidden="true">
+                                <use id="gestion-icon" xlink:href="#minus"></use>
+                            </svg>
+                            Gestion
+                        </h3>
+                        <div id="gestion-bloc">
                         <?php
                         if(!empty(DATA_GEST['facturation'])) {
                             ?>
@@ -287,24 +307,32 @@ asort($orders);
                         <?php
                         }
                         ?>
+                        </div>
                     </div>
                     <?php
                 }
                 ?>
                 <div class="index-primary">
-                    <h3>Outils</h3>
-                    <div class="tiles">
-                        <?php
-                            $action = '<form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >
-                                        <input type="file" name="zip_file" id="zip-view" accept=".zip">
-                                    </form>';
-                            echo uploaderTile($action, "Visionner Tickets", "eye");
-                            $action = '<form action="controller/uploadPrepa.php" method="post" id="form-simu" enctype="multipart/form-data" >
-                                        <input type="hidden" name="type" id="type" value="SIMU">
-                                        <input id="SIMU" type="file" name="SIMU" '. $disabled.' class="zip-simu lockable" accept=".zip">
-                                    </form>';
-                            echo uploaderTile($action, "Simulation", "activity");
-                        ?>
+                    <h3 id="tools-title" class="icon-selectable">
+                        <svg class="icon feather" aria-hidden="true">
+                            <use id="tools-icon" xlink:href="#minus"></use>
+                        </svg>
+                        Outils
+                    </h3>
+                    <div id="tools-bloc">
+                        <div class="tiles">
+                            <?php
+                                $action = '<form action="controller/viewTicket.php" method="post" id="form-view" enctype="multipart/form-data" >
+                                            <input type="file" name="zip_file" id="zip-view" accept=".zip">
+                                        </form>';
+                                echo uploaderTile($action, "Visionner Tickets", "eye");
+                                $action = '<form action="controller/uploadPrepa.php" method="post" id="form-simu" enctype="multipart/form-data" >
+                                            <input type="hidden" name="type" id="type" value="SIMU">
+                                            <input id="SIMU" type="file" name="SIMU" '. $disabled.' class="zip-simu lockable" accept=".zip">
+                                        </form>';
+                                echo uploaderTile($action, "Simulation", "activity");
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -37,7 +37,7 @@ if(file_exists($dir)) {
     }
 }
 if($first) {
-    $tbTarifs = firstNewTarifs($plateforme);
+    $tbTarifs = firstNewTarifs($dir);
     if(count($tbTarifs) > 0) {
         $dateTarifs = $tbTarifs[0]."/".$tbTarifs[1];
     }
@@ -50,13 +50,12 @@ $m0 = "";
 /**
  * Gets tarifs for a first new facturation, for a given plateforme
  *
- * @param string $plateforme
+ * @param string $plateforme main directory
  * @return array
  */
-function firstNewTarifs(string $plateforme): array
+function firstNewTarifs(string $dir): array
 {
     $res = [];
-    $dir = DATA.$plateforme;
     foreach(globReverse($dir) as $dirYear) {
         foreach(globReverse($dirYear) as $dirMonth) {
             if(file_exists($dirMonth."/".ParamZip::NAME)){
@@ -168,7 +167,7 @@ include("includes/lock.inc");
                                             $choices[$year.$month] = [$year, $month];
                                         }
                                     }?>
-                                    <div><button type="button" id="init-period" '.$disabled.' data-choices="<?php echo htmlentities(json_encode($choices),ENT_QUOTES); ?>" class="btn but-red lockable"><?= $title ?></button>
+                                    <div><button type="button" id="init-period" <?= $disabled ?> data-choices="<?php echo htmlentities(json_encode($choices),ENT_QUOTES); ?>" class="btn but-red lockable"><?= $title ?></button>
                                     </div>
                                     <div id="first"></div>
                                     <div id="last">
@@ -200,9 +199,15 @@ include("includes/lock.inc");
                                 }
                             ?>
                         </div>
+                        <div class="but-col">
+                            <div id="open-statuts" class="tile tight-tile">Statuts factures</div>
+                        </div>
                     </div>
                     <div id="historique-div" class="center-tile">
                         <div id="close-historique" class="tile tight-tile">Fermer l'historique</div>
+                    </div>
+                    <div id="statuts-div" class="center-tile">
+                        <div id="close-statuts" class="tile tight-tile">Fermer les statuts</div>
                     </div>
                 </div>
 

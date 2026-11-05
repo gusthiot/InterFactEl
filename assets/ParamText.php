@@ -60,7 +60,9 @@ class ParamText extends Csv
                     "table-superviseur-0",
                     "paramfact-code_int", "paramfact-code_ext", "paramfact-devise", "paramfact-modes",
                     "plateforme-Id-Plateforme", "plateforme-Code_P", "plateforme-CF", "plateforme-Fonds", "plateforme-Admin", "plateforme-Abrev-Plateforme", "plateforme-Intitule-Plateforme", "plateforme-Grille-Plateforme",
-                    "cae-annee-fact", "cae-mois-fact", "cae-id-compte", "cae-id-user", "cae-id-machine", "cae-login", "cae-HP", "cae-HC", "cae-DRUN", "cae-DOP", "cae-id-operator", "cae-rem-operator", "cae-rem-staff", "cae-validation", "cae-id-validator"];
+                    "cae-annee-fact", "cae-mois-fact", "cae-id-compte", "cae-id-user", "cae-id-machine", "cae-login", "cae-HP", "cae-HC", "cae-DRUN", "cae-DOP", "cae-id-operator", "cae-rem-operator", "cae-rem-staff", "cae-validation", "cae-id-validator",
+                    "track-invoice-year", "track-invoice-month", "track-invoice-version", "track-invoice-month2", "track-sent-date", "track-sent-login", "track-client-name", "track-invoice-id", "track-total-fact", "track-valid-statut", "track-order-statut",
+                    "track-FI-statut", "track-api-date", "track-api-TTC", "track-api-devise", "track-api-TTC2", "track-api-msg", "track-api-app", "track-api-ord", "track-api-fin"];
 
     /**
      * Array containing the parameters, by specific keys

@@ -25,6 +25,9 @@ class Config
                 if(file_exists($tmpDir.ParamText::NAME)) {
                     self::addMsg($msg, self::checkColumns($tmpDir, ParamText::NAME, 2, ParamText::LABELS));
                 }
+                if(file_exists($tmpDir.MessageSap::NAME)) {
+                    copy($tmpDir.MessageSap::NAME, CONFIG.MessageSap::NAME);
+                }
             }
             State::delDir($tmpDir);
             return $msg;

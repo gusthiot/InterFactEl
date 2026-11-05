@@ -5,6 +5,7 @@ require_once("../assets/Lock.php");
 require_once("../assets/Label.php");
 require_once("../assets/Sap.php");
 require_once("../assets/Message.php");
+require_once("../assets/MessageSap.php");
 require_once("../assets/ParamText.php");
 require_once("../assets/Plateforme.php");
 require_once("../includes/Zip.php");
@@ -29,6 +30,7 @@ if(isset($_GET['type'])) {
         if(file_exists($tmpDir) || mkdir($tmpDir, 0777, true)) {
             copy(CONFIG.Message::NAME, $tmpDir.Message::NAME);
             copy(CONFIG.Paramtext::NAME, $tmpDir.Paramtext::NAME);
+            copy(CONFIG.MessageSap::NAME, $tmpDir.MessageSap::NAME);
         }
         readZip($type, $tmpFile, $tmpDir);
         State::delDir($tmpDir);

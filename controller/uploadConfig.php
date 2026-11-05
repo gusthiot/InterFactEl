@@ -3,6 +3,7 @@ require_once("../includes/Config.php");
 require_once("../includes/Zip.php");
 require_once("../includes/State.php");
 require_once("../assets/Message.php");
+require_once("../assets/MessageSap.php");
 require_once("../assets/ParamText.php");
 require_once("../session.inc");
 

@@ -1,6 +1,7 @@
 'use strict';
 
 $('#historique-div').hide();
+$('#statuts-div').hide();
 
 $('#open-historique').on('click', function () {
     $('#plate-content').hide();
@@ -15,6 +16,22 @@ $('#close-historique').on('click', function () {
     $('#plate-content').show();
     $('#buttons').show();
     $('#historique-div').hide();
+    $('#display').html("");
+} );
+
+$('#open-statuts').on('click', function () {
+    $('#plate-content').hide();
+    $('#buttons').hide();
+    $('#statuts-div').show();
+    $.post("controller/getStatuts.php", {plate: $('#plate').val()}, function (data) {
+        $('#display').html(data);
+    });
+} );
+
+$('#close-statuts').on('click', function () {
+    $('#plate-content').show();
+    $('#buttons').show();
+    $('#statuts-div').hide();
     $('#display').html("");
 } );
 
