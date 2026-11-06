@@ -784,6 +784,7 @@ table.dates-tarifs .tr-clickable:hover {
 
 .dim0 {
   text-align: left;
+  min-width: 200px;
 }
 
 #table-tableur thead tr th {

@@ -1,6 +1,8 @@
 <?php
 
 require_once("../assets/Sap.php");
+require_once("../assets/MessageSap.php");
+require_once("../assets/ParamText.php");
 require_once("../session.inc");
 
 /**
@@ -10,25 +12,43 @@ $txt = "";
 if(isset($_POST['plate'])) {
     checkPlateforme("facturation", $_POST["plate"]);
     $dir = DATA.$_POST['plate'];
-    //$order = "0010000236";
-    //$txt = getStatut($order);
-    $txt = "<div class='over'><div id='statut'>";
+    $paramtext = new ParamText();
+    $messageSap = new MessageSap();
+    $txt = "<div class='over'><table class='table table-boxed'>";
+    $txt .= "<tr><th>" . $paramtext->getParam('track-invoice-month2') . "</th><th>" . $paramtext->getParam('track-sent-login') . "</th><th>" . $paramtext->getParam('track-client-name') . "</th><th>" . $paramtext->getParam('track-invoice-id') . "</th><th>" . $paramtext->getParam('track-total-fact') . "</th>";
+    $txt .= "<th>" . $paramtext->getParam('track-err-msg') . "</th><th>" . $paramtext->getParam('track-doc-nr') . "</th><th>" . $paramtext->getParam('track-api-date') . "</th><th>" . $paramtext->getParam('track-api-TTC2') . "</th><th>" . $paramtext->getParam('track-api-msg') . "</th></tr>";
     if(file_exists($dir)) {
         foreach(globReverse($dir) as $dirYear) {
-            $txt .= basename($dirYear)."<br />";
+            $year = basename($dirYear);
             foreach(globReverse($dirYear) as $dirMonth) {
-                $txt .= basename($dirMonth)."<br />";
+                $month = basename($dirMonth);
                 foreach(globReverse($dirMonth) as $dirVersion) {
-                    $txt .= basename($dirVersion)."<br />";
+                    $version = basename($dirVersion);
                     foreach(globReverse($dirVersion) as $dirRun) {
-                        $txt .= basename($dirRun)."<br />";
+                        $run = basename($dirRun);
                         foreach(array_reverse(glob($dirRun."/*")) as $file) {
                             if(str_contains($file, "sap_")) {
-                                $txt .= basename($file)."<br />";
+                                $file = basename($file);
+                                $fileTab = explode("_", $file);
+                                $login = $fileTab[1];
                                 $sap = new Sap($dirRun, basename($file));
                                 foreach($sap->getBills() as $fact=>$tab) {
-                                    $txt .= json_encode($tab);
-                                    $txt .= "<br />";
+                                    $txt .= '<tr><td>' . $month . " " . $year . " - " . $version . "</td>";
+                                    $txt .= '<td>' . $login . '</td><td>' . $tab[0] . '</td><td>' . $tab[1] . '</td><td>'. $tab[2] . '</td>';
+                                    $txt .= '<td>' . $tab[5] . '</td><td>' . $tab[4] . '</td>';
+                                    if($tab[4] != "-") {
+                                        $sapTab = getStatut($tab[4])[0];
+                                        if(!empty($sapTab)) {
+                                            //$txt .= '<td>'.json_encode($sapTab).'</td><td>-</td><td>-</td></tr>';
+                                            $txt .= '<td>' . $sapTab["CreationDate"] . '</td><td>' . $sapTab["TransactionCurrency"] . " " . $sapTab["TotalNetAmount"] . '</td><td>' . $sapTab["FistatuTxt"] . '</td></tr>';
+                                        }
+                                        else {
+                                            $txt .= '<td>-</td><td>-</td><td>-</td></tr>';
+                                        }
+                                    }
+                                    else {
+                                        $txt .= '<td>-</td><td>-</td><td>-</td></tr>';
+                                    }
                                 }
                             }
                         }
@@ -37,7 +57,7 @@ if(isset($_POST['plate'])) {
             }
         }
     }
-    $txt .= "</div></div>";
+    $txt .= "</table></div>";
 }
 
 echo $txt;
@@ -51,7 +71,7 @@ function getStatut($order)
     if(!is_null($res)) {
         $result = json_decode($res, true);
         if(array_key_exists("value", $result)) {
-            return json_encode($result["value"]);
+            return $result["value"];
         }
     }
     return "";

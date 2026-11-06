@@ -84,10 +84,14 @@ if(isset($_POST['type'])) {
                                     $vl = $version["version-logiciel"][2];
                                     $array = [["FactEl", $paramtext->getParam('res-factel'), $vl], ["Platform", $paramtext->getParam('res-pltf'), $plateforme], ["Year", $paramtext->getParam('res-year'), $year_1], ["Month", $paramtext->getParam('res-month'), $month_1], ["Version", $paramtext->getParam('res-version'), 0] , ["Folder", $paramtext->getParam('res-folder'), 0], ["Type", $paramtext->getParam('res-type'), "SAP"]];
                                     Csv::write($tmpDir."/".Result::NAME, $array);
-                                    $array = [[$paramtext->getParam('proj-id'), $paramtext->getParam('platf-code'), $paramtext->getParam('item-idclass'), $paramtext->getParam('subsid-alrdygrant')]];
-                                    Csv::write($tmpDir."/granted_".$year_1."_".$month_1.".csv", $array);
-                                    $array = [[$paramtext->getParam('year'), $paramtext->getParam('month'), $paramtext->getParam('day'), $paramtext->getParam('week-nbr'), $paramtext->getParam('platf-code'), $paramtext->getParam('client-code'), $paramtext->getParam('user-id')]];
-                                    Csv::write($tmpDir."/User-labo_".$year_1."_".$month_1.".csv", $array);
+                                    if(!file_exists($tmpDir."/granted_".$year_1."_".$month_1.".csv")) {
+                                        $array = [[$paramtext->getParam('proj-id'), $paramtext->getParam('platf-code'), $paramtext->getParam('item-idclass'), $paramtext->getParam('subsid-alrdygrant')]];
+                                        Csv::write($tmpDir."/granted_".$year_1."_".$month_1.".csv", $array);
+                                    }
+                                    if(!file_exists($tmpDir."/User-labo_".$year_1."_".$month_1.".csv")) {
+                                        $array = [[$paramtext->getParam('year'), $paramtext->getParam('month'), $paramtext->getParam('day'), $paramtext->getParam('week-nbr'), $paramtext->getParam('platf-code'), $paramtext->getParam('client-code'), $paramtext->getParam('user-id')]];
+                                        Csv::write($tmpDir."/User-labo_".$year_1."_".$month_1.".csv", $array);
+                                    }
                                 }
                                 else {
                                     $state = new State(DATA.$plateforme);
