@@ -546,6 +546,11 @@ input[type="file"] {
   justify-content: center;
 }
 
+#atatuts-period {
+  margin: 10px;
+  text-align: center;
+}
+
 /** run **/
 
 #prefa-content {

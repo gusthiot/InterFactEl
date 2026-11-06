@@ -37,13 +37,17 @@ if(isset($_POST['plate'])) {
                                     $txt .= '<td>' . $login . '</td><td>' . $tab[0] . '</td><td>' . $tab[1] . '</td><td>'. $tab[2] . '</td>';
                                     $txt .= '<td>' . $tab[5] . '</td><td>' . $tab[4] . '</td>';
                                     if($tab[4] != "-") {
-                                        $sapTab = getStatut($tab[4])[0];
+                                        $sapTab = getStatut($tab[4]);
                                         if(!empty($sapTab)) {
-                                            //$txt .= '<td>'.json_encode($sapTab).'</td><td>-</td><td>-</td></tr>';
-                                            $txt .= '<td>' . $sapTab["CreationDate"] . '</td><td>' . $sapTab["TransactionCurrency"] . " " . $sapTab["TotalNetAmount"] . '</td><td>' . $sapTab["FistatuTxt"] . '</td></tr>';
+                                            $doc = $sapTab[0];
+                                            $msg = $messageSap->getMessage($doc["SalesDocApprovalStatus"], $doc["OverallOrdReltdBillgStatus"], $doc["Fistatu"]);
+                                            if(empty($msg)) {
+                                                $msg = 'Statut problématique : "' . $doc["SalesDocApprovalStatusTxt"] . '" + "' . $doc["OverallOrdReltdBillgStatusTxt"] . '" + "' . $doc["FistatuTxt"] . '"';
+                                            }
+                                            $txt .= '<td>' . $doc["CreationDate"] . '</td><td>' . $doc["TransactionCurrency"] . " " . $doc["TotalNetAmount"] . '</td><td>' . $msg . '</td></tr>';
                                         }
                                         else {
-                                            $txt .= '<td>-</td><td>-</td><td>-</td></tr>';
+                                            $txt .= '<td>liste</td><td>non</td><td>accessible</td></tr>';
                                         }
                                     }
                                     else {

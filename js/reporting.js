@@ -32,7 +32,7 @@ $('.select-period').on('click', function () {
         $($(this).attr('id')).addClass('selected-tile');
         report = $(this).attr('id');
         const title = $('.title', this).text();
-        $.post("controller/selectPeriod.php", {plate: plateforme, type: report}, function (data) {
+        $.post("controller/selectReportPeriod.php", {plate: plateforme, type: report}, function (data) {
             $('#report-tiles').hide();
             $('#report-period').html(data);
             $('#report-period').show();

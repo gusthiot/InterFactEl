@@ -224,6 +224,7 @@ include("includes/lock.inc");
                     echo'<div class="text-center">'.$dlTxt.'</div>';
                 }
                 ?>
+                <div id="statuts-period"></div>
                 <div id="display"></div>
             </form>
 

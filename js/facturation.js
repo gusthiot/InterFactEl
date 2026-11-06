@@ -20,10 +20,47 @@ $('#close-historique').on('click', function () {
 } );
 
 $('#open-statuts').on('click', function () {
-    $('#plate-content').hide();
-    $('#buttons').hide();
-    $('#statuts-div').show();
+    $.post("controller/selectStatutsPeriod.php", {plate: $('#plate').val()}, function (data) {
+        $('#plate-content').hide();
+        $('#buttons').hide();
+        $('#statuts-period').html(data);
+        $('#statuts-period').show();
+        $('#statuts-div').show();
+    });
+} );
+
+$(document).on("change", "#from-st", function() {
+    const from = $(this).find(":selected").val();
+    const to = $('#last-st').find(":selected").val();
+    let blank = true;
+    let start = '<label for="to-st">A</label><select id="to-st" class="custom-select lockable">';
+    let next = "";
+    $(this.children).each(function()
+    {
+        if(parseInt($(this).val()) >= parseInt(from)) {
+            next += '<option value="'+$(this).val()+'"';
+            if(to && (to === $(this).val())) {
+                blank = false;
+                next += ' selected ';
+            }
+            next += '>'+$(this).text()+'</option>';
+        }
+    });
+    if(blank) {
+        start += '<option disabled selected></option>';
+        $('#generate-st').html('');
+    }
+    const last = start + next + '</select>';
+    $('#last-st').html(last);
+} );
+
+$(document).on("change", "#to-st", function() {
+    $('#generate-st').html('<button type="button" class="btn but-line lockable">Afficher</button>');
+} );
+
+$(document).on("click", "#generate-st", function() {
     $.post("controller/getStatuts.php", {plate: $('#plate').val()}, function (data) {
+        $('#statuts-period').hide();
         $('#display').html(data);
     });
 } );
@@ -32,6 +69,7 @@ $('#close-statuts').on('click', function () {
     $('#plate-content').show();
     $('#buttons').show();
     $('#statuts-div').hide();
+    $('#statuts-period').hide();
     $('#display').html("");
 } );
 
