@@ -42,7 +42,7 @@ if(isset($_POST['plate'])) {
                                             $doc = $sapTab[0];
                                             $msg = $messageSap->getMessage($doc["SalesDocApprovalStatus"], $doc["OverallOrdReltdBillgStatus"], $doc["Fistatu"]);
                                             if(empty($msg)) {
-                                                $msg = 'Statut problématique : "' . $doc["SalesDocApprovalStatusTxt"] . '" + "' . $doc["OverallOrdReltdBillgStatusTxt"] . '" + "' . $doc["FistatuTxt"] . '"';
+                                                $msg = 'Statut problématique : "' . $doc["SalesDocApprovalStatus"] . ' : ' . $doc["SalesDocApprovalStatusTxt"] . '" :  + "' . $doc["OverallOrdReltdBillgStatus"] . ' : '  . $doc["OverallOrdReltdBillgStatusTxt"] . '" + "' . $doc["Fistatu"] . ' : '  . $doc["FistatuTxt"] . '"';
                                             }
                                             $txt .= '<td>' . $doc["CreationDate"] . '</td><td>' . $doc["TransactionCurrency"] . " " . $doc["TotalNetAmount"] . '</td><td>' . $msg . '</td></tr>';
                                         }
