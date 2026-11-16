@@ -7,6 +7,7 @@ require_once("../assets/Facture.php");
 require_once("../assets/Label.php");
 require_once("../assets/Lock.php");
 require_once("../assets/ParamZip.php");
+require_once("../assets/ParamText.php");
 require_once("../assets/Logfile.php");
 require_once("../assets/Message.php");
 require_once("../assets/NewRates.php");
@@ -50,6 +51,7 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
     $error = "";
     $messages = new Message();
     $sap = new Sap($dir);
+    $paramtext = new ParamText();
     $oldStatus = $sap->status();
     $oldSapState = $sap->state();
     $oks = 0;
@@ -166,8 +168,8 @@ if(isset($_POST["bills"]) && isset($_POST['type']) && isset($_POST["plate"]) && 
                     $histo .= count($redo)." factures potentiellement non envoyées. Problème de connexion au serveur SAP.".PHP_EOL;
                 }
             }
-            $sap->save($dir, $sap_cont);
-            $sap->generateArchive($dir, USER, $archive);
+            $sap->save($paramtext, $dir, $sap_cont);
+            $sap->generateArchive($paramtext, $dir, USER, $archive);
         }
     }
     catch(Exception $e) {

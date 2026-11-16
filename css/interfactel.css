@@ -546,10 +546,13 @@ input[type="file"] {
   justify-content: center;
 }
 
-#atatuts-period {
+#statuts-period {
   margin: 10px;
   text-align: center;
 }
+
+table.statuts td:nth-child(9) { min-width: 120px; }
+
 
 /** run **/
 

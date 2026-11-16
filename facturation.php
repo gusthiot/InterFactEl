@@ -200,14 +200,14 @@ include("includes/lock.inc");
                             ?>
                         </div>
                         <div class="but-col">
-                            <div id="open-statuts" class="tile tight-tile">Statuts factures</div>
+                            <div id="statut-open" class="tile tight-tile">Statuts factures</div>
                         </div>
                     </div>
                     <div id="historique-div" class="center-tile">
                         <div id="close-historique" class="tile tight-tile">Fermer l'historique</div>
                     </div>
                     <div id="statuts-div" class="center-tile">
-                        <div id="close-statuts" class="tile tight-tile">Fermer les statuts</div>
+                        <div id="statut-close" class="tile tight-tile">Fermer les statuts</div>
                     </div>
                 </div>
 

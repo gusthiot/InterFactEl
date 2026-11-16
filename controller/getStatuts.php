@@ -3,55 +3,46 @@
 require_once("../assets/Sap.php");
 require_once("../assets/MessageSap.php");
 require_once("../assets/ParamText.php");
+require_once("../includes/State.php");
 require_once("../session.inc");
 
 /**
  * Called to
  */
 $txt = "";
-if(isset($_POST['plate'])) {
+if(isset($_POST['plate']) && isset($_POST['mode']) && isset($_POST['from']) && isset($_POST['to'])) {
     checkPlateforme("facturation", $_POST["plate"]);
     $dir = DATA.$_POST['plate'];
+    $mode = $_POST['mode'];
     $paramtext = new ParamText();
     $messageSap = new MessageSap();
-    $txt = "<div class='over'><table class='table table-boxed'>";
-    $txt .= "<tr><th>" . $paramtext->getParam('track-invoice-month2') . "</th><th>" . $paramtext->getParam('track-sent-login') . "</th><th>" . $paramtext->getParam('track-client-name') . "</th><th>" . $paramtext->getParam('track-invoice-id') . "</th><th>" . $paramtext->getParam('track-total-fact') . "</th>";
-    $txt .= "<th>" . $paramtext->getParam('track-err-msg') . "</th><th>" . $paramtext->getParam('track-doc-nr') . "</th><th>" . $paramtext->getParam('track-api-date') . "</th><th>" . $paramtext->getParam('track-api-TTC2') . "</th><th>" . $paramtext->getParam('track-api-msg') . "</th></tr>";
+    $bills = [];
+    $orders = [];
+    $date = $_POST['from'];
     if(file_exists($dir)) {
-        foreach(globReverse($dir) as $dirYear) {
-            $year = basename($dirYear);
-            foreach(globReverse($dirYear) as $dirMonth) {
-                $month = basename($dirMonth);
-                foreach(globReverse($dirMonth) as $dirVersion) {
-                    $version = basename($dirVersion);
-                    foreach(globReverse($dirVersion) as $dirRun) {
-                        $run = basename($dirRun);
-                        foreach(array_reverse(glob($dirRun."/*")) as $file) {
-                            if(str_contains($file, "sap_")) {
-                                $file = basename($file);
-                                $fileTab = explode("_", $file);
-                                $login = $fileTab[1];
-                                $sap = new Sap($dirRun, basename($file));
-                                foreach($sap->getBills() as $fact=>$tab) {
-                                    $txt .= '<tr><td>' . $month . " " . $year . " - " . $version . "</td>";
-                                    $txt .= '<td>' . $login . '</td><td>' . $tab[0] . '</td><td>' . $tab[1] . '</td><td>'. $tab[2] . '</td>';
-                                    $txt .= '<td>' . $tab[5] . '</td><td>' . $tab[4] . '</td>';
+
+        while($date >= $_POST['to']) {
+
+            $month = substr($date, 4, 2);
+            $year = substr($date, 0, 4);
+
+            $dirMonth = $dir."/".$year."/".$month;
+
+            foreach(globReverse($dirMonth) as $dirVersion) {
+                $version = basename($dirVersion);
+                foreach(globReverse($dirVersion) as $dirRun) {
+                    $run = basename($dirRun);
+                    foreach(array_reverse(glob($dirRun."/*")) as $file) {
+                        if(str_contains($file, "sap_")) {
+                            $file = basename($file);
+                            $fileTab = explode("_", $file);
+                            $login = $fileTab[1];
+                            $sap = new Sap($dirRun, basename($file));
+                            foreach($sap->getBills() as $fact=>$tab) {
+                                if((($tab[4] != "-") && ($mode != "en-erreur")) || (($tab[4] == "-") && in_array($mode, ["toutes", "en-erreur"]))) {
+                                    $bills[$fact] = ["tab" => $tab, "login" => $login, "title" => $month . " " . $year . " - " . $version];
                                     if($tab[4] != "-") {
-                                        $sapTab = getStatut($tab[4]);
-                                        if(!empty($sapTab)) {
-                                            $doc = $sapTab[0];
-                                            $msg = $messageSap->getMessage($doc["SalesDocApprovalStatus"], $doc["OverallOrdReltdBillgStatus"], $doc["Fistatu"]);
-                                            if(empty($msg)) {
-                                                $msg = 'Statut problématique : "' . $doc["SalesDocApprovalStatus"] . ' : ' . $doc["SalesDocApprovalStatusTxt"] . '" :  + "' . $doc["OverallOrdReltdBillgStatus"] . ' : '  . $doc["OverallOrdReltdBillgStatusTxt"] . '" + "' . $doc["Fistatu"] . ' : '  . $doc["FistatuTxt"] . '"';
-                                            }
-                                            $txt .= '<td>' . $doc["CreationDate"] . '</td><td>' . $doc["TransactionCurrency"] . " " . $doc["TotalNetAmount"] . '</td><td>' . $msg . '</td></tr>';
-                                        }
-                                        else {
-                                            $txt .= '<td>liste</td><td>non</td><td>accessible</td></tr>';
-                                        }
-                                    }
-                                    else {
-                                        $txt .= '<td>-</td><td>-</td><td>-</td></tr>';
+                                        $orders[intval($tab[4])] = ["fact" => $fact, "order" => $tab[4]];
                                     }
                                 }
                             }
@@ -59,11 +50,76 @@ if(isset($_POST['plate'])) {
                     }
                 }
             }
+            $date = State::decreaseDate($date);
         }
     }
-    $txt .= "</table></div>";
-}
+    if(count($orders) > 0) {
+        $cmd = "curl -H 'X-API-KEY: " . NEXUS_KEY . "' " . NEXUS_ORDERS . "?%24filter=";
+        $first = true;
+        foreach($orders as $orderInt=>$data) {
+            if($first) {
+                $first = false;
+            }
+            else {
+                $cmd .= "%20or%20";
+            }
+            $cmd .= "SalesOrder%20eq%20%27" . $data["order"] . "%27";
+        }
+        $res = shell_exec($cmd);
 
+        if(!is_null($res)) {
+            $result = json_decode($res, true);
+            if(array_key_exists("value", $result)) {
+                foreach($result["value"] as $value) {
+                    $o = intval($value["SalesOrder"]);
+                    $msg = $messageSap->getMessage($value["SalesDocApprovalStatus"], $value["OverallOrdReltdBillgStatus"], $value["Fistatu"]);
+                    if(empty($msg)) {
+                        $msg = 'Statut problématique : "' . $value["SalesDocApprovalStatus"] . ' : ' . $value["SalesDocApprovalStatusTxt"] . '" :  + "' . $value["OverallOrdReltdBillgStatus"] . ' : '  . $value["OverallOrdReltdBillgStatusTxt"] . '" + "' . $value["Fistatu"] . ' : '  . $value["FistatuTxt"] . '"';
+                    }
+                    $fact = $orders[$o]["fact"];
+                    $bills[$fact]["rep"] = ["msg" => $msg, "date" => $value["CreationDate"], "current" => $value["TransactionCurrency"], "total" => $value["TotalNetAmount"]];
+                }
+            }
+        }
+    }
+    if(count($bills) > 0) {
+        $txt = "<div class='over'><table class='table statuts'><tr>";
+        $headers = [];
+        foreach(['track-invoice-month2', 'track-sent-login', 'track-client-name', 'track-invoice-id', 'track-total-fact', 'track-err-msg', 'track-doc-nr', 'track-api-date', 'track-api-TTC2', 'track-api-msg'] as $title) {
+            $txt .= '<th>'.$paramtext->getParam($title).'</th>';
+            $headers[] = $paramtext->getParam($title);
+        }
+        $totalCsv = implode(";", $headers);
+        $txt .= "</tr>";
+        foreach($bills as $fact=>$bill) {
+            $line = [$bill["title"], $bill["login"], $bill["tab"][0], $bill["tab"][1], $bill["tab"][2], $bill["tab"][5], $bill["tab"][4]];
+
+            if($bill["tab"][4] != "-") {
+                if(!empty($bill["rep"])) {
+                    array_push($line, $bill["rep"]["date"], $bill["rep"]["current"] . " " . $bill["rep"]["total"], $bill["rep"]["msg"]);
+                }
+                else {
+                    array_push($line, "liste", "non", "accessible");
+                }
+            }
+            else {
+                array_push($line, "-", "-", "-");
+            }
+            $txt .= '<tr>';
+            foreach($line as $cell) {
+                $txt .= '<td>' . $cell . '</td>';
+            }
+            $txt .= '</tr>';
+            $totalCsv .= "\n".implode(";", $line);
+        }
+
+        $txt .= "</table></div>";
+        $txt .= '<div class="center-tile"><a href="data:text/plain;base64,'.base64_encode($totalCsv).'" download="statuts.csv"><div id="export-statuts" class="tile tight-tile">Exporter</div></a></div>';
+    }
+    else {
+        $txt = "Aucun résultat disponible";
+    }
+}
 echo $txt;
 
 

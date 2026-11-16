@@ -26,9 +26,9 @@ if(isset($_POST["plate"])) {
 
     if(count($choices) > 0) {
         $html = '<div id="dates">
-                    <div id="first-st">
-                        <label for="from-st">De</label>
-                        <select id="from-st" class="custom-select lockable" <?= $disabled ?> >
+                    <div id="statut-first">
+                        <label for="statut-from">De</label>
+                        <select id="statut-from" class="custom-select lockable" <?= $disabled ?> >
                         <option disabled selected></option>';
         $i = 0;
         foreach($choices as $key=>$choice) {
@@ -36,9 +36,9 @@ if(isset($_POST["plate"])) {
         }
         $html .=        '</select>
                     </div>
-                    <div id="last-st">
+                    <div id="statut-last">
                     </div>
-                    <div id="generate-st">
+                    <div id="statut-buttons">
                     </div>
                 </div>';
         echo $html;

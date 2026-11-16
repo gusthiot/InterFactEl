@@ -12,19 +12,14 @@ class Sap extends Csv
      */
     const NAME = "sap.csv";
 
+    const KEYS = ['track-client-name', 'track-invoice-id', 'track-total-fact', 'track-status', 'track-doc-nr', 'track-err-msg'];
+
     /**
      * Array containing the bills as arrays
      *
      * @var array
      */
     private array $bills;
-
-    /**
-     * First line of the table containing the columns titles
-     *
-     * @var array
-     */
-    private array $title;
 
     /**
      * Class constructor
@@ -38,27 +33,10 @@ class Sap extends Csv
         if(empty($name)) {
             $name = self::NAME;
         }
-        $lines = self::extract($dir."/".$name);
-        $first = true;
+        $lines = self::extract($dir."/".$name, true);
         foreach($lines as $line) {
-            if($first) {
-                $first = false;
-                $this->title = $line;
-            }
-            else {
-                $this->bills[$line[1]] = $line;
-            }
+            $this->bills[$line[1]] = $line;
         }
-    }
-
-    /**
-     * Getter for $title array variable
-     *
-     * @return array
-     */
-    function getTitle(): array
-    {
-        return $this->title;
     }
 
     /**
@@ -106,10 +84,10 @@ class Sap extends Csv
      * @param array $content content to be saved
      * @return void
      */
-    function save(string $dir, array $content): void
+    function save(ParamText $paramtext, string $dir, array $content): void
     {
         $this->bills = $content;
-        $data = [$this->title];
+        $data = [$this->getTitles($paramtext)];
         foreach($this->bills as $line) {
             $data[] = $line;
         }
@@ -119,14 +97,15 @@ class Sap extends Csv
     /**
      * Generates file containing result of bills sent to sap on a given shot
      *
+     * @param ParamText $paramtext data from Paramtext file
      * @param string $dir directory where to save the csv file
      * @param string $user connected user
      * @param array $content lines of result to be saved
      * @return void
      */
-    function generateArchive(string $dir, string $user, array $content): void
+    function generateArchive(ParamText $paramtext, string $dir, string $user, array $content): void
     {
-        $data = [$this->title];
+        $data = [$this->getTitles($paramtext)];
         foreach($content as $line) {
             $data[] = $line;
         }
@@ -135,17 +114,33 @@ class Sap extends Csv
     }
 
     /**
+     * Gets titles names from keys
+     *
+     * @param ParamText $paramtext data from Paramtext file
+     * @return array
+     */
+    function getTitles(ParamText $paramtext): array
+    {
+        $titles = [];
+        foreach(self::KEYS as $key) {
+            $titles[] = $paramtext->getParam($key);
+        }
+        return $titles;
+    }
+
+    /**
      * Displays bills from sap file
      *
+     * @param ParamText $paramtext $paramtext data from Paramtext file
      * @param string $parameters parameters for download, get-sap or get-report, and data-name for report
      * @return string
      */
-    function displayTable($parameters='id="get-sap"'): string
+    function displayTable(ParamText $paramtext, string $parameters='id="get-sap"'): string
     {
         $html = '<div class="over"><table class="table factures"><thead><tr>';
         $lines = [];
-        foreach($this->getTitle() as $title) {
-            $html .= '<th>'.str_replace('"', '', $title).'</th>';
+        foreach(self::KEYS as $key) {
+            $html .= '<th>'.$paramtext->getParam($key).'</th>';
         }
         $html .= '</tr></thead><tbody>';
         foreach($this->getBills() as $bill) {

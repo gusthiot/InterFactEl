@@ -19,7 +19,7 @@ $('#close-historique').on('click', function () {
     $('#display').html("");
 } );
 
-$('#open-statuts').on('click', function () {
+$('#statut-open').on('click', function () {
     $.post("controller/selectStatutsPeriod.php", {plate: $('#plate').val()}, function (data) {
         $('#plate-content').hide();
         $('#buttons').hide();
@@ -29,11 +29,11 @@ $('#open-statuts').on('click', function () {
     });
 } );
 
-$(document).on("change", "#from-st", function() {
+$(document).on("change", "#statut-from", function() {
     const from = $(this).find(":selected").val();
-    const to = $('#last-st').find(":selected").val();
+    const to = $('#statut-last').find(":selected").val();
     let blank = true;
-    let start = '<label for="to-st">A</label><select id="to-st" class="custom-select lockable">';
+    let start = '<label for="statut-to">A</label><select id="statut-to" class="custom-select lockable">';
     let next = "";
     $(this.children).each(function()
     {
@@ -48,24 +48,34 @@ $(document).on("change", "#from-st", function() {
     });
     if(blank) {
         start += '<option disabled selected></option>';
-        $('#generate-st').html('');
+        $('#statut-buttons').html('');
     }
     const last = start + next + '</select>';
-    $('#last-st').html(last);
+    $('#statut-last').html(last);
 } );
 
-$(document).on("change", "#to-st", function() {
-    $('#generate-st').html('<button type="button" class="btn but-line lockable">Afficher</button>');
+$(document).on("change", "#statut-to", function() {
+    const buttons = '<label for="statut-mode">Mode</label><select id="statut-mode" class="custom-select lockable">' +
+            '<option value="toutes" selected>Toutes</option>' +
+            '<option value="en-cours">En cours</option>' +
+            '<option value="en-erreur">En erreur</option>' +
+            '<option value="refusees">Refusées, Refaites, Renvoyées </option>' +
+            '<option value="non-payees">Non payées</option></select>' +
+            '<button type="button" id="statut-generate" class="btn but-line lockable">Valider</button>';
+    $('#statut-buttons').html(buttons);
 } );
 
-$(document).on("click", "#generate-st", function() {
-    $.post("controller/getStatuts.php", {plate: $('#plate').val()}, function (data) {
+$(document).on("click", "#statut-generate", function() {
+    const from = $('#statut-from').find(":selected").val();
+    const to = $('#statut-to').find(":selected").val();
+    const mode = $('#statut-mode').find(":selected").val();
+    $.post("controller/getStatuts.php", {plate: $('#plate').val(), mode: mode, from: from, to: to}, function (data) {
         $('#statuts-period').hide();
         $('#display').html(data);
     });
 } );
 
-$('#close-statuts').on('click', function () {
+$('#statut-close').on('click', function () {
     $('#plate-content').show();
     $('#buttons').show();
     $('#statuts-div').hide();
