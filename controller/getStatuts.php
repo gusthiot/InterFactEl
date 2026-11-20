@@ -67,8 +67,8 @@ if(isset($_POST['plate']) && isset($_POST['mode']) && isset($_POST['from']) && i
             $filter .= "SalesOrder%20eq%20%27" . $data["order"] . "%27";
         }
         if(in_array($mode,["en-cours", "refusees", "non-payees"])) {
-            $fin = "%20and%20Fistatu%20neq%20%271%27";
-            $app = "SalesDocApprovalStatus%20neq%20%27C%27";
+            $fin = "%20and%20Fistatu%20ne%20%271%27";
+            $app = "SalesDocApprovalStatus%20ne%20%27C%27";
             if($mode == "refusees") {
                 $fin = "";
                 $app = "SalesDocApprovalStatus%20eq%20%27C%27";
@@ -78,7 +78,6 @@ if(isset($_POST['plate']) && isset($_POST['mode']) && isset($_POST['from']) && i
             }
             $filter = "%28" . $filter . "%29%20and%20" . $app . $fin;
         }
-        var_dump($cmd.$filter);
         $res = shell_exec($cmd.$filter);
 
         if(!is_null($res)) {
@@ -95,6 +94,11 @@ if(isset($_POST['plate']) && isset($_POST['mode']) && isset($_POST['from']) && i
                 }
             }
         }
+        foreach($bills as $fact=>$bill) {
+            if(($bill["tab"][4] != "-") && empty($bill["rep"])) {
+                unset($bills[$fact]);
+            }
+        }
     }
     if(count($bills) > 0) {
         $txt = "<div class='over'><table class='table statuts'><tr>";
@@ -109,12 +113,7 @@ if(isset($_POST['plate']) && isset($_POST['mode']) && isset($_POST['from']) && i
             $line = [$bill["title"], $bill["login"], $bill["tab"][0], $bill["tab"][1], $bill["tab"][2], $bill["tab"][5], $bill["tab"][4]];
 
             if($bill["tab"][4] != "-") {
-                if(!empty($bill["rep"])) {
-                    array_push($line, $bill["rep"]["date"], $bill["rep"]["current"] . " " . $bill["rep"]["total"], $bill["rep"]["msg"]);
-                }
-                else {
-                    array_push($line, "liste", "non", "accessible");
-                }
+                array_push($line, $bill["rep"]["date"], $bill["rep"]["current"] . " " . $bill["rep"]["total"], $bill["rep"]["msg"]);
             }
             else {
                 array_push($line, "-", "-", "-");
