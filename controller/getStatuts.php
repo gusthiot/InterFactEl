@@ -56,20 +56,34 @@ if(isset($_POST['plate']) && isset($_POST['mode']) && isset($_POST['from']) && i
     if(count($orders) > 0) {
         $cmd = "curl -H 'X-API-KEY: " . NEXUS_KEY . "' " . NEXUS_ORDERS . "?%24filter=";
         $first = true;
+        $filter = "";
         foreach($orders as $orderInt=>$data) {
             if($first) {
                 $first = false;
             }
             else {
-                $cmd .= "%20or%20";
+                $filter .= "%20or%20";
             }
-            $cmd .= "SalesOrder%20eq%20%27" . $data["order"] . "%27";
+            $filter .= "SalesOrder%20eq%20%27" . $data["order"] . "%27";
         }
-        $res = shell_exec($cmd);
+        if(in_array($mode,["en-cours", "refusees", "non-payees"])) {
+            $fin = "%20and%20Fistatu%20neq%20%271%27";
+            $app = "SalesDocApprovalStatus%20neq%20%27C%27";
+            if($mode == "refusees") {
+                $fin = "";
+                $app = "SalesDocApprovalStatus%20eq%20%27C%27";
+            }
+            if($mode == "non-payees") {
+                $app = "SalesDocApprovalStatus%20eq%20%27B%27";
+            }
+            $filter = "%28" . $filter . "%29%20and%20" . $app . $fin;
+        }
+        var_dump($cmd.$filter);
+        $res = shell_exec($cmd.$filter);
 
         if(!is_null($res)) {
             $result = json_decode($res, true);
-            if(array_key_exists("value", $result)) {
+            if(is_array($result) && array_key_exists("value", $result)) {
                 foreach($result["value"] as $value) {
                     $o = intval($value["SalesOrder"]);
                     $msg = $messageSap->getMessage($value["SalesDocApprovalStatus"], $value["OverallOrdReltdBillgStatus"], $value["Fistatu"]);

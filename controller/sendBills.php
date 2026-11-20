@@ -248,19 +248,19 @@ function send(string $data, string $dir, string $mode): array
 {
     $decoded = json_decode($data, true);
     if($mode == "REAL") {
-        if($decoded["SalesOrderType"] == "ZINT") {
-            $decoded["SDDocumentReason"] = "900";
+        if($decoded["SalesOrderType"] == "ZPLT") {
+            $decoded["HeaderBillingBlockReason"] = "";
         }
         else {
-            $decoded["HeaderBillingBlockReason"] = "";
+            $decoded["SDDocumentReason"] = "900";
         }
     }
     else {
-        if($decoded["SalesOrderType"] == "ZINT") {
-            $decoded["SDDocumentReason"] = "Z1";
+        if($decoded["SalesOrderType"] == "ZPLT") {
+            $decoded["HeaderBillingBlockReason"] = "Z1";
         }
         else {
-            $decoded["HeaderBillingBlockReason"] = "Z1";
+            $decoded["SDDocumentReason"] = "Z1";
         }
     }
 

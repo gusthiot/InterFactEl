@@ -260,7 +260,7 @@ $.get("controller/getParametresJson.php", function(data){
         }
         let paramfact = [];
         for(let line of table.contents["paramfact"]) {
-            paramfact.push([line[0], line[2], line[3]]);
+            paramfact.push([line[0], line[2]]);
         }
         return table.getEncFiles({categprix: categprix, plateforme: plateContent, paramfact: paramfact});
     }

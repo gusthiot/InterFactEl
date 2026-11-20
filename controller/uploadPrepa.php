@@ -157,7 +157,7 @@ if(isset($_POST['type'])) {
                         else {
                             $_SESSION['alert-danger'] = $msg;
                         }
-                        //State::delDir($tmpDir);
+                        State::delDir($tmpDir);
                     }
                     else {
                         $errors= error_get_last();
